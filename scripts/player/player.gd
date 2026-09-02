@@ -5,15 +5,27 @@ const SPRINT_SPEED := 8.0
 const JUMP_VELOCITY := 4.5
 const MOUSE_SENSITIVITY := 0.004
 
+@export var max_health := 100
+
 @onready var head: Node3D = $Head
 @onready var weapon: Node3D = $Head/Camera3D/WeaponHolder
 
+var health: int
+var is_dead := false
+
 
 func _ready() -> void:
+	health = max_health
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	get_tree().call_group("hud", "update_health", health, max_health)
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if is_dead:
+		if event.is_action_pressed("restart"):
+			get_tree().reload_current_scene()
+		return
+
 	if event is InputEventMouseMotion:
 		rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
 
@@ -32,6 +44,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if is_dead:
+		velocity = Vector3.ZERO
+		return
+
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
@@ -63,3 +79,23 @@ func _physics_process(delta: float) -> void:
 		velocity.z = move_toward(velocity.z, 0.0, speed)
 
 	move_and_slide()
+
+
+func take_damage(amount: int) -> void:
+	if is_dead:
+		return
+
+	health -= amount
+	health = max(health, 0)
+
+	get_tree().call_group("hud", "update_health", health, max_health)
+	get_tree().call_group("hud", "show_damage_flash")
+
+	if health <= 0:
+		die()
+
+
+func die() -> void:
+	is_dead = true
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	get_tree().call_group("hud", "show_death_screen")

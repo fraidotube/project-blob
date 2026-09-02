@@ -17,6 +17,12 @@ size = Vector3(0.2, 3, 20)
 [sub_resource type="BoxShape3D" id="BoxShape3D_el81d"]
 size = Vector3(0.2, 3, 20)
 
+[sub_resource type="BoxMesh" id="BoxMesh_el81d"]
+size = Vector3(12, 3, 0.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mn6ti"]
+size = Vector3(12, 3, 0.2)
+
 [node name="PrototypeCorridor" type="Node3D" unique_id=876116458]
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=859147626]
@@ -58,3 +64,21 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -5)
 
 [node name="HUD" parent="." unique_id=160974520 instance=ExtResource("4_cpoig")]
+
+[node name="Wall_Front" type="StaticBody3D" parent="." unique_id=971861547]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -10)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Wall_Front" unique_id=350514555]
+mesh = SubResource("BoxMesh_el81d")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Front" unique_id=62379565]
+shape = SubResource("BoxShape3D_mn6ti")
+
+[node name="Wall_Back" type="StaticBody3D" parent="." unique_id=1374569768]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 10)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Wall_Back" unique_id=1161593572]
+mesh = SubResource("BoxMesh_el81d")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Back" unique_id=972583294]
+shape = SubResource("BoxShape3D_mn6ti")
