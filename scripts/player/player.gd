@@ -6,6 +6,8 @@ const JUMP_VELOCITY := 4.5
 const MOUSE_SENSITIVITY := 0.004
 
 @onready var head: Node3D = $Head
+@onready var weapon_ray: RayCast3D = $Head/Camera3D/WeaponRay
+
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -21,6 +23,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			deg_to_rad(-89.0),
 			deg_to_rad(89.0)
 		)
+
+	if event.is_action_pressed("fire"):
+		shoot()
 
 	if event.is_action_pressed("ui_cancel"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -58,3 +63,15 @@ func _physics_process(delta: float) -> void:
 		velocity.z = move_toward(velocity.z, 0.0, speed)
 
 	move_and_slide()
+
+
+func shoot() -> void:
+	weapon_ray.force_raycast_update()
+
+	if not weapon_ray.is_colliding():
+		return
+
+	var collider := weapon_ray.get_collider()
+
+	if collider != null and collider.has_method("take_damage"):
+		collider.take_damage(1)
