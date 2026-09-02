@@ -3,7 +3,7 @@ extends CharacterBody3D
 const WALK_SPEED := 5.0
 const SPRINT_SPEED := 8.0
 const JUMP_VELOCITY := 4.5
-const MOUSE_SENSITIVITY := 0.002
+const MOUSE_SENSITIVITY := 0.004
 
 @onready var head: Node3D = $Head
 
