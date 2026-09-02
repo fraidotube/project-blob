@@ -75,3 +75,4 @@ func shoot() -> void:
 
 	if collider != null and collider.has_method("take_damage"):
 		collider.take_damage(1)
+		get_tree().call_group("hud", "show_hitmarker")

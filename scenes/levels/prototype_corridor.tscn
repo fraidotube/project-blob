@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://cbatlw163lxtd" path="res://scenes/player/player.tscn" id="1_arovg"]
 [ext_resource type="PackedScene" uid="uid://dqlen21maalf2" path="res://scenes/interactables/door.tscn" id="2_3xrac"]
 [ext_resource type="PackedScene" uid="uid://bn01sqry1ithq" path="res://scenes/enemies/enemy.tscn" id="3_t2j0p"]
+[ext_resource type="PackedScene" uid="uid://sg2wyput3ej5" path="res://scenes/ui/hud.tscn" id="4_cpoig"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_hbjui"]
 size = Vector3(12, 0.2, 20)
@@ -55,3 +56,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
 
 [node name="Enemy" parent="." unique_id=1152342991 instance=ExtResource("3_t2j0p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -5)
+
+[node name="HUD" parent="." unique_id=160974520 instance=ExtResource("4_cpoig")]
