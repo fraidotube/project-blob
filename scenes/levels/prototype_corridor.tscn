@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dnnur1onl5p2a"]
 
 [ext_resource type="PackedScene" uid="uid://cbatlw163lxtd" path="res://scenes/player/player.tscn" id="1_arovg"]
+[ext_resource type="PackedScene" uid="uid://dqlen21maalf2" path="res://scenes/interactables/door.tscn" id="2_3xrac"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_hbjui"]
 size = Vector3(12, 0.2, 20)
@@ -47,3 +48,6 @@ shape = SubResource("BoxShape3D_el81d")
 
 [node name="Player" parent="." unique_id=432704500 instance=ExtResource("1_arovg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 5)
+
+[node name="Door" parent="." unique_id=1917063193 instance=ExtResource("2_3xrac")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)

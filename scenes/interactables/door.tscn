@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://dqlen21maalf2"]
+
+[ext_resource type="Script" uid="uid://cdcipbi5j0331" path="res://scripts/interactables/door.gd" id="1_qq3h0"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_hbjui"]
+size = Vector3(1, 2.2, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hyfr5"]
+size = Vector3(1, 2.2, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_el81d"]
+size = Vector3(2.5, 2.5, 2.5)
+
+[node name="Door" type="Node3D" unique_id=1917063193]
+script = ExtResource("1_qq3h0")
+
+[node name="DoorBody" type="StaticBody3D" parent="." unique_id=1308984451]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.1, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="DoorBody" unique_id=1842633990]
+mesh = SubResource("BoxMesh_hbjui")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DoorBody" unique_id=271824675]
+shape = SubResource("BoxShape3D_hyfr5")
+
+[node name="Area3D" type="Area3D" parent="." unique_id=1614083516]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1262857251]
+shape = SubResource("BoxShape3D_el81d")
