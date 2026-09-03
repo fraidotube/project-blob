@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://bdh4fao2mihwx"]
+
+[ext_resource type="Script" uid="uid://cuhjmv0yxjhpp" path="res://scripts/pickups/ammo_pickup.gd" id="1_3raeh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hyfr5"]
+size = Vector3(1.2, 0.8, 1.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hbjui"]
+size = Vector3(0.08, 0.18, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_el81d"]
+albedo_color = Color(0.2609403, 0.1403786, 0.1499702, 1)
+
+[node name="AmmoPickup" type="Area3D" unique_id=788646051]
+script = ExtResource("1_3raeh")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=318771204]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+shape = SubResource("BoxShape3D_hyfr5")
+
+[node name="AmmoVisual" type="Node3D" parent="." unique_id=2041205951]
+
+[node name="MagazineMesh" type="MeshInstance3D" parent="AmmoVisual" unique_id=878533753]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, 0)
+mesh = SubResource("BoxMesh_hbjui")
+surface_material_override/0 = SubResource("StandardMaterial3D_el81d")

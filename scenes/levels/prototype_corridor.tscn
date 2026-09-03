@@ -1,9 +1,13 @@
 [gd_scene format=3 uid="uid://dnnur1onl5p2a"]
 
 [ext_resource type="PackedScene" uid="uid://cbatlw163lxtd" path="res://scenes/player/player.tscn" id="1_arovg"]
+[ext_resource type="Material" uid="uid://cgepvqpgydnp" path="res://materials/enviroment/floor_test.tres" id="1_nnt1b"]
+[ext_resource type="PackedScene" uid="uid://c7vx37t8yqesg" path="res://scenes/pickups/pistol_pickup.tscn" id="1_s5fqq"]
 [ext_resource type="PackedScene" uid="uid://dqlen21maalf2" path="res://scenes/interactables/door.tscn" id="2_3xrac"]
+[ext_resource type="Material" uid="uid://ms8lv0k3tx4n" path="res://materials/enviroment/wall_test.tres" id="2_athqp"]
 [ext_resource type="PackedScene" uid="uid://bn01sqry1ithq" path="res://scenes/enemies/enemy.tscn" id="3_t2j0p"]
 [ext_resource type="PackedScene" uid="uid://sg2wyput3ej5" path="res://scenes/ui/hud.tscn" id="4_cpoig"]
+[ext_resource type="PackedScene" uid="uid://bdh4fao2mihwx" path="res://scenes/pickups/ammo_pickup.tscn" id="5_fray0"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_hbjui"]
 size = Vector3(12, 0.2, 20)
@@ -23,14 +27,33 @@ size = Vector3(12, 3, 0.2)
 [sub_resource type="BoxShape3D" id="BoxShape3D_mn6ti"]
 size = Vector3(12, 3, 0.2)
 
+[sub_resource type="BoxMesh" id="BoxMesh_mn6ti"]
+size = Vector3(1.2, 0.08, 0.35)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uk1fg"]
+albedo_color = Color(1.1966052, 1.1966053, 1.1966054, 1)
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+
 [node name="PrototypeCorridor" type="Node3D" unique_id=876116458]
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=859147626]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Floor" unique_id=486147232]
 mesh = SubResource("BoxMesh_hbjui")
+surface_material_override/0 = ExtResource("1_nnt1b")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=508569117]
+shape = SubResource("BoxShape3D_hyfr5")
+
+[node name="Ceiling" type="StaticBody3D" parent="." unique_id=1621555219]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ceiling" unique_id=1727110790]
+mesh = SubResource("BoxMesh_hbjui")
+surface_material_override/0 = ExtResource("2_athqp")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ceiling" unique_id=1697730012]
 shape = SubResource("BoxShape3D_hyfr5")
 
 [node name="Sun" type="DirectionalLight3D" parent="." unique_id=212879316]
@@ -41,6 +64,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.5, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Wall_Left" unique_id=1920999417]
 mesh = SubResource("BoxMesh_hyfr5")
+surface_material_override/0 = ExtResource("2_athqp")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Left" unique_id=2080740265]
 shape = SubResource("BoxShape3D_el81d")
@@ -50,6 +74,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.5, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Wall_Right" unique_id=605151083]
 mesh = SubResource("BoxMesh_hyfr5")
+surface_material_override/0 = ExtResource("2_athqp")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Right" unique_id=1864363235]
 shape = SubResource("BoxShape3D_el81d")
@@ -70,6 +95,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -10)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Wall_Front" unique_id=350514555]
 mesh = SubResource("BoxMesh_el81d")
+surface_material_override/0 = ExtResource("2_athqp")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Front" unique_id=62379565]
 shape = SubResource("BoxShape3D_mn6ti")
@@ -79,6 +105,54 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 10)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Wall_Back" unique_id=1161593572]
 mesh = SubResource("BoxMesh_el81d")
+surface_material_override/0 = ExtResource("2_athqp")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Wall_Back" unique_id=972583294]
 shape = SubResource("BoxShape3D_mn6ti")
+
+[node name="AmmoPickup" parent="." unique_id=788646051 instance=ExtResource("5_fray0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.4902518, 0.099999905, 0.3243947)
+
+[node name="PistolPickup" parent="." unique_id=1172997143 instance=ExtResource("1_s5fqq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8851695, 0.099999905, -2.0245543)
+
+[node name="CeilingLights" type="Node3D" parent="." unique_id=302530883]
+
+[node name="CeilingLight_01" type="Node3D" parent="CeilingLights" unique_id=2074831346]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9061162, 6.25059)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CeilingLights/CeilingLight_01" unique_id=1329520270]
+mesh = SubResource("BoxMesh_mn6ti")
+surface_material_override/0 = SubResource("StandardMaterial3D_uk1fg")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="CeilingLights/CeilingLight_01" unique_id=521380214]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.15, 0)
+light_energy = 1.6
+shadow_enabled = true
+omni_range = 8.0
+
+[node name="CeilingLight_02" type="Node3D" parent="CeilingLights" unique_id=730523051]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9061162, -0.43714803)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CeilingLights/CeilingLight_02" unique_id=1364258228]
+mesh = SubResource("BoxMesh_mn6ti")
+surface_material_override/0 = SubResource("StandardMaterial3D_uk1fg")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="CeilingLights/CeilingLight_02" unique_id=2120180166]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.15, 0)
+light_energy = 1.6
+shadow_enabled = true
+omni_range = 8.0
+
+[node name="CeilingLight_03" type="Node3D" parent="CeilingLights" unique_id=38262126]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.9061162, -6.2553687)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CeilingLights/CeilingLight_03" unique_id=364062037]
+mesh = SubResource("BoxMesh_mn6ti")
+surface_material_override/0 = SubResource("StandardMaterial3D_uk1fg")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="CeilingLights/CeilingLight_03" unique_id=70222070]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.15, 0)
+light_energy = 1.6
+shadow_enabled = true
+omni_range = 8.0

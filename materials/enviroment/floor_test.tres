@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cgepvqpgydnp"]
+
+[ext_resource type="Texture2D" uid="uid://d0i27elodfupq" path="res://assets/textures/environment/floor_test/concrete_floor_02_diff_4k.jpg" id="1_shsse"]
+[ext_resource type="Texture2D" uid="uid://i8iyeepyipxm" path="res://assets/textures/environment/floor_test/concrete_floor_02_rough_4k.jpg" id="2_f2gcd"]
+
+[resource]
+albedo_texture = ExtResource("1_shsse")
+roughness_texture = ExtResource("2_f2gcd")
+uv1_scale = Vector3(0.65, 0.65, 0.65)
+uv1_triplanar = true
+uv1_world_triplanar = true

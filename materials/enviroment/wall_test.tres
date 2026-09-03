@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://ms8lv0k3tx4n"]
+
+[ext_resource type="Texture2D" uid="uid://ctx88ufl2uqvs" path="res://assets/textures/environment/wall_test/concrete_wall_004_diff_4k.jpg" id="1_ve6m5"]
+
+[resource]
+albedo_texture = ExtResource("1_ve6m5")
+roughness = 0.8
+uv1_triplanar = true
+uv1_world_triplanar = true

@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://c4q8sikqhcy5h"]
+[gd_scene format=3 uid="uid://c4q8sikqhcy5h"]
 
-[ext_resource type="PackedScene" uid="uid://co70s31b8bmac" path="res://SilverDelivery/Low_World_Base_Male_Character/gltf/smesh_pistol.glb" id="1_rpndp"]
-[ext_resource type="Material" uid="uid://7du8jtbi5h5x" path="res://SilverDelivery/Low_World_Base_Male_Character/materials/m_lowworld_basemalecharacter_placeholder.tres" id="2_302bm"]
+[ext_resource type="PackedScene" uid="uid://tqybfjnrw1of" path="res://SilverDelivery/Low_World_Base_Male_Character/gltf/smesh_pistol.glb" id="1_rpndp"]
+[ext_resource type="Material" uid="uid://mm3snllv1sj" path="res://SilverDelivery/Low_World_Base_Male_Character/materials/m_lowworld_basemalecharacter.tres" id="2_nqtfw"]
 
-[node name="smesh_pistol" instance=ExtResource("1_rpndp")]
+[node name="smesh_pistol" unique_id=2072505605 instance=ExtResource("1_rpndp")]
 
-[node name="mesh_pistol" parent="parent_pistol/rig_pistol/Skeleton3D" index="0"]
-material_override = ExtResource("2_302bm")
+[node name="mesh_pistol" parent="parent_pistol/rig_pistol/Skeleton3D" parent_id_path=PackedInt32Array(71207391) index="0" unique_id=762739827]
+material_override = ExtResource("2_nqtfw")

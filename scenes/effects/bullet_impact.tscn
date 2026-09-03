@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://dqehgjy7k1qyb"]
+
+[ext_resource type="Texture2D" uid="uid://dmc372uj1rcgl" path="res://assets/textures/effects/bullet_hole_pistol_01.png" id="1_lq3bg"]
+[ext_resource type="Script" uid="uid://ctcs7lhi8a0hi" path="res://scripts/effects/bullet_impact.gd" id="2_xn4h4"]
+
+[node name="BulletImpact" type="Decal" unique_id=997374188]
+size = Vector3(0.12, 0.12, 0.1)
+texture_albedo = ExtResource("1_lq3bg")
+script = ExtResource("2_xn4h4")

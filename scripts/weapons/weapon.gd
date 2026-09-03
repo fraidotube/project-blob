@@ -31,10 +31,23 @@ var reserve_ammo: int = 36
 
 
 # ------------------------------------------------------------
+# ANIMAZIONI
+# ------------------------------------------------------------
+
+@export var reload_animation_speed := 1.25
+
+
+# ------------------------------------------------------------
 # EFFETTI
 # ------------------------------------------------------------
 
 @export var muzzle_flash_duration := 0.05
+
+@export var bullet_impact_scene: PackedScene = preload(
+	"res://scenes/effects/bullet_impact.tscn"
+)
+
+@export var bullet_impact_offset := 0.01
 
 
 # ------------------------------------------------------------
@@ -186,15 +199,20 @@ func play_current_locomotion(
 	if has_pistol:
 		if not player_is_moving:
 			animation_name = "a_arms_pistol_idle"
+
 		elif player_is_sprinting:
 			animation_name = "a_arms_pistol_run"
+
 		else:
 			animation_name = "a_arms_pistol_walk"
+
 	else:
 		if not player_is_moving:
 			animation_name = "a_arms_unarmed_idle"
+
 		elif player_is_sprinting:
 			animation_name = "a_arms_unarmed_run"
+
 		else:
 			animation_name = "a_arms_unarmed_walk"
 
@@ -212,6 +230,7 @@ func play_current_locomotion(
 			"Animazione locomotion non trovata: "
 			+ animation_name
 		)
+
 		return
 
 	current_locomotion_animation = animation_name
@@ -377,6 +396,8 @@ func fire_pistol() -> void:
 
 	if weapon_ray.is_colliding():
 		var collider := weapon_ray.get_collider()
+		var hit_point := weapon_ray.get_collision_point()
+		var hit_normal := weapon_ray.get_collision_normal()
 
 		if (
 			collider != null
@@ -391,11 +412,51 @@ func fire_pistol() -> void:
 				"show_hitmarker"
 			)
 
+		else:
+			spawn_bullet_impact(
+				hit_point,
+				hit_normal
+			)
+
 	await arms_animation_player.animation_finished
 
 	is_performing_action = false
 
 	play_current_locomotion(true)
+
+
+# ============================================================
+# BULLET IMPACT
+# ============================================================
+
+func spawn_bullet_impact(
+	hit_point: Vector3,
+	hit_normal: Vector3
+) -> void:
+	if bullet_impact_scene == null:
+		return
+
+	var impact := bullet_impact_scene.instantiate()
+
+	if impact == null:
+		return
+
+	get_tree().current_scene.add_child(
+		impact
+	)
+
+	impact.global_position = (
+		hit_point
+		+ hit_normal * bullet_impact_offset
+	)
+
+	# Il Decal di Godot proietta lungo il proprio asse -Y.
+	# Allineiamo quindi il suo asse +Y alla normale della
+	# superficie colpita.
+	impact.quaternion = Quaternion(
+		Vector3.UP,
+		hit_normal.normalized()
+	)
 
 
 # ============================================================
@@ -429,14 +490,17 @@ func reload() -> void:
 	):
 		arms_animation_player.play(
 			"a_arms_pistol_reload",
-			0.08
+			0.08,
+			reload_animation_speed
 		)
 
 	if pistol_animation_player.has_animation(
 		"pistol_reload"
 	):
 		pistol_animation_player.play(
-			"pistol_reload"
+			"pistol_reload",
+			-1.0,
+			reload_animation_speed
 		)
 
 	await arms_animation_player.animation_finished

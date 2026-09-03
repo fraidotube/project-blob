@@ -17,19 +17,31 @@ var is_dead := false
 func _ready() -> void:
 	health = max_health
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	get_tree().call_group("hud", "update_health", health, max_health)
+
+	get_tree().call_group(
+		"hud",
+		"update_health",
+		health,
+		max_health
+	)
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_dead:
 		if event.is_action_pressed("restart"):
 			get_tree().reload_current_scene()
+
 		return
 
 	if event is InputEventMouseMotion:
-		rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
+		rotate_y(
+			-event.relative.x * MOUSE_SENSITIVITY
+		)
 
-		head.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
+		head.rotate_x(
+			-event.relative.y * MOUSE_SENSITIVITY
+		)
+
 		head.rotation.x = clamp(
 			head.rotation.x,
 			deg_to_rad(-89.0),
@@ -54,12 +66,19 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
-	if Input.is_action_just_pressed("jump") and is_on_floor():
+	if (
+		Input.is_action_just_pressed("jump")
+		and is_on_floor()
+	):
 		velocity.y = JUMP_VELOCITY
+
+	var is_sprinting := Input.is_action_pressed(
+		"sprint"
+	)
 
 	var speed := WALK_SPEED
 
-	if Input.is_action_pressed("sprint"):
+	if is_sprinting:
 		speed = SPRINT_SPEED
 
 	var input_dir := Input.get_vector(
@@ -70,18 +89,46 @@ func _physics_process(delta: float) -> void:
 	)
 
 	var direction := (
-		transform.basis *
-		Vector3(input_dir.x, 0.0, input_dir.y)
+		transform.basis
+		* Vector3(
+			input_dir.x,
+			0.0,
+			input_dir.y
+		)
 	).normalized()
 
-	if direction:
+	var is_moving := direction != Vector3.ZERO
+
+	if is_moving:
 		velocity.x = direction.x * speed
 		velocity.z = direction.z * speed
 	else:
-		velocity.x = move_toward(velocity.x, 0.0, speed)
-		velocity.z = move_toward(velocity.z, 0.0, speed)
+		velocity.x = move_toward(
+			velocity.x,
+			0.0,
+			speed
+		)
+
+		velocity.z = move_toward(
+			velocity.z,
+			0.0,
+			speed
+		)
 
 	move_and_slide()
+
+	weapon.set_movement_state(
+		is_moving,
+		is_sprinting
+	)
+
+
+func equip_pistol() -> void:
+	weapon.equip_pistol()
+
+
+func add_ammo(amount: int) -> void:
+	weapon.add_ammo(amount)
 
 
 func take_damage(amount: int) -> void:
@@ -91,8 +138,17 @@ func take_damage(amount: int) -> void:
 	health -= amount
 	health = max(health, 0)
 
-	get_tree().call_group("hud", "update_health", health, max_health)
-	get_tree().call_group("hud", "show_damage_flash")
+	get_tree().call_group(
+		"hud",
+		"update_health",
+		health,
+		max_health
+	)
+
+	get_tree().call_group(
+		"hud",
+		"show_damage_flash"
+	)
 
 	if health <= 0:
 		die()
@@ -101,4 +157,8 @@ func take_damage(amount: int) -> void:
 func die() -> void:
 	is_dead = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	get_tree().call_group("hud", "show_death_screen")
+
+	get_tree().call_group(
+		"hud",
+		"show_death_screen"
+	)

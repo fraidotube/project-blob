@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://c7vx37t8yqesg"]
+
+[ext_resource type="Script" uid="uid://bjtppuw1krf0x" path="res://scripts/pickups/pistol_pickup.gd" id="1_b2efb"]
+[ext_resource type="PackedScene" uid="uid://c4q8sikqhcy5h" path="res://SilverDelivery/Low_World_Base_Male_Character/scenes/prefab_pistol.tscn" id="2_bh4mi"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hbjui"]
+size = Vector3(1.5, 1, 1.5)
+
+[node name="PistolPickup" type="Area3D" unique_id=1172997143]
+script = ExtResource("1_b2efb")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=228876838]
+shape = SubResource("BoxShape3D_hbjui")
+
+[node name="PistolVisual" type="Node3D" parent="." unique_id=928012837]
+transform = Transform3D(-0.8275712, -0.8689798, -3.7984314e-08, 0, -5.2453668e-08, 1.2, -0.86897975, 0.82757133, 3.6174292e-08, 0.11096585, 0.015313983, -0.10062873)
+
+[node name="smesh_pistol" parent="PistolVisual" unique_id=875026832 instance=ExtResource("2_bh4mi")]
