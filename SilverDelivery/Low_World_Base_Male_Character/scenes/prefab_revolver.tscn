@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://jhtef28xiuy"]
+
+[ext_resource type="PackedScene" uid="uid://bj33cgd62biq0" path="res://SilverDelivery/Low_World_Base_Male_Character/gltf/smesh_revolver.glb" id="1_k2xm4"]
+[ext_resource type="Material" uid="uid://7du8jtbi5h5x" path="res://SilverDelivery/Low_World_Base_Male_Character/materials/m_lowworld_basemalecharacter_placeholder.tres" id="2_ikvc0"]
+
+[node name="smesh_revolver" instance=ExtResource("1_k2xm4")]
+
+[node name="mesh_revolver" parent="parent_revolver/rig_revolver/Skeleton3D" index="0"]
+material_override = ExtResource("2_ikvc0")

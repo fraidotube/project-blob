@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://duxcde5ki6v5x"]
+
+[ext_resource type="PackedScene" uid="uid://siseri6oscbl" path="res://scenes/weapons/lowworld_arms_viewmodel.tscn" id="1_iakfh"]
+[ext_resource type="PackedScene" uid="uid://c4q8sikqhcy5h" path="res://SilverDelivery/Low_World_Base_Male_Character/scenes/prefab_pistol.tscn" id="2_a6trc"]
+
+[node name="LowWorldViewModel" type="Node3D" unique_id=514129486]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="smesh_arms_male" parent="." unique_id=394924321 instance=ExtResource("1_iakfh")]
+
+[node name="Skeleton3D" parent="smesh_arms_male/rig_arms" parent_id_path=PackedInt32Array(394924321, 1810606850) index="0" unique_id=1147120206]
+bones/12/rotation = Quaternion(0.38327092, -3.0261237e-08, 6.042628e-08, 0.9236361)
+bones/13/rotation = Quaternion(0.2726048, 1.3512621e-07, -7.782821e-08, 0.9621262)
+bones/37/rotation = Quaternion(0.3324414, 0.0005614054, 0.0015917295, 0.94312245)
+
+[node name="PistolSocket" type="BoneAttachment3D" parent="smesh_arms_male/rig_arms/Skeleton3D" index="1" unique_id=2144907275]
+transform = Transform3D(0.8237254, 0.017455544, 0.5667197, -0.19433293, 0.9476747, 0.2532731, -0.53264487, -0.3187598, 0.78401625, -0.24131358, 0.2141276, 0.20470604)
+bone_name = "Hand.R"
+bone_idx = 23
+
+[node name="smesh_pistol" parent="smesh_arms_male/rig_arms/Skeleton3D/PistolSocket" unique_id=1095934682 instance=ExtResource("2_a6trc")]
+visible = false
+
+[editable path="smesh_arms_male"]

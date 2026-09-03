@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://bd73mrtdidkvi"]
+
+[ext_resource type="PackedScene" uid="uid://wmocvmk7oc50" path="res://SilverDelivery/Low_World_Base_Male_Character/gltf/smesh_shotgun.glb" id="1_wb3vd"]
+[ext_resource type="Material" uid="uid://7du8jtbi5h5x" path="res://SilverDelivery/Low_World_Base_Male_Character/materials/m_lowworld_basemalecharacter_placeholder.tres" id="2_kjp6e"]
+
+[node name="smesh_shotgun" instance=ExtResource("1_wb3vd")]
+
+[node name="mesh_shotgun" parent="parent_shotgun/rig_shotgun/Skeleton3D" index="0"]
+material_override = ExtResource("2_kjp6e")

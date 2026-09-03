@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://snfw1ft7trlj"]
+
+[ext_resource type="PackedScene" uid="uid://dgeca3q04yoy1" path="res://SilverDelivery/Low_World_Base_Male_Character/gltf/smesh_arms_male.glb" id="1_x684g"]
+[ext_resource type="Material" uid="uid://mm3snllv1sj" path="res://SilverDelivery/Low_World_Base_Male_Character/materials/m_lowworld_basemalecharacter.tres" id="2_fpby7"]
+
+[node name="smesh_arms_male" instance=ExtResource("1_x684g")]
+
+[node name="smesh_arms_male2" parent="rig_arms/Skeleton3D" index="0"]
+material_override = ExtResource("2_fpby7")

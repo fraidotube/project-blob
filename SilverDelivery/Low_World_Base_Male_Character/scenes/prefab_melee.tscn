@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://b44slrxc8car7"]
+
+[ext_resource type="PackedScene" uid="uid://d34wejtnf7xtq" path="res://SilverDelivery/Low_World_Base_Male_Character/gltf/mesh_melee.glb" id="1_bns2q"]
+[ext_resource type="Material" uid="uid://7du8jtbi5h5x" path="res://SilverDelivery/Low_World_Base_Male_Character/materials/m_lowworld_basemalecharacter_placeholder.tres" id="2_denvb"]
+
+[node name="mesh_melee" instance=ExtResource("1_bns2q")]
+
+[node name="mesh_melee2" parent="." index="0"]
+material_override = ExtResource("2_denvb")

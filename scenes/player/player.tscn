@@ -2,14 +2,11 @@
 
 [ext_resource type="Script" uid="uid://dql217vdoqylx" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Script" uid="uid://b2ewp6spvmhdj" path="res://scripts/weapons/weapon.gd" id="2_dovo2"]
-[ext_resource type="PackedScene" uid="uid://g34gmxfpfdtq" path="res://assets/models/weapons/service_pistol.glb" id="3_gmlin"]
+[ext_resource type="PackedScene" uid="uid://duxcde5ki6v5x" path="res://scenes/weapons/lowworld_viewmodel.tscn" id="3_gmlin"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
 radius = 0.4
 height = 1.8
-
-[sub_resource type="BoxMesh" id="BoxMesh_hbjui"]
-size = Vector3(0.18, 0.18, 0.55)
 
 [node name="Player" type="CharacterBody3D" unique_id=432704500 groups=["player"]]
 script = ExtResource("1_8afob")
@@ -29,12 +26,8 @@ target_position = Vector3(0, 0, -100)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.25, -0.55)
 script = ExtResource("2_dovo2")
 
-[node name="PistolPlaceholder" type="MeshInstance3D" parent="Head/Camera3D/WeaponHolder" unique_id=1979420601]
-visible = false
-mesh = SubResource("BoxMesh_hbjui")
-
-[node name="service_pistol" parent="Head/Camera3D/WeaponHolder" unique_id=1207337314 instance=ExtResource("3_gmlin")]
-transform = Transform3D(0.006157803, -0.117498994, 1.3448629, -0.07038469, 1.3430197, 0.11766025, -1.3481499, -0.07065354, -5.8785822e-08, 0.17, -0.14, -0.18)
+[node name="LowWorldViewModel" parent="Head/Camera3D/WeaponHolder" unique_id=514129486 instance=ExtResource("3_gmlin")]
+transform = Transform3D(-3, 0, -4.5298742e-07, 0, 3, 0, 4.5298742e-07, 0, -3, -0.111851215, 0.11060953, 0.16929638)
 
 [node name="MuzzleFlash" type="OmniLight3D" parent="Head/Camera3D/WeaponHolder" unique_id=785843134]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.34999996)

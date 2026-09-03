@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://c4mv8kljhaee"]
+
+[ext_resource type="PackedScene" uid="uid://cpc2wnq7i7jpx" path="res://SilverDelivery/Low_World_Base_Male_Character/gltf/smesh_sniper.glb" id="1_0dhnk"]
+[ext_resource type="Material" uid="uid://7du8jtbi5h5x" path="res://SilverDelivery/Low_World_Base_Male_Character/materials/m_lowworld_basemalecharacter_placeholder.tres" id="2_vd0qq"]
+
+[node name="smesh_sniper" instance=ExtResource("1_0dhnk")]
+
+[node name="mesh_rifle" parent="parent_sniper/rig_rifle/Skeleton3D" index="0"]
+material_override = ExtResource("2_vd0qq")
