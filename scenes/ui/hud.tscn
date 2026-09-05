@@ -1,6 +1,22 @@
 [gd_scene format=3 uid="uid://sg2wyput3ej5"]
 
 [ext_resource type="Script" uid="uid://bnufqe5hfe8h8" path="res://scripts/systems/hud.gd" id="1_0mwgc"]
+[ext_resource type="Texture2D" uid="uid://opus0mcfthid" path="res://assets/ui/hud/hud_empty.png" id="2_hqnrr"]
+[ext_resource type="Texture2D" uid="uid://dd5dd1d8ichsi" path="res://assets/ui/hud/hud_face_100_v1.png" id="3_bo48s"]
+[ext_resource type="Texture2D" uid="uid://d1wmu30w13y06" path="res://assets/ui/hud/hud_hands.png" id="4_8qguk"]
+[ext_resource type="Texture2D" uid="uid://bo7oxgk8rl4t1" path="res://assets/ui/hud/hud_bullet.png" id="5_136eg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hbjui"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hyfr5"]
+bg_color = Color(0.70980394, 0.16862746, 0.16862746, 1)
+
+[sub_resource type="SystemFont" id="SystemFont_hbjui"]
+font_names = PackedStringArray("Bebas Neue")
+
+[sub_resource type="SystemFont" id="SystemFont_hyfr5"]
+font_names = PackedStringArray("Bebas Neue")
 
 [node name="HUD" type="CanvasLayer" unique_id=160974520]
 script = ExtResource("1_0mwgc")
@@ -107,3 +123,183 @@ offset_bottom = 11.5
 grow_horizontal = 0
 grow_vertical = 2
 text = "ARMA: MANI NUDE"
+
+[node name="HudBar" type="Control" parent="Interface" unique_id=17490652]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="FacePortrait" type="TextureRect" parent="Interface/HudBar" unique_id=1186017525]
+layout_mode = 0
+offset_left = 543.0
+offset_top = 540.0
+offset_right = 630.0
+offset_bottom = 627.0
+mouse_filter = 2
+texture = ExtResource("3_bo48s")
+expand_mode = 1
+
+[node name="HudBackground" type="TextureRect" parent="Interface/HudBar" unique_id=1006998617]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -116.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("2_hqnrr")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HealthBar" type="ProgressBar" parent="Interface/HudBar" unique_id=880038989]
+layout_mode = 0
+offset_left = 198.0
+offset_top = 603.0
+offset_right = 318.0
+offset_bottom = 620.0
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_hbjui")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hyfr5")
+value = 100.0
+show_percentage = false
+
+[node name="HealthValue" type="Label" parent="Interface/HudBar" unique_id=2021412218]
+layout_mode = 0
+offset_left = 245.0
+offset_top = 599.0
+offset_right = 277.0
+offset_bottom = 622.0
+text = "100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WeaponIcon" type="TextureRect" parent="Interface/HudBar" unique_id=70415183]
+layout_mode = 0
+offset_left = 674.0
+offset_top = 582.0
+offset_right = 754.75946
+offset_bottom = 626.0
+mouse_filter = 2
+texture = ExtResource("4_8qguk")
+expand_mode = 1
+
+[node name="BulletRow" type="Control" parent="Interface/HudBar" unique_id=1102472100]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="Bullet01" type="TextureRect" parent="Interface/HudBar/BulletRow" unique_id=1972679533]
+layout_mode = 0
+offset_left = 798.0
+offset_top = 594.0
+offset_right = 828.0
+offset_bottom = 629.0
+texture = ExtResource("5_136eg")
+expand_mode = 1
+
+[node name="Bullet02" type="TextureRect" parent="Interface/HudBar/BulletRow" unique_id=1923004330]
+layout_mode = 0
+offset_left = 816.0
+offset_top = 594.0
+offset_right = 846.0
+offset_bottom = 629.0
+texture = ExtResource("5_136eg")
+expand_mode = 1
+
+[node name="Bullet03" type="TextureRect" parent="Interface/HudBar/BulletRow" unique_id=1213603531]
+layout_mode = 0
+offset_left = 833.0
+offset_top = 594.0
+offset_right = 863.0
+offset_bottom = 629.0
+texture = ExtResource("5_136eg")
+expand_mode = 1
+
+[node name="Bullet04" type="TextureRect" parent="Interface/HudBar/BulletRow" unique_id=2085886666]
+layout_mode = 0
+offset_left = 850.0
+offset_top = 594.0
+offset_right = 880.0
+offset_bottom = 629.0
+texture = ExtResource("5_136eg")
+expand_mode = 1
+
+[node name="Bullet05" type="TextureRect" parent="Interface/HudBar/BulletRow" unique_id=849663531]
+layout_mode = 0
+offset_left = 868.0
+offset_top = 594.0
+offset_right = 898.0
+offset_bottom = 629.0
+texture = ExtResource("5_136eg")
+expand_mode = 1
+
+[node name="Bullet06" type="TextureRect" parent="Interface/HudBar/BulletRow" unique_id=1893824925]
+layout_mode = 0
+offset_left = 885.0
+offset_top = 594.0
+offset_right = 915.0
+offset_bottom = 629.0
+texture = ExtResource("5_136eg")
+expand_mode = 1
+
+[node name="Bullet07" type="TextureRect" parent="Interface/HudBar/BulletRow" unique_id=2033453103]
+layout_mode = 0
+offset_left = 902.0
+offset_top = 594.0
+offset_right = 932.0
+offset_bottom = 629.0
+texture = ExtResource("5_136eg")
+expand_mode = 1
+
+[node name="Bullet08" type="TextureRect" parent="Interface/HudBar/BulletRow" unique_id=651333755]
+layout_mode = 0
+offset_left = 920.0
+offset_top = 594.0
+offset_right = 950.0
+offset_bottom = 629.0
+texture = ExtResource("5_136eg")
+expand_mode = 1
+
+[node name="Bullet09" type="TextureRect" parent="Interface/HudBar/BulletRow" unique_id=508588438]
+layout_mode = 0
+offset_left = 937.0
+offset_top = 594.0
+offset_right = 967.0
+offset_bottom = 629.0
+texture = ExtResource("5_136eg")
+expand_mode = 1
+
+[node name="AmmoValue" type="Label" parent="Interface/HudBar" unique_id=312130817]
+layout_mode = 0
+offset_left = 904.0
+offset_top = 560.0
+offset_right = 947.0
+offset_bottom = 583.0
+theme_override_fonts/font = SubResource("SystemFont_hbjui")
+theme_override_font_sizes/font_size = 18
+text = "9 / 36"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MissionLabel" type="Label" parent="Interface/HudBar" unique_id=1150134326]
+layout_mode = 0
+offset_left = 351.0
+offset_top = 591.0
+offset_right = 500.0
+offset_bottom = 627.0
+theme_override_colors/font_color = Color(0.8117647, 0.7764706, 0.7058824, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_fonts/font = SubResource("SystemFont_hyfr5")
+theme_override_font_sizes/font_size = 18
+text = "TROVA UNA VIA D'USCITA"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3

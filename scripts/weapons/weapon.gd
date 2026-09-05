@@ -7,6 +7,14 @@ extends Node3D
 
 
 # ------------------------------------------------------------
+# TIPI ARMA
+# ------------------------------------------------------------
+
+const WEAPON_UNARMED := 0
+const WEAPON_PISTOL := 1
+
+
+# ------------------------------------------------------------
 # COMBATTIMENTO
 # ------------------------------------------------------------
 
@@ -23,10 +31,10 @@ extends Node3D
 # MUNIZIONI PISTOLA
 # ------------------------------------------------------------
 
-@export var pistol_magazine_size := 12
+@export var pistol_magazine_size := 9
 @export var starting_reserve_ammo := 36
 
-var magazine_ammo: int = 12
+var magazine_ammo: int = 9
 var reserve_ammo: int = 36
 
 
@@ -51,11 +59,26 @@ var reserve_ammo: int = 36
 
 
 # ------------------------------------------------------------
+# ANTI-CLIPPING VIEWMODEL
+# ------------------------------------------------------------
+
+@export var wall_pushback := 0.55
+@export var wall_drop := 0.20
+@export var wall_move_speed := 14.0
+
+var viewmodel_base_position: Vector3
+
+
+# ------------------------------------------------------------
 # NODI PLAYER
 # ------------------------------------------------------------
 
 @onready var weapon_ray: RayCast3D = (
 	$"../WeaponRay"
+)
+
+@onready var viewmodel_wall_cast: ShapeCast3D = (
+	$"../ViewmodelWallCast"
 )
 
 @onready var muzzle_flash: OmniLight3D = (
@@ -98,10 +121,11 @@ var reserve_ammo: int = 36
 
 
 # ------------------------------------------------------------
-# STATO ARMA
+# STATO INVENTARIO / ARMA EQUIPAGGIATA
 # ------------------------------------------------------------
 
-var has_pistol := false
+var owns_pistol := false
+var equipped_weapon := WEAPON_UNARMED
 
 var can_attack := true
 var is_reloading := false
@@ -130,14 +154,29 @@ var current_locomotion_animation := ""
 func _ready() -> void:
 	muzzle_flash.visible = false
 
-	has_pistol = false
+	owns_pistol = false
+	equipped_weapon = WEAPON_UNARMED
+
 	pistol_model.visible = false
 
 	magazine_ammo = pistol_magazine_size
 	reserve_ammo = starting_reserve_ammo
 
+	viewmodel_base_position = position
+
 	arms_animation_player.animation_finished.connect(
 		_on_arms_animation_finished
+	)
+
+	get_tree().call_group(
+		"hud",
+		"update_weapon",
+		"MANI NUDE"
+	)
+
+	get_tree().call_group(
+		"hud",
+		"hide_ammo"
 	)
 
 	play_current_locomotion(true)
@@ -161,6 +200,181 @@ func _process(delta: float) -> void:
 		if muzzle_flash_time_left <= 0.0:
 			muzzle_flash_time_left = 0.0
 			muzzle_flash.visible = false
+
+
+func _physics_process(delta: float) -> void:
+	update_viewmodel_wall_push(delta)
+
+
+# ============================================================
+# ANTI-CLIPPING VIEWMODEL
+# ============================================================
+
+func update_viewmodel_wall_push(
+	delta: float
+) -> void:
+	var target_position: Vector3 = (
+		viewmodel_base_position
+	)
+
+	viewmodel_wall_cast.force_shapecast_update()
+
+	if viewmodel_wall_cast.is_colliding():
+		var safe_fraction: float = (
+			viewmodel_wall_cast
+			.get_closest_collision_safe_fraction()
+		)
+
+		var proximity: float = (
+			1.0 - safe_fraction
+		)
+
+		proximity = clampf(
+			proximity,
+			0.0,
+			1.0
+		)
+
+		target_position += Vector3(
+			0.0,
+			-wall_drop * proximity,
+			wall_pushback * proximity
+		)
+
+	var interpolation: float = clampf(
+		wall_move_speed * delta,
+		0.0,
+		1.0
+	)
+
+	position = position.lerp(
+		target_position,
+		interpolation
+	)
+
+
+# ============================================================
+# STATO ARMA
+# ============================================================
+
+func is_pistol_equipped() -> bool:
+	return equipped_weapon == WEAPON_PISTOL
+
+
+# ============================================================
+# SELEZIONE SLOT
+# ============================================================
+
+func select_weapon_slot(slot: int) -> void:
+	if slot == 1:
+		equip_unarmed()
+		return
+
+	if slot == 2:
+		equip_owned_pistol()
+		return
+
+
+# ============================================================
+# MANI NUDE - EQUIP
+# ============================================================
+
+func equip_unarmed() -> void:
+	if equipped_weapon == WEAPON_UNARMED:
+		return
+
+	if is_reloading:
+		return
+
+	if is_performing_action:
+		return
+
+	is_performing_action = true
+	current_locomotion_animation = ""
+
+	equipped_weapon = WEAPON_UNARMED
+	pistol_model.visible = false
+
+	get_tree().call_group(
+		"hud",
+		"update_weapon",
+		"MANI NUDE"
+	)
+
+	get_tree().call_group(
+		"hud",
+		"hide_ammo"
+	)
+
+	if arms_animation_player.has_animation(
+		"a_arms_unarmed_start"
+	):
+		arms_animation_player.play(
+			"a_arms_unarmed_start",
+			0.08
+		)
+
+		await arms_animation_player.animation_finished
+
+	is_performing_action = false
+
+	play_current_locomotion(true)
+
+
+# ============================================================
+# PISTOLA - ACQUISIZIONE DAL PICKUP
+# ============================================================
+
+func equip_pistol() -> void:
+	owns_pistol = true
+
+	await equip_owned_pistol()
+
+
+# ============================================================
+# PISTOLA - EQUIP DA SLOT
+# ============================================================
+
+func equip_owned_pistol() -> void:
+	if not owns_pistol:
+		return
+
+	if equipped_weapon == WEAPON_PISTOL:
+		return
+
+	if is_reloading:
+		return
+
+	if is_performing_action:
+		return
+
+	is_performing_action = true
+	current_locomotion_animation = ""
+
+	equipped_weapon = WEAPON_PISTOL
+	pistol_model.visible = true
+
+	get_tree().call_group(
+		"hud",
+		"update_weapon",
+		"PISTOLA"
+	)
+
+	update_ammo_hud()
+
+	if arms_animation_player.has_animation(
+		"a_arms_pistol_start"
+	):
+		arms_animation_player.play(
+			"a_arms_pistol_start",
+			0.08
+		)
+
+		await arms_animation_player.animation_finished
+
+	is_performing_action = false
+
+	play_current_locomotion(true)
 
 
 # ============================================================
@@ -196,7 +410,7 @@ func play_current_locomotion(
 
 	var animation_name := ""
 
-	if has_pistol:
+	if is_pistol_equipped():
 		if not player_is_moving:
 			animation_name = "a_arms_pistol_idle"
 
@@ -270,14 +484,14 @@ func fire() -> void:
 	if is_performing_action:
 		return
 
-	if has_pistol:
+	if is_pistol_equipped():
 		fire_pistol()
 	else:
 		attack_unarmed()
 
 
 # ============================================================
-# MANI NUDE
+# MANI NUDE - ATTACCO
 # ============================================================
 
 func attack_unarmed() -> void:
@@ -332,7 +546,7 @@ func perform_melee_hit() -> void:
 	var collider := weapon_ray.get_collider()
 	var hit_point := weapon_ray.get_collision_point()
 
-	var distance_to_hit := (
+	var distance_to_hit: float = (
 		weapon_ray.global_position.distance_to(
 			hit_point
 		)
@@ -360,6 +574,9 @@ func perform_melee_hit() -> void:
 # ============================================================
 
 func fire_pistol() -> void:
+	if not is_pistol_equipped():
+		return
+
 	if magazine_ammo <= 0:
 		return
 
@@ -450,9 +667,6 @@ func spawn_bullet_impact(
 		+ hit_normal * bullet_impact_offset
 	)
 
-	# Il Decal di Godot proietta lungo il proprio asse -Y.
-	# Allineiamo quindi il suo asse +Y alla normale della
-	# superficie colpita.
 	impact.quaternion = Quaternion(
 		Vector3.UP,
 		hit_normal.normalized()
@@ -464,7 +678,7 @@ func spawn_bullet_impact(
 # ============================================================
 
 func reload() -> void:
-	if not has_pistol:
+	if not is_pistol_equipped():
 		return
 
 	if is_reloading:
@@ -527,44 +741,6 @@ func reload() -> void:
 
 
 # ============================================================
-# EQUIP PISTOLA
-# ============================================================
-
-func equip_pistol() -> void:
-	if has_pistol:
-		return
-
-	is_performing_action = true
-
-	has_pistol = true
-	pistol_model.visible = true
-
-	current_locomotion_animation = ""
-
-	get_tree().call_group(
-		"hud",
-		"update_weapon",
-		"PISTOLA"
-	)
-
-	update_ammo_hud()
-
-	if arms_animation_player.has_animation(
-		"a_arms_pistol_start"
-	):
-		arms_animation_player.play(
-			"a_arms_pistol_start",
-			0.08
-		)
-
-		await arms_animation_player.animation_finished
-
-	is_performing_action = false
-
-	play_current_locomotion(true)
-
-
-# ============================================================
 # PICKUP MUNIZIONI
 # ============================================================
 
@@ -574,7 +750,7 @@ func add_ammo(amount: int) -> void:
 
 	reserve_ammo += amount
 
-	if has_pistol:
+	if is_pistol_equipped():
 		update_ammo_hud()
 
 

@@ -48,6 +48,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			deg_to_rad(89.0)
 		)
 
+	if event.is_action_pressed("weapon_slot_1"):
+		weapon.select_weapon_slot(1)
+
+	if event.is_action_pressed("weapon_slot_2"):
+		weapon.select_weapon_slot(2)
+
 	if event.is_action_pressed("fire"):
 		weapon.fire()
 
