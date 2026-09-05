@@ -6,6 +6,7 @@ enum State {
 	ATTACK,
 	SPELL,
 	HIT,
+	DODGE,
 	DEAD
 }
 
@@ -28,35 +29,41 @@ enum State {
 @export var eye_height: float = 1.50
 
 @export_category("Melee Combat")
-@export var max_health: int = 30
+@export var max_health: int = 100
 @export var attack_distance: float = 1.55
 @export var attack_hit_distance: float = 1.85
 @export var attack_damage_jab: int = 12
 @export var attack_damage_cross: int = 20
-@export var attack_damage_push: int = 8
-@export var attack_interval_min: float = 0.65
-@export var attack_interval_max: float = 1.20
+@export var attack_interval_min: float = 0.55
+@export var attack_interval_max: float = 0.95
 @export var jab_hit_time: float = 0.28
 @export var cross_hit_time: float = 0.38
-@export var push_hit_time: float = 0.32
+
+@export_category("Hit Zones")
+@export var headshot_height: float = 1.55
+@export var headshot_multiplier: float = 3.0
+
+@export_category("Dodge")
+@export_range(0.0, 1.0) var dodge_chance: float = 0.28
+@export var dodge_cooldown_time: float = 2.2
+@export var dodge_speed: float = 5.0
+@export var dodge_duration: float = 0.55
 
 @export_category("Spell Combat")
 @export var spell_projectile_scene: PackedScene
 @export var spell_damage: int = 18
-@export var spell_min_distance: float = 4.0
-@export var spell_max_distance: float = 10.0
-@export var spell_cooldown_min: float = 4.0
-@export var spell_cooldown_max: float = 7.0
-@export_range(0.0, 1.0) var spell_probability: float = 0.38
-@export var spell_decision_interval: float = 1.25
-@export var spell_aim_min: float = 0.25
-@export var spell_aim_max: float = 0.55
-@export var spell_release_time: float = 0.18
+@export var spell_min_distance: float = 3.2
+@export var spell_max_distance: float = 12.0
+@export var spell_cooldown_min: float = 0.85
+@export var spell_cooldown_max: float = 1.35
+@export_range(0.0, 1.0) var spell_probability: float = 1.0
+@export var spell_decision_interval: float = 0.12
+@export var spell_aim_min: float = 0.06
+@export var spell_aim_max: float = 0.16
+@export var spell_release_time: float = 0.10
 @export var spell_origin_height: float = 1.35
 @export var spell_origin_forward: float = 0.60
-
-# Più basso di prima: mira circa a torace/addome invece che troppo in alto.
-@export var spell_target_height: float = 0.82
+@export var spell_target_height: float = 0.74
 
 @export_category("Behaviour")
 @export var idle_change_min: float = 3.0
@@ -91,6 +98,10 @@ var spell_phase: StringName = &""
 var spell_phase_timer: float = 0.0
 var spell_projectile_released: bool = false
 
+var dodge_cooldown: float = 0.0
+var dodge_timer: float = 0.0
+var dodge_direction: Vector3 = Vector3.ZERO
+
 var boss_bar_layer: CanvasLayer = null
 var boss_bar: ProgressBar = null
 var boss_hp_label: Label = null
@@ -103,9 +114,9 @@ const ANIM_JOG: StringName = &"Jog_Fwd"
 const ANIM_SPRINT: StringName = &"Sprint"
 const ANIM_JAB: StringName = &"Punch_Jab"
 const ANIM_CROSS: StringName = &"Punch_Cross"
-const ANIM_PUSH: StringName = &"Push"
 const ANIM_HIT_CHEST: StringName = &"Hit_Chest"
 const ANIM_HIT_HEAD: StringName = &"Hit_Head"
+const ANIM_ROLL: StringName = &"Roll"
 const ANIM_DEATH: StringName = &"Death01"
 const ANIM_SPELL_ENTER: StringName = &"Spell_Simple_Enter"
 const ANIM_SPELL_IDLE: StringName = &"Spell_Simple_Idle"
@@ -142,12 +153,12 @@ func _physics_process(delta: float) -> void:
 
 	if attack_cooldown > 0.0:
 		attack_cooldown -= delta
-
 	if spell_cooldown > 0.0:
 		spell_cooldown -= delta
-
 	if spell_decision_timer > 0.0:
 		spell_decision_timer -= delta
+	if dodge_cooldown > 0.0:
+		dodge_cooldown -= delta
 
 	if player == null or not is_instance_valid(player):
 		player = get_tree().get_first_node_in_group("player") as CharacterBody3D
@@ -165,6 +176,8 @@ func _physics_process(delta: float) -> void:
 			_process_spell(delta)
 		State.HIT:
 			_stop_horizontal_motion()
+		State.DODGE:
+			_process_dodge(delta)
 		State.DEAD:
 			pass
 
@@ -249,6 +262,8 @@ func _process_chase() -> void:
 			_start_random_attack()
 		return
 
+	# A distanza utile la magia diventa la priorità:
+	# appena il cooldown scade, prova praticamente subito a castare.
 	if (
 		distance >= spell_min_distance
 		and distance <= spell_max_distance
@@ -302,7 +317,6 @@ func _rotate_toward(direction: Vector3) -> void:
 		return
 
 	var target_yaw := atan2(direction.x, direction.z)
-
 	rotation.y = lerp_angle(
 		rotation.y,
 		target_yaw,
@@ -330,20 +344,16 @@ func _start_random_attack() -> void:
 	_face_player()
 	attack_hit_applied = false
 
-	var choice := rng.randf()
-
-	if choice < 0.45:
+	# Solo due attacchi validi: JAB e CROSS.
+	# Push eliminato completamente.
+	if rng.randf() < 0.55:
 		current_attack = ANIM_JAB
 		attack_hit_timer = jab_hit_time
 		_play_normal_animation(ANIM_JAB, 0.08)
-	elif choice < 0.85:
+	else:
 		current_attack = ANIM_CROSS
 		attack_hit_timer = cross_hit_time
 		_play_normal_animation(ANIM_CROSS, 0.08)
-	else:
-		current_attack = ANIM_PUSH
-		attack_hit_timer = push_hit_time
-		_play_normal_animation(ANIM_PUSH, 0.08)
 
 func _process_attack(delta: float) -> void:
 	_stop_horizontal_motion()
@@ -374,8 +384,6 @@ func _apply_attack_damage() -> void:
 			damage = attack_damage_jab
 		ANIM_CROSS:
 			damage = attack_damage_cross
-		ANIM_PUSH:
-			damage = attack_damage_push
 
 	if damage > 0 and player.has_method("take_damage"):
 		player.take_damage(damage)
@@ -387,10 +395,9 @@ func _start_spell() -> void:
 	state = State.SPELL
 	_stop_horizontal_motion()
 	_face_player()
-
 	spell_phase = &"enter"
 	spell_projectile_released = false
-	_play_normal_animation(ANIM_SPELL_ENTER, 0.12)
+	_play_normal_animation(ANIM_SPELL_ENTER, 0.06)
 
 func _process_spell(delta: float) -> void:
 	_stop_horizontal_motion()
@@ -398,11 +405,12 @@ func _process_spell(delta: float) -> void:
 
 	if spell_phase == &"aim":
 		spell_phase_timer -= delta
+
 		if spell_phase_timer <= 0.0:
 			spell_phase = &"shoot"
 			spell_phase_timer = spell_release_time
 			spell_projectile_released = false
-			_play_normal_animation(ANIM_SPELL_SHOOT, 0.05)
+			_play_normal_animation(ANIM_SPELL_SHOOT, 0.03)
 
 	elif spell_phase == &"shoot":
 		if spell_projectile_released:
@@ -434,21 +442,102 @@ func _release_spell_projectile() -> void:
 
 	projectile.global_position = origin
 
-	# Mira più bassa: torace/addome.
 	var target := player.global_position + Vector3.UP * spell_target_height
 	var direction := (target - origin).normalized()
 
 	if projectile.has_method("setup"):
 		projectile.setup(direction, spell_damage, self)
 
+# Chiamato dall'arma PRIMA di applicare il danno.
+# true = CeccaPC ha schivato davvero il colpo.
+func try_dodge_shot(_hit_point: Vector3) -> bool:
+	if state == State.DEAD:
+		return false
+	if state == State.HIT or state == State.DODGE:
+		return false
+	if state == State.ATTACK or state == State.SPELL:
+		return false
+	if dodge_cooldown > 0.0:
+		return false
+	if rng.randf() > dodge_chance:
+		return false
+
+	_start_dodge()
+	return true
+
+func _start_dodge() -> void:
+	state = State.DODGE
+	dodge_cooldown = dodge_cooldown_time
+	dodge_timer = dodge_duration
+
+	current_attack = &""
+	spell_phase = &""
+	attack_hit_applied = true
+
+	var right := global_transform.basis.x
+	right.y = 0.0
+	right = right.normalized()
+
+	if rng.randf() < 0.5:
+		right = -right
+
+	dodge_direction = right
+	_play_normal_animation(ANIM_ROLL, 0.05)
+
+func _process_dodge(delta: float) -> void:
+	dodge_timer -= delta
+
+	velocity.x = dodge_direction.x * dodge_speed
+	velocity.z = dodge_direction.z * dodge_speed
+
+	if dodge_timer <= 0.0:
+		_finish_dodge()
+
+func _finish_dodge() -> void:
+	if state != State.DODGE:
+		return
+
+	_stop_horizontal_motion()
+
+	if _should_chase_player():
+		_set_state(State.CHASE)
+	else:
+		_set_state(State.IDLE)
+
+# Colpo di pistola: distingue automaticamente testa/corpo dal punto d'impatto.
+func take_bullet_hit(base_damage: int, hit_point: Vector3) -> void:
+	if state == State.DEAD:
+		return
+
+	var is_headshot := hit_point.y >= global_position.y + headshot_height
+	var final_damage := base_damage
+
+	if is_headshot:
+		final_damage = maxi(
+			1,
+			roundi(float(base_damage) * headshot_multiplier)
+		)
+
+	_apply_damage(final_damage, is_headshot)
+
+# Mantiene compatibilità con pugni / vecchi sistemi.
 func take_damage(amount: int) -> void:
+	_apply_damage(amount, false)
+
+func _apply_damage(amount: int, headshot: bool) -> void:
 	if state == State.DEAD:
 		return
 
 	health -= amount
 	health = maxi(health, 0)
 
-	print("CeccaPC hit! HP remaining: ", health)
+	print(
+		"CeccaPC hit! HP remaining: ",
+		health,
+		" | HEADSHOT: ",
+		headshot
+	)
+
 	_update_boss_bar()
 
 	if health <= 0:
@@ -461,10 +550,10 @@ func take_damage(amount: int) -> void:
 	spell_phase = &""
 	attack_hit_applied = true
 
-	if rng.randf() < 0.35:
-		_play_normal_animation(ANIM_HIT_HEAD, 0.08)
+	if headshot:
+		_play_normal_animation(ANIM_HIT_HEAD, 0.06)
 	else:
-		_play_normal_animation(ANIM_HIT_CHEST, 0.08)
+		_play_normal_animation(ANIM_HIT_CHEST, 0.06)
 
 func _die() -> void:
 	print("CeccaPC dead")
@@ -486,11 +575,7 @@ func _on_animation_finished(animation_name: StringName) -> void:
 		return
 
 	if state == State.ATTACK:
-		if (
-			animation_name == ANIM_JAB
-			or animation_name == ANIM_CROSS
-			or animation_name == ANIM_PUSH
-		):
+		if animation_name == ANIM_JAB or animation_name == ANIM_CROSS:
 			attack_cooldown = rng.randf_range(
 				attack_interval_min,
 				attack_interval_max
@@ -508,12 +593,12 @@ func _on_animation_finished(animation_name: StringName) -> void:
 		if animation_name == ANIM_SPELL_ENTER:
 			spell_phase = &"aim"
 			spell_phase_timer = rng.randf_range(spell_aim_min, spell_aim_max)
-			_play_normal_animation(ANIM_SPELL_IDLE, 0.06)
+			_play_normal_animation(ANIM_SPELL_IDLE, 0.03)
 			return
 
 		if animation_name == ANIM_SPELL_SHOOT:
 			spell_phase = &"exit"
-			_play_normal_animation(ANIM_SPELL_EXIT, 0.06)
+			_play_normal_animation(ANIM_SPELL_EXIT, 0.03)
 			return
 
 		if animation_name == ANIM_SPELL_EXIT:
@@ -529,6 +614,10 @@ func _on_animation_finished(animation_name: StringName) -> void:
 			else:
 				_set_state(State.IDLE)
 			return
+
+	if state == State.DODGE and animation_name == ANIM_ROLL:
+		_finish_dodge()
+		return
 
 	if state == State.HIT:
 		if animation_name == ANIM_HIT_HEAD or animation_name == ANIM_HIT_CHEST:
@@ -561,6 +650,8 @@ func _set_state(new_state: State) -> void:
 			_stop_horizontal_motion()
 		State.HIT:
 			_stop_horizontal_motion()
+		State.DODGE:
+			pass
 		State.DEAD:
 			_stop_horizontal_motion()
 
@@ -634,10 +725,6 @@ func _play_locomotion(
 	):
 		animation_player.play(animation_name, 0.18)
 
-# ================================================================
-# BOSS BAR
-# ================================================================
-
 func _create_boss_bar() -> void:
 	boss_bar_layer = CanvasLayer.new()
 	boss_bar_layer.name = "CeccaPCBossBar"
@@ -651,13 +738,15 @@ func _create_boss_bar() -> void:
 
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	center.offset_top = 18.0
-	center.offset_bottom = 88.0
+
+	# Più in alto e molto più compatta della versione precedente.
+	center.offset_top = 5.0
+	center.offset_bottom = 61.0
 	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(center)
 
 	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(560.0, 64.0)
+	panel.custom_minimum_size = Vector2(460.0, 48.0)
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	center.add_child(panel)
 
@@ -665,27 +754,27 @@ func _create_boss_bar() -> void:
 	panel_style.bg_color = Color(0.035, 0.025, 0.025, 0.90)
 	panel_style.border_color = Color(0.45, 0.10, 0.10, 1.0)
 	panel_style.set_border_width_all(2)
-	panel_style.corner_radius_top_left = 8
-	panel_style.corner_radius_top_right = 8
-	panel_style.corner_radius_bottom_left = 8
-	panel_style.corner_radius_bottom_right = 8
+	panel_style.corner_radius_top_left = 7
+	panel_style.corner_radius_top_right = 7
+	panel_style.corner_radius_bottom_left = 7
+	panel_style.corner_radius_bottom_right = 7
 	panel.add_theme_stylebox_override("panel", panel_style)
 
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 14)
-	margin.add_theme_constant_override("margin_right", 14)
-	margin.add_theme_constant_override("margin_top", 8)
-	margin.add_theme_constant_override("margin_bottom", 8)
+	margin.add_theme_constant_override("margin_left", 10)
+	margin.add_theme_constant_override("margin_right", 10)
+	margin.add_theme_constant_override("margin_top", 4)
+	margin.add_theme_constant_override("margin_bottom", 4)
 	panel.add_child(margin)
 
 	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 5)
+	column.add_theme_constant_override("separation", 2)
 	margin.add_child(column)
 
 	var title := Label.new()
 	title.text = boss_name
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_font_size_override("font_size", 17)
 	column.add_child(title)
 
 	boss_bar = ProgressBar.new()
@@ -693,28 +782,28 @@ func _create_boss_bar() -> void:
 	boss_bar.max_value = float(max_health)
 	boss_bar.value = float(health)
 	boss_bar.show_percentage = false
-	boss_bar.custom_minimum_size = Vector2(520.0, 18.0)
+	boss_bar.custom_minimum_size = Vector2(430.0, 10.0)
 	column.add_child(boss_bar)
 
 	var bg := StyleBoxFlat.new()
 	bg.bg_color = Color(0.12, 0.08, 0.08, 1.0)
-	bg.corner_radius_top_left = 4
-	bg.corner_radius_top_right = 4
-	bg.corner_radius_bottom_left = 4
-	bg.corner_radius_bottom_right = 4
+	bg.corner_radius_top_left = 3
+	bg.corner_radius_top_right = 3
+	bg.corner_radius_bottom_left = 3
+	bg.corner_radius_bottom_right = 3
 	boss_bar.add_theme_stylebox_override("background", bg)
 
 	var fill := StyleBoxFlat.new()
 	fill.bg_color = Color(0.72, 0.08, 0.08, 1.0)
-	fill.corner_radius_top_left = 4
-	fill.corner_radius_top_right = 4
-	fill.corner_radius_bottom_left = 4
-	fill.corner_radius_bottom_right = 4
+	fill.corner_radius_top_left = 3
+	fill.corner_radius_top_right = 3
+	fill.corner_radius_bottom_left = 3
+	fill.corner_radius_bottom_right = 3
 	boss_bar.add_theme_stylebox_override("fill", fill)
 
 	boss_hp_label = Label.new()
 	boss_hp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	boss_hp_label.add_theme_font_size_override("font_size", 13)
+	boss_hp_label.add_theme_font_size_override("font_size", 11)
 	column.add_child(boss_hp_label)
 
 func _update_boss_bar() -> void:

@@ -616,18 +616,72 @@ func fire_pistol() -> void:
 		var hit_point := weapon_ray.get_collision_point()
 		var hit_normal := weapon_ray.get_collision_normal()
 
-		if (
-			collider != null
-			and collider.has_method("take_damage")
-		):
-			collider.take_damage(
-				pistol_damage
-			)
+		if collider != null:
+			# CeccaPC / nemici evoluti:
+			# prima possono tentare una schivata del colpo hitscan.
+			if collider.has_method("try_dodge_shot"):
+				var dodged: bool = collider.try_dodge_shot(
+					hit_point
+				)
 
-			get_tree().call_group(
-				"hud",
-				"show_hitmarker"
-			)
+				if dodged:
+					# Nessun danno e nessun hitmarker:
+					# la schivata è riuscita.
+					pass
+
+				elif collider.has_method("take_bullet_hit"):
+					collider.take_bullet_hit(
+						pistol_damage,
+						hit_point
+					)
+
+					get_tree().call_group(
+						"hud",
+						"show_hitmarker"
+					)
+
+				elif collider.has_method("take_damage"):
+					collider.take_damage(
+						pistol_damage
+					)
+
+					get_tree().call_group(
+						"hud",
+						"show_hitmarker"
+					)
+
+				else:
+					spawn_bullet_impact(
+						hit_point,
+						hit_normal
+					)
+
+			elif collider.has_method("take_bullet_hit"):
+				collider.take_bullet_hit(
+					pistol_damage,
+					hit_point
+				)
+
+				get_tree().call_group(
+					"hud",
+					"show_hitmarker"
+				)
+
+			elif collider.has_method("take_damage"):
+				collider.take_damage(
+					pistol_damage
+				)
+
+				get_tree().call_group(
+					"hud",
+					"show_hitmarker"
+				)
+
+			else:
+				spawn_bullet_impact(
+					hit_point,
+					hit_normal
+				)
 
 		else:
 			spawn_bullet_impact(
