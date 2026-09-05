@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://o3n7p7fqd3r6"]
+
+[ext_resource type="Script" uid="uid://ce4f5dsecsyeo" path="res://scripts/enemies/spell_projectile.gd" id="1_cw7fq"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_hbjui"]
+radius = 0.12
+height = 0.24
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hyfr5"]
+radius = 0.12
+
+[node name="SpellProjectile" type="Area3D" unique_id=1722643486]
+script = ExtResource("1_cw7fq")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1451620118]
+mesh = SubResource("SphereMesh_hbjui")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=78599586]
+shape = SubResource("SphereShape3D_hyfr5")

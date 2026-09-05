@@ -32,18 +32,26 @@ const WEAPON_PISTOL = preload(
 )
 
 
-@onready var crosshair: Label = $Interface/Crosshair
-@onready var hit_marker: Label = $Interface/HitMarker
+# ============================================================
+# NUOVA HUD
+# ============================================================
 
-# Vecchia HUD - mantenuta durante la migrazione
-@onready var health_label: Label = $Interface/HealthLabel
-@onready var ammo_label: Label = $Interface/AmmoLabel
-@onready var weapon_label: Label = $Interface/WeaponLabel
+@onready var crosshair_image: TextureRect = (
+	$Interface/CrosshairImage
+)
 
-@onready var death_label: Label = $Interface/DeathLabel
-@onready var damage_flash: ColorRect = $Interface/DamageFlash
+@onready var hit_marker_image: TextureRect = (
+	$Interface/HitMarkerImage
+)
 
-# Nuova HUD
+@onready var damage_overlay_image: TextureRect = (
+	$Interface/DamageOverlayImage
+)
+
+@onready var death_label: Label = (
+	$Interface/DeathLabel
+)
+
 @onready var health_bar: ProgressBar = (
 	$Interface/HudBar/HealthBar
 )
@@ -79,17 +87,16 @@ var hitmarker_time_left := 0.0
 var damage_flash_time_left := 0.0
 
 
+# ============================================================
+# READY
+# ============================================================
+
 func _ready() -> void:
 	add_to_group("hud")
 
-	hit_marker.visible = false
+	hit_marker_image.visible = false
+	damage_overlay_image.visible = false
 	death_label.visible = false
-	damage_flash.visible = false
-
-	# Vecchi elementi ormai sostituiti.
-	health_label.visible = false
-	weapon_label.visible = false
-	ammo_label.visible = false
 
 	bullet_icons = [
 		$Interface/HudBar/BulletRow/Bullet01,
@@ -107,33 +114,48 @@ func _ready() -> void:
 
 	update_weapon("MANI NUDE")
 	hide_ammo()
-
 	update_mission("TROVA UNA VIA D'USCITA")
 
+
+# ============================================================
+# PROCESS
+# ============================================================
 
 func _process(delta: float) -> void:
 	if hitmarker_time_left > 0.0:
 		hitmarker_time_left -= delta
 
 		if hitmarker_time_left <= 0.0:
-			hit_marker.visible = false
+			hit_marker_image.visible = false
 
 	if damage_flash_time_left > 0.0:
 		damage_flash_time_left -= delta
 
 		if damage_flash_time_left <= 0.0:
-			damage_flash.visible = false
+			damage_overlay_image.visible = false
 
+
+# ============================================================
+# HITMARKER
+# ============================================================
 
 func show_hitmarker() -> void:
-	hit_marker.visible = true
+	hit_marker_image.visible = true
 	hitmarker_time_left = HITMARKER_DURATION
 
 
+# ============================================================
+# DANNO
+# ============================================================
+
 func show_damage_flash() -> void:
-	damage_flash.visible = true
+	damage_overlay_image.visible = true
 	damage_flash_time_left = DAMAGE_FLASH_DURATION
 
+
+# ============================================================
+# SALUTE
+# ============================================================
 
 func update_health(
 	current_health: int,
@@ -181,6 +203,10 @@ func _update_face_from_health(
 		face_portrait.texture = FACE_100
 
 
+# ============================================================
+# MUNIZIONI
+# ============================================================
+
 func update_ammo(
 	magazine_ammo: int,
 	reserve_ammo: int
@@ -217,6 +243,10 @@ func hide_ammo() -> void:
 	bullet_row.visible = false
 
 
+# ============================================================
+# ARMA
+# ============================================================
+
 func update_weapon(
 	weapon_name: String
 ) -> void:
@@ -227,15 +257,25 @@ func update_weapon(
 	weapon_icon.texture = WEAPON_HANDS
 
 
+# ============================================================
+# MISSIONE
+# ============================================================
+
 func update_mission(
 	mission_text: String
 ) -> void:
 	mission_label.text = mission_text
 
 
+# ============================================================
+# MORTE
+# ============================================================
+
 func show_death_screen() -> void:
-	crosshair.visible = false
+	crosshair_image.visible = false
+	hit_marker_image.visible = false
+	damage_overlay_image.visible = false
+
 	death_label.visible = true
-	damage_flash.visible = false
 
 	face_portrait.texture = FACE_0

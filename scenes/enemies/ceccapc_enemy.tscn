@@ -1,0 +1,97 @@
+[gd_scene format=3 uid="uid://da052y8mg5bmo"]
+
+[ext_resource type="Script" uid="uid://b2cu3r452vm8b" path="res://scripts/enemies/enemy.gd" id="1_2qlje"]
+[ext_resource type="PackedScene" uid="uid://d2e8tpk7vm26w" path="res://assets/models/enemies/ceccapc/CeccaPC.glb" id="1_hyt18"]
+[ext_resource type="PackedScene" uid="uid://o3n7p7fqd3r6" path="res://scenes/enemies/spell_projectile.tscn" id="2_p0kps"]
+[ext_resource type="PackedScene" uid="uid://bvyv6h33kiklj" path="res://assets/models/animations/AnimationLibrary_Godot_Standard.glb" id="3_2qlje"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
+height = 1.6520996
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hbjui"]
+radius = 1.2
+
+[node name="CeccaPCEnemy" type="CharacterBody3D" unique_id=262225333]
+script = ExtResource("1_2qlje")
+spell_projectile_scene = ExtResource("2_p0kps")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=841549450]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.73154044, 0)
+shape = SubResource("CapsuleShape3D_hbjui")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=989489058]
+
+[node name="CeccaPC" parent="." unique_id=1871780165 instance=ExtResource("1_hyt18")]
+
+[node name="GeneralSkeleton" parent="CeccaPC/imp2" parent_id_path=PackedInt32Array(1871780165, 1179950545) index="0" unique_id=866131647]
+bones/1/position = Vector3(0.004680853, 0.77223206, -0.07614667)
+bones/1/rotation = Quaternion(-0.04628033, -0.11588846, -0.005405691, 0.9921687)
+bones/3/rotation = Quaternion(0.046351045, 0.0001086035, 0.00013027458, 0.99892527)
+bones/4/rotation = Quaternion(0.13865471, 0.00032485503, 0.00038959694, 0.9903407)
+bones/5/rotation = Quaternion(0.487481, 0.5266153, 0.52638155, -0.4560274)
+bones/6/rotation = Quaternion(-0.06222135, 0.81768024, -0.5722164, 0.009801064)
+bones/7/rotation = Quaternion(0.18998532, -0.651041, 0.18306458, 0.7117153)
+bones/8/rotation = Quaternion(0.09913024, 0.70686626, 0.0629003, 0.69753635)
+bones/9/rotation = Quaternion(0.6295969, -4.0978193e-08, -4.61936e-06, 0.77692205)
+bones/10/rotation = Quaternion(0.62334186, 2.9802322e-08, -4.261732e-06, 0.78194946)
+bones/11/rotation = Quaternion(0.62334144, -2.2351742e-07, -4.4703484e-06, 0.78194976)
+bones/13/rotation = Quaternion(0.6288943, -0.0297349, -4.470348e-06, 0.7769219)
+bones/14/rotation = Quaternion(0.6227327, -0.02755458, -4.410744e-06, 0.7819494)
+bones/15/rotation = Quaternion(0.6226684, -0.028961532, -4.4703493e-06, 0.78194976)
+bones/17/rotation = Quaternion(0.6291978, -0.022414071, -4.202128e-06, 0.77692205)
+bones/18/rotation = Quaternion(0.6229472, -0.022176376, -4.321337e-06, 0.78194946)
+bones/19/rotation = Quaternion(0.6228982, -0.023505477, -4.5001498e-06, 0.7819497)
+bones/21/rotation = Quaternion(-0.123819165, 0.7195233, 0.2018354, 0.65285325)
+bones/22/rotation = Quaternion(0.18180694, 0.11012423, 0.060063303, 0.9753006)
+bones/23/rotation = Quaternion(0.5994299, 0.27396563, 0.19463211, 0.7264606)
+bones/25/rotation = Quaternion(0.53972095, -0.47448963, -0.47470158, -0.5081529)
+bones/26/rotation = Quaternion(0.089077465, 0.82466066, -0.5584877, -0.009565941)
+bones/27/rotation = Quaternion(0.29214105, 0.54285806, -0.20492761, 0.760239)
+bones/28/rotation = Quaternion(0.12024976, -0.69903094, -0.056890074, 0.702609)
+bones/29/rotation = Quaternion(0.6295971, 3.7252903e-08, 4.172325e-06, 0.7769218)
+bones/30/rotation = Quaternion(0.62334144, 1.825392e-07, 4.470348e-06, 0.7819497)
+bones/31/rotation = Quaternion(0.62334156, 1.00582824e-07, 4.2319293e-06, 0.78194964)
+bones/33/rotation = Quaternion(0.6288947, 0.029734796, 4.351139e-06, 0.77692175)
+bones/34/rotation = Quaternion(0.62273216, 0.027554482, 4.5001507e-06, 0.78194976)
+bones/35/rotation = Quaternion(0.62266874, 0.028961398, 4.3213377e-06, 0.78194946)
+bones/37/rotation = Quaternion(0.6291981, 0.022413792, 4.11272e-06, 0.7769218)
+bones/38/rotation = Quaternion(0.62294656, 0.022176204, 4.470349e-06, 0.7819501)
+bones/39/rotation = Quaternion(0.6228987, 0.02350526, 4.1723247e-06, 0.7819493)
+bones/41/rotation = Quaternion(-0.12381923, -0.7195234, -0.2018356, 0.6528533)
+bones/42/rotation = Quaternion(0.18180703, -0.11012423, -0.060063303, 0.97530067)
+bones/43/rotation = Quaternion(0.5994302, -0.2739653, -0.19463223, 0.7264605)
+bones/45/rotation = Quaternion(-0.09260249, -0.00021697998, -0.00026025015, 0.9957031)
+bones/46/rotation = Quaternion(0.07725409, 0.0957206, 0.007964551, 0.99237394)
+bones/47/rotation = Quaternion(-0.00077796273, 0.12214074, 0.98626107, -0.11122178)
+bones/48/rotation = Quaternion(0.016344335, 0.98224515, -0.14901444, 0.11279213)
+bones/49/rotation = Quaternion(-0.09455208, 0.7292354, -0.67767, 0.006254539)
+bones/50/rotation = Quaternion(4.2923723e-08, 1, 5.9604645e-08, 2.568838e-08)
+bones/51/rotation = Quaternion(0.0008066073, -0.110076316, 0.9872104, 0.11531823)
+bones/52/rotation = Quaternion(-0.028729852, 0.92896134, -0.08071508, -0.36012587)
+bones/53/rotation = Quaternion(0.17156827, 0.6469511, -0.7429744, -0.0027946457)
+bones/54/rotation = Quaternion(-8.1927055e-08, 1, 2.9802322e-08, -8.602239e-09)
+
+[node name="Head" parent="CeccaPC/imp2/GeneralSkeleton" index="0" unique_id=531745445]
+transform = Transform3D(0.99778706, -0.05788736, -0.032707676, 0.048364595, 0.96947104, -0.24038845, 0.04562457, 0.23827468, 0.9701255, -0.028554192, 1.3107938, 0.06353885)
+
+[node name="AttackArea" type="Area3D" parent="." unique_id=1137626764]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AttackArea" unique_id=1436281106]
+shape = SubResource("SphereShape3D_hbjui")
+
+[node name="AnimationLibrary_Godot_Standard" parent="." unique_id=760200285 instance=ExtResource("3_2qlje")]
+
+[node name="Rig" parent="AnimationLibrary_Godot_Standard" index="0" unique_id=194863777]
+visible = false
+
+[node name="GeneralSkeleton" parent="AnimationLibrary_Godot_Standard/Rig" index="0" unique_id=659135337]
+visible = false
+
+[node name="Mannequin" parent="AnimationLibrary_Godot_Standard/Rig/GeneralSkeleton" index="0" unique_id=1414051023]
+visible = false
+
+[node name="AnimationPlayer" parent="AnimationLibrary_Godot_Standard" index="1" unique_id=202251250]
+root_node = NodePath("../../CeccaPC")
+
+[editable path="CeccaPC"]
+[editable path="AnimationLibrary_Godot_Standard"]
