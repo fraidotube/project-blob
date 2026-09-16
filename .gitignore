@@ -8,3 +8,4 @@ export_presets.cfg
 *.log
 .DS_Store
 Thumbs.db
+*.blend1

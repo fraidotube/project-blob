@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://c7vx37t8yqesg" path="res://scenes/pickups/pistol_pickup.tscn" id="1_s5fqq"]
 [ext_resource type="PackedScene" uid="uid://dqlen21maalf2" path="res://scenes/interactables/door.tscn" id="2_3xrac"]
 [ext_resource type="Material" uid="uid://ms8lv0k3tx4n" path="res://materials/enviroment/wall_test.tres" id="2_athqp"]
-[ext_resource type="PackedScene" uid="uid://da052y8mg5bmo" path="res://scenes/enemies/ceccapc_enemy.tscn" id="2_taqbm"]
+[ext_resource type="PackedScene" uid="uid://caco10r7nx0c" path="res://scenes/enemies/dr_carloni2_enemy.tscn" id="3_athqp"]
 [ext_resource type="PackedScene" uid="uid://sg2wyput3ej5" path="res://scenes/ui/hud.tscn" id="4_cpoig"]
 [ext_resource type="PackedScene" uid="uid://bdh4fao2mihwx" path="res://scenes/pickups/ammo_pickup.tscn" id="5_fray0"]
 
@@ -47,8 +47,8 @@ surface_material_override/0 = ExtResource("1_nnt1b")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=508569117]
 shape = SubResource("BoxShape3D_hyfr5")
 
-[node name="CeccaPCEnemy" parent="Floor" unique_id=262225333 instance=ExtResource("2_taqbm")]
-transform = Transform3D(0.99451995, 0, 0.10454701, 0, 1, 0, -0.10454701, 0, 0.99451995, -3.625163, 0.10201347, -24.559258)
+[node name="DrCarloniEnemy" parent="Floor" unique_id=2026469555 instance=ExtResource("3_athqp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.539289, 0.104052134, -23.127954)
 
 [node name="Floor2" type="StaticBody3D" parent="." unique_id=761020147]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -19.631681)

@@ -1,0 +1,53 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://wujjm3kde8i2"
+path="res://.godot/imported/dr_carloni11.glb-0ca16f2d554dac962451f7299d85d7a5.scn"
+
+[deps]
+
+source_file="res://assets/models/enemies/dr_carloni/dr_carloni11.glb"
+dest_files=["res://.godot/imported/dr_carloni11.glb-0ca16f2d554dac962451f7299d85d7a5.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+mesh_library/use_node_names_as_mesh_names=false
+array_mesh/deduplicate_surfaces=true
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"nodes": {
+"PATH:Sketchfab_model/root/GLTF_SceneRootNode/kratos_ARM_106/GLTF_created_0/Skeleton3D": {
+"retarget/bone_map": Object(BoneMap,"resource_local_to_scene":false,"resource_name":"","profile":Object(SkeletonProfileHumanoid,"resource_local_to_scene":false,"resource_name":"","root_bone":&"Root","scale_base_bone":&"Hips","group_size":4,"bone_size":56,"script":null)
+,"bonemap":null,"bone_map/Root":&"root ground_103","bone_map/Hips":&"root hips_101","bone_map/Spine":&"spine 1_75","bone_map/Chest":&"spine 2_74","bone_map/UpperChest":&"spine 3_73","bone_map/Neck":&"head neck lower_53","bone_map/Head":&"head jaw_44","bone_map/LeftEye":&"head eyeball left_49","bone_map/RightEye":&"head eyeball right_29","bone_map/Jaw":&"head jaw_44","bone_map/LeftShoulder":&"arm left shoulder 1_72","bone_map/LeftUpperArm":&"arm left shoulder 2_71","bone_map/LeftLowerArm":&"arm left elbow_70","bone_map/LeftHand":&"arm left wrist_69","bone_map/LeftThumbMetacarpal":&"arm left finger 1a_59","bone_map/LeftThumbProximal":&"arm left finger 1b_58","bone_map/LeftThumbDistal":&"arm left finger 1c_57","bone_map/LeftIndexProximal":&"arm left finger 2a_62","bone_map/LeftIndexIntermediate":&"arm left finger 2b_61","bone_map/LeftIndexDistal":&"arm left finger 2c_60","bone_map/LeftMiddleProximal":&"arm left finger 3a_65","bone_map/LeftMiddleIntermediate":&"arm left finger 3b_64","bone_map/LeftMiddleDistal":&"arm left finger 3c_63","bone_map/LeftRingProximal":&"arm left finger 4a_56","bone_map/LeftRingIntermediate":&"arm left finger 4b_55","bone_map/LeftRingDistal":&"arm left finger 4c_54","bone_map/LeftLittleProximal":&"arm left finger 5a_68","bone_map/LeftLittleIntermediate":&"arm left finger 5b_67","bone_map/LeftLittleDistal":&"arm left finger 5c_66","bone_map/RightShoulder":&"arm right shoulder 1_27","bone_map/RightUpperArm":&"arm right shoulder 2_26","bone_map/RightLowerArm":&"arm right elbow_25","bone_map/RightHand":&"arm right wrist_24","bone_map/RightThumbMetacarpal":&"arm right finger 1a_17","bone_map/RightThumbProximal":&"arm right finger 1b_16","bone_map/RightThumbDistal":&"arm right finger 1c_15","bone_map/RightIndexProximal":&"arm right finger 2a_14","bone_map/RightIndexIntermediate":&"arm right finger 2b_13","bone_map/RightIndexDistal":&"arm right finger 2c_12","bone_map/RightMiddleProximal":&"arm right finger 3a_20","bone_map/RightMiddleIntermediate":&"arm right finger 3b_19","bone_map/RightMiddleDistal":&"arm right finger 3c_18","bone_map/RightRingProximal":&"arm right finger 4a_11","bone_map/RightRingIntermediate":&"arm right finger 4b_10","bone_map/RightRingDistal":&"arm right finger 4c_9","bone_map/RightLittleProximal":&"arm right finger 5a_23","bone_map/RightLittleIntermediate":&"arm right finger 5b_22","bone_map/RightLittleDistal":&"arm right finger 5c_21","bone_map/LeftUpperLeg":&"leg left thigh_97","bone_map/LeftLowerLeg":&"leg left knee_92","bone_map/LeftFoot":&"leg left ankle_91","bone_map/LeftToes":&"leg left toe_90","bone_map/RightUpperLeg":&"leg right thigh_85","bone_map/RightLowerLeg":&"leg right knee_84","bone_map/RightFoot":&"leg right ankle_83","bone_map/RightToes":&"leg right toe_82","script":null)
+
+}
+}
+}
+gltf/naming_version=2
+gltf/embedded_image_handling=1
+gltf/texture_map_mode=1

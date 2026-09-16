@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://gccuko20hb1l"]
+
+[ext_resource type="Script" uid="uid://d1gk4sbjgls2j" path="res://scripts/enemies/hammer_flight.gd" id="1_nb3uw"]
+[ext_resource type="PackedScene" uid="uid://bom35bpeocy6" path="res://assets/models/weapons/martello/martello.glb" id="2_46no6"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hbjui"]
+radius = 0.35
+
+[node name="HammerFlight" type="Area3D" unique_id=601336675]
+script = ExtResource("1_nb3uw")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2076522199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0018014908, 0)
+shape = SubResource("SphereShape3D_hbjui")
+
+[node name="Visual" type="Node3D" parent="." unique_id=835430380]
+
+[node name="martello" parent="Visual" unique_id=1711078036 instance=ExtResource("2_46no6")]
+transform = Transform3D(-2.6226832e-08, 0, 0.59999996, 0, 0.59999996, 0, -0.59999996, 0, -2.6226832e-08, 0, -0.26742178, 0)

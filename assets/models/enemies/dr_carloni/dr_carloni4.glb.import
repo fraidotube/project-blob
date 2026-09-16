@@ -1,0 +1,53 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://caon45momvx7r"
+path="res://.godot/imported/dr_carloni4.glb-df347c58c9af0ee1e1a16d48f5133156.scn"
+
+[deps]
+
+source_file="res://assets/models/enemies/dr_carloni/dr_carloni4.glb"
+dest_files=["res://.godot/imported/dr_carloni4.glb-df347c58c9af0ee1e1a16d48f5133156.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+mesh_library/use_node_names_as_mesh_names=false
+array_mesh/deduplicate_surfaces=true
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=true
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"nodes": {
+"PATH:hero_thor01_s04/Skeleton3D": {
+"retarget/bone_map": Object(BoneMap,"resource_local_to_scene":false,"resource_name":"","profile":Object(SkeletonProfileHumanoid,"resource_local_to_scene":false,"resource_name":"","root_bone":&"Root","scale_base_bone":&"Hips","group_size":4,"bone_size":56,"script":null)
+,"bonemap":null,"bone_map/Root":&"hero_thor01_s04_2","bone_map/Hips":&"Bip001 Pelvis","bone_map/Spine":&"Bip001 Spine","bone_map/Chest":&"Bip001 Spine1","bone_map/UpperChest":&"","bone_map/Neck":&"Bip001 Neck","bone_map/Head":&"Bip001 Head","bone_map/LeftEye":&"","bone_map/RightEye":&"","bone_map/Jaw":&"Jaw Bone001","bone_map/LeftShoulder":&"Bip001 L Clavicle","bone_map/LeftUpperArm":&"Bip001 L UpperArm","bone_map/LeftLowerArm":&"Bip001 L Forearm","bone_map/LeftHand":&"Bip001 L Hand","bone_map/LeftThumbMetacarpal":&"Bip001 L Finger0","bone_map/LeftThumbProximal":&"Bip001 L Finger01","bone_map/LeftThumbDistal":&"","bone_map/LeftIndexProximal":&"Bip001 L Finger1","bone_map/LeftIndexIntermediate":&"Bip001 L Finger11","bone_map/LeftIndexDistal":&"","bone_map/LeftMiddleProximal":&"","bone_map/LeftMiddleIntermediate":&"","bone_map/LeftMiddleDistal":&"","bone_map/LeftRingProximal":&"","bone_map/LeftRingIntermediate":&"","bone_map/LeftRingDistal":&"","bone_map/LeftLittleProximal":&"","bone_map/LeftLittleIntermediate":&"","bone_map/LeftLittleDistal":&"","bone_map/RightShoulder":&"Bip001 R Clavicle","bone_map/RightUpperArm":&"Bip001 R UpperArm","bone_map/RightLowerArm":&"Bip001 R Forearm","bone_map/RightHand":&"Bip001 R Hand","bone_map/RightThumbMetacarpal":&"Bip001 R Finger0","bone_map/RightThumbProximal":&"Bip001 R Finger01","bone_map/RightThumbDistal":&"","bone_map/RightIndexProximal":&"Bip001 R Finger1","bone_map/RightIndexIntermediate":&"Bip001 R Finger11","bone_map/RightIndexDistal":&"","bone_map/RightMiddleProximal":&"","bone_map/RightMiddleIntermediate":&"","bone_map/RightMiddleDistal":&"","bone_map/RightRingProximal":&"","bone_map/RightRingIntermediate":&"","bone_map/RightRingDistal":&"","bone_map/RightLittleProximal":&"","bone_map/RightLittleIntermediate":&"","bone_map/RightLittleDistal":&"","bone_map/LeftUpperLeg":&"Bip001 L Thigh","bone_map/LeftLowerLeg":&"Bip001 L Calf","bone_map/LeftFoot":&"Bip001 L Foot","bone_map/LeftToes":&"Bip001 L Toe0","bone_map/RightUpperLeg":&"Bip001 R Thigh","bone_map/RightLowerLeg":&"Bip001 R Calf","bone_map/RightFoot":&"Bip001 R Foot","bone_map/RightToes":&"Bip001 R Toe0","script":null)
+
+}
+}
+}
+gltf/naming_version=2
+gltf/embedded_image_handling=1
+gltf/texture_map_mode=1

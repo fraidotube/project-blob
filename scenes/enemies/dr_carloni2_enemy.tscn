@@ -1,0 +1,148 @@
+[gd_scene format=3 uid="uid://caco10r7nx0c"]
+
+[ext_resource type="PackedScene" uid="uid://bvyv6h33kiklj" path="res://assets/models/animations/AnimationLibrary_Godot_Standard.glb" id="1_1tjew"]
+[ext_resource type="Script" uid="uid://dd1ma1hn0bf0m" path="res://scripts/enemies/dr_carloni_enemy.gd" id="1_2mggq"]
+[ext_resource type="PackedScene" uid="uid://gccuko20hb1l" path="res://scenes/weapons/hammer_flight.tscn" id="2_6qvot"]
+[ext_resource type="PackedScene" uid="uid://bom35bpeocy6" path="res://assets/models/weapons/martello/martello.glb" id="3_30qym"]
+[ext_resource type="PackedScene" uid="uid://dqx7cj1up6kvn" path="res://assets/models/animations/quaternius_ual2/UAL2_Standard.glb" id="3_axfkd"]
+[ext_resource type="PackedScene" uid="uid://wujjm3kde8i2" path="res://assets/models/enemies/dr_carloni/dr_carloni11.glb" id="3_x7vxa"]
+[ext_resource type="PackedScene" uid="uid://c1ucetpmygrek" path="res://assets/models/animations/Idles/HumanM@Idle01.fbx" id="4_30qym"]
+[ext_resource type="PackedScene" uid="uid://dp2cwbx14oqnv" path="res://assets/models/animations/Press_Button.fbx" id="5_2mggq"]
+[ext_resource type="PackedScene" uid="uid://cg45u6gkywtpn" path="res://assets/models/animations/AnimationLibrary_Carloni_Mirror.glb" id="9_6qvot"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
+
+[node name="DrCarloniEnemy" type="CharacterBody3D" unique_id=2026469555]
+script = ExtResource("1_2mggq")
+hammer_flight_scene = ExtResource("2_6qvot")
+throw_release_time = 0.5
+
+[node name="AnimationLibrary_Godot_Standard" parent="." unique_id=760200285 instance=ExtResource("1_1tjew")]
+
+[node name="GeneralSkeleton" parent="AnimationLibrary_Godot_Standard/Rig" parent_id_path=PackedInt32Array(760200285, 194863777) index="0" unique_id=659135337]
+visible = false
+
+[node name="Mannequin" parent="AnimationLibrary_Godot_Standard/Rig/GeneralSkeleton" index="0" unique_id=1414051023]
+visible = false
+
+[node name="AnimationPlayer" parent="AnimationLibrary_Godot_Standard" index="1" unique_id=202251250]
+root_node = NodePath("../../dr_carloni11")
+
+[node name="dr_carloni11" parent="." unique_id=1760760805 instance=ExtResource("3_x7vxa")]
+
+[node name="GeneralSkeleton" parent="dr_carloni11/Sketchfab_model/root/GLTF_SceneRootNode/kratos_ARM_106/GLTF_created_0" parent_id_path=PackedInt32Array(1760760805, 748125957) index="2" unique_id=445905243]
+bones/3/position = Vector3(0.00361553, 0.9231697, -0.011269307)
+bones/3/rotation = Quaternion(-0.046339247, -0.104501694, -0.0048745465, 0.99343264)
+bones/4/rotation = Quaternion(-0.00076738745, 0.123951904, 0.98620397, -0.109714195)
+bones/5/rotation = Quaternion(0.016120002, 0.98256016, -0.14668192, 0.11313726)
+bones/6/rotation = Quaternion(-0.07168304, 0.7343947, -0.674465, 0.024961788)
+bones/7/rotation = Quaternion(4.1056122e-08, 1, 5.960463e-08, 1.2100752e-08)
+bones/12/rotation = Quaternion(0.00077358447, -0.11490175, 0.98720056, 0.11059874)
+bones/13/rotation = Quaternion(-0.027121305, 0.9291563, -0.07646698, -0.36067402)
+bones/14/rotation = Quaternion(0.28490102, 0.60384226, -0.7326709, 0.13190678)
+bones/15/rotation = Quaternion(-2.226703e-08, 1, 5.960463e-08, -1.5907963e-08)
+bones/39/rotation = Quaternion(0.09260246, 0.000112686146, 0.00025382134, 0.99570316)
+bones/40/rotation = Quaternion(0.092602424, 0.00032069712, 0.00024720686, 0.9957031)
+bones/41/rotation = Quaternion(0.487481, 0.5266153, 0.52638155, -0.45602742)
+bones/42/rotation = Quaternion(-0.06222125, 0.81768036, -0.5722161, 0.009801122)
+bones/43/rotation = Quaternion(0.18998535, -0.6510409, 0.1830645, 0.71171534)
+bones/44/rotation = Quaternion(0.0991302, 0.70686626, 0.06290039, 0.69753635)
+bones/45/rotation = Quaternion(-0.12381928, 0.71952325, 0.20183538, 0.6528534)
+bones/46/rotation = Quaternion(0.18180703, 0.11012432, 0.060063176, 0.9753006)
+bones/47/rotation = Quaternion(0.5994299, 0.27396536, 0.1946323, 0.7264607)
+bones/48/rotation = Quaternion(0.6295973, -1.4528634e-07, -4.202128e-06, 0.7769217)
+bones/49/rotation = Quaternion(0.62334144, -3.3900142e-07, -4.4703484e-06, 0.7819499)
+bones/50/rotation = Quaternion(0.6233416, -1.192093e-07, -4.5299535e-06, 0.78194976)
+bones/51/rotation = Quaternion(0.62889427, -0.029735023, -4.4703484e-06, 0.77692205)
+bones/52/rotation = Quaternion(0.62273264, -0.027554482, -4.3213367e-06, 0.78194934)
+bones/53/rotation = Quaternion(0.6226684, -0.028961547, -4.4107446e-06, 0.7819497)
+bones/54/rotation = Quaternion(0.62919766, -0.022414085, -4.440546e-06, 0.77692205)
+bones/55/rotation = Quaternion(0.6229473, -0.022176098, -4.2915344e-06, 0.7819494)
+bones/56/rotation = Quaternion(0.622898, -0.023505552, -4.4703474e-06, 0.7819499)
+bones/57/rotation = Quaternion(0.6630009, -0.044529848, 0.07369418, 0.7436506)
+bones/58/rotation = Quaternion(0.6203662, -0.062294, 0.015573114, 0.78167945)
+bones/59/rotation = Quaternion(0.6219215, -0.04205182, -4.380942e-06, 0.7819498)
+bones/60/rotation = Quaternion(0.5397211, -0.47448963, -0.47470158, -0.5081528)
+bones/61/rotation = Quaternion(0.08907732, 0.82466066, -0.5584878, -0.009565983)
+bones/62/rotation = Quaternion(0.29214117, 0.54285806, -0.20492755, 0.760239)
+bones/63/rotation = Quaternion(0.120249644, -0.699031, -0.05689012, 0.70260894)
+bones/64/rotation = Quaternion(-0.12381949, -0.7195233, -0.20183557, 0.65285325)
+bones/65/rotation = Quaternion(0.18180718, -0.11012441, -0.060063243, 0.9753006)
+bones/66/rotation = Quaternion(0.59943014, -0.27396542, -0.19463241, 0.72646046)
+bones/67/rotation = Quaternion(0.6295969, -1.564622e-07, 4.500151e-06, 0.7769221)
+bones/68/rotation = Quaternion(0.6233419, -2.6077032e-08, 4.3213367e-06, 0.7819494)
+bones/69/rotation = Quaternion(0.6233415, 6.3329935e-08, 4.529953e-06, 0.78194976)
+bones/70/rotation = Quaternion(0.62889445, 0.029734707, 4.3809414e-06, 0.77692187)
+bones/71/rotation = Quaternion(0.6227323, 0.027554393, 4.4703484e-06, 0.7819497)
+bones/72/rotation = Quaternion(0.6226689, 0.02896138, 4.35114e-06, 0.7819493)
+bones/73/rotation = Quaternion(0.6291978, 0.022413762, 4.4405456e-06, 0.776922)
+bones/74/rotation = Quaternion(0.62294734, 0.022176139, 4.23193e-06, 0.7819494)
+bones/75/rotation = Quaternion(0.62289786, 0.023505531, 4.2021275e-06, 0.78195)
+bones/76/rotation = Quaternion(0.6630009, 0.04452972, -0.07369421, 0.7436505)
+bones/77/rotation = Quaternion(0.620366, 0.062293816, -0.015572963, 0.7816796)
+bones/78/rotation = Quaternion(0.6219215, 0.042051714, 4.1723247e-06, 0.78194964)
+bones/79/rotation = Quaternion(-0.09260249, -0.00021699585, -0.00026024203, 0.9957031)
+bones/93/rotation = Quaternion(0.07725408, 0.09572059, 0.007964599, 0.9923739)
+
+[node name="head neck upper_52" parent="dr_carloni11/Sketchfab_model/root/GLTF_SceneRootNode/kratos_ARM_106/GLTF_created_0/GeneralSkeleton" index="0" unique_id=2003067108]
+transform = Transform3D(0.9782013, -0.019635133, -0.20672797, 0.00052004604, 0.995748, -0.09211591, 0.20765768, 0.09000039, 0.9740525, -0.0019859928, 1.312396, 0.014402479)
+
+[node name="HammerSocket" type="BoneAttachment3D" parent="dr_carloni11/Sketchfab_model/root/GLTF_SceneRootNode/kratos_ARM_106/GLTF_created_0/GeneralSkeleton" index="10" unique_id=1993707202]
+transform = Transform3D(0.09859114, 0.9338656, 0.34376493, 0.4829363, -0.3469422, 0.8039919, 0.8700873, 0.086750165, -0.48520312, -0.24769323, 0.7522098, 0.011320405)
+bone_name = "RightIndexProximal"
+bone_idx = 67
+
+[node name="martello" parent="dr_carloni11/Sketchfab_model/root/GLTF_SceneRootNode/kratos_ARM_106/GLTF_created_0/GeneralSkeleton/HammerSocket" unique_id=1711078036 instance=ExtResource("3_30qym")]
+transform = Transform3D(-2.6226834e-08, 0.6, 0, -0.6, -2.6226834e-08, 0, 0, 0, 0.6, -0.23167711, 0.030642152, 0.041579366)
+
+[node name="UAL2_Standard" parent="." unique_id=3726005 instance=ExtResource("3_axfkd")]
+
+[node name="GeneralSkeleton" parent="UAL2_Standard/Armature" parent_id_path=PackedInt32Array(3726005, 2012662412) index="0" unique_id=1801411564]
+visible = false
+
+[node name="Mannequin" parent="UAL2_Standard/Armature/GeneralSkeleton" index="0" unique_id=1335840132]
+visible = false
+
+[node name="AnimationPlayer" parent="UAL2_Standard" index="1" unique_id=191332820]
+root_node = NodePath("../../dr_carloni11")
+
+[node name="HumanM_Idle01" parent="." unique_id=109284872 instance=ExtResource("4_30qym")]
+
+[node name="Rig" parent="HumanM_Idle01" index="0" unique_id=1634440950]
+visible = false
+
+[node name="GeneralSkeleton" parent="HumanM_Idle01" index="1" unique_id=420074156]
+visible = false
+
+[node name="AnimationPlayer" parent="HumanM_Idle01" index="2" unique_id=1710911596]
+root_node = NodePath("../../dr_carloni11")
+
+[node name="Press_Button" parent="." unique_id=613487106 instance=ExtResource("5_2mggq")]
+
+[node name="GeneralSkeleton" parent="Press_Button" index="0" unique_id=2067893942]
+visible = false
+
+[node name="AnimationPlayer" parent="Press_Button" index="1" unique_id=599041872]
+root_node = NodePath("../../dr_carloni11")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=108925071]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8138435, 0)
+shape = SubResource("CapsuleShape3D_hbjui")
+
+[node name="AnimationLibrary_Carloni_Mirror" parent="." unique_id=145181585 instance=ExtResource("9_6qvot")]
+
+[node name="GeneralSkeleton" parent="AnimationLibrary_Carloni_Mirror/Rig" parent_id_path=PackedInt32Array(145181585, 1669904667) index="0" unique_id=1777884611]
+visible = false
+
+[node name="Mannequin" parent="AnimationLibrary_Carloni_Mirror/Rig/GeneralSkeleton" index="0" unique_id=1671222552]
+visible = false
+
+[node name="AnimationPlayer" parent="AnimationLibrary_Carloni_Mirror" index="1" unique_id=1477812642]
+root_node = NodePath("../../dr_carloni11")
+
+[editable path="AnimationLibrary_Godot_Standard"]
+[editable path="dr_carloni11"]
+[editable path="UAL2_Standard"]
+[editable path="HumanM_Idle01"]
+[editable path="Press_Button"]
+[editable path="AnimationLibrary_Carloni_Mirror"]
