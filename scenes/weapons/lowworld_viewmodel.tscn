@@ -2,23 +2,85 @@
 
 [ext_resource type="PackedScene" uid="uid://siseri6oscbl" path="res://scenes/weapons/lowworld_arms_viewmodel.tscn" id="1_iakfh"]
 [ext_resource type="PackedScene" uid="uid://c4q8sikqhcy5h" path="res://SilverDelivery/Low_World_Base_Male_Character/scenes/prefab_pistol.tscn" id="2_a6trc"]
+[ext_resource type="PackedScene" uid="uid://cycppgjqpav77" path="res://assets/models/environment/Flashlight.glb" id="3_a6trc"]
+[ext_resource type="Animation" uid="uid://ips7wyrdn2sx" path="res://SilverDelivery/Low_World_Base_Male_Character/gltf/a_arms_flashlight_idle.res" id="4_m8a8k"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_rr7yk"]
+_data = {
+&"a_arms_flashlight_idle": ExtResource("4_m8a8k")
+}
 
 [node name="LowWorldViewModel" type="Node3D" unique_id=514129486]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
 [node name="smesh_arms_male" parent="." unique_id=394924321 instance=ExtResource("1_iakfh")]
 
-[node name="Skeleton3D" parent="smesh_arms_male/rig_arms" parent_id_path=PackedInt32Array(394924321, 1810606850) index="0" unique_id=1147120206]
-bones/12/rotation = Quaternion(0.38327092, -3.0261237e-08, 6.042628e-08, 0.9236361)
-bones/13/rotation = Quaternion(0.2726048, 1.3512621e-07, -7.782821e-08, 0.9621262)
-bones/37/rotation = Quaternion(0.3324414, 0.0005614054, 0.0015917295, 0.94312245)
+[node name="Skeleton3D" parent="smesh_arms_male/rig_arms" parent_id_path=PackedInt32Array(394924321, 955807258) index="0" unique_id=1260884027]
+bones/2/rotation = Quaternion(0.61326975, 0.4224586, 0.019760815, 0.66711205)
+bones/3/rotation = Quaternion(-0.1892282, -0.00015092177, 0.3572768, 0.91462886)
+bones/4/rotation = Quaternion(0.08080789, -0.2590772, -0.064586595, 0.96030086)
+bones/5/position = Vector3(-0.020377312, 0.023281187, 0.0025461395)
+bones/5/rotation = Quaternion(0.14328805, 0.061458938, 0.3363607, 0.9287373)
+bones/6/rotation = Quaternion(-3.6701579e-06, -5.797709e-07, -0.09223976, 0.99573684)
+bones/7/rotation = Quaternion(4.3680448e-06, 2.2156366e-06, -0.14038734, 0.9900967)
+bones/8/rotation = Quaternion(0.12501958, 0.001245675, -0.021916755, 0.9919114)
+bones/9/rotation = Quaternion(0.2726049, 3.1573103e-07, 7.940689e-08, 0.9621261)
+bones/10/rotation = Quaternion(0.27260485, -1.18443076e-07, -7.8173976e-08, 0.9621261)
+bones/11/rotation = Quaternion(0.15986362, -0.011893741, -0.018373193, 0.9868965)
+bones/12/rotation = Quaternion(0.38327098, -2.1438389e-08, 4.8200377e-08, 0.92363596)
+bones/13/rotation = Quaternion(0.27260476, 1.3325074e-07, -7.17783e-08, 0.9621261)
+bones/14/rotation = Quaternion(0.2742913, -0.044356093, -0.028670974, 0.9601953)
+bones/15/rotation = Quaternion(0.32521006, 0.00038738776, 0.0011238903, 0.9456411)
+bones/16/rotation = Quaternion(0.2726049, 4.3681906e-05, 0.0001550765, 0.9621261)
+bones/17/rotation = Quaternion(0.3271649, -0.057249863, -0.041752573, 0.94230694)
+bones/18/rotation = Quaternion(0.33244142, -0.0005043721, -0.0014302335, 0.94312274)
+bones/19/rotation = Quaternion(0.31230485, 9.72119e-06, 2.909449e-05, 0.9499819)
+bones/21/rotation = Quaternion(0.49246395, -0.08377414, -0.2905655, 0.8161084)
+bones/22/rotation = Quaternion(-0.30986497, 0.00012371784, -0.5850478, 0.7494683)
+bones/23/rotation = Quaternion(0.22667304, 0.37220806, 0.24180105, 0.8669561)
+bones/24/position = Vector3(0.020377338, 0.023281118, 0.002546194)
+bones/24/rotation = Quaternion(0.26866463, -0.1067771, -0.3248297, 0.90050197)
+bones/25/rotation = Quaternion(-3.591808e-06, 8.5485624e-07, 0.16212383, 0.98677045)
+bones/26/rotation = Quaternion(3.985331e-06, -2.8888694e-06, 0.29618955, 0.9551292)
+bones/27/position = Vector3(0.02565454, 0.08635591, -0.001127286)
+bones/27/rotation = Quaternion(0.30905887, -0.0034230358, 0.041182607, 0.95014465)
+bones/28/rotation = Quaternion(0.75826645, -3.6872493e-07, 1.944981e-07, 0.65194476)
+bones/29/rotation = Quaternion(0.57763433, 6.2959856e-08, 1.8902816e-07, 0.8162956)
+bones/30/position = Vector3(0.0032903554, 0.08673041, -0.0063072536)
+bones/30/rotation = Quaternion(0.35062003, 0.054284442, 0.008389024, 0.93490565)
+bones/31/rotation = Quaternion(0.76139694, 0.025181586, 0.001295275, 0.6477954)
+bones/32/rotation = Quaternion(0.44075587, 1.4934663e-08, -7.477811e-09, 0.897627)
+bones/33/position = Vector3(-0.01635828, 0.080997646, -0.005877213)
+bones/33/rotation = Quaternion(0.35693768, 0.14483787, -0.009036595, 0.92278695)
+bones/34/rotation = Quaternion(0.71372074, -0.0009080152, -0.0008899085, 0.70042926)
+bones/35/rotation = Quaternion(0.57556593, -5.0200284e-05, -7.21004e-05, 0.81775534)
+bones/36/position = Vector3(-0.031439066, 0.06908435, -0.0014383242)
+bones/36/rotation = Quaternion(0.15452684, 0.112926506, -0.028693967, 0.9810942)
+bones/37/rotation = Quaternion(0.62094116, 0.001048273, 0.0013227864, 0.7838553)
+bones/38/rotation = Quaternion(0.4998519, -0.00010204689, -0.00017627439, 0.8661109)
+bones/39/position = Vector3(0.17674938, -0.32123035, -0.12603581)
+bones/39/rotation = Quaternion(0.7057931, 0.007981711, -0.7079441, -0.0246528)
+bones/41/position = Vector3(-0.24841249, -0.114263274, 0.27001014)
+bones/41/rotation = Quaternion(0.51927906, 0.45558518, 0.53747576, 0.4836437)
 
 [node name="PistolSocket" type="BoneAttachment3D" parent="smesh_arms_male/rig_arms/Skeleton3D" index="1" unique_id=2144907275]
-transform = Transform3D(0.8237254, 0.017455544, 0.5667197, -0.19433293, 0.9476747, 0.2532731, -0.53264487, -0.3187598, 0.78401625, -0.24131358, 0.2141276, 0.20470604)
+transform = Transform3D(0.04208672, 0.0887323, 0.9951657, 0.3732977, 0.9225164, -0.09804189, -0.9267562, 0.3756198, 0.0057023764, -0.24842438, 0.21544914, 0.25731575)
 bone_name = "Hand.R"
 bone_idx = 23
 
 [node name="smesh_pistol" parent="smesh_arms_male/rig_arms/Skeleton3D/PistolSocket" unique_id=1095934682 instance=ExtResource("2_a6trc")]
 visible = false
+
+[node name="FlashlightSocket" type="BoneAttachment3D" parent="smesh_arms_male/rig_arms/Skeleton3D" index="2" unique_id=1078999935]
+transform = Transform3D(0.04208672, 0.0887323, 0.9951657, 0.3732977, 0.9225164, -0.09804189, -0.9267562, 0.3756198, 0.0057023764, -0.24842438, 0.21544914, 0.25731575)
+bone_name = "Hand.R"
+bone_idx = 23
+
+[node name="Flashlight" parent="smesh_arms_male/rig_arms/Skeleton3D/FlashlightSocket" unique_id=873452566 instance=ExtResource("3_a6trc")]
+transform = Transform3D(0.35774615, -1.1452365, -0.021191001, 1.075005, 0.32802802, 0.42043108, -0.3954519, -0.1443236, 1.1237386, 0.042078793, 0.06877586, 0.023425296)
+
+[node name="AnimationPlayer" parent="smesh_arms_male" index="1" unique_id=178024650]
+libraries/Mie = SubResource("AnimationLibrary_rr7yk")
+autoplay = &"Mie/a_arms_flashlight_idle"
 
 [editable path="smesh_arms_male"]
