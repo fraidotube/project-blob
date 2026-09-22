@@ -17,9 +17,16 @@ bg_color = Color(0.70980394, 0.16862746, 0.16862746, 1)
 
 [sub_resource type="SystemFont" id="SystemFont_hbjui"]
 font_names = PackedStringArray("Bebas Neue")
+subpixel_positioning = 0
 
 [sub_resource type="SystemFont" id="SystemFont_hyfr5"]
 font_names = PackedStringArray("Bebas Neue")
+subpixel_positioning = 0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_el81d"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mn6ti"]
+bg_color = Color(0.9647059, 0, 0.07450981, 0.72156864)
 
 [node name="HUD" type="CanvasLayer" unique_id=160974520]
 script = ExtResource("1_0mwgc")
@@ -282,3 +289,14 @@ text = "TROVA UNA VIA D'USCITA"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
+
+[node name="BatteryBar" type="ProgressBar" parent="Interface/HudBar" unique_id=1978523524]
+layout_mode = 0
+offset_left = 808.0
+offset_top = 599.0
+offset_right = 961.0
+offset_bottom = 623.0
+theme_override_styles/background = SubResource("StyleBoxFlat_el81d")
+theme_override_styles/fill = SubResource("StyleBoxFlat_mn6ti")
+value = 100.0
+show_percentage = false

@@ -54,6 +54,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("weapon_slot_2"):
 		weapon.select_weapon_slot(2)
 
+	if event.is_action_pressed("weapon_slot_3"):
+		weapon.select_weapon_slot(3)
+
+	if event.is_action_pressed("flashlight_toggle"):
+		weapon.toggle_flashlight()
+
 	if event.is_action_pressed("fire"):
 		weapon.fire()
 
@@ -131,6 +137,10 @@ func _physics_process(delta: float) -> void:
 
 func equip_pistol() -> void:
 	weapon.equip_pistol()
+
+
+func equip_flashlight() -> void:
+	weapon.equip_flashlight()
 
 
 func add_ammo(amount: int) -> void:

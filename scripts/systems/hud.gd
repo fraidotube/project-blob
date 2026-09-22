@@ -31,9 +31,13 @@ const WEAPON_PISTOL = preload(
 	"res://assets/ui/hud/hud_pistol.png"
 )
 
+const WEAPON_FLASHLIGHT = preload(
+	"res://assets/ui/hud/hud_flashlight.png"
+)
+
 
 # ============================================================
-# NUOVA HUD
+# HUD
 # ============================================================
 
 @onready var crosshair_image: TextureRect = (
@@ -76,6 +80,10 @@ const WEAPON_PISTOL = preload(
 	$Interface/HudBar/AmmoValue
 )
 
+@onready var battery_bar: ProgressBar = (
+	$Interface/HudBar/BatteryBar
+)
+
 @onready var mission_label: Label = (
 	$Interface/HudBar/MissionLabel
 )
@@ -114,7 +122,11 @@ func _ready() -> void:
 
 	update_weapon("MANI NUDE")
 	hide_ammo()
+	hide_flashlight_battery()
+
 	update_mission("TROVA UNA VIA D'USCITA")
+	
+
 
 
 # ============================================================
@@ -211,6 +223,7 @@ func update_ammo(
 	magazine_ammo: int,
 	reserve_ammo: int
 ) -> void:
+	battery_bar.visible = false
 	ammo_value.visible = true
 	bullet_row.visible = true
 
@@ -244,7 +257,36 @@ func hide_ammo() -> void:
 
 
 # ============================================================
-# ARMA
+# BATTERIA TORCIA
+# ============================================================
+
+func update_flashlight_battery(
+	charge_percent: float
+) -> void:
+	var charge := clampf(
+		charge_percent,
+		0.0,
+		100.0
+	)
+
+	bullet_row.visible = false
+	battery_bar.visible = true
+	ammo_value.visible = true
+
+	battery_bar.value = charge
+
+	ammo_value.text = (
+		"%d%%"
+		% roundi(charge)
+	)
+
+
+func hide_flashlight_battery() -> void:
+	battery_bar.visible = false
+
+
+# ============================================================
+# ARMA / OGGETTO EQUIPAGGIATO
 # ============================================================
 
 func update_weapon(
@@ -252,9 +294,16 @@ func update_weapon(
 ) -> void:
 	if weapon_name == "PISTOLA":
 		weapon_icon.texture = WEAPON_PISTOL
+		battery_bar.visible = false
+		return
+
+	if weapon_name == "TORCIA":
+		weapon_icon.texture = WEAPON_FLASHLIGHT
+		bullet_row.visible = false
 		return
 
 	weapon_icon.texture = WEAPON_HANDS
+	battery_bar.visible = false
 
 
 # ============================================================

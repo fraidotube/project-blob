@@ -12,6 +12,7 @@ extends Node3D
 
 const WEAPON_UNARMED := 0
 const WEAPON_PISTOL := 1
+const WEAPON_FLASHLIGHT := 2
 
 
 # ------------------------------------------------------------
@@ -36,6 +37,14 @@ const WEAPON_PISTOL := 1
 
 var magazine_ammo: int = 9
 var reserve_ammo: int = 36
+
+
+# ------------------------------------------------------------
+# TORCIA
+# ------------------------------------------------------------
+
+var flashlight_charge := 100.0
+var flashlight_on := false
 
 
 # ------------------------------------------------------------
@@ -119,12 +128,33 @@ var viewmodel_base_position: Vector3
 	/AnimationPlayer
 )
 
+@onready var flashlight_model: Node3D = (
+	$LowWorldViewModel
+	/smesh_arms_male
+	/rig_arms
+	/Skeleton3D
+	/FlashlightSocket
+	/Flashlight
+)
+
+@onready var flashlight_light: SpotLight3D = (
+	$LowWorldViewModel
+	/smesh_arms_male
+	/rig_arms
+	/Skeleton3D
+	/FlashlightSocket
+	/Flashlight
+	/FlashlightLight
+)
+
 
 # ------------------------------------------------------------
 # STATO INVENTARIO / ARMA EQUIPAGGIATA
 # ------------------------------------------------------------
 
 var owns_pistol := false
+var owns_flashlight := false
+
 var equipped_weapon := WEAPON_UNARMED
 
 var can_attack := true
@@ -155,9 +185,16 @@ func _ready() -> void:
 	muzzle_flash.visible = false
 
 	owns_pistol = false
+	owns_flashlight = false
+
 	equipped_weapon = WEAPON_UNARMED
 
 	pistol_model.visible = false
+	flashlight_model.visible = false
+	flashlight_light.visible = false
+
+	flashlight_on = false
+	flashlight_charge = 100.0
 
 	magazine_ammo = pistol_magazine_size
 	reserve_ammo = starting_reserve_ammo
@@ -177,6 +214,11 @@ func _ready() -> void:
 	get_tree().call_group(
 		"hud",
 		"hide_ammo"
+	)
+
+	get_tree().call_group(
+		"hud",
+		"hide_flashlight_battery"
 	)
 
 	play_current_locomotion(true)
@@ -261,6 +303,10 @@ func is_pistol_equipped() -> bool:
 	return equipped_weapon == WEAPON_PISTOL
 
 
+func is_flashlight_equipped() -> bool:
+	return equipped_weapon == WEAPON_FLASHLIGHT
+
+
 # ============================================================
 # SELEZIONE SLOT
 # ============================================================
@@ -274,9 +320,13 @@ func select_weapon_slot(slot: int) -> void:
 		equip_owned_pistol()
 		return
 
+	if slot == 3:
+		equip_owned_flashlight()
+		return
+
 
 # ============================================================
-# MANI NUDE - EQUIP
+# MANI NUDE
 # ============================================================
 
 func equip_unarmed() -> void:
@@ -293,7 +343,12 @@ func equip_unarmed() -> void:
 	current_locomotion_animation = ""
 
 	equipped_weapon = WEAPON_UNARMED
+
 	pistol_model.visible = false
+	flashlight_model.visible = false
+
+	flashlight_on = false
+	flashlight_light.visible = false
 
 	get_tree().call_group(
 		"hud",
@@ -304,6 +359,11 @@ func equip_unarmed() -> void:
 	get_tree().call_group(
 		"hud",
 		"hide_ammo"
+	)
+
+	get_tree().call_group(
+		"hud",
+		"hide_flashlight_battery"
 	)
 
 	if arms_animation_player.has_animation(
@@ -322,7 +382,7 @@ func equip_unarmed() -> void:
 
 
 # ============================================================
-# PISTOLA - ACQUISIZIONE DAL PICKUP
+# PISTOLA - PICKUP
 # ============================================================
 
 func equip_pistol() -> void:
@@ -332,7 +392,7 @@ func equip_pistol() -> void:
 
 
 # ============================================================
-# PISTOLA - EQUIP DA SLOT
+# PISTOLA - EQUIP
 # ============================================================
 
 func equip_owned_pistol() -> void:
@@ -352,12 +412,22 @@ func equip_owned_pistol() -> void:
 	current_locomotion_animation = ""
 
 	equipped_weapon = WEAPON_PISTOL
+
 	pistol_model.visible = true
+	flashlight_model.visible = false
+
+	flashlight_on = false
+	flashlight_light.visible = false
 
 	get_tree().call_group(
 		"hud",
 		"update_weapon",
 		"PISTOLA"
+	)
+
+	get_tree().call_group(
+		"hud",
+		"hide_flashlight_battery"
 	)
 
 	update_ammo_hud()
@@ -375,6 +445,104 @@ func equip_owned_pistol() -> void:
 	is_performing_action = false
 
 	play_current_locomotion(true)
+
+
+# ============================================================
+# TORCIA - PICKUP
+# ============================================================
+
+func equip_flashlight() -> void:
+	owns_flashlight = true
+
+	await equip_owned_flashlight()
+
+
+# ============================================================
+# TORCIA - EQUIP
+# ============================================================
+
+func equip_owned_flashlight() -> void:
+	if not owns_flashlight:
+		return
+
+	if equipped_weapon == WEAPON_FLASHLIGHT:
+		return
+
+	if is_reloading:
+		return
+
+	if is_performing_action:
+		return
+
+	is_performing_action = true
+	current_locomotion_animation = ""
+
+	equipped_weapon = WEAPON_FLASHLIGHT
+
+	pistol_model.visible = false
+	flashlight_model.visible = true
+
+	flashlight_on = false
+	flashlight_light.visible = false
+
+	get_tree().call_group(
+		"hud",
+		"update_weapon",
+		"TORCIA"
+	)
+
+	get_tree().call_group(
+		"hud",
+		"update_flashlight_battery",
+		flashlight_charge
+	)
+
+	# Nessuna animazione START in questa prova.
+	# Partiamo direttamente dalla HOLD IDLE originale.
+
+	if not arms_animation_player.has_animation(
+		"a_arms_hold_idle"
+	):
+		push_error(
+			"Animazione a_arms_hold_idle non trovata"
+		)
+
+		is_performing_action = false
+		return
+
+	current_locomotion_animation = (
+		"a_arms_hold_idle"
+	)
+
+	arms_animation_player.play(
+		"a_arms_hold_idle",
+		0.0
+	)
+
+	is_performing_action = false
+
+
+# ============================================================
+# TORCIA - ON/OFF
+# ============================================================
+
+func toggle_flashlight() -> void:
+	if not owns_flashlight:
+		return
+
+	if not is_flashlight_equipped():
+		return
+
+	if flashlight_charge <= 0.0:
+		flashlight_on = false
+		flashlight_light.visible = false
+		return
+
+	flashlight_on = not flashlight_on
+
+	flashlight_light.visible = (
+		flashlight_on
+	)
 
 
 # ============================================================
@@ -410,32 +578,53 @@ func play_current_locomotion(
 
 	var animation_name := ""
 
-	if is_pistol_equipped():
+	if is_flashlight_equipped():
 		if not player_is_moving:
-			animation_name = "a_arms_pistol_idle"
+			animation_name = (
+				"a_arms_hold_idle"
+			)
 
 		elif player_is_sprinting:
-			animation_name = "a_arms_pistol_run"
+			animation_name = (
+				"a_arms_hold_run"
+			)
 
 		else:
-			animation_name = "a_arms_pistol_walk"
+			animation_name = (
+				"a_arms_hold_walk"
+			)
+
+	elif is_pistol_equipped():
+		if not player_is_moving:
+			animation_name = (
+				"a_arms_pistol_idle"
+			)
+
+		elif player_is_sprinting:
+			animation_name = (
+				"a_arms_pistol_run"
+			)
+
+		else:
+			animation_name = (
+				"a_arms_pistol_walk"
+			)
 
 	else:
 		if not player_is_moving:
-			animation_name = "a_arms_unarmed_idle"
+			animation_name = (
+				"a_arms_unarmed_idle"
+			)
 
 		elif player_is_sprinting:
-			animation_name = "a_arms_unarmed_run"
+			animation_name = (
+				"a_arms_unarmed_run"
+			)
 
 		else:
-			animation_name = "a_arms_unarmed_walk"
-
-	if (
-		not force
-		and current_locomotion_animation == animation_name
-		and arms_animation_player.is_playing()
-	):
-		return
+			animation_name = (
+				"a_arms_unarmed_walk"
+			)
 
 	if not arms_animation_player.has_animation(
 		animation_name
@@ -445,6 +634,13 @@ func play_current_locomotion(
 			+ animation_name
 		)
 
+		return
+
+	if (
+		not force
+		and current_locomotion_animation == animation_name
+		and arms_animation_player.is_playing()
+	):
 		return
 
 	current_locomotion_animation = animation_name
@@ -464,7 +660,9 @@ func _on_arms_animation_finished(
 	if is_reloading:
 		return
 
-	if String(animation_name) != current_locomotion_animation:
+	if String(animation_name) != (
+		current_locomotion_animation
+	):
 		return
 
 	play_current_locomotion(true)
@@ -482,6 +680,9 @@ func fire() -> void:
 		return
 
 	if is_performing_action:
+		return
+
+	if is_flashlight_equipped():
 		return
 
 	if is_pistol_equipped():
@@ -617,19 +818,19 @@ func fire_pistol() -> void:
 		var hit_normal := weapon_ray.get_collision_normal()
 
 		if collider != null:
-			# CeccaPC / nemici evoluti:
-			# prima possono tentare una schivata del colpo hitscan.
 			if collider.has_method("try_dodge_shot"):
-				var dodged: bool = collider.try_dodge_shot(
-					hit_point
+				var dodged: bool = (
+					collider.try_dodge_shot(
+						hit_point
+					)
 				)
 
 				if dodged:
-					# Nessun danno e nessun hitmarker:
-					# la schivata è riuscita.
 					pass
 
-				elif collider.has_method("take_bullet_hit"):
+				elif collider.has_method(
+					"take_bullet_hit"
+				):
 					collider.take_bullet_hit(
 						pistol_damage,
 						hit_point
@@ -640,7 +841,9 @@ func fire_pistol() -> void:
 						"show_hitmarker"
 					)
 
-				elif collider.has_method("take_damage"):
+				elif collider.has_method(
+					"take_damage"
+				):
 					collider.take_damage(
 						pistol_damage
 					)
@@ -656,7 +859,9 @@ func fire_pistol() -> void:
 						hit_normal
 					)
 
-			elif collider.has_method("take_bullet_hit"):
+			elif collider.has_method(
+				"take_bullet_hit"
+			):
 				collider.take_bullet_hit(
 					pistol_damage,
 					hit_point
@@ -667,7 +872,9 @@ func fire_pistol() -> void:
 					"show_hitmarker"
 				)
 
-			elif collider.has_method("take_damage"):
+			elif collider.has_method(
+				"take_damage"
+			):
 				collider.take_damage(
 					pistol_damage
 				)
@@ -823,4 +1030,6 @@ func update_ammo_hud() -> void:
 
 func show_muzzle_flash() -> void:
 	muzzle_flash.visible = true
-	muzzle_flash_time_left = muzzle_flash_duration
+	muzzle_flash_time_left = (
+		muzzle_flash_duration
+	)
