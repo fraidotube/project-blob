@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://siseri6oscbl" path="res://scenes/weapons/lowworld_arms_viewmodel.tscn" id="1_iakfh"]
 [ext_resource type="PackedScene" uid="uid://c4q8sikqhcy5h" path="res://SilverDelivery/Low_World_Base_Male_Character/scenes/prefab_pistol.tscn" id="2_a6trc"]
-[ext_resource type="PackedScene" uid="uid://cycppgjqpav77" path="res://assets/models/items/flashlight/Flashlight.glb" id="3_a6trc"]
+[ext_resource type="PackedScene" uid="uid://cycppgjqpav77" path="res://assets/models/environment/Flashlight.glb" id="3_a6trc"]
 [ext_resource type="Animation" uid="uid://ips7wyrdn2sx" path="res://SilverDelivery/Low_World_Base_Male_Character/gltf/a_arms_flashlight_idle.res" id="4_m8a8k"]
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_rr7yk"]
@@ -15,7 +15,7 @@ transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0
 
 [node name="smesh_arms_male" parent="." unique_id=394924321 instance=ExtResource("1_iakfh")]
 
-[node name="Skeleton3D" parent="smesh_arms_male/rig_arms" parent_id_path=PackedInt32Array(394924321, 1518001146) index="0" unique_id=1246692803]
+[node name="Skeleton3D" parent="smesh_arms_male/rig_arms" parent_id_path=PackedInt32Array(394924321, 1201424799) index="0" unique_id=949106662]
 bones/2/rotation = Quaternion(0.61326975, 0.4224586, 0.019760815, 0.66711205)
 bones/3/rotation = Quaternion(-0.1892282, -0.00015092177, 0.3572768, 0.91462886)
 bones/4/rotation = Quaternion(0.08080789, -0.2590772, -0.064586595, 0.96030086)
@@ -82,14 +82,14 @@ visible = false
 
 [node name="FlashlightLight" type="SpotLight3D" parent="smesh_arms_male/rig_arms/Skeleton3D/FlashlightSocket/Flashlight" unique_id=184043557]
 transform = Transform3D(-0.46991414, -0.23778772, -0.64581865, -0.004596673, 0.7830776, -0.2849804, 0.68818915, -0.15713744, -0.4428861, 0.07973009, 0.013244674, 0.034940198)
-visible = false
 light_color = Color(1, 1, 0.7647059, 1)
 light_energy = 4.0
 light_volumetric_fog_energy = 5.0
+shadow_enabled = true
 spot_range = 25.0
 spot_angle = 32.0
 
-[node name="AnimationPlayer" parent="smesh_arms_male" index="1" unique_id=1906159672]
+[node name="AnimationPlayer" parent="smesh_arms_male" index="1" unique_id=786724653]
 libraries/Mie = SubResource("AnimationLibrary_rr7yk")
 
 [editable path="smesh_arms_male"]
