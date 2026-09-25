@@ -48,11 +48,9 @@ func _physics_process(delta: float) -> void:
 
 	door_body.global_transform = desired_body_transform
 
-	if (
-		player_inside
-		and Input.is_action_just_pressed("interact")
-	):
-		toggle_door()
+
+func interact() -> void:
+	toggle_door()
 
 
 func toggle_door() -> void:

@@ -9,6 +9,7 @@ const MOUSE_SENSITIVITY := 0.004
 
 @onready var head: Node3D = $Head
 @onready var weapon: Node3D = $Head/Camera3D/WeaponHolder
+@onready var interact_ray: RayCast3D = $Head/Camera3D/InteractRay
 
 var health: int
 var is_dead := false
@@ -48,6 +49,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			deg_to_rad(89.0)
 		)
 
+	if event.is_action_pressed("interact"):
+		try_interact()
+
 	if event.is_action_pressed("weapon_slot_1"):
 		weapon.select_weapon_slot(1)
 
@@ -68,6 +72,27 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	if event.is_action_pressed("ui_cancel"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+
+func try_interact() -> void:
+	interact_ray.force_raycast_update()
+
+	if not interact_ray.is_colliding():
+		return
+
+	var collider := interact_ray.get_collider()
+
+	if collider == null:
+		return
+
+	var current_node: Node = collider
+
+	while current_node != null:
+		if current_node.has_method("interact"):
+			current_node.interact()
+			return
+
+		current_node = current_node.get_parent()
 
 
 func _physics_process(delta: float) -> void:
