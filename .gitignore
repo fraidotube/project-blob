@@ -32,3 +32,5 @@ assets/textures/environment/
 
 # Godot generated import metadata
 *.import
+ProjectBlob_demo.exe
+ProjectBlob_demo.pck
