@@ -2,17 +2,28 @@ extends CharacterBody3D
 
 const WALK_SPEED := 5.0
 const SPRINT_SPEED := 8.0
+const CROUCH_SPEED := 2.8
 const JUMP_VELOCITY := 4.5
 const MOUSE_SENSITIVITY := 0.004
+
+const STAND_HEIGHT := 1.8
+const CROUCH_HEIGHT := 1.2
+
+const STAND_HEAD_Y := 0.9
+const CROUCH_HEAD_Y := 0.45
+
+const CROUCH_TRANSITION_SPEED := 8.0
 
 @export var max_health := 100
 
 @onready var head: Node3D = $Head
+@onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var weapon: Node3D = $Head/Camera3D/WeaponHolder
 @onready var interact_ray: RayCast3D = $Head/Camera3D/InteractRay
 
 var health: int
 var is_dead := false
+var is_crouched := false
 
 
 func _ready() -> void:
@@ -81,6 +92,8 @@ func try_interact() -> void:
 		return
 
 	var collider := interact_ray.get_collider()
+	
+	print("INTERACT COLLIDER: ", collider)
 
 	if collider == null:
 		return
@@ -100,22 +113,28 @@ func _physics_process(delta: float) -> void:
 		velocity = Vector3.ZERO
 		return
 
+	_update_crouch(delta)
+
 	if not is_on_floor():
 		velocity += get_gravity() * delta
 
 	if (
 		Input.is_action_just_pressed("jump")
 		and is_on_floor()
+		and not is_crouched
 	):
 		velocity.y = JUMP_VELOCITY
 
-	var is_sprinting := Input.is_action_pressed(
-		"sprint"
+	var is_sprinting := (
+		Input.is_action_pressed("sprint")
+		and not is_crouched
 	)
 
 	var speed := WALK_SPEED
 
-	if is_sprinting:
+	if is_crouched:
+		speed = CROUCH_SPEED
+	elif is_sprinting:
 		speed = SPRINT_SPEED
 
 	var input_dir := Input.get_vector(
@@ -157,6 +176,67 @@ func _physics_process(delta: float) -> void:
 	weapon.set_movement_state(
 		is_moving,
 		is_sprinting
+	)
+
+
+func _update_crouch(delta: float) -> void:
+	var wants_to_crouch := Input.is_action_pressed("crouch")
+
+	if wants_to_crouch:
+		is_crouched = true
+	elif is_crouched and _can_stand_up():
+		is_crouched = false
+
+	var target_height := STAND_HEIGHT
+	var target_head_y := STAND_HEAD_Y
+
+	if is_crouched:
+		target_height = CROUCH_HEIGHT
+		target_head_y = CROUCH_HEAD_Y
+
+	var capsule := collision_shape.shape as CapsuleShape3D
+
+	if capsule == null:
+		return
+
+	var new_height := move_toward(
+		capsule.height,
+		target_height,
+		CROUCH_TRANSITION_SPEED * delta
+	)
+
+	capsule.height = new_height
+
+	# Mantiene i piedi alla stessa altezza mentre cambia
+	# l'altezza della capsula.
+	collision_shape.position.y = -(
+		STAND_HEIGHT - new_height
+	) * 0.5
+
+	head.position.y = move_toward(
+		head.position.y,
+		target_head_y,
+		CROUCH_TRANSITION_SPEED * delta
+	)
+
+
+func _can_stand_up() -> bool:
+	var capsule := collision_shape.shape as CapsuleShape3D
+
+	if capsule == null:
+		return true
+
+	var missing_height := STAND_HEIGHT - capsule.height
+
+	if missing_height <= 0.01:
+		return true
+
+	# Prova virtualmente a spostare verso l'alto la capsula
+	# accovacciata. Se incontra qualcosa, non c'è spazio
+	# sufficiente per rialzarsi.
+	return not test_move(
+		global_transform,
+		Vector3.UP * missing_height
 	)
 
 
