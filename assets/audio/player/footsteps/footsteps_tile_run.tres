@@ -1,0 +1,17 @@
+[gd_resource type="AudioStreamRandomizer" format=3 uid="uid://bq61spvv6nj0k"]
+
+[ext_resource type="AudioStream" uid="uid://c2qcfwrv8me68" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_01.wav" id="1_rmxw4"]
+[ext_resource type="AudioStream" uid="uid://30ldy4olhu5" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_02.wav" id="2_m552x"]
+[ext_resource type="AudioStream" uid="uid://dj3ix7i20tqsw" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_03.wav" id="3_f0ox5"]
+[ext_resource type="AudioStream" uid="uid://bahncb18vrds4" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_04.wav" id="4_pc3gs"]
+[ext_resource type="AudioStream" uid="uid://bgpx4g8spnmgg" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_05.wav" id="5_j0m86"]
+[ext_resource type="AudioStream" uid="uid://dsjwi2hcdusn0" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_06.wav" id="6_gt1l5"]
+
+[resource]
+streams_count = 6
+stream_0/stream = ExtResource("1_rmxw4")
+stream_1/stream = ExtResource("2_m552x")
+stream_2/stream = ExtResource("3_f0ox5")
+stream_3/stream = ExtResource("4_pc3gs")
+stream_4/stream = ExtResource("5_j0m86")
+stream_5/stream = ExtResource("6_gt1l5")

@@ -1,0 +1,25 @@
+[gd_resource type="AudioStreamRandomizer" format=3 uid="uid://b21kws5gpsdrb"]
+
+[ext_resource type="AudioStream" uid="uid://deqbuf6pncht4" path="res://assets/audio/player/footsteps/Footsteps_Rock_Run_01.wav" id="1_3pso8"]
+[ext_resource type="AudioStream" uid="uid://crysgo7kdrkjn" path="res://assets/audio/player/footsteps/Footsteps_Rock_Run_02.wav" id="2_tuvlw"]
+[ext_resource type="AudioStream" uid="uid://dp325uciumx4n" path="res://assets/audio/player/footsteps/Footsteps_Rock_Run_03.wav" id="3_uiegp"]
+[ext_resource type="AudioStream" uid="uid://bwlrt51kcobby" path="res://assets/audio/player/footsteps/Footsteps_Rock_Run_04.wav" id="4_sopfb"]
+[ext_resource type="AudioStream" uid="uid://byldpm2l7ffo3" path="res://assets/audio/player/footsteps/Footsteps_Rock_Run_05.wav" id="5_k7416"]
+[ext_resource type="AudioStream" uid="uid://bp6ybjmu7krf6" path="res://assets/audio/player/footsteps/Footsteps_Rock_Run_06.wav" id="6_21kxg"]
+[ext_resource type="AudioStream" uid="uid://8xxs5gqsne2k" path="res://assets/audio/player/footsteps/Footsteps_Rock_Run_07.wav" id="7_lrwet"]
+[ext_resource type="AudioStream" uid="uid://ddsw5j2w3wmve" path="res://assets/audio/player/footsteps/Footsteps_Rock_Run_08.wav" id="8_14w3q"]
+[ext_resource type="AudioStream" uid="uid://dpk5q3bntfwy4" path="res://assets/audio/player/footsteps/Footsteps_Rock_Run_09.wav" id="9_er5uk"]
+[ext_resource type="AudioStream" uid="uid://c70ykwjuhaw2q" path="res://assets/audio/player/footsteps/Footsteps_Rock_Run_10.wav" id="10_56efn"]
+
+[resource]
+streams_count = 10
+stream_0/stream = ExtResource("1_3pso8")
+stream_1/stream = ExtResource("2_tuvlw")
+stream_2/stream = ExtResource("3_uiegp")
+stream_3/stream = ExtResource("4_sopfb")
+stream_4/stream = ExtResource("5_k7416")
+stream_5/stream = ExtResource("6_21kxg")
+stream_6/stream = ExtResource("7_lrwet")
+stream_7/stream = ExtResource("8_14w3q")
+stream_8/stream = ExtResource("9_er5uk")
+stream_9/stream = ExtResource("10_56efn")

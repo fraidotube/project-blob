@@ -18,10 +18,23 @@ const FOOTSTEP_WALK_INTERVAL := 0.45
 const FOOTSTEP_SPRINT_INTERVAL := 0.30
 const FOOTSTEP_CROUCH_INTERVAL := 0.60
 
+const LAND_MIN_SPEED := -2.0
+
 @export var max_health := 100
 
 @export var footsteps_parquet: AudioStream
+
 @export var footsteps_tile: AudioStream
+@export var footsteps_tile_run: AudioStream
+
+@export var footsteps_rock: AudioStream
+@export var footsteps_rock_run: AudioStream
+
+@export var jump_tile_start: AudioStream
+@export var jump_tile_land: AudioStream
+
+@export var jump_rock_start: AudioStream
+@export var jump_rock_land: AudioStream
 
 @onready var head: Node3D = $Head
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
@@ -31,6 +44,9 @@ const FOOTSTEP_CROUCH_INTERVAL := 0.60
 @onready var footstep_audio: AudioStreamPlayer3D = $FootstepAudio
 @onready var footstep_timer: Timer = $FootstepTimer
 @onready var footstep_ray: RayCast3D = $FootstepRay
+
+@onready var jump_audio: AudioStreamPlayer3D = $JumpAudio
+@onready var land_audio: AudioStreamPlayer3D = $LandAudio
 
 var health: int
 var is_dead := false
@@ -125,6 +141,8 @@ func _physics_process(delta: float) -> void:
 		footstep_timer.stop()
 		return
 
+	var was_on_floor := is_on_floor()
+
 	_update_crouch(delta)
 
 	if not is_on_floor():
@@ -135,6 +153,7 @@ func _physics_process(delta: float) -> void:
 		and is_on_floor()
 		and not is_crouched
 	):
+		_play_jump_sound()
 		velocity.y = JUMP_VELOCITY
 
 	var is_sprinting := (
@@ -183,7 +202,19 @@ func _physics_process(delta: float) -> void:
 			speed
 		)
 
+	var vertical_speed_before_move := velocity.y
+
 	move_and_slide()
+
+	var just_landed := (
+		not was_on_floor
+		and is_on_floor()
+	)
+
+	if just_landed:
+		_play_landing_sound(
+			vertical_speed_before_move
+		)
 
 	weapon.set_movement_state(
 		is_moving,
@@ -191,11 +222,15 @@ func _physics_process(delta: float) -> void:
 	)
 
 	_update_footsteps(
-		is_sprinting
+		is_sprinting,
+		just_landed
 	)
 
 
-func _update_footsteps(is_sprinting: bool) -> void:
+func _update_footsteps(
+	is_sprinting: bool,
+	just_landed: bool
+) -> void:
 	if not is_on_floor():
 		footstep_timer.stop()
 		return
@@ -209,8 +244,18 @@ func _update_footsteps(is_sprinting: bool) -> void:
 		footstep_timer.stop()
 		return
 
+	var interval := _get_footstep_interval(
+		is_sprinting
+	)
+
+	if just_landed:
+		footstep_timer.start(interval)
+		return
+
 	if footstep_timer.is_stopped():
-		var footstep_stream := _get_footstep_stream()
+		var footstep_stream := _get_footstep_stream(
+			is_sprinting
+		)
 
 		if footstep_stream == null:
 			return
@@ -218,39 +263,112 @@ func _update_footsteps(is_sprinting: bool) -> void:
 		footstep_audio.stream = footstep_stream
 		footstep_audio.play()
 
-		var interval := FOOTSTEP_WALK_INTERVAL
-
-		if is_crouched:
-			interval = FOOTSTEP_CROUCH_INTERVAL
-		elif is_sprinting:
-			interval = FOOTSTEP_SPRINT_INTERVAL
-
 		footstep_timer.start(interval)
 
 
-func _get_footstep_stream() -> AudioStream:
+func _get_footstep_interval(
+	is_sprinting: bool
+) -> float:
+	if is_crouched:
+		return FOOTSTEP_CROUCH_INTERVAL
+
+	if is_sprinting:
+		return FOOTSTEP_SPRINT_INTERVAL
+
+	return FOOTSTEP_WALK_INTERVAL
+
+
+func _get_surface_type() -> String:
 	footstep_ray.force_raycast_update()
 
 	if not footstep_ray.is_colliding():
-		return null
+		return ""
 
 	var collider := footstep_ray.get_collider()
 
 	if collider == null:
-		return null
+		return ""
 
 	var current_node: Node = collider
 
 	while current_node != null:
+		if current_node.is_in_group("surface_rock"):
+			return "rock"
+
 		if current_node.is_in_group("surface_tile"):
-			return footsteps_tile
+			return "tile"
 
 		if current_node.is_in_group("surface_parquet"):
-			return footsteps_parquet
+			return "parquet"
 
 		current_node = current_node.get_parent()
 
+	return ""
+
+
+func _get_footstep_stream(
+	is_sprinting: bool
+) -> AudioStream:
+	var surface_type := _get_surface_type()
+
+	match surface_type:
+		"rock":
+			if (
+				is_sprinting
+				and footsteps_rock_run != null
+			):
+				return footsteps_rock_run
+
+			return footsteps_rock
+
+		"tile":
+			if (
+				is_sprinting
+				and footsteps_tile_run != null
+			):
+				return footsteps_tile_run
+
+			return footsteps_tile
+
+		"parquet":
+			return footsteps_parquet
+
 	return null
+
+
+func _play_jump_sound() -> void:
+	var surface_type := _get_surface_type()
+
+	match surface_type:
+		"rock":
+			if jump_rock_start != null:
+				jump_audio.stream = jump_rock_start
+				jump_audio.play()
+
+		"tile":
+			if jump_tile_start != null:
+				jump_audio.stream = jump_tile_start
+				jump_audio.play()
+
+
+func _play_landing_sound(
+	vertical_speed: float
+) -> void:
+	if vertical_speed > LAND_MIN_SPEED:
+		return
+
+	var surface_type := _get_surface_type()
+
+	match surface_type:
+		"rock":
+			if jump_rock_land != null:
+				land_audio.stream = jump_rock_land
+				land_audio.play()
+
+		"tile":
+			if jump_tile_land != null:
+				land_audio.stream = jump_tile_land
+				land_audio.play()
 
 
 func _update_crouch(delta: float) -> void:

@@ -1,15 +1,17 @@
 [gd_resource type="AudioStreamRandomizer" format=3 uid="uid://c7kd8r2ao12p2"]
 
-[ext_resource type="AudioStream" uid="uid://c0rx64xdmmpaf" path="res://assets/audio/player/footsteps/Tile_Mono_01.wav" id="1_0mm7y"]
-[ext_resource type="AudioStream" uid="uid://230mgripbwj0" path="res://assets/audio/player/footsteps/Tile_Mono_02.wav" id="2_w7gjl"]
-[ext_resource type="AudioStream" uid="uid://b5bcbi1rvr381" path="res://assets/audio/player/footsteps/Tile_Mono_03.wav" id="3_d5jqs"]
-[ext_resource type="AudioStream" uid="uid://132uue0ehlrl" path="res://assets/audio/player/footsteps/Tile_Mono_04.wav" id="4_2yy0m"]
-[ext_resource type="AudioStream" uid="uid://c4i0klvv3e60i" path="res://assets/audio/player/footsteps/Tile_Mono_05.wav" id="5_6ct07"]
+[ext_resource type="AudioStream" uid="uid://c2qcfwrv8me68" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_01.wav" id="1_w7gjl"]
+[ext_resource type="AudioStream" uid="uid://30ldy4olhu5" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_02.wav" id="2_d5jqs"]
+[ext_resource type="AudioStream" uid="uid://dj3ix7i20tqsw" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_03.wav" id="3_2yy0m"]
+[ext_resource type="AudioStream" uid="uid://bahncb18vrds4" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_04.wav" id="4_6ct07"]
+[ext_resource type="AudioStream" uid="uid://bgpx4g8spnmgg" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_05.wav" id="5_ld2ij"]
+[ext_resource type="AudioStream" uid="uid://dsjwi2hcdusn0" path="res://assets/audio/player/footsteps/Footsteps_Tile_Run_06.wav" id="6_jpg5h"]
 
 [resource]
-streams_count = 5
-stream_0/stream = ExtResource("1_0mm7y")
-stream_1/stream = ExtResource("2_w7gjl")
-stream_2/stream = ExtResource("3_d5jqs")
-stream_3/stream = ExtResource("4_2yy0m")
-stream_4/stream = ExtResource("5_6ct07")
+streams_count = 6
+stream_0/stream = ExtResource("1_w7gjl")
+stream_1/stream = ExtResource("2_d5jqs")
+stream_2/stream = ExtResource("3_2yy0m")
+stream_3/stream = ExtResource("4_6ct07")
+stream_4/stream = ExtResource("5_ld2ij")
+stream_5/stream = ExtResource("6_jpg5h")

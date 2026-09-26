@@ -1,0 +1,11 @@
+[gd_resource type="AudioStreamRandomizer" format=3 uid="uid://c4a1bmw8vivnb"]
+
+[ext_resource type="AudioStream" uid="uid://ke3fgs3owq2v" path="res://assets/audio/player/jump_land/Footsteps_Tile_Jump_Land_01.wav" id="1_5n5yn"]
+[ext_resource type="AudioStream" uid="uid://cbtrxcx2w5sko" path="res://assets/audio/player/jump_land/Footsteps_Tile_Jump_Land_02.wav" id="2_u7k86"]
+[ext_resource type="AudioStream" uid="uid://xrkldvrp024n" path="res://assets/audio/player/jump_land/Footsteps_Tile_Jump_Land_03.wav" id="3_knh02"]
+
+[resource]
+streams_count = 3
+stream_0/stream = ExtResource("1_5n5yn")
+stream_1/stream = ExtResource("2_u7k86")
+stream_2/stream = ExtResource("3_knh02")

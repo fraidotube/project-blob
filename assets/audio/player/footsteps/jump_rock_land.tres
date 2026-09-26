@@ -1,0 +1,17 @@
+[gd_resource type="AudioStreamRandomizer" format=3 uid="uid://b7wiy16aqbxys"]
+
+[ext_resource type="AudioStream" uid="uid://b7q5yp64c1t77" path="res://assets/audio/player/jump_land/Footsteps_Rock_Jump_Land_01.wav" id="1_l3u8r"]
+[ext_resource type="AudioStream" uid="uid://dsr7e7bdmvvsd" path="res://assets/audio/player/jump_land/Footsteps_Rock_Jump_Land_02.wav" id="2_0pvr6"]
+[ext_resource type="AudioStream" uid="uid://c7it4vxw2nb7t" path="res://assets/audio/player/jump_land/Footsteps_Rock_Jump_Land_03.wav" id="3_1wtub"]
+[ext_resource type="AudioStream" uid="uid://cd7l7a684hldr" path="res://assets/audio/player/jump_land/Footsteps_Rock_Jump_Land_04.wav" id="4_4pqcc"]
+[ext_resource type="AudioStream" uid="uid://cavr13dkpnwp2" path="res://assets/audio/player/jump_land/Footsteps_Rock_Jump_Land_05.wav" id="5_n6fx5"]
+[ext_resource type="AudioStream" uid="uid://7qdn7xnde877" path="res://assets/audio/player/jump_land/Footsteps_Rock_Jump_Land_06.wav" id="6_ot1lw"]
+
+[resource]
+streams_count = 6
+stream_0/stream = ExtResource("1_l3u8r")
+stream_1/stream = ExtResource("2_0pvr6")
+stream_2/stream = ExtResource("3_1wtub")
+stream_3/stream = ExtResource("4_4pqcc")
+stream_4/stream = ExtResource("5_n6fx5")
+stream_5/stream = ExtResource("6_ot1lw")

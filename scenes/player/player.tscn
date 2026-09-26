@@ -4,7 +4,14 @@
 [ext_resource type="Script" uid="uid://b2ewp6spvmhdj" path="res://scripts/weapons/weapon.gd" id="2_dovo2"]
 [ext_resource type="PackedScene" uid="uid://duxcde5ki6v5x" path="res://scenes/weapons/lowworld_viewmodel.tscn" id="3_gmlin"]
 [ext_resource type="AudioStream" uid="uid://c7kd8r2ao12p2" path="res://assets/audio/player/footsteps/footsteps_tile.tres" id="3_p47bc"]
+[ext_resource type="AudioStream" uid="uid://bq61spvv6nj0k" path="res://assets/audio/player/footsteps/footsteps_tile_run.tres" id="4_fm80t"]
 [ext_resource type="AudioStream" uid="uid://bnlqelnj1kc7q" path="res://assets/audio/player/footsteps/footsteps_parquet.tres" id="4_lvxji"]
+[ext_resource type="AudioStream" uid="uid://d1jtudjctj656" path="res://assets/audio/player/footsteps/footsteps_rock.tres" id="5_gx1jg"]
+[ext_resource type="AudioStream" uid="uid://b21kws5gpsdrb" path="res://assets/audio/player/footsteps/footsteps_rock_run.tres" id="6_75vfm"]
+[ext_resource type="AudioStream" uid="uid://6f5r04uq30sh" path="res://assets/audio/player/footsteps/jump_tile_start.tres" id="7_ugbui"]
+[ext_resource type="AudioStream" uid="uid://c4a1bmw8vivnb" path="res://assets/audio/player/footsteps/jump_tile_land.tres" id="8_fcs02"]
+[ext_resource type="AudioStream" uid="uid://bkeb4paikacj8" path="res://assets/audio/player/footsteps/jump_rock_start.tres" id="9_myrg7"]
+[ext_resource type="AudioStream" uid="uid://b7wiy16aqbxys" path="res://assets/audio/player/footsteps/jump_rock_land.tres" id="10_kvlxm"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
 radius = 0.4
@@ -18,6 +25,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8796772, 0)
 script = ExtResource("1_8afob")
 footsteps_parquet = ExtResource("4_lvxji")
 footsteps_tile = ExtResource("3_p47bc")
+footsteps_tile_run = ExtResource("4_fm80t")
+footsteps_rock = ExtResource("5_gx1jg")
+footsteps_rock_run = ExtResource("6_75vfm")
+jump_tile_start = ExtResource("7_ugbui")
+jump_tile_land = ExtResource("8_fcs02")
+jump_rock_start = ExtResource("9_myrg7")
+jump_rock_land = ExtResource("10_kvlxm")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1140553579]
 shape = SubResource("CapsuleShape3D_hbjui")
@@ -53,7 +67,7 @@ collision_mask = 2
 collide_with_areas = true
 
 [node name="FootstepAudio" type="AudioStreamPlayer3D" parent="." unique_id=1134358108]
-stream = ExtResource("4_lvxji")
+stream = ExtResource("6_75vfm")
 volume_db = -8.0
 
 [node name="FootstepTimer" type="Timer" parent="." unique_id=690385103]
@@ -62,3 +76,9 @@ one_shot = true
 
 [node name="FootstepRay" type="RayCast3D" parent="." unique_id=121513376]
 target_position = Vector3(0, -1.5, 0)
+
+[node name="JumpAudio" type="AudioStreamPlayer3D" parent="." unique_id=111221126]
+volume_db = -8.0
+
+[node name="LandAudio" type="AudioStreamPlayer3D" parent="." unique_id=392142125]
+volume_db = -8.0
