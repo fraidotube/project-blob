@@ -125,6 +125,15 @@ var viewmodel_base_position: Vector3
 
 
 # ------------------------------------------------------------
+# AUDIO TORCIA
+# ------------------------------------------------------------
+
+@onready var flashlight_click_audio: AudioStreamPlayer = (
+	$FlashlightClickAudio
+)
+
+
+# ------------------------------------------------------------
 # LOW WORLD VIEWMODEL
 # ------------------------------------------------------------
 
@@ -167,13 +176,7 @@ var viewmodel_base_position: Vector3
 )
 
 @onready var flashlight_light: SpotLight3D = (
-	$LowWorldViewModel
-	/smesh_arms_male
-	/rig_arms
-	/Skeleton3D
-	/FlashlightSocket
-	/Flashlight
-	/FlashlightLight
+	$"../FlashlightBeam"
 )
 
 
@@ -572,6 +575,9 @@ func toggle_flashlight() -> void:
 		return
 
 	flashlight_on = not flashlight_on
+
+	if flashlight_click_audio.stream != null:
+		flashlight_click_audio.play()
 
 	flashlight_light.visible = (
 		flashlight_on
