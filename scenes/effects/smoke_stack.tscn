@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://cuc5q0l4apn64"]
+
+[ext_resource type="Shader" uid="uid://esc47crfui3r" path="res://assets/vfx/smoke.gdshader" id="1_4wcc8"]
+[ext_resource type="Script" uid="uid://bb8om1llpotam" path="res://scripts/vfx/smoke_stack.gd" id="1_lg8ms"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hyfr5"]
+render_priority = 0
+shader = ExtResource("1_4wcc8")
+shader_parameter/scale = 1.0
+shader_parameter/tex_speed = Vector3(0, -0.6, 0.5)
+shader_parameter/mokomoko = Vector2(0.1, 0.1)
+shader_parameter/smoke_volume = 0.850000040375
+shader_parameter/smoke_aperture = 0.28
+shader_parameter/density = 1.0
+shader_parameter/smoke_color = Color(0.36078432, 0.3529412, 0.3372549, 0.8509804)
+
+[sub_resource type="QuadMesh" id="QuadMesh_hbjui"]
+size = Vector2(2, 3)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_e5yi3"]
+render_priority = 0
+shader = ExtResource("1_4wcc8")
+shader_parameter/scale = 1.0
+shader_parameter/tex_speed = Vector3(0, -0.48, 0.5)
+shader_parameter/mokomoko = Vector2(0.1, 0.1)
+shader_parameter/smoke_volume = 0.7200000342
+shader_parameter/smoke_aperture = 0.28
+shader_parameter/density = 1.0
+shader_parameter/smoke_color = Color(0.42352942, 0.4117647, 0.39215687, 0.78039217)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wj3gk"]
+render_priority = 0
+shader = ExtResource("1_4wcc8")
+shader_parameter/scale = 1.0
+shader_parameter/tex_speed = Vector3(0, -0.72, 0.5)
+shader_parameter/mokomoko = Vector2(0.1, 0.1)
+shader_parameter/smoke_volume = 0.78000003705
+shader_parameter/smoke_aperture = 0.28
+shader_parameter/density = 1.0
+shader_parameter/smoke_color = Color(0.47843137, 0.46666667, 0.44313726, 0.7490196)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t1mj2"]
+render_priority = 0
+shader = ExtResource("1_4wcc8")
+shader_parameter/scale = 1.0
+shader_parameter/tex_speed = Vector3(0, -0.4, 0.65)
+shader_parameter/mokomoko = Vector2(0.1, 0.1)
+shader_parameter/smoke_volume = 0.850000040375
+shader_parameter/smoke_aperture = 0.28
+shader_parameter/density = 1.0
+shader_parameter/smoke_color = Color(0.5411765, 0.5294118, 0.5019608, 0.65882355)
+
+[node name="SmokeStack" type="Node3D" unique_id=898911274]
+script = ExtResource("1_lg8ms")
+
+[node name="SmokePlane_01" type="MeshInstance3D" parent="." unique_id=2065505787]
+material_override = SubResource("ShaderMaterial_hyfr5")
+mesh = SubResource("QuadMesh_hbjui")
+
+[node name="SmokePlane_02" type="MeshInstance3D" parent="." unique_id=1039368880]
+transform = Transform3D(0.85, 0, 0, 0, 1.1, 0, 0, 0, 0.85, 0.18, 0.2, 0.08)
+material_override = SubResource("ShaderMaterial_e5yi3")
+mesh = SubResource("QuadMesh_hbjui")
+
+[node name="SmokePlane_03" type="MeshInstance3D" parent="." unique_id=1017868735]
+transform = Transform3D(1.1, 0, 0, 0, 0.9, 0, 0, 0, 1.1, -0.15, 0.45, -0.05)
+material_override = SubResource("ShaderMaterial_wj3gk")
+mesh = SubResource("QuadMesh_hbjui")
+
+[node name="SmokePlane_04" type="MeshInstance3D" parent="." unique_id=968770513]
+transform = Transform3D(0.75, 0, 0, 0, 1.2, 0, 0, 0, 0.75, 0.08, 0.75, 0.12)
+material_override = SubResource("ShaderMaterial_t1mj2")
+mesh = SubResource("QuadMesh_hbjui")
