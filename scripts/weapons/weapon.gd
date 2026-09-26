@@ -96,6 +96,35 @@ var viewmodel_base_position: Vector3
 
 
 # ------------------------------------------------------------
+# AUDIO PISTOLA
+# ------------------------------------------------------------
+
+@onready var shot_audio: AudioStreamPlayer = (
+	$ShotAudio
+)
+
+@onready var empty_audio: AudioStreamPlayer = (
+	$EmptyAudio
+)
+
+@onready var reload_audio: AudioStreamPlayer = (
+	$ReloadAudio
+)
+
+@onready var ready_audio: AudioStreamPlayer = (
+	$ReadyAudio
+)
+
+@onready var shell_casing_audio: AudioStreamPlayer = (
+	$ShellCasingAudio
+)
+
+@onready var shell_casing_timer: Timer = (
+	$ShellCasingTimer
+)
+
+
+# ------------------------------------------------------------
 # LOW WORLD VIEWMODEL
 # ------------------------------------------------------------
 
@@ -203,6 +232,10 @@ func _ready() -> void:
 
 	arms_animation_player.animation_finished.connect(
 		_on_arms_animation_finished
+	)
+
+	shell_casing_timer.timeout.connect(
+		_on_shell_casing_timer_timeout
 	)
 
 	get_tree().call_group(
@@ -432,6 +465,9 @@ func equip_owned_pistol() -> void:
 
 	update_ammo_hud()
 
+	if ready_audio.stream != null:
+		ready_audio.play()
+
 	if arms_animation_player.has_animation(
 		"a_arms_pistol_start"
 	):
@@ -496,9 +532,6 @@ func equip_owned_flashlight() -> void:
 		"update_flashlight_battery",
 		flashlight_charge
 	)
-
-	# Nessuna animazione START in questa prova.
-	# Partiamo direttamente dalla HOLD IDLE originale.
 
 	if not arms_animation_player.has_animation(
 		"a_arms_hold_idle"
@@ -779,6 +812,9 @@ func fire_pistol() -> void:
 		return
 
 	if magazine_ammo <= 0:
+		if empty_audio.stream != null:
+			empty_audio.play()
+
 		return
 
 	magazine_ammo -= 1
@@ -792,6 +828,9 @@ func fire_pistol() -> void:
 	)
 
 	current_locomotion_animation = ""
+
+	if shot_audio.stream != null:
+		shot_audio.play()
 
 	if arms_animation_player.has_animation(
 		"a_arms_pistol_attack1"
@@ -809,6 +848,8 @@ func fire_pistol() -> void:
 		)
 
 	show_muzzle_flash()
+
+	shell_casing_timer.start()
 
 	weapon_ray.force_raycast_update()
 
@@ -904,6 +945,17 @@ func fire_pistol() -> void:
 
 
 # ============================================================
+# AUDIO BOSSOLI
+# ============================================================
+
+func _on_shell_casing_timer_timeout() -> void:
+	if shell_casing_audio.stream == null:
+		return
+
+	shell_casing_audio.play()
+
+
+# ============================================================
 # BULLET IMPACT
 # ============================================================
 
@@ -959,6 +1011,9 @@ func reload() -> void:
 	can_attack = false
 
 	current_locomotion_animation = ""
+
+	if reload_audio.stream != null:
+		reload_audio.play()
 
 	if arms_animation_player.has_animation(
 		"a_arms_pistol_reload"
