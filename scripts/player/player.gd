@@ -14,12 +14,23 @@ const CROUCH_HEAD_Y := 0.45
 
 const CROUCH_TRANSITION_SPEED := 8.0
 
+const FOOTSTEP_WALK_INTERVAL := 0.45
+const FOOTSTEP_SPRINT_INTERVAL := 0.30
+const FOOTSTEP_CROUCH_INTERVAL := 0.60
+
 @export var max_health := 100
+
+@export var footsteps_parquet: AudioStream
+@export var footsteps_tile: AudioStream
 
 @onready var head: Node3D = $Head
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var weapon: Node3D = $Head/Camera3D/WeaponHolder
 @onready var interact_ray: RayCast3D = $Head/Camera3D/InteractRay
+
+@onready var footstep_audio: AudioStreamPlayer3D = $FootstepAudio
+@onready var footstep_timer: Timer = $FootstepTimer
+@onready var footstep_ray: RayCast3D = $FootstepRay
 
 var health: int
 var is_dead := false
@@ -92,7 +103,7 @@ func try_interact() -> void:
 		return
 
 	var collider := interact_ray.get_collider()
-	
+
 	print("INTERACT COLLIDER: ", collider)
 
 	if collider == null:
@@ -111,6 +122,7 @@ func try_interact() -> void:
 func _physics_process(delta: float) -> void:
 	if is_dead:
 		velocity = Vector3.ZERO
+		footstep_timer.stop()
 		return
 
 	_update_crouch(delta)
@@ -178,6 +190,68 @@ func _physics_process(delta: float) -> void:
 		is_sprinting
 	)
 
+	_update_footsteps(
+		is_sprinting
+	)
+
+
+func _update_footsteps(is_sprinting: bool) -> void:
+	if not is_on_floor():
+		footstep_timer.stop()
+		return
+
+	var horizontal_speed := Vector2(
+		velocity.x,
+		velocity.z
+	).length()
+
+	if horizontal_speed < 0.2:
+		footstep_timer.stop()
+		return
+
+	if footstep_timer.is_stopped():
+		var footstep_stream := _get_footstep_stream()
+
+		if footstep_stream == null:
+			return
+
+		footstep_audio.stream = footstep_stream
+		footstep_audio.play()
+
+		var interval := FOOTSTEP_WALK_INTERVAL
+
+		if is_crouched:
+			interval = FOOTSTEP_CROUCH_INTERVAL
+		elif is_sprinting:
+			interval = FOOTSTEP_SPRINT_INTERVAL
+
+		footstep_timer.start(interval)
+
+
+func _get_footstep_stream() -> AudioStream:
+	footstep_ray.force_raycast_update()
+
+	if not footstep_ray.is_colliding():
+		return null
+
+	var collider := footstep_ray.get_collider()
+
+	if collider == null:
+		return null
+
+	var current_node: Node = collider
+
+	while current_node != null:
+		if current_node.is_in_group("surface_tile"):
+			return footsteps_tile
+
+		if current_node.is_in_group("surface_parquet"):
+			return footsteps_parquet
+
+		current_node = current_node.get_parent()
+
+	return null
+
 
 func _update_crouch(delta: float) -> void:
 	var wants_to_crouch := Input.is_action_pressed("crouch")
@@ -207,8 +281,6 @@ func _update_crouch(delta: float) -> void:
 
 	capsule.height = new_height
 
-	# Mantiene i piedi alla stessa altezza mentre cambia
-	# l'altezza della capsula.
 	collision_shape.position.y = -(
 		STAND_HEIGHT - new_height
 	) * 0.5
@@ -231,9 +303,6 @@ func _can_stand_up() -> bool:
 	if missing_height <= 0.01:
 		return true
 
-	# Prova virtualmente a spostare verso l'alto la capsula
-	# accovacciata. Se incontra qualcosa, non c'è spazio
-	# sufficiente per rialzarsi.
 	return not test_move(
 		global_transform,
 		Vector3.UP * missing_height
@@ -278,6 +347,8 @@ func take_damage(amount: int) -> void:
 func die() -> void:
 	is_dead = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+
+	footstep_timer.stop()
 
 	get_tree().call_group(
 		"hud",

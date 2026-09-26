@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://dql217vdoqylx" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Script" uid="uid://b2ewp6spvmhdj" path="res://scripts/weapons/weapon.gd" id="2_dovo2"]
 [ext_resource type="PackedScene" uid="uid://duxcde5ki6v5x" path="res://scenes/weapons/lowworld_viewmodel.tscn" id="3_gmlin"]
+[ext_resource type="AudioStream" uid="uid://c7kd8r2ao12p2" path="res://assets/audio/player/footsteps/footsteps_tile.tres" id="3_p47bc"]
+[ext_resource type="AudioStream" uid="uid://bnlqelnj1kc7q" path="res://assets/audio/player/footsteps/footsteps_parquet.tres" id="4_lvxji"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
 radius = 0.4
@@ -14,6 +16,8 @@ radius = 0.38
 [node name="Player" type="CharacterBody3D" unique_id=432704500 groups=["player"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8796772, 0)
 script = ExtResource("1_8afob")
+footsteps_parquet = ExtResource("4_lvxji")
+footsteps_tile = ExtResource("3_p47bc")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1140553579]
 shape = SubResource("CapsuleShape3D_hbjui")
@@ -47,3 +51,14 @@ target_position = Vector3(0, 0, -0.9)
 target_position = Vector3(0, 0, -2)
 collision_mask = 2
 collide_with_areas = true
+
+[node name="FootstepAudio" type="AudioStreamPlayer3D" parent="." unique_id=1134358108]
+stream = ExtResource("4_lvxji")
+volume_db = -8.0
+
+[node name="FootstepTimer" type="Timer" parent="." unique_id=690385103]
+wait_time = 0.45
+one_shot = true
+
+[node name="FootstepRay" type="RayCast3D" parent="." unique_id=121513376]
+target_position = Vector3(0, -1.5, 0)

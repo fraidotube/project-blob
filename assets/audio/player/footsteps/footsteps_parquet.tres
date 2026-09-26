@@ -1,0 +1,15 @@
+[gd_resource type="AudioStreamRandomizer" format=3 uid="uid://bnlqelnj1kc7q"]
+
+[ext_resource type="AudioStream" uid="uid://c8m1s5dnhjwtu" path="res://assets/audio/player/footsteps/Parquet_Floor_Mono_01.wav" id="1_algg3"]
+[ext_resource type="AudioStream" uid="uid://hc2aablk4bnd" path="res://assets/audio/player/footsteps/Parquet_Floor_Mono_02.wav" id="2_xb40n"]
+[ext_resource type="AudioStream" uid="uid://cd5c6lrh1saeo" path="res://assets/audio/player/footsteps/Parquet_Floor_Mono_03.wav" id="3_q6uyc"]
+[ext_resource type="AudioStream" uid="uid://dumcb6hnpe28x" path="res://assets/audio/player/footsteps/Parquet_Floor_Mono_04.wav" id="4_tvhv7"]
+[ext_resource type="AudioStream" uid="uid://bjj5q3e4vwuca" path="res://assets/audio/player/footsteps/Parquet_Floor_Mono_05.wav" id="5_60s3p"]
+
+[resource]
+streams_count = 5
+stream_0/stream = ExtResource("1_algg3")
+stream_1/stream = ExtResource("2_xb40n")
+stream_2/stream = ExtResource("3_q6uyc")
+stream_3/stream = ExtResource("4_tvhv7")
+stream_4/stream = ExtResource("5_60s3p")
