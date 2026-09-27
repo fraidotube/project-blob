@@ -18,7 +18,9 @@
 [ext_resource type="AudioStream" uid="uid://bcde5urnj7omb" path="res://assets/audio/weapons/pistol/gunready.ogg" id="16_8ydkj"]
 [ext_resource type="AudioStream" uid="uid://yfp5l2tv3ua" path="res://assets/audio/player/footsteps/pistol_shell_casings.tres" id="17_3j4b4"]
 [ext_resource type="AudioStream" uid="uid://ckeqqnh7l24xg" path="res://assets/audio/weapons/pistol/guntoggles.ogg" id="18_uf5tr"]
+[ext_resource type="Texture2D" uid="uid://c6ivkfjw1ht2s" path="res://assets/textures/flashlight_cookie_soft_irregular.png" id="19_8ydkj"]
 [ext_resource type="Script" uid="uid://b3c2ab60a3gn" path="res://scripts/weapons/flashlight_beam_follow.gd" id="19_lgqa7"]
+[ext_resource type="PackedScene" path="res://scenes/ui/interaction_system.tscn" id="21_3j4b4"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
 radius = 0.4
@@ -54,6 +56,7 @@ target_position = Vector3(0, 0, -100)
 [node name="WeaponHolder" type="Node3D" parent="Head/Camera3D" unique_id=213853436]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.25, -0.55)
 script = ExtResource("2_dovo2")
+flashlight_drain_per_second = 10.0
 
 [node name="LowWorldViewModel" parent="Head/Camera3D/WeaponHolder" unique_id=514129486 instance=ExtResource("3_gmlin")]
 transform = Transform3D(-3, 0, -4.5298742e-07, 0, 3, 0, 4.5298742e-07, 0, -3, -0.111851215, 0.11060953, 0.16929638)
@@ -98,20 +101,21 @@ target_position = Vector3(0, 0, -2)
 collision_mask = 2
 collide_with_areas = true
 
-[node name="FlashlightBeam" type="SpotLight3D" parent="Head/Camera3D" unique_id=1871386271 node_paths=PackedStringArray("rotation_source")]
+[node name="FlashlightBeam" type="SpotLight3D" parent="Head/Camera3D" unique_id=1871386271]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.05)
 light_color = Color(1, 1, 0.7647059, 1)
-light_energy = 4.0
-light_volumetric_fog_energy = 5.0
+light_energy = 2.0
+light_volumetric_fog_energy = 0.8
+light_projector = ExtResource("19_8ydkj")
 shadow_enabled = true
-spot_range = 25.0
-spot_angle = 20.0
+spot_range = 15.0
+spot_angle = 17.0
+spot_angle_attenuation = 0.35
 script = ExtResource("19_lgqa7")
-rotation_source = NodePath("../WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/FlashlightSocket/Flashlight/FlashlightLight")
 
 [node name="FootstepAudio" type="AudioStreamPlayer3D" parent="." unique_id=1134358108]
 stream = ExtResource("6_75vfm")
-volume_db = -8.0
+volume_db = -14.0
 
 [node name="FootstepTimer" type="Timer" parent="." unique_id=690385103]
 wait_time = 0.45
@@ -125,6 +129,8 @@ volume_db = -8.0
 
 [node name="LandAudio" type="AudioStreamPlayer3D" parent="." unique_id=392142125]
 volume_db = -8.0
+
+[node name="InteractionSystem" parent="." unique_id=322344732 instance=ExtResource("21_3j4b4")]
 
 [editable path="Head/Camera3D/WeaponHolder/LowWorldViewModel"]
 [editable path="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male"]

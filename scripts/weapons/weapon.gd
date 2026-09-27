@@ -40,11 +40,16 @@ var reserve_ammo: int = 36
 
 
 # ------------------------------------------------------------
-# TORCIA
+# TORCIA / BATTERIE
 # ------------------------------------------------------------
+
+@export var flashlight_drain_per_second := 2.0
+@export var starting_spare_batteries := 0
+@export var max_spare_batteries := 5
 
 var flashlight_charge := 100.0
 var flashlight_on := false
+var spare_batteries := 0
 
 
 # ------------------------------------------------------------
@@ -227,6 +232,11 @@ func _ready() -> void:
 
 	flashlight_on = false
 	flashlight_charge = 100.0
+	spare_batteries = clampi(
+		starting_spare_batteries,
+		0,
+		max_spare_batteries
+	)
 
 	magazine_ammo = pistol_magazine_size
 	reserve_ammo = starting_reserve_ammo
@@ -279,9 +289,95 @@ func _process(delta: float) -> void:
 			muzzle_flash_time_left = 0.0
 			muzzle_flash.visible = false
 
+	_update_flashlight_battery(delta)
+
 
 func _physics_process(delta: float) -> void:
 	update_viewmodel_wall_push(delta)
+
+
+# ============================================================
+# BATTERIA TORCIA
+# ============================================================
+
+func _update_flashlight_battery(delta: float) -> void:
+	if not flashlight_on:
+		return
+
+	if flashlight_charge <= 0.0:
+		_deplete_flashlight_battery()
+		return
+
+	flashlight_charge -= (
+		flashlight_drain_per_second * delta
+	)
+
+	flashlight_charge = clampf(
+		flashlight_charge,
+		0.0,
+		100.0
+	)
+
+	if is_flashlight_equipped():
+		update_flashlight_battery_hud()
+
+	if flashlight_charge <= 0.0:
+		_deplete_flashlight_battery()
+
+
+func _deplete_flashlight_battery() -> void:
+	flashlight_charge = 0.0
+	flashlight_on = false
+	flashlight_light.visible = false
+
+	if is_flashlight_equipped():
+		update_flashlight_battery_hud()
+
+
+func update_flashlight_battery_hud() -> void:
+	get_tree().call_group(
+		"hud",
+		"update_flashlight_battery",
+		flashlight_charge
+	)
+
+
+func add_flashlight_battery(
+	amount: int = 1
+) -> bool:
+	if amount <= 0:
+		return false
+
+	if spare_batteries >= max_spare_batteries:
+		return false
+
+	var previous_amount := spare_batteries
+
+	spare_batteries = mini(
+		spare_batteries + amount,
+		max_spare_batteries
+	)
+
+	return spare_batteries > previous_amount
+
+
+func reload_flashlight_battery() -> void:
+	if not owns_flashlight:
+		return
+
+	if not is_flashlight_equipped():
+		return
+
+	if flashlight_charge >= 100.0:
+		return
+
+	if spare_batteries <= 0:
+		return
+
+	spare_batteries -= 1
+	flashlight_charge = 100.0
+
+	update_flashlight_battery_hud()
 
 
 # ============================================================
@@ -530,11 +626,7 @@ func equip_owned_flashlight() -> void:
 		"TORCIA"
 	)
 
-	get_tree().call_group(
-		"hud",
-		"update_flashlight_battery",
-		flashlight_charge
-	)
+	update_flashlight_battery_hud()
 
 	if not arms_animation_player.has_animation(
 		"a_arms_hold_idle"
@@ -572,6 +664,7 @@ func toggle_flashlight() -> void:
 	if flashlight_charge <= 0.0:
 		flashlight_on = false
 		flashlight_light.visible = false
+		update_flashlight_battery_hud()
 		return
 
 	flashlight_on = not flashlight_on
@@ -997,6 +1090,10 @@ func spawn_bullet_impact(
 # ============================================================
 
 func reload() -> void:
+	if is_flashlight_equipped():
+		reload_flashlight_battery()
+		return
+
 	if not is_pistol_equipped():
 		return
 

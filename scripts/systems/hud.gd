@@ -3,6 +3,9 @@ extends CanvasLayer
 const HITMARKER_DURATION := 0.10
 const DAMAGE_FLASH_DURATION := 0.12
 
+const BATTERY_SEGMENTS := 8
+const BATTERY_SEGMENT_SIZE := 100.0 / BATTERY_SEGMENTS
+
 const FACE_0 = preload(
 	"res://assets/ui/hud/hud_face_0_v1.png"
 )
@@ -125,8 +128,6 @@ func _ready() -> void:
 	hide_flashlight_battery()
 
 	update_mission("TROVA UNA VIA D'USCITA")
-	
-
 
 
 # ============================================================
@@ -269,11 +270,27 @@ func update_flashlight_battery(
 		100.0
 	)
 
+	var displayed_charge := 0.0
+
+	if charge > 0.0:
+		displayed_charge = (
+			ceil(
+				charge / BATTERY_SEGMENT_SIZE
+			)
+			* BATTERY_SEGMENT_SIZE
+		)
+
+	displayed_charge = clampf(
+		displayed_charge,
+		0.0,
+		100.0
+	)
+
 	bullet_row.visible = false
 	battery_bar.visible = true
 	ammo_value.visible = true
 
-	battery_bar.value = charge
+	battery_bar.value = displayed_charge
 
 	ammo_value.text = (
 		"%d%%"

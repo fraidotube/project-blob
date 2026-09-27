@@ -78,7 +78,6 @@ bone_idx = 23
 
 [node name="Flashlight" parent="smesh_arms_male/rig_arms/Skeleton3D/FlashlightSocket" unique_id=873452566 instance=ExtResource("3_a6trc")]
 transform = Transform3D(0.35774615, -1.1452365, -0.021191001, 1.075005, 0.32802802, 0.42043108, -0.3954519, -0.1443236, 1.1237386, 0.042078793, 0.06877586, 0.023425296)
-visible = false
 
 [node name="FlashlightLight" type="SpotLight3D" parent="smesh_arms_male/rig_arms/Skeleton3D/FlashlightSocket/Flashlight" unique_id=184043557]
 transform = Transform3D(-0.46991414, -0.23778772, -0.64581865, -0.004596673, 0.7830776, -0.2849804, 0.68818915, -0.15713744, -0.4428861, 0.07973009, 0.013244674, 0.034940198)

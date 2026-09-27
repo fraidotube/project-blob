@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://c7vx37t8yqesg"]
+[gd_scene load_steps=4 format=3 uid="uid://c7vx37t8yqesg"]
 
 [ext_resource type="Script" uid="uid://bjtppuw1krf0x" path="res://scripts/pickups/pistol_pickup.gd" id="1_b2efb"]
 [ext_resource type="PackedScene" uid="uid://c4q8sikqhcy5h" path="res://SilverDelivery/Low_World_Base_Male_Character/scenes/prefab_pistol.tscn" id="2_bh4mi"]
@@ -7,6 +7,8 @@
 size = Vector3(1.5, 1, 1.5)
 
 [node name="PistolPickup" type="Area3D" unique_id=1172997143]
+collision_layer = 2
+collision_mask = 1
 script = ExtResource("1_b2efb")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=228876838]

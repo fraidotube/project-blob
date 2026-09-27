@@ -87,8 +87,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			deg_to_rad(89.0)
 		)
 
-	if event.is_action_pressed("interact"):
-		try_interact()
+	
 
 	if event.is_action_pressed("weapon_slot_1"):
 		weapon.select_weapon_slot(1)
@@ -112,27 +111,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 
-func try_interact() -> void:
-	interact_ray.force_raycast_update()
 
-	if not interact_ray.is_colliding():
-		return
-
-	var collider := interact_ray.get_collider()
-
-	print("INTERACT COLLIDER: ", collider)
-
-	if collider == null:
-		return
-
-	var current_node: Node = collider
-
-	while current_node != null:
-		if current_node.has_method("interact"):
-			current_node.interact()
-			return
-
-		current_node = current_node.get_parent()
 
 
 func _physics_process(delta: float) -> void:
@@ -437,6 +416,14 @@ func equip_flashlight() -> void:
 
 func add_ammo(amount: int) -> void:
 	weapon.add_ammo(amount)
+
+
+func add_flashlight_battery(
+	amount: int = 1
+) -> bool:
+	return weapon.add_flashlight_battery(
+		amount
+	)
 
 
 func take_damage(amount: int) -> void:

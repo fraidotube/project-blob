@@ -1,0 +1,56 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/systems/interaction_system.gd" id="1_system"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_prompt"]
+bg_color = Color(0.035, 0.04, 0.045, 0.82)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.72, 0.55, 0.30, 0.9)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="InteractionSystem" type="Node"]
+script = ExtResource("1_system")
+
+[node name="InteractionHUD" type="CanvasLayer" parent="."]
+layer = 20
+
+[node name="Prompt" type="Panel" parent="InteractionHUD"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -115.0
+offset_top = -205.0
+offset_right = 115.0
+offset_bottom = -135.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBox_prompt")
+
+[node name="Name" type="Label" parent="InteractionHUD/Prompt"]
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 218.0
+offset_bottom = 32.0
+theme_override_colors/font_color = Color(0.93, 0.89, 0.80, 1)
+theme_override_font_sizes/font_size = 17
+text = "PISTOLA"
+horizontal_alignment = 1
+
+[node name="Action" type="Label" parent="InteractionHUD/Prompt"]
+offset_left = 12.0
+offset_top = 36.0
+offset_right = 218.0
+offset_bottom = 60.0
+theme_override_colors/font_color = Color(0.95, 0.68, 0.28, 1)
+theme_override_font_sizes/font_size = 15
+text = "[ E ]  RACCOGLI"
+horizontal_alignment = 1

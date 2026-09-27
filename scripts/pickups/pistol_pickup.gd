@@ -1,45 +1,53 @@
 extends Area3D
 
+const OUTLINE_SHADER := preload("res://assets/shaders/interactable_outline.gdshader")
 
-var player_in_range: CharacterBody3D = null
+@export var interaction_name := "PISTOLA"
+@export var interaction_action := "RACCOGLI"
+@export var interaction_color := Color("e06a3d")
+
 var collected := false
+var outline_material: ShaderMaterial
+var outlined_meshes: Array[GeometryInstance3D] = []
 
 
 func _ready() -> void:
-	body_entered.connect(_on_body_entered)
-	body_exited.connect(_on_body_exited)
+	outline_material = ShaderMaterial.new()
+	outline_material.shader = OUTLINE_SHADER
+	outline_material.set_shader_parameter("outline_color", interaction_color)
+	outline_material.set_shader_parameter("outline_width", 0.012)
+	_collect_geometry($PistolVisual)
+	set_interaction_focus(false)
 
 
-func _process(_delta: float) -> void:
-	if collected:
+func _collect_geometry(node: Node) -> void:
+	if node is GeometryInstance3D:
+		outlined_meshes.append(node as GeometryInstance3D)
+	for child: Node in node.get_children():
+		_collect_geometry(child)
+
+
+func set_interaction_focus(enabled: bool) -> void:
+	for mesh: GeometryInstance3D in outlined_meshes:
+		mesh.material_overlay = outline_material if enabled else null
+
+
+func get_interaction_name() -> String:
+	return interaction_name
+
+
+func get_interaction_action() -> String:
+	return interaction_action
+
+
+func get_interaction_color() -> Color:
+	return interaction_color
+
+
+func interact(player: Node) -> void:
+	if collected or not player.has_method("equip_pistol"):
 		return
-
-	if player_in_range == null:
-		return
-
-	if Input.is_action_just_pressed("interact"):
-		collect()
-
-
-func _on_body_entered(body: Node3D) -> void:
-	if body.has_method("equip_pistol"):
-		player_in_range = body as CharacterBody3D
-
-
-func _on_body_exited(body: Node3D) -> void:
-	if body == player_in_range:
-		player_in_range = null
-
-
-func collect() -> void:
-	if player_in_range == null:
-		return
-
-	if collected:
-		return
-
 	collected = true
-
-	player_in_range.equip_pistol()
-
+	set_interaction_focus(false)
+	player.equip_pistol()
 	queue_free()
