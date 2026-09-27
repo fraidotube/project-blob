@@ -1,13 +1,13 @@
 extends Area3D
 
 const OUTLINE_SHADER := preload(
-	"res://assets/shaders/interactable_outline_screen.gdshader"
+	"res://assets/shaders/interactable_outline.gdshader"
 )
 
 @export var interaction_name := "BATTERIA 9V"
 @export var interaction_action := "RACCOGLI"
 @export var interaction_color := Color("f2ad47")
-@export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0025
+@export_range(0.0001, 0.05, 0.0001) var outline_width := 0.0015
 
 var collected := false
 var outline_material: ShaderMaterial
@@ -32,7 +32,8 @@ func _ready() -> void:
 
 func _collect_geometry(node: Node) -> void:
 	if node is GeometryInstance3D:
-		outlined_meshes.append(node as GeometryInstance3D)
+		var geometry := node as GeometryInstance3D
+		outlined_meshes.append(geometry)
 
 	for child: Node in node.get_children():
 		_collect_geometry(child)
@@ -43,7 +44,10 @@ func set_interaction_focus(enabled: bool) -> void:
 		if not is_instance_valid(mesh):
 			continue
 
-		mesh.material_overlay = outline_material if enabled else null
+		if enabled:
+			mesh.material_overlay = outline_material
+		else:
+			mesh.material_overlay = null
 
 
 func get_interaction_name() -> String:
@@ -72,4 +76,5 @@ func interact(player: Node) -> void:
 
 	collected = true
 	set_interaction_focus(false)
+
 	queue_free()

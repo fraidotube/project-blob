@@ -6,7 +6,64 @@ extends Node3D
 @export var auto_close := false
 @export var auto_close_delay := 3.0
 
-@onready var door_body: AnimatableBody3D = $DoorBody
+const OUTLINE_SHADER := preload(
+	"res://assets/shaders/interactable_outline_screen.gdshader"
+)
+
+@export var interaction_name := "PORTA"
+@export var interaction_color := Color("ffffff")
+@export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0015
+
+var outline_material: ShaderMaterial
+var outlined_meshes: Array[GeometryInstance3D] = []
+
+
+func _setup_interaction_outline() -> void:
+	outline_material = ShaderMaterial.new()
+	outline_material.shader = OUTLINE_SHADER
+	outline_material.set_shader_parameter(
+		"outline_color",
+		interaction_color
+	)
+	outline_material.set_shader_parameter(
+		"outline_width",
+		outline_width
+	)
+
+	outlined_meshes.clear()
+	_collect_interaction_geometry($DoorBody)
+	set_interaction_focus(false)
+
+
+func _collect_interaction_geometry(node: Node) -> void:
+	if node is GeometryInstance3D:
+		outlined_meshes.append(node as GeometryInstance3D)
+
+	for child: Node in node.get_children():
+		_collect_interaction_geometry(child)
+
+
+func set_interaction_focus(enabled: bool) -> void:
+	for mesh: GeometryInstance3D in outlined_meshes:
+		if not is_instance_valid(mesh):
+			continue
+
+		mesh.material_overlay = outline_material if enabled else null
+
+
+func get_interaction_name() -> String:
+	return interaction_name
+
+
+func get_interaction_action() -> String:
+	return "CHIUDI" if is_open else "APRI"
+
+
+func get_interaction_color() -> Color:
+	return interaction_color
+
+
+@onready var door_body: Node3D = $DoorBody
 @onready var area: Area3D = $Area3D
 
 var is_open := false
@@ -15,8 +72,6 @@ var target_rotation_y := 0.0
 
 var auto_close_timer: Timer
 var auto_close_pending := false
-
-# Trasformazione originale del DoorBody rispetto al root/cardine.
 var door_body_rest_transform: Transform3D
 
 
@@ -31,17 +86,16 @@ func _ready() -> void:
 	auto_close_timer.timeout.connect(_on_auto_close_timeout)
 	add_child(auto_close_timer)
 
+	_setup_interaction_outline()
+
 
 func _physics_process(delta: float) -> void:
-	# Ruota il root/cardine e quindi tutta la geometria importata.
 	rotation.y = lerp_angle(
 		rotation.y,
 		target_rotation_y,
 		open_speed * delta
 	)
 
-	# Aggiorna esplicitamente la trasformazione globale del DoorBody
-	# affinché anche il Physics Server aggiorni la collisione.
 	var desired_body_transform := (
 		global_transform * door_body_rest_transform
 	)
@@ -49,7 +103,7 @@ func _physics_process(delta: float) -> void:
 	door_body.global_transform = desired_body_transform
 
 
-func interact() -> void:
+func interact(_player: Node) -> void:
 	toggle_door()
 
 
@@ -78,8 +132,6 @@ func _on_auto_close_timeout() -> void:
 		return
 
 	if player_inside:
-		# Il tempo è scaduto, ma il giocatore è ancora
-		# nella zona della porta: aspettiamo che esca.
 		auto_close_pending = true
 	else:
 		close_door()
