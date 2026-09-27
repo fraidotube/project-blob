@@ -1,0 +1,11 @@
+[gd_resource type="AudioStreamRandomizer" format=3 uid="uid://cif7rifv0lc8b"]
+
+[ext_resource type="AudioStream" uid="uid://c28vfoef2mry1" path="res://assets/audio/weapons/pistol/gunshot_1.ogg" id="1_okwtj"]
+[ext_resource type="AudioStream" uid="uid://446lqv1srfr3" path="res://assets/audio/weapons/pistol/gunshot_2.ogg" id="2_8cmen"]
+[ext_resource type="AudioStream" uid="uid://bixvewmut0p57" path="res://assets/audio/weapons/pistol/gunshot_3.ogg" id="3_p54i3"]
+
+[resource]
+streams_count = 3
+stream_0/stream = ExtResource("1_okwtj")
+stream_1/stream = ExtResource("2_8cmen")
+stream_2/stream = ExtResource("3_p54i3")

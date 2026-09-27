@@ -1,0 +1,11 @@
+[gd_resource type="AudioStreamRandomizer" format=3 uid="uid://yfp5l2tv3ua"]
+
+[ext_resource type="AudioStream" uid="uid://b8s0idg5aw16u" path="res://assets/audio/weapons/pistol/shellcasings_01.ogg" id="1_6dryl"]
+[ext_resource type="AudioStream" uid="uid://kxrhjgogrwlf" path="res://assets/audio/weapons/pistol/shellcasings_02.ogg" id="2_26h5c"]
+[ext_resource type="AudioStream" uid="uid://wtrnel8hbygd" path="res://assets/audio/weapons/pistol/shellcasings_03.ogg" id="3_sjigq"]
+
+[resource]
+streams_count = 3
+stream_0/stream = ExtResource("1_6dryl")
+stream_1/stream = ExtResource("2_26h5c")
+stream_2/stream = ExtResource("3_sjigq")
