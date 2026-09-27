@@ -3,73 +3,104 @@
 [ext_resource type="Shader" uid="uid://esc47crfui3r" path="res://assets/vfx/smoke.gdshader" id="1_4wcc8"]
 [ext_resource type="Script" uid="uid://bb8om1llpotam" path="res://scripts/vfx/smoke_stack.gd" id="1_lg8ms"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hyfr5"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lg8ms"]
+resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("1_4wcc8")
 shader_parameter/scale = 1.0
-shader_parameter/tex_speed = Vector3(0.15, -0.25, 0.7)
+shader_parameter/tex_speed = Vector3(0.08, -0.18, 0.58)
 shader_parameter/mokomoko = Vector2(0.1, 0.1)
-shader_parameter/smoke_volume = 0.45
-shader_parameter/smoke_aperture = 0.14
-shader_parameter/density = 1.0
-shader_parameter/smoke_color = Color(0.6039216, 0.19607843, 0.8745098, 1)
+shader_parameter/smoke_volume = 0.42
+shader_parameter/smoke_aperture = 0.42
+shader_parameter/density = 0.28
+shader_parameter/smoke_color = Color(0.54509807, 0.3882353, 0.65882355, 0.4)
 
 [sub_resource type="QuadMesh" id="QuadMesh_hbjui"]
 size = Vector2(2, 3)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_e5yi3"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1l6mo"]
+resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("1_4wcc8")
 shader_parameter/scale = 1.0
-shader_parameter/tex_speed = Vector3(-0.12, -0.35, 0.85)
+shader_parameter/tex_speed = Vector3(-0.08, -0.22, 0.7)
 shader_parameter/mokomoko = Vector2(0.1, 0.1)
-shader_parameter/smoke_volume = 0.7
-shader_parameter/smoke_aperture = 0.24
-shader_parameter/density = 1.0
-shader_parameter/smoke_color = Color(0.44313726, 0.1882353, 0.7490196, 1)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_wj3gk"]
-render_priority = 0
-shader = ExtResource("1_4wcc8")
-shader_parameter/scale = 1.0
-shader_parameter/tex_speed = Vector3(0.2, -0.22, 0.6)
-shader_parameter/mokomoko = Vector2(0.1, 0.1)
-shader_parameter/smoke_volume = 0.58
-shader_parameter/smoke_aperture = 0.38
-shader_parameter/density = 0.85
-shader_parameter/smoke_color = Color(0.7411765, 0.38431373, 1, 1)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_t1mj2"]
-render_priority = 0
-shader = ExtResource("1_4wcc8")
-shader_parameter/scale = 1.0
-shader_parameter/tex_speed = Vector3(-0.15, -0.18, 0.95)
-shader_parameter/mokomoko = Vector2(0.1, 0.1)
-shader_parameter/smoke_volume = 0.5
+shader_parameter/smoke_volume = 0.38
 shader_parameter/smoke_aperture = 0.46
-shader_parameter/density = 0.7
-shader_parameter/smoke_color = Color(0.83137256, 0.6039216, 1, 1)
+shader_parameter/density = 0.24
+shader_parameter/smoke_color = Color(0.6039216, 0.44705883, 0.72156864, 0.36078432)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c4qts"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_4wcc8")
+shader_parameter/scale = 1.0
+shader_parameter/tex_speed = Vector3(0.12, -0.16, 0.48)
+shader_parameter/mokomoko = Vector2(0.1, 0.1)
+shader_parameter/smoke_volume = 0.34
+shader_parameter/smoke_aperture = 0.5
+shader_parameter/density = 0.2
+shader_parameter/smoke_color = Color(0.6666667, 0.50980395, 0.76862746, 0.30980393)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tmica"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("1_4wcc8")
+shader_parameter/scale = 1.0
+shader_parameter/tex_speed = Vector3(-0.1, -0.14, 0.76)
+shader_parameter/mokomoko = Vector2(0.1, 0.1)
+shader_parameter/smoke_volume = 0.3
+shader_parameter/smoke_aperture = 0.54
+shader_parameter/density = 0.16
+shader_parameter/smoke_color = Color(0.7254902, 0.6039216, 0.83137256, 0.27450982)
 
 [node name="SmokeStack" type="Node3D" unique_id=898911274]
 script = ExtResource("1_lg8ms")
-preset = 1
+preset = 4
+plane_01_color = Color(0.54509807, 0.3882353, 0.65882355, 0.4)
+plane_01_density = 0.28
+plane_01_volume = 0.42
+plane_01_aperture = 0.42
+plane_01_tex_speed = Vector3(0.08, -0.18, 0.58)
+plane_01_scale = Vector3(0.7, 0.75, 0.7)
+plane_02_color = Color(0.6039216, 0.44705883, 0.72156864, 0.36078432)
+plane_02_density = 0.24
+plane_02_volume = 0.38
+plane_02_aperture = 0.46
+plane_02_tex_speed = Vector3(-0.08, -0.22, 0.7)
+plane_02_position = Vector3(0.24, 0.18, 0.12)
+plane_02_scale = Vector3(0.65, 0.95, 0.65)
+plane_03_color = Color(0.6666667, 0.50980395, 0.76862746, 0.30980393)
+plane_03_density = 0.2
+plane_03_volume = 0.34
+plane_03_aperture = 0.5
+plane_03_tex_speed = Vector3(0.12, -0.16, 0.48)
+plane_03_position = Vector3(-0.22, 0.38, -0.1)
+plane_03_scale = Vector3(0.9, 0.78, 0.9)
+plane_04_color = Color(0.7254902, 0.6039216, 0.83137256, 0.27450982)
+plane_04_density = 0.16
+plane_04_volume = 0.3
+plane_04_aperture = 0.54
+plane_04_tex_speed = Vector3(-0.1, -0.14, 0.76)
+plane_04_position = Vector3(0.1, 0.64, 0.15)
+plane_04_scale = Vector3(0.58, 1.05, 0.58)
 
 [node name="SmokePlane_01" type="MeshInstance3D" parent="." unique_id=2065505787]
-transform = Transform3D(0.55, 0, 0, 0, 0.7, 0, 0, 0, 0.55, 0, 0, 0)
-material_override = SubResource("ShaderMaterial_hyfr5")
+transform = Transform3D(0.7, 0, 0, 0, 0.75, 0, 0, 0, 0.7, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_lg8ms")
 mesh = SubResource("QuadMesh_hbjui")
 
 [node name="SmokePlane_02" type="MeshInstance3D" parent="." unique_id=1039368880]
-transform = Transform3D(0.75, 0, 0, 0, 1.2, 0, 0, 0, 0.75, 0.32, 0.2, 0.15)
-material_override = SubResource("ShaderMaterial_e5yi3")
+transform = Transform3D(0.65, 0, 0, 0, 0.95, 0, 0, 0, 0.65, 0.24, 0.18, 0.12)
+material_override = SubResource("ShaderMaterial_1l6mo")
 mesh = SubResource("QuadMesh_hbjui")
 
 [node name="SmokePlane_03" type="MeshInstance3D" parent="." unique_id=1017868735]
-transform = Transform3D(1.25, 0, 0, 0, 0.8, 0, 0, 0, 1.25, -0.3, 0.5, -0.15)
-material_override = SubResource("ShaderMaterial_wj3gk")
+transform = Transform3D(0.9, 0, 0, 0, 0.78, 0, 0, 0, 0.9, -0.22, 0.38, -0.1)
+material_override = SubResource("ShaderMaterial_c4qts")
 mesh = SubResource("QuadMesh_hbjui")
 
 [node name="SmokePlane_04" type="MeshInstance3D" parent="." unique_id=968770513]
-transform = Transform3D(0.65, 0, 0, 0, 1.45, 0, 0, 0, 0.65, 0.12, 0.85, 0.18)
-material_override = SubResource("ShaderMaterial_t1mj2")
+transform = Transform3D(0.58, 0, 0, 0, 1.05, 0, 0, 0, 0.58, 0.1, 0.64, 0.15)
+material_override = SubResource("ShaderMaterial_tmica")
 mesh = SubResource("QuadMesh_hbjui")

@@ -30,11 +30,29 @@ uniform float density :
 
 uniform vec4 smoke_color :
 	source_color = vec4(
-	0.45,
-	0.45,
-	0.45,
-	0.75
+		0.45,
+		0.45,
+		0.45,
+		0.75
 );
+
+
+// ============================================================
+// SOFT EDGES
+//
+// side_fade:
+// dissolve i lati sinistro e destro.
+//
+// vertical_fade:
+// dissolve entrambe le estremità verticali della QuadMesh.
+// Evita il taglio piatto in alto e in basso.
+// ============================================================
+
+uniform float side_fade :
+	hint_range(0.01, 0.49) = 0.20;
+
+uniform float vertical_fade :
+	hint_range(0.01, 0.49) = 0.12;
 
 
 varying vec4 world_vertex;
@@ -64,6 +82,7 @@ float value_noise(vec3 pos)
 	vec3 f = fract(pos);
 
 	float v000 = random(p);
+
 	float v100 = random(
 		p + vec3(1.0, 0.0, 0.0)
 	);
@@ -304,6 +323,39 @@ void fragment()
 
 	ALBEDO = smoke_color.rgb;
 
+
+	// ========================================================
+	// SOFT MASK
+	// ========================================================
+
+	float distance_side = min(
+		UV.x,
+		1.0 - UV.x
+	);
+
+	float distance_vertical = min(
+		UV.y,
+		1.0 - UV.y
+	);
+
+	float side_mask = smoothstep(
+		0.0,
+		side_fade,
+		distance_side
+	);
+
+	float vertical_mask = smoothstep(
+		0.0,
+		vertical_fade,
+		distance_vertical
+	);
+
+	float shape_mask = (
+		side_mask
+		* vertical_mask
+	);
+
+
 	float final_alpha = (
 		clamp(
 			smoke_noise,
@@ -312,6 +364,7 @@ void fragment()
 		)
 		* density
 		* smoke_color.a
+		* shape_mask
 	);
 
 	ALPHA = clamp(
