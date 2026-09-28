@@ -1,101 +1,106 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene format=3 uid="uid://bobys44tvyo61"]
 
-[ext_resource type="Script" path="res://scripts/ui/main_menu.gd" id="1"]
-[ext_resource type="Script" path="res://scripts/ui/game_settings.gd" id="2"]
-[ext_resource type="Texture2D" path="res://assets/ui/menu/projectblob_menu.png" id="3"]
-[ext_resource type="Texture2D" path="res://assets/ui/projectblob_logo.png" id="4"]
-[ext_resource type="Shader" path="res://assets/shaders/menu_fog.gdshader" id="5"]
-[ext_resource type="AudioStream" path="res://assets/audio/ProjectBlob - Soundtrack.mp3" id="6"]
+[ext_resource type="Script" uid="uid://taic7po2ran5" path="res://scripts/ui/main_menu.gd" id="1"]
+[ext_resource type="Theme" path="res://scenes/ui/project_blob_menu_theme.tres" id="1_btxxm"]
+[ext_resource type="Script" uid="uid://bipkbqgcnwv5k" path="res://scripts/ui/game_settings.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://b2ff18ly4wwt0" path="res://assets/ui/menu/projectblob_menu.png" id="3"]
+[ext_resource type="Texture2D" uid="uid://c5pdeu3wppxxc" path="res://assets/ui/projectblob_logo.png" id="4"]
+[ext_resource type="Shader" uid="uid://c5tv3sre1tcbt" path="res://assets/shaders/menu_fog.gdshader" id="5"]
+[ext_resource type="Script" uid="uid://cx4q1qlispfry" path="res://scripts/ui/menu_button.gd" id="6"]
 
 [sub_resource type="ShaderMaterial" id="FogMaterial"]
 shader = ExtResource("5")
-shader_parameter/fog_color = Color(0.25, 0.035, 0.42, 0.36)
-shader_parameter/speed = 0.018
-shader_parameter/scale = 3.2
-shader_parameter/contrast = 1.45
-shader_parameter/density = 0.5
+shader_parameter/fog_color_a = Color(0.34, 0.05, 0.56, 1)
+shader_parameter/fog_color_b = Color(0.04, 0.28, 0.45, 1)
+shader_parameter/speed = 0.02
+shader_parameter/scale = 3.6
+shader_parameter/density = 0.46
+
+[sub_resource type="StyleBoxFlat" id="PanelStyle"]
+bg_color = Color(0.012, 0.012, 0.022, 0.94)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.55, 0.2, 0.72, 0.72)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+shadow_color = Color(0, 0, 0, 0.75)
+shadow_size = 20
+
+[sub_resource type="StyleBoxFlat" id="TabPanel"]
+bg_color = Color(0, 0, 0, 0)
 
 [sub_resource type="SystemFont" id="MenuFont"]
 font_names = PackedStringArray("Bebas Neue")
 font_weight = 600
 
 [sub_resource type="StyleBoxFlat" id="ButtonNormal"]
-bg_color = Color(0.025, 0.025, 0.035, 0.78)
-border_width_left = 1
+content_margin_left = 26.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
+bg_color = Color(0.012, 0.012, 0.02, 0.82)
+border_width_left = 4
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.48, 0.18, 0.63, 0.55)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-content_margin_left = 18.0
-content_margin_top = 10.0
-content_margin_right = 18.0
-content_margin_bottom = 10.0
-
-[sub_resource type="StyleBoxFlat" id="ButtonHover"]
-bg_color = Color(0.08, 0.025, 0.11, 0.93)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.78, 0.32, 1, 0.95)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-shadow_color = Color(0.55, 0.1, 0.8, 0.45)
-shadow_size = 8
-content_margin_left = 18.0
-content_margin_top = 10.0
-content_margin_right = 18.0
-content_margin_bottom = 10.0
+border_color = Color(0.45, 0.12, 0.62, 0.68)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="ButtonPressed"]
-bg_color = Color(0.19, 0.045, 0.26, 0.95)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.92, 0.58, 1, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-content_margin_left = 18.0
-content_margin_top = 10.0
-content_margin_right = 18.0
-content_margin_bottom = 10.0
-
-[sub_resource type="StyleBoxFlat" id="PanelStyle"]
-bg_color = Color(0.015, 0.015, 0.025, 0.88)
-border_width_left = 1
+content_margin_left = 26.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
+bg_color = Color(0.16, 0.035, 0.23, 0.96)
+border_width_left = 6
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.48, 0.18, 0.63, 0.65)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-shadow_color = Color(0, 0, 0, 0.65)
-shadow_size = 18
+border_color = Color(0.95, 0.58, 1, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
-[node name="MainMenu" type="Control"]
+[sub_resource type="StyleBoxFlat" id="ButtonHover"]
+content_margin_left = 26.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
+bg_color = Color(0.045, 0.015, 0.07, 0.95)
+border_width_left = 6
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.83, 0.24, 1, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+shadow_color = Color(0.5, 0.1, 0.78, 0.55)
+shadow_size = 10
+
+[node name="MainMenu" type="Control" unique_id=1737128455]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_btxxm")
 script = ExtResource("1")
 
-[node name="GameSettings" type="Node" parent="."]
+[node name="GameSettings" type="Node" parent="." unique_id=1590830709]
 script = ExtResource("2")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background" type="TextureRect" parent="." unique_id=1839637615]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -107,7 +112,7 @@ texture = ExtResource("3")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="ColorGrade" type="ColorRect" parent="."]
+[node name="ColorGrade" type="ColorRect" parent="." unique_id=249187104]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -115,32 +120,31 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.015, 0.01, 0.025, 0.38)
+color = Color(0.015, 0.01, 0.025, 0.34)
 
-[node name="Fog" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
+[node name="Fog" type="ColorRect" parent="." unique_id=1263011197]
 material = SubResource("FogMaterial")
-color = Color(1, 1, 1, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
-[node name="Logo" type="TextureRect" parent="."]
+[node name="Logo" type="TextureRect" parent="." unique_id=676007525]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 38.0
-offset_bottom = 275.0
+offset_top = 28.0
+offset_bottom = 285.0
 grow_horizontal = 2
 mouse_filter = 2
 texture = ExtResource("4")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="MainPanel" type="Control" parent="."]
+[node name="MainPanel" type="Control" parent="." unique_id=835994116]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -148,61 +152,40 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="MainPanel"]
+[node name="VBox" type="VBoxContainer" parent="MainPanel" unique_id=1560231439]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -210.0
-offset_top = 45.0
-offset_right = 210.0
+offset_left = -220.0
+offset_top = 40.0
+offset_right = 220.0
 offset_bottom = 300.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 14
 
-[node name="NewGame" type="Button" parent="MainPanel/VBox"]
-custom_minimum_size = Vector2(420, 56)
+[node name="NewGame" type="Button" parent="MainPanel/VBox" unique_id=309362834]
+custom_minimum_size = Vector2(440, 58)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.88, 0.95, 1)
-theme_override_colors/font_hover_color = Color(1, 0.88, 0.46, 1)
-theme_override_fonts/font = SubResource("MenuFont")
-theme_override_font_sizes/font_size = 25
-theme_override_styles/normal = SubResource("ButtonNormal")
-theme_override_styles/hover = SubResource("ButtonHover")
-theme_override_styles/pressed = SubResource("ButtonPressed")
-theme_override_styles/focus = SubResource("ButtonHover")
 text = "NUOVA PARTITA"
+script = ExtResource("6")
 
-[node name="Options" type="Button" parent="MainPanel/VBox"]
-custom_minimum_size = Vector2(420, 56)
+[node name="Options" type="Button" parent="MainPanel/VBox" unique_id=1152249880]
+custom_minimum_size = Vector2(440, 58)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.88, 0.95, 1)
-theme_override_colors/font_hover_color = Color(1, 0.88, 0.46, 1)
-theme_override_fonts/font = SubResource("MenuFont")
-theme_override_font_sizes/font_size = 25
-theme_override_styles/normal = SubResource("ButtonNormal")
-theme_override_styles/hover = SubResource("ButtonHover")
-theme_override_styles/pressed = SubResource("ButtonPressed")
-theme_override_styles/focus = SubResource("ButtonHover")
 text = "OPZIONI"
+script = ExtResource("6")
 
-[node name="Quit" type="Button" parent="MainPanel/VBox"]
-custom_minimum_size = Vector2(420, 56)
+[node name="Quit" type="Button" parent="MainPanel/VBox" unique_id=103322594]
+custom_minimum_size = Vector2(440, 58)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.88, 0.95, 1)
-theme_override_colors/font_hover_color = Color(1, 0.88, 0.46, 1)
-theme_override_fonts/font = SubResource("MenuFont")
-theme_override_font_sizes/font_size = 25
-theme_override_styles/normal = SubResource("ButtonNormal")
-theme_override_styles/hover = SubResource("ButtonHover")
-theme_override_styles/pressed = SubResource("ButtonPressed")
-theme_override_styles/focus = SubResource("ButtonHover")
 text = "ESCI"
+script = ExtResource("6")
 
-[node name="OptionsPanel" type="Control" parent="."]
+[node name="OptionsPanel" type="Control" parent="." unique_id=730418753]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -211,108 +194,205 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="OptionsPanel"]
+[node name="Panel" type="Panel" parent="OptionsPanel" unique_id=1815653402]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -310.0
-offset_top = -230.0
-offset_right = 310.0
-offset_bottom = 310.0
+offset_left = -360.0
+offset_top = -300.0
+offset_right = 360.0
+offset_bottom = 330.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("PanelStyle")
 
-[node name="Margin" type="MarginContainer" parent="OptionsPanel/Panel"]
+[node name="Margin" type="MarginContainer" parent="OptionsPanel/Panel" unique_id=1490724655]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 34.0
-offset_top = 30.0
-offset_right = -34.0
-offset_bottom = -30.0
+offset_left = 36.0
+offset_top = 32.0
+offset_right = -36.0
+offset_bottom = -32.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBox" type="VBoxContainer" parent="OptionsPanel/Panel/Margin"]
+[node name="Tabs" type="TabContainer" parent="OptionsPanel/Panel/Margin" unique_id=219764733]
 layout_mode = 2
-theme_override_constants/separation = 11
+theme_override_styles/panel = SubResource("TabPanel")
+current_tab = 0
 
-[node name="Title" type="Label" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="VIDEO" type="MarginContainer" parent="OptionsPanel/Panel/Margin/Tabs" unique_id=576904985]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="VideoVBox" type="VBoxContainer" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO" unique_id=952883599]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="Title" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=1796384444]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.86, 0.48, 1, 1)
 theme_override_fonts/font = SubResource("MenuFont")
-theme_override_font_sizes/font_size = 30
-text = "OPZIONI GRAFICHE"
+theme_override_font_sizes/font_size = 28
+text = "VIDEO"
 horizontal_alignment = 1
 
-[node name="ResolutionLabel" type="Label" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="ResolutionLabel" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=724007152]
 layout_mode = 2
 text = "RISOLUZIONE"
 
-[node name="Resolution" type="OptionButton" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="Resolution" type="OptionButton" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=315848892]
 layout_mode = 2
 
-[node name="WindowModeLabel" type="Label" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="WindowModeLabel" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=1038066986]
 layout_mode = 2
 text = "MODALITÀ SCHERMO"
 
-[node name="WindowMode" type="OptionButton" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="WindowMode" type="OptionButton" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=770767684]
 layout_mode = 2
 
-[node name="VSync" type="CheckButton" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="VSync" type="CheckButton" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=1610382492]
 layout_mode = 2
 text = "VSYNC"
 
-[node name="FPSLabel" type="Label" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="FPSLabel" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=1690897820]
 layout_mode = 2
 text = "LIMITE FPS"
 
-[node name="FPSLimit" type="OptionButton" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="FPSLimit" type="OptionButton" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=198630321]
 layout_mode = 2
 
-[node name="RenderScaleValue" type="Label" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="RenderScaleValue" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=1382445350]
 layout_mode = 2
 text = "SCALA RENDER 3D: 100%"
 
-[node name="RenderScale" type="HSlider" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="RenderScale" type="HSlider" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=1476056079]
 layout_mode = 2
 min_value = 0.5
 max_value = 1.5
 step = 0.05
 value = 1.0
 
-[node name="Apply" type="Button" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="MSAALabel" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=2056140274]
+layout_mode = 2
+text = "MSAA"
+
+[node name="MSAA" type="OptionButton" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=1339678656]
+layout_mode = 2
+
+[node name="FXAA" type="CheckButton" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=78195726]
+layout_mode = 2
+text = "FXAA"
+
+[node name="TAA" type="CheckButton" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=1684583585]
+layout_mode = 2
+text = "TAA"
+
+[node name="AUDIO" type="MarginContainer" parent="OptionsPanel/Panel/Margin/Tabs" unique_id=1980509305]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="AudioVBox" type="VBoxContainer" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO" unique_id=142338369]
+layout_mode = 2
+theme_override_constants/separation = 13
+
+[node name="Title" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox" unique_id=886348623]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.48, 1, 1)
+theme_override_fonts/font = SubResource("MenuFont")
+theme_override_font_sizes/font_size = 28
+text = "AUDIO"
+horizontal_alignment = 1
+
+[node name="MasterValue" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox" unique_id=1687911535]
+layout_mode = 2
+text = "MASTER: 100%"
+
+[node name="Master" type="HSlider" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox" unique_id=1996330711]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="MusicValue" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox" unique_id=1268593111]
+layout_mode = 2
+text = "MUSICA: 75%"
+
+[node name="Music" type="HSlider" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox" unique_id=770302039]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.75
+
+[node name="SFXValue" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox" unique_id=490075122]
+layout_mode = 2
+text = "EFFETTI: 100%"
+
+[node name="SFX" type="HSlider" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox" unique_id=1801826345]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="UIValue" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox" unique_id=1183922368]
+layout_mode = 2
+text = "INTERFACCIA: 90%"
+
+[node name="UI" type="HSlider" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox" unique_id=541358718]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.9
+
+[node name="BottomButtons" type="HBoxContainer" parent="OptionsPanel/Panel" unique_id=492670428]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = -74.0
+offset_right = -36.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 12
+
+[node name="Apply" type="Button" parent="OptionsPanel/Panel/BottomButtons" unique_id=1140649637]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_fonts/font = SubResource("MenuFont")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("ButtonNormal")
-theme_override_styles/hover = SubResource("ButtonHover")
 theme_override_styles/pressed = SubResource("ButtonPressed")
+theme_override_styles/hover = SubResource("ButtonHover")
 text = "APPLICA"
 
-[node name="Back" type="Button" parent="OptionsPanel/Panel/Margin/VBox"]
+[node name="Back" type="Button" parent="OptionsPanel/Panel/BottomButtons" unique_id=454151406]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_fonts/font = SubResource("MenuFont")
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("ButtonNormal")
-theme_override_styles/hover = SubResource("ButtonHover")
 theme_override_styles/pressed = SubResource("ButtonPressed")
+theme_override_styles/hover = SubResource("ButtonHover")
 text = "INDIETRO"
-
-[node name="MenuMusic" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("6")
-volume_db = -12.0
 
 [connection signal="pressed" from="MainPanel/VBox/NewGame" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="MainPanel/VBox/Options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="MainPanel/VBox/Quit" to="." method="_on_quit_pressed"]
-[connection signal="value_changed" from="OptionsPanel/Panel/Margin/VBox/RenderScale" to="." method="_on_render_scale_changed"]
-[connection signal="pressed" from="OptionsPanel/Panel/Margin/VBox/Apply" to="." method="_on_apply_pressed"]
-[connection signal="pressed" from="OptionsPanel/Panel/Margin/VBox/Back" to="." method="_on_back_pressed"]
+[connection signal="value_changed" from="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox/RenderScale" to="." method="_on_render_scale_changed"]
+[connection signal="value_changed" from="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/Master" to="." method="_on_audio_changed"]
+[connection signal="value_changed" from="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/Music" to="." method="_on_audio_changed"]
+[connection signal="value_changed" from="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/SFX" to="." method="_on_audio_changed"]
+[connection signal="value_changed" from="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/UI" to="." method="_on_audio_changed"]
+[connection signal="pressed" from="OptionsPanel/Panel/BottomButtons/Apply" to="." method="_on_apply_pressed"]
+[connection signal="pressed" from="OptionsPanel/Panel/BottomButtons/Back" to="." method="_on_back_pressed"]
