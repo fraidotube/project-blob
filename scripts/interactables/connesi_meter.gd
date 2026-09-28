@@ -1,77 +1,82 @@
 extends Node3D
 
+@export var power_system: Node
+@export var led_red: Light3D
+@export var led_green: Light3D
+@export var interaction_name := "CONTATORE"
+
 const OUTLINE_SHADER := preload(
 	"res://assets/shaders/interactable_outline_screen.gdshader"
 )
 
-@export var power_system: Node
-@export var led_red: Light3D
-@export var led_green: Light3D
-
-@export var interaction_name := "CONTATORE"
 @export var interaction_color := Color("b86cff")
 @export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0015
-
-@onready var interaction_outline: MeshInstance3D = (
-	get_node_or_null("InteractionOutline")
-)
+@export var interaction_visual_roots: Array[NodePath] = []
 
 var outline_material: ShaderMaterial
-
-
-func _ready() -> void:
-	if power_system:
-		power_system.power_changed.connect(
-			_on_power_changed
-		)
-		_update_leds(
-			power_system.is_power_on()
-		)
-	else:
-		_update_leds(false)
-
-	_setup_interaction_outline()
+var outlined_meshes: Array[GeometryInstance3D] = []
 
 
 func _setup_interaction_outline() -> void:
-	if interaction_outline == null:
-		push_warning(
-			"CONTATORE: nodo InteractionOutline non trovato."
-		)
-		return
-
 	outline_material = ShaderMaterial.new()
 	outline_material.shader = OUTLINE_SHADER
-
 	outline_material.set_shader_parameter(
 		"outline_color",
 		interaction_color
 	)
-
 	outline_material.set_shader_parameter(
 		"outline_width",
 		outline_width
 	)
 
-	interaction_outline.material_override = (
-		outline_material
-	)
+	outlined_meshes.clear()
 
-	interaction_outline.cast_shadow = (
-		GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	)
+	if interaction_visual_roots.is_empty():
+		_collect_interaction_geometry(self)
+	else:
+		for path: NodePath in interaction_visual_roots:
+			var visual_root := get_node_or_null(path)
+			if visual_root != null:
+				_collect_interaction_geometry(visual_root)
 
-	interaction_outline.visible = false
+	set_interaction_focus(false)
+
+
+func _collect_interaction_geometry(node: Node) -> void:
+	if node.name == "InteractionOutline":
+		return
+	if node.name == "OutlineBuilder":
+		return
+	if node.name == "InteractionOutlineProxy":
+		return
+
+	if node is GeometryInstance3D:
+		outlined_meshes.append(node as GeometryInstance3D)
+
+	for child: Node in node.get_children():
+		_collect_interaction_geometry(child)
 
 
 func set_interaction_focus(enabled: bool) -> void:
-	if interaction_outline == null:
-		return
+	for mesh: GeometryInstance3D in outlined_meshes:
+		if not is_instance_valid(mesh):
+			continue
 
-	if not is_instance_valid(interaction_outline):
-		return
+		mesh.material_overlay = outline_material if enabled else null
 
-	interaction_outline.visible = enabled
+
+func get_interaction_color() -> Color:
+	return interaction_color
+
+
+func _ready() -> void:
+	if power_system:
+		power_system.power_changed.connect(_on_power_changed)
+		_update_leds(power_system.is_power_on())
+	else:
+		_update_leds(false)
+
+	_setup_interaction_outline()
 
 
 func get_interaction_name() -> String:
@@ -82,15 +87,7 @@ func get_interaction_action() -> String:
 	if power_system == null:
 		return "USA"
 
-	return (
-		"DISATTIVA"
-		if power_system.is_power_on()
-		else "ATTIVA"
-	)
-
-
-func get_interaction_color() -> Color:
-	return interaction_color
+	return "DISATTIVA" if power_system.is_power_on() else "ATTIVA"
 
 
 func interact(_player: Node) -> void:
