@@ -2,6 +2,7 @@ extends Node3D
 
 @export var power_system: Node
 @export var video_player: VideoStreamPlayer
+@export var video_surface: GeometryInstance3D
 @export var audio_player: AudioStreamPlayer3D
 @export var room_area: Area3D
 
@@ -13,6 +14,13 @@ var player_inside_room := false
 
 
 func _ready() -> void:
+	# SAFE fallback: se il riferimento non è stato assegnato nell'Inspector,
+	# cerca automaticamente il TVVideoQuad figlio di Monitor Appeso.
+	if video_surface == null:
+		var auto_surface := get_node_or_null("TVVideoQuad")
+		if auto_surface is GeometryInstance3D:
+			video_surface = auto_surface as GeometryInstance3D
+
 	if power_system:
 		power_system.power_changed.connect(_on_power_changed)
 
@@ -23,6 +31,8 @@ func _ready() -> void:
 	if video_player:
 		video_player.stop()
 
+	_set_video_surface_visible(false)
+
 	if audio_player:
 		audio_player.stop()
 		audio_player.volume_db = outside_volume_db
@@ -32,7 +42,7 @@ func toggle_tv() -> void:
 	if power_system == null:
 		return
 
-	if not power_system.is_power_on():
+	if not bool(power_system.is_power_on()):
 		return
 
 	if tv_on:
@@ -47,6 +57,8 @@ func turn_on_tv() -> void:
 
 	tv_on = true
 
+	_set_video_surface_visible(true)
+
 	if video_player:
 		video_player.play()
 
@@ -57,6 +69,16 @@ func turn_on_tv() -> void:
 
 func turn_off_tv() -> void:
 	if not tv_on:
+		# Anche se lo stato logico era già OFF, forziamo comunque
+		# la superficie video a sparire.
+		_set_video_surface_visible(false)
+
+		if video_player:
+			video_player.stop()
+
+		if audio_player:
+			audio_player.stop()
+
 		return
 
 	tv_on = false
@@ -66,6 +88,15 @@ func turn_off_tv() -> void:
 
 	if audio_player:
 		audio_player.stop()
+
+	_set_video_surface_visible(false)
+
+
+func _set_video_surface_visible(enabled: bool) -> void:
+	if video_surface == null:
+		return
+
+	video_surface.visible = enabled
 
 
 func _on_power_changed(is_on: bool) -> void:
@@ -97,4 +128,3 @@ func _update_audio_volume() -> void:
 		audio_player.volume_db = inside_volume_db
 	else:
 		audio_player.volume_db = outside_volume_db
-		

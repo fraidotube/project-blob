@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c0ktexaip0kmy"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_vviwf"]
+viewport_path = NodePath("../TVViewport")
+
+[resource]
+resource_local_to_scene = true
+shading_mode = 0
+albedo_texture = SubResource("ViewportTexture_vviwf")
+albedo_texture_force_srgb = true
