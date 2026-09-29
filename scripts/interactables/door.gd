@@ -14,6 +14,12 @@ const OUTLINE_SHADER := preload(
 @export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0015
 @export var interaction_visual_roots: Array[NodePath] = []
 
+@export_group("Door Audio")
+@export var open_sound: AudioStream
+@export var close_sound: AudioStream
+@export_range(-40.0, 12.0, 0.5) var door_audio_volume_db := 0.0
+@export_range(1.0, 50.0, 0.5) var door_audio_max_distance := 12.0
+
 var outline_material: ShaderMaterial
 var outlined_meshes: Array[GeometryInstance3D] = []
 
@@ -80,6 +86,9 @@ var auto_close_timer: Timer
 var auto_close_pending := false
 var door_body_rest_transform: Transform3D
 
+var door_audio: AudioStreamPlayer3D
+var close_sound_pending := false
+
 
 func _ready() -> void:
 	door_body_rest_transform = door_body.transform
@@ -92,7 +101,17 @@ func _ready() -> void:
 	auto_close_timer.timeout.connect(_on_auto_close_timeout)
 	add_child(auto_close_timer)
 
+	_setup_door_audio()
 	_setup_interaction_outline()
+
+
+func _setup_door_audio() -> void:
+	door_audio = AudioStreamPlayer3D.new()
+	door_audio.name = "DoorAudio"
+	door_audio.bus = &"SFX"
+	door_audio.volume_db = door_audio_volume_db
+	door_audio.max_distance = door_audio_max_distance
+	add_child(door_audio)
 
 
 func _physics_process(delta: float) -> void:
@@ -101,6 +120,22 @@ func _physics_process(delta: float) -> void:
 		target_rotation_y,
 		open_speed * delta
 	)
+
+	# Il suono di chiusura deve partire quando la porta è realmente
+	# arrivata a battuta, non quando inizia a muoversi.
+	if (
+		close_sound_pending
+		and not is_open
+		and absf(
+			angle_difference(
+				rotation.y,
+				target_rotation_y
+			)
+		) <= deg_to_rad(0.6)
+	):
+		rotation.y = target_rotation_y
+		close_sound_pending = false
+		_play_door_sound(close_sound)
 
 	var desired_body_transform := (
 		global_transform * door_body_rest_transform
@@ -122,23 +157,53 @@ func interact(_player: Node) -> void:
 
 
 func toggle_door() -> void:
-	is_open = not is_open
-	auto_close_pending = false
-
 	if is_open:
-		target_rotation_y = deg_to_rad(open_angle)
-
-		if auto_close:
-			auto_close_timer.start(auto_close_delay)
-	else:
 		close_door()
+	else:
+		open_door()
+
+
+func open_door() -> void:
+	if is_open:
+		return
+
+	is_open = true
+	auto_close_pending = false
+	close_sound_pending = false
+	target_rotation_y = deg_to_rad(open_angle)
+
+	_play_door_sound(open_sound)
+
+	if auto_close:
+		auto_close_timer.start(auto_close_delay)
 
 
 func close_door() -> void:
+	if not is_open:
+		return
+
 	is_open = false
 	target_rotation_y = 0.0
 	auto_close_pending = false
 	auto_close_timer.stop()
+
+	close_sound_pending = (
+		close_sound != null
+	)
+
+
+func _play_door_sound(stream: AudioStream) -> void:
+	if door_audio == null:
+		return
+
+	if stream == null:
+		return
+
+	door_audio.stop()
+	door_audio.stream = stream
+	door_audio.volume_db = door_audio_volume_db
+	door_audio.max_distance = door_audio_max_distance
+	door_audio.play()
 
 
 func _on_auto_close_timeout() -> void:

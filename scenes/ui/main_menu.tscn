@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://c5pdeu3wppxxc" path="res://assets/ui/projectblob_logo.png" id="4"]
 [ext_resource type="Shader" uid="uid://c5tv3sre1tcbt" path="res://assets/shaders/menu_fog.gdshader" id="5"]
 [ext_resource type="Script" uid="uid://cx4q1qlispfry" path="res://scripts/ui/menu_button.gd" id="6"]
+[ext_resource type="Shader" path="res://assets/shaders/menu_atmosphere.gdshader" id="7"]
 
 [sub_resource type="ShaderMaterial" id="FogMaterial"]
 shader = ExtResource("5")
@@ -15,6 +16,13 @@ shader_parameter/fog_color_b = Color(0.04, 0.28, 0.45, 1)
 shader_parameter/speed = 0.02
 shader_parameter/scale = 3.6
 shader_parameter/density = 0.46
+
+[sub_resource type="ShaderMaterial" id="AtmosphereMaterial"]
+shader = ExtResource("7")
+shader_parameter/intensity = 1.35
+shader_parameter/meteor_center = Vector2(0.35, 0.9)
+shader_parameter/meteor_color = Color(0.95, 0.03, 0.82, 1)
+shader_parameter/cyan_color = Color(0.02, 0.46, 0.78, 1)
 
 [sub_resource type="StyleBoxFlat" id="PanelStyle"]
 bg_color = Color(0.012, 0.012, 0.022, 0.94)
@@ -132,6 +140,16 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="AtmosphereFX" type="ColorRect" parent="."]
+material = SubResource("AtmosphereMaterial")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
 [node name="Logo" type="TextureRect" parent="." unique_id=676007525]
 layout_mode = 1
 anchors_preset = 10
@@ -217,7 +235,7 @@ anchor_bottom = 1.0
 offset_left = 36.0
 offset_top = 32.0
 offset_right = -36.0
-offset_bottom = -32.0
+offset_bottom = -96.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -226,12 +244,13 @@ layout_mode = 2
 theme_override_styles/panel = SubResource("TabPanel")
 current_tab = 0
 
-[node name="VIDEO" type="MarginContainer" parent="OptionsPanel/Panel/Margin/Tabs" unique_id=576904985]
+[node name="VIDEO" type="ScrollContainer" parent="OptionsPanel/Panel/Margin/Tabs" unique_id=576904985]
 layout_mode = 2
 metadata/_tab_index = 0
 
 [node name="VideoVBox" type="VBoxContainer" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO" unique_id=952883599]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 9
 
 [node name="Title" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox" unique_id=1796384444]
@@ -293,13 +312,14 @@ text = "FXAA"
 layout_mode = 2
 text = "TAA"
 
-[node name="AUDIO" type="MarginContainer" parent="OptionsPanel/Panel/Margin/Tabs" unique_id=1980509305]
+[node name="AUDIO" type="ScrollContainer" parent="OptionsPanel/Panel/Margin/Tabs" unique_id=1980509305]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
 [node name="AudioVBox" type="VBoxContainer" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO" unique_id=142338369]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_constants/separation = 13
 
 [node name="Title" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox" unique_id=886348623]
@@ -350,6 +370,40 @@ max_value = 1.0
 step = 0.01
 value = 0.9
 
+[node name="CONTROLLI" type="ScrollContainer" parent="OptionsPanel/Panel/Margin/Tabs"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="ControlsVBox" type="VBoxContainer" parent="OptionsPanel/Panel/Margin/Tabs/CONTROLLI"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.48, 1, 1)
+theme_override_fonts/font = SubResource("MenuFont")
+theme_override_font_sizes/font_size = 28
+text = "CONTROLLI"
+horizontal_alignment = 1
+
+[node name="MouseSensitivityValue" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox"]
+layout_mode = 2
+text = "SENSIBILITÀ MOUSE: 100%"
+
+[node name="MouseSensitivity" type="HSlider" parent="OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox"]
+layout_mode = 2
+min_value = 0.25
+max_value = 2.5
+step = 0.05
+value = 1.0
+
+[node name="SensitivityHint" type="Label" parent="OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox"]
+layout_mode = 2
+text = "100% = sensibilità attuale di Project Blob"
+horizontal_alignment = 1
+
 [node name="BottomButtons" type="HBoxContainer" parent="OptionsPanel/Panel" unique_id=492670428]
 layout_mode = 1
 anchors_preset = 12
@@ -374,6 +428,7 @@ theme_override_styles/normal = SubResource("ButtonNormal")
 theme_override_styles/pressed = SubResource("ButtonPressed")
 theme_override_styles/hover = SubResource("ButtonHover")
 text = "APPLICA"
+script = ExtResource("6")
 
 [node name="Back" type="Button" parent="OptionsPanel/Panel/BottomButtons" unique_id=454151406]
 custom_minimum_size = Vector2(0, 48)
@@ -385,6 +440,7 @@ theme_override_styles/normal = SubResource("ButtonNormal")
 theme_override_styles/pressed = SubResource("ButtonPressed")
 theme_override_styles/hover = SubResource("ButtonHover")
 text = "INDIETRO"
+script = ExtResource("6")
 
 [connection signal="pressed" from="MainPanel/VBox/NewGame" to="." method="_on_new_game_pressed"]
 [connection signal="pressed" from="MainPanel/VBox/Options" to="." method="_on_options_pressed"]
@@ -394,5 +450,6 @@ text = "INDIETRO"
 [connection signal="value_changed" from="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/Music" to="." method="_on_audio_changed"]
 [connection signal="value_changed" from="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/SFX" to="." method="_on_audio_changed"]
 [connection signal="value_changed" from="OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/UI" to="." method="_on_audio_changed"]
+[connection signal="value_changed" from="OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox/MouseSensitivity" to="." method="_on_sensitivity_changed"]
 [connection signal="pressed" from="OptionsPanel/Panel/BottomButtons/Apply" to="." method="_on_apply_pressed"]
 [connection signal="pressed" from="OptionsPanel/Panel/BottomButtons/Back" to="." method="_on_back_pressed"]

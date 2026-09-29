@@ -8,35 +8,27 @@ const GAME_SCENE := "res://scenes/maps/map_test.tscn"
 @onready var resolution_option: OptionButton = (
 	$OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox/Resolution
 )
-
 @onready var mode_option: OptionButton = (
 	$OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox/WindowMode
 )
-
 @onready var vsync_check: CheckButton = (
 	$OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox/VSync
 )
-
 @onready var fps_option: OptionButton = (
 	$OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox/FPSLimit
 )
-
 @onready var render_scale_slider: HSlider = (
 	$OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox/RenderScale
 )
-
 @onready var render_scale_value: Label = (
 	$OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox/RenderScaleValue
 )
-
 @onready var msaa_option: OptionButton = (
 	$OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox/MSAA
 )
-
 @onready var fxaa_check: CheckButton = (
 	$OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox/FXAA
 )
-
 @onready var taa_check: CheckButton = (
 	$OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox/TAA
 )
@@ -44,15 +36,12 @@ const GAME_SCENE := "res://scenes/maps/map_test.tscn"
 @onready var master_slider: HSlider = (
 	$OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/Master
 )
-
 @onready var music_slider: HSlider = (
 	$OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/Music
 )
-
 @onready var sfx_slider: HSlider = (
 	$OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/SFX
 )
-
 @onready var ui_slider: HSlider = (
 	$OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/UI
 )
@@ -60,20 +49,28 @@ const GAME_SCENE := "res://scenes/maps/map_test.tscn"
 @onready var master_value: Label = (
 	$OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/MasterValue
 )
-
 @onready var music_value: Label = (
 	$OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/MusicValue
 )
-
 @onready var sfx_value: Label = (
 	$OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/SFXValue
 )
-
 @onready var ui_value: Label = (
 	$OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/UIValue
 )
 
-var settings := GameSettings.new()
+@onready var sensitivity_slider: HSlider = (
+	$OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox/MouseSensitivity
+)
+@onready var sensitivity_value: Label = (
+	$OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox/MouseSensitivityValue
+)
+@onready var controls_vbox: VBoxContainer = (
+	$OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox
+)
+
+var fov_slider: HSlider
+var fov_value: Label
 
 var resolutions := [
 	Vector2i(1280, 720),
@@ -94,20 +91,58 @@ var fps_values := [
 ]
 
 
+func _settings() -> Node:
+	return get_node("/root/SettingsManager")
+
+
+func _audio_manager() -> Node:
+	return get_node_or_null("/root/AudioManager")
+
+
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
-	add_child(settings)
+	var settings := _settings()
 	settings.load_settings()
+	settings.apply_settings()
 
+	_create_fov_control()
 	_build_options()
 	_show_main()
 
-	if has_node("/root/AudioManager"):
-		AudioManager.ensure_menu_music()
+	var audio_manager := _audio_manager()
+
+	if (
+		audio_manager != null
+		and audio_manager.has_method(
+			"ensure_menu_music"
+		)
+	):
+		audio_manager.call(
+			"ensure_menu_music"
+		)
+
+
+func _create_fov_control() -> void:
+	fov_value = Label.new()
+	fov_value.name = "FOVValue"
+	controls_vbox.add_child(fov_value)
+
+	fov_slider = HSlider.new()
+	fov_slider.name = "FOV"
+	fov_slider.min_value = 60.0
+	fov_slider.max_value = 100.0
+	fov_slider.step = 1.0
+	controls_vbox.add_child(fov_slider)
+
+	fov_slider.value_changed.connect(
+		_on_fov_changed
+	)
 
 
 func _build_options() -> void:
+	var settings := _settings()
+
 	resolution_option.clear()
 
 	for resolution: Vector2i in resolutions:
@@ -132,10 +167,8 @@ func _build_options() -> void:
 	match settings.window_mode:
 		"WINDOWED":
 			mode_option.select(0)
-
 		"BORDERLESS":
 			mode_option.select(1)
-
 		"FULLSCREEN":
 			mode_option.select(2)
 
@@ -178,31 +211,27 @@ func _build_options() -> void:
 		)
 	)
 
-	fxaa_check.button_pressed = (
-		settings.fxaa_enabled
+	fxaa_check.button_pressed = settings.fxaa_enabled
+	taa_check.button_pressed = settings.taa_enabled
+
+	master_slider.value = settings.master_volume
+	music_slider.value = settings.music_volume
+	sfx_slider.value = settings.sfx_volume
+	ui_slider.value = settings.ui_volume
+
+	sensitivity_slider.value = (
+		settings.mouse_sensitivity
 	)
 
-	taa_check.button_pressed = (
-		settings.taa_enabled
-	)
-
-	master_slider.value = (
-		settings.master_volume
-	)
-
-	music_slider.value = (
-		settings.music_volume
-	)
-
-	sfx_slider.value = (
-		settings.sfx_volume
-	)
-
-	ui_slider.value = (
-		settings.ui_volume
-	)
+	fov_slider.value = settings.camera_fov
 
 	_update_audio_labels()
+	_update_sensitivity_label(
+		settings.mouse_sensitivity
+	)
+	_update_fov_label(
+		settings.camera_fov
+	)
 
 
 func _show_main() -> void:
@@ -216,8 +245,29 @@ func _show_options() -> void:
 
 
 func _on_new_game_pressed() -> void:
-	if has_node("/root/AudioManager"):
-		await AudioManager.fade_out_menu_music()
+	var audio_manager := _audio_manager()
+
+	if (
+		audio_manager != null
+		and audio_manager.has_method(
+			"fade_out_menu_music"
+		)
+	):
+		await audio_manager.call(
+			"fade_out_menu_music"
+		)
+
+	var transition := get_node_or_null(
+		"/root/SceneTransition"
+	)
+
+	if transition != null:
+		await transition.call(
+			"transition_to",
+			GAME_SCENE,
+			true
+		)
+		return
 
 	get_tree().change_scene_to_file(
 		GAME_SCENE
@@ -229,17 +279,21 @@ func _on_options_pressed() -> void:
 
 
 func _on_quit_pressed() -> void:
-	if has_node("/root/AudioManager"):
-		await AudioManager.fade_out_menu_music()
-
 	get_tree().quit()
 
 
 func _on_back_pressed() -> void:
+	var settings := _settings()
+
+	settings.load_settings()
+	settings.apply_settings()
+	_build_options()
 	_show_main()
 
 
 func _on_apply_pressed() -> void:
+	var settings := _settings()
+
 	settings.resolution = resolutions[
 		resolution_option.selected
 	]
@@ -262,14 +316,10 @@ func _on_apply_pressed() -> void:
 		render_scale_slider.value
 	)
 
-	settings.msaa_mode = (
-		msaa_option.selected
-	)
-
+	settings.msaa_mode = msaa_option.selected
 	settings.fxaa_enabled = (
 		fxaa_check.button_pressed
 	)
-
 	settings.taa_enabled = (
 		taa_check.button_pressed
 	)
@@ -277,21 +327,26 @@ func _on_apply_pressed() -> void:
 	settings.master_volume = float(
 		master_slider.value
 	)
-
 	settings.music_volume = float(
 		music_slider.value
 	)
-
 	settings.sfx_volume = float(
 		sfx_slider.value
 	)
-
 	settings.ui_volume = float(
 		ui_slider.value
 	)
 
-	settings.apply_settings()
+	settings.mouse_sensitivity = float(
+		sensitivity_slider.value
+	)
+
+	settings.camera_fov = float(
+		fov_slider.value
+	)
+
 	settings.save_settings()
+	settings.apply_settings()
 
 
 func _on_render_scale_changed(
@@ -312,6 +367,25 @@ func _update_render_scale_label(
 func _on_audio_changed(
 	_value: float
 ) -> void:
+	var settings := _settings()
+
+	settings.master_volume = float(
+		master_slider.value
+	)
+	settings.music_volume = float(
+		music_slider.value
+	)
+	settings.sfx_volume = float(
+		sfx_slider.value
+	)
+	settings.ui_volume = float(
+		ui_slider.value
+	)
+
+	# L'audio viene salvato SUBITO.
+	# Non può più tornare al 75% durante un cambio scena.
+	settings.save_audio_now()
+
 	_update_audio_labels()
 
 
@@ -322,24 +396,51 @@ func _update_audio_labels() -> void:
 			master_slider.value * 100.0
 		)
 	)
-
 	music_value.text = (
 		"MUSICA: %d%%"
 		% roundi(
 			music_slider.value * 100.0
 		)
 	)
-
 	sfx_value.text = (
 		"EFFETTI: %d%%"
 		% roundi(
 			sfx_slider.value * 100.0
 		)
 	)
-
 	ui_value.text = (
 		"INTERFACCIA: %d%%"
 		% roundi(
 			ui_slider.value * 100.0
 		)
+	)
+
+
+func _on_sensitivity_changed(
+	value: float
+) -> void:
+	_update_sensitivity_label(value)
+
+
+func _update_sensitivity_label(
+	value: float
+) -> void:
+	sensitivity_value.text = (
+		"SENSIBILITÀ MOUSE: %d%%"
+		% roundi(value * 100.0)
+	)
+
+
+func _on_fov_changed(
+	value: float
+) -> void:
+	_update_fov_label(value)
+
+
+func _update_fov_label(
+	value: float
+) -> void:
+	fov_value.text = (
+		"FOV CAMERA: %d°"
+		% roundi(value)
 	)

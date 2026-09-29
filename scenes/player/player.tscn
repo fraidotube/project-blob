@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dql217vdoqylx" path="res://scripts/player/player.gd" id="1_8afob"]
 [ext_resource type="Script" uid="uid://b2ewp6spvmhdj" path="res://scripts/weapons/weapon.gd" id="2_dovo2"]
+[ext_resource type="Script" path="res://scripts/player/camera_settings.gd" id="2_camera_settings"]
 [ext_resource type="PackedScene" uid="uid://duxcde5ki6v5x" path="res://scenes/weapons/lowworld_viewmodel.tscn" id="3_gmlin"]
 [ext_resource type="AudioStream" uid="uid://c7kd8r2ao12p2" path="res://assets/audio/player/footsteps/footsteps_tile.tres" id="3_p47bc"]
 [ext_resource type="AudioStream" uid="uid://bq61spvv6nj0k" path="res://assets/audio/player/footsteps/footsteps_tile_run.tres" id="4_fm80t"]
@@ -49,6 +50,7 @@ shape = SubResource("CapsuleShape3D_hbjui")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Head" unique_id=1618307731]
+script = ExtResource("2_camera_settings")
 
 [node name="WeaponRay" type="RayCast3D" parent="Head/Camera3D" unique_id=1756541014]
 target_position = Vector3(0, 0, -100)
@@ -72,18 +74,23 @@ omni_range = 2.0
 
 [node name="ShotAudio" type="AudioStreamPlayer" parent="Head/Camera3D/WeaponHolder" unique_id=603463574]
 stream = ExtResource("13_kvlxm")
+bus = &"Weapons"
 
 [node name="EmptyAudio" type="AudioStreamPlayer" parent="Head/Camera3D/WeaponHolder" unique_id=768046929]
 stream = ExtResource("14_uf5tr")
+bus = &"Weapons"
 
 [node name="ReloadAudio" type="AudioStreamPlayer" parent="Head/Camera3D/WeaponHolder" unique_id=1131896973]
 stream = ExtResource("15_lgqa7")
+bus = &"Weapons"
 
 [node name="ReadyAudio" type="AudioStreamPlayer" parent="Head/Camera3D/WeaponHolder" unique_id=977150589]
 stream = ExtResource("16_8ydkj")
+bus = &"Weapons"
 
 [node name="ShellCasingAudio" type="AudioStreamPlayer" parent="Head/Camera3D/WeaponHolder" unique_id=408951361]
 stream = ExtResource("17_3j4b4")
+bus = &"Weapons"
 
 [node name="ShellCasingTimer" type="Timer" parent="Head/Camera3D/WeaponHolder" unique_id=2144498762]
 wait_time = 0.18
@@ -91,6 +98,7 @@ one_shot = true
 
 [node name="FlashlightClickAudio" type="AudioStreamPlayer" parent="Head/Camera3D/WeaponHolder" unique_id=1346721656]
 stream = ExtResource("18_uf5tr")
+bus = &"Weapons"
 
 [node name="ViewmodelWallCast" type="ShapeCast3D" parent="Head/Camera3D" unique_id=640761384]
 shape = SubResource("SphereShape3D_hbjui")
@@ -115,7 +123,8 @@ script = ExtResource("19_lgqa7")
 
 [node name="FootstepAudio" type="AudioStreamPlayer3D" parent="." unique_id=1134358108]
 stream = ExtResource("6_75vfm")
-volume_db = -14.0
+volume_db = -13.0
+bus = &"Player"
 
 [node name="FootstepTimer" type="Timer" parent="." unique_id=690385103]
 wait_time = 0.45
@@ -126,9 +135,11 @@ target_position = Vector3(0, -1.5, 0)
 
 [node name="JumpAudio" type="AudioStreamPlayer3D" parent="." unique_id=111221126]
 volume_db = -8.0
+bus = &"Player"
 
 [node name="LandAudio" type="AudioStreamPlayer3D" parent="." unique_id=392142125]
 volume_db = -8.0
+bus = &"Player"
 
 [node name="InteractionSystem" parent="." unique_id=322344732 instance=ExtResource("21_3j4b4")]
 

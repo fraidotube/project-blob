@@ -3,20 +3,28 @@
 [ext_resource type="Script" uid="uid://thnrfgrp3rlo" path="res://scripts/ui/pause_menu.gd" id="1"]
 [ext_resource type="Script" uid="uid://cx4q1qlispfry" path="res://scripts/ui/menu_button.gd" id="2"]
 [ext_resource type="Theme" uid="uid://bktkx56kqeboj" path="res://scenes/ui/project_blob_menu_theme.tres" id="2_f6eus"]
+[ext_resource type="Script" path="res://scripts/ui/game_settings.gd" id="3"]
 
 [sub_resource type="SystemFont" id="MenuFont"]
 font_names = PackedStringArray("Bebas Neue")
 font_weight = 600
 
 [sub_resource type="StyleBoxFlat" id="PanelStyle"]
-bg_color = Color(0.01, 0.01, 0.02, 0.93)
+bg_color = Color(0.01, 0.01, 0.02, 0.95)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.55, 0.2, 0.72, 0.72)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 shadow_color = Color(0, 0, 0, 0.75)
 shadow_size = 18
+
+[sub_resource type="StyleBoxFlat" id="TabPanel"]
+bg_color = Color(0, 0, 0, 0)
 
 [sub_resource type="StyleBoxFlat" id="ButtonNormal"]
 content_margin_left = 24.0
@@ -55,6 +63,9 @@ shadow_size = 10
 [node name="PauseMenu" type="CanvasLayer" unique_id=823432185]
 layer = 100
 script = ExtResource("1")
+
+[node name="GameSettings" type="Node" parent="."]
+script = ExtResource("3")
 
 [node name="PauseRoot" type="Control" parent="." unique_id=558076622]
 process_mode = 3
@@ -135,53 +146,239 @@ layout_mode = 2
 text = "ESCI"
 script = ExtResource("2")
 
-[node name="OptionsPanel" type="Panel" parent="PauseRoot" unique_id=337197159]
+[node name="OptionsPanel" type="Control" parent="PauseRoot" unique_id=337197159]
 visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="PauseRoot/OptionsPanel"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -300.0
-offset_top = -180.0
-offset_right = 300.0
-offset_bottom = 180.0
+offset_left = -360.0
+offset_top = -300.0
+offset_right = 360.0
+offset_bottom = 330.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("PanelStyle")
 
-[node name="VBox" type="VBoxContainer" parent="PauseRoot/OptionsPanel" unique_id=251870489]
+[node name="Margin" type="MarginContainer" parent="PauseRoot/OptionsPanel/Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 34.0
-offset_top = 30.0
-offset_right = -34.0
-offset_bottom = -30.0
+offset_left = 36.0
+offset_top = 32.0
+offset_right = -36.0
+offset_bottom = -96.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 14
 
-[node name="Title" type="Label" parent="PauseRoot/OptionsPanel/VBox" unique_id=1997902883]
+[node name="Tabs" type="TabContainer" parent="PauseRoot/OptionsPanel/Panel/Margin"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("TabPanel")
+current_tab = 0
+
+[node name="VIDEO" type="ScrollContainer" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="VideoVBox" type="VBoxContainer" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 9
+
+[node name="Title" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.86, 0.48, 1, 1)
 theme_override_fonts/font = SubResource("MenuFont")
-theme_override_font_sizes/font_size = 30
-text = "OPZIONI"
+theme_override_font_sizes/font_size = 28
+text = "VIDEO"
 horizontal_alignment = 1
 
-[node name="Hint" type="Label" parent="PauseRoot/OptionsPanel/VBox" unique_id=626393080]
+[node name="ResolutionLabel" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
 layout_mode = 2
-text = "Le opzioni complete sono disponibili dal menu principale."
-horizontal_alignment = 1
+text = "RISOLUZIONE"
 
-[node name="Back" type="Button" parent="PauseRoot/OptionsPanel/VBox" unique_id=514231145]
-custom_minimum_size = Vector2(0, 52)
+[node name="Resolution" type="OptionButton" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
 layout_mode = 2
+
+[node name="WindowModeLabel" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
+layout_mode = 2
+text = "MODALITÀ SCHERMO"
+
+[node name="WindowMode" type="OptionButton" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
+layout_mode = 2
+
+[node name="VSync" type="CheckButton" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
+layout_mode = 2
+text = "VSYNC"
+
+[node name="FPSLabel" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
+layout_mode = 2
+text = "LIMITE FPS"
+
+[node name="FPSLimit" type="OptionButton" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
+layout_mode = 2
+
+[node name="RenderScaleValue" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
+layout_mode = 2
+text = "SCALA RENDER 3D: 100%"
+
+[node name="RenderScale" type="HSlider" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
+layout_mode = 2
+min_value = 0.5
+max_value = 1.5
+step = 0.05
+value = 1.0
+
+[node name="MSAALabel" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
+layout_mode = 2
+text = "MSAA"
+
+[node name="MSAA" type="OptionButton" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
+layout_mode = 2
+
+[node name="FXAA" type="CheckButton" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
+layout_mode = 2
+text = "FXAA"
+
+[node name="TAA" type="CheckButton" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox"]
+layout_mode = 2
+text = "TAA"
+
+[node name="AUDIO" type="ScrollContainer" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="AudioVBox" type="VBoxContainer" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 13
+
+[node name="Title" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.48, 1, 1)
 theme_override_fonts/font = SubResource("MenuFont")
-theme_override_font_sizes/font_size = 23
+theme_override_font_sizes/font_size = 28
+text = "AUDIO"
+horizontal_alignment = 1
+
+[node name="MasterValue" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox"]
+layout_mode = 2
+text = "MASTER: 100%"
+
+[node name="Master" type="HSlider" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox"]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="MusicValue" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox"]
+layout_mode = 2
+text = "MUSICA: 75%"
+
+[node name="Music" type="HSlider" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox"]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.75
+
+[node name="SFXValue" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox"]
+layout_mode = 2
+text = "EFFETTI: 100%"
+
+[node name="SFX" type="HSlider" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox"]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 1.0
+
+[node name="UIValue" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox"]
+layout_mode = 2
+text = "INTERFACCIA: 90%"
+
+[node name="UI" type="HSlider" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox"]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.9
+
+[node name="CONTROLLI" type="ScrollContainer" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="ControlsVBox" type="VBoxContainer" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/CONTROLLI"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+
+[node name="Title" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.48, 1, 1)
+theme_override_fonts/font = SubResource("MenuFont")
+theme_override_font_sizes/font_size = 28
+text = "CONTROLLI"
+horizontal_alignment = 1
+
+[node name="MouseSensitivityValue" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox"]
+layout_mode = 2
+text = "SENSIBILITÀ MOUSE: 100%"
+
+[node name="MouseSensitivity" type="HSlider" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox"]
+layout_mode = 2
+min_value = 0.25
+max_value = 2.5
+step = 0.05
+value = 1.0
+
+[node name="SensitivityHint" type="Label" parent="PauseRoot/OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox"]
+layout_mode = 2
+text = "100% = sensibilità attuale di Project Blob"
+horizontal_alignment = 1
+
+[node name="BottomButtons" type="HBoxContainer" parent="PauseRoot/OptionsPanel/Panel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = -74.0
+offset_right = -36.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 12
+
+[node name="Apply" type="Button" parent="PauseRoot/OptionsPanel/Panel/BottomButtons"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = SubResource("MenuFont")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+theme_override_styles/hover = SubResource("ButtonHover")
+text = "APPLICA"
+script = ExtResource("2")
+
+[node name="Back" type="Button" parent="PauseRoot/OptionsPanel/Panel/BottomButtons"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = SubResource("MenuFont")
+theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("ButtonNormal")
 theme_override_styles/pressed = SubResource("ButtonPressed")
 theme_override_styles/hover = SubResource("ButtonHover")
@@ -192,4 +389,13 @@ script = ExtResource("2")
 [connection signal="pressed" from="PauseRoot/MenuPanel/VBox/Options" to="." method="_on_options_pressed"]
 [connection signal="pressed" from="PauseRoot/MenuPanel/VBox/MainMenu" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="PauseRoot/MenuPanel/VBox/Quit" to="." method="_on_quit_pressed"]
-[connection signal="pressed" from="PauseRoot/OptionsPanel/VBox/Back" to="." method="_on_options_back_pressed"]
+
+[connection signal="value_changed" from="PauseRoot/OptionsPanel/Panel/Margin/Tabs/VIDEO/VideoVBox/RenderScale" to="." method="_on_render_scale_changed"]
+[connection signal="value_changed" from="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/Master" to="." method="_on_audio_changed"]
+[connection signal="value_changed" from="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/Music" to="." method="_on_audio_changed"]
+[connection signal="value_changed" from="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/SFX" to="." method="_on_audio_changed"]
+[connection signal="value_changed" from="PauseRoot/OptionsPanel/Panel/Margin/Tabs/AUDIO/AudioVBox/UI" to="." method="_on_audio_changed"]
+[connection signal="value_changed" from="PauseRoot/OptionsPanel/Panel/Margin/Tabs/CONTROLLI/ControlsVBox/MouseSensitivity" to="." method="_on_sensitivity_changed"]
+
+[connection signal="pressed" from="PauseRoot/OptionsPanel/Panel/BottomButtons/Apply" to="." method="_on_apply_pressed"]
+[connection signal="pressed" from="PauseRoot/OptionsPanel/Panel/BottomButtons/Back" to="." method="_on_options_back_pressed"]

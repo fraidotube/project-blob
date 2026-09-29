@@ -1,13 +1,12 @@
 extends Area3D
 
-
 @export var exterior_ambience: AudioStreamPlayer
 
 @export_range(
 	-80.0,
 	0.0,
 	0.5
-) var outside_volume_db := -10.0
+) var outside_volume_db := -6.0
 
 @export_range(
 	-80.0,
@@ -20,7 +19,6 @@ extends Area3D
 	5.0,
 	0.1
 ) var fade_time := 1.2
-
 
 var _tween: Tween
 

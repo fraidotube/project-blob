@@ -18,6 +18,9 @@ var music_volume := 0.75
 var sfx_volume := 1.0
 var ui_volume := 0.90
 
+# 1.0 = sensibilità storica Project Blob (0.004 rad/pixel).
+var mouse_sensitivity := 1.0
+
 
 func load_settings() -> void:
 	var config := ConfigFile.new()
@@ -113,6 +116,14 @@ func load_settings() -> void:
 			)
 		)
 
+		mouse_sensitivity = float(
+			config.get_value(
+				"controls",
+				"mouse_sensitivity",
+				mouse_sensitivity
+			)
+		)
+
 	apply_settings()
 
 
@@ -191,12 +202,22 @@ func save_settings() -> void:
 		ui_volume
 	)
 
+	config.set_value(
+		"controls",
+		"mouse_sensitivity",
+		mouse_sensitivity
+	)
+
 	config.save(SETTINGS_PATH)
 
 
 func apply_settings() -> void:
 	_apply_display()
 	_apply_rendering()
+	_apply_audio()
+
+
+func apply_audio() -> void:
 	_apply_audio()
 
 
@@ -253,13 +274,10 @@ func _apply_rendering() -> void:
 	match msaa_mode:
 		1:
 			viewport.msaa_3d = Viewport.MSAA_2X
-
 		2:
 			viewport.msaa_3d = Viewport.MSAA_4X
-
 		3:
 			viewport.msaa_3d = Viewport.MSAA_8X
-
 		_:
 			viewport.msaa_3d = Viewport.MSAA_DISABLED
 

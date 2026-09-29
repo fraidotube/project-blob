@@ -12,8 +12,17 @@ const OUTLINE_SHADER := preload(
 @export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0015
 @export var interaction_visual_roots: Array[NodePath] = []
 
+@export_group("Switch Audio")
+@export var switch_on_sound: AudioStream
+@export var switch_off_sound: AudioStream
+@export_range(-40.0, 12.0, 0.5) var switch_volume_db := 0.0
+@export_range(1.0, 50.0, 0.5) var audio_max_distance := 8.0
+
 var outline_material: ShaderMaterial
 var outlined_meshes: Array[GeometryInstance3D] = []
+
+var switch_audio: AudioStreamPlayer3D
+var lights_on := false
 
 
 func _setup_interaction_outline() -> void:
@@ -68,15 +77,23 @@ func get_interaction_color() -> Color:
 	return interaction_color
 
 
-var lights_on := false
-
-
 func _ready() -> void:
+	_setup_audio()
+
 	if power_system:
 		power_system.power_changed.connect(_on_power_changed)
 
 	_set_lights(false)
 	_setup_interaction_outline()
+
+
+func _setup_audio() -> void:
+	switch_audio = AudioStreamPlayer3D.new()
+	switch_audio.name = "SwitchAudio"
+	switch_audio.bus = &"SFX"
+	switch_audio.volume_db = switch_volume_db
+	switch_audio.max_distance = audio_max_distance
+	add_child(switch_audio)
 
 
 func get_interaction_name() -> String:
@@ -100,6 +117,22 @@ func try_toggle_lights() -> void:
 
 	lights_on = not lights_on
 	_set_lights(lights_on)
+
+	if lights_on:
+		_play_switch_sound(switch_on_sound)
+	else:
+		_play_switch_sound(switch_off_sound)
+
+
+func _play_switch_sound(stream: AudioStream) -> void:
+	if switch_audio == null or stream == null:
+		return
+
+	switch_audio.stop()
+	switch_audio.stream = stream
+	switch_audio.volume_db = switch_volume_db
+	switch_audio.max_distance = audio_max_distance
+	switch_audio.play()
 
 
 func _set_lights(enabled: bool) -> void:

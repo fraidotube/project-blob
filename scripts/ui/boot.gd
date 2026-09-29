@@ -10,26 +10,65 @@ const NEXT_SCENE := "res://scenes/ui/main_menu.tscn"
 @onready var fraidosoft_logo: TextureRect = $FraidoSoftLogo
 @onready var project_blob_logo: TextureRect = $ProjectBlobLogo
 
+
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	fraidosoft_logo.modulate.a = 0.0
 	project_blob_logo.modulate.a = 0.0
-	await get_tree().process_frame
-	await _show_logo(fraidosoft_logo, fraidosoft_hold_time)
-	await _show_logo(project_blob_logo, project_blob_hold_time)
-	_finish_boot()
 
-func _show_logo(logo: TextureRect, hold_time: float) -> void:
+	await get_tree().process_frame
+	await _show_logo(
+		fraidosoft_logo,
+		fraidosoft_hold_time
+	)
+	await _show_logo(
+		project_blob_logo,
+		project_blob_hold_time
+	)
+
+	await _finish_boot()
+
+
+func _show_logo(
+	logo: TextureRect,
+	hold_time: float
+) -> void:
 	var fade_in := create_tween()
-	fade_in.tween_property(logo, "modulate:a", 1.0, fade_in_time)
+	fade_in.tween_property(
+		logo,
+		"modulate:a",
+		1.0,
+		fade_in_time
+	)
 	await fade_in.finished
-	await get_tree().create_timer(hold_time).timeout
+
+	await get_tree().create_timer(
+		hold_time
+	).timeout
+
 	var fade_out := create_tween()
-	fade_out.tween_property(logo, "modulate:a", 0.0, fade_out_time)
+	fade_out.tween_property(
+		logo,
+		"modulate:a",
+		0.0,
+		fade_out_time
+	)
 	await fade_out.finished
 
+
 func _finish_boot() -> void:
-	if not ResourceLoader.exists(NEXT_SCENE):
-		push_error("BOOT: scena non trovata: " + NEXT_SCENE)
+	var transition := get_node_or_null(
+		"/root/SceneTransition"
+	)
+
+	if transition != null:
+		await transition.call(
+			"transition_to",
+			NEXT_SCENE,
+			false
+		)
 		return
-	get_tree().change_scene_to_file(NEXT_SCENE)
+
+	get_tree().change_scene_to_file(
+		NEXT_SCENE
+	)

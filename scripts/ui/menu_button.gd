@@ -66,13 +66,13 @@ func _create_ui_audio_players() -> void:
 	hover_player.name = "UIHoverAudio"
 	hover_player.bus = &"UI"
 	hover_player.stream = UI_HOVER
-	hover_player.volume_db = -11.0
+	hover_player.volume_db = -4.0
 	add_child(hover_player)
 
 	click_player = AudioStreamPlayer.new()
 	click_player.name = "UIClickAudio"
 	click_player.bus = &"UI"
-	click_player.volume_db = -7.0
+	click_player.volume_db = -2.0
 	add_child(click_player)
 
 
@@ -315,11 +315,18 @@ func _refresh_image() -> void:
 		)
 
 
+func _is_container_managed() -> bool:
+	return get_parent() is Container
+
+
 func _update_pivot() -> void:
-	pivot_offset = Vector2(
-		0.0,
-		size.y * 0.5
-	)
+	if _is_container_managed():
+		pivot_offset = size * 0.5
+	else:
+		pivot_offset = Vector2(
+			0.0,
+			size.y * 0.5
+		)
 
 	if label_image != null:
 		_refresh_image()
@@ -328,6 +335,15 @@ func _update_pivot() -> void:
 func _kill_tween() -> void:
 	if hover_tween != null:
 		hover_tween.kill()
+
+
+func _hover_target_x() -> float:
+	# I Container gestiscono autonomamente la posizione dei figli.
+	# Spostare position.x dentro HBox/VBox causa sovrapposizioni.
+	if _is_container_managed():
+		return base_position.x
+
+	return base_position.x + hover_shift
 
 
 func _animate_to(
@@ -351,22 +367,24 @@ func _animate_to(
 		Tween.EASE_OUT
 	)
 
-	hover_tween.tween_property(
-		self,
-		"position:x",
-		target_x,
-		duration
-	).set_trans(
-		Tween.TRANS_QUAD
-	).set_ease(
-		Tween.EASE_OUT
-	)
+	# Non tocchiamo position.x dei Button gestiti da Container.
+	if not _is_container_managed():
+		hover_tween.tween_property(
+			self,
+			"position:x",
+			target_x,
+			duration
+		).set_trans(
+			Tween.TRANS_QUAD
+		).set_ease(
+			Tween.EASE_OUT
+		)
 
 
 func _on_mouse_entered() -> void:
 	_animate_to(
 		base_scale * hover_scale,
-		base_position.x + hover_shift,
+		_hover_target_x(),
 		animation_time
 	)
 
@@ -390,7 +408,7 @@ func _on_mouse_exited() -> void:
 func _on_focus_entered() -> void:
 	_animate_to(
 		base_scale * hover_scale,
-		base_position.x + hover_shift,
+		_hover_target_x(),
 		animation_time
 	)
 

@@ -4,7 +4,10 @@ const WALK_SPEED := 5.0
 const SPRINT_SPEED := 8.0
 const CROUCH_SPEED := 2.8
 const JUMP_VELOCITY := 4.5
-const MOUSE_SENSITIVITY := 0.004
+
+# Baseline storica Project Blob.
+const BASE_MOUSE_SENSITIVITY := 0.004
+const SETTINGS_PATH := "user://settings.cfg"
 
 const STAND_HEIGHT := 1.8
 const CROUCH_HEIGHT := 1.2
@@ -51,9 +54,12 @@ const LAND_MIN_SPEED := -2.0
 var health: int
 var is_dead := false
 var is_crouched := false
+var mouse_sensitivity := BASE_MOUSE_SENSITIVITY
 
 
 func _ready() -> void:
+	_load_mouse_sensitivity()
+
 	health = max_health
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
@@ -62,6 +68,27 @@ func _ready() -> void:
 		"update_health",
 		health,
 		max_health
+	)
+
+
+func _load_mouse_sensitivity() -> void:
+	var config := ConfigFile.new()
+
+	if config.load(SETTINGS_PATH) != OK:
+		mouse_sensitivity = BASE_MOUSE_SENSITIVITY
+		return
+
+	var multiplier := float(
+		config.get_value(
+			"controls",
+			"mouse_sensitivity",
+			1.0
+		)
+	)
+
+	mouse_sensitivity = (
+		BASE_MOUSE_SENSITIVITY
+		* clampf(multiplier, 0.25, 2.50)
 	)
 
 
@@ -74,11 +101,11 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	if event is InputEventMouseMotion:
 		rotate_y(
-			-event.relative.x * MOUSE_SENSITIVITY
+			-event.relative.x * mouse_sensitivity
 		)
 
 		head.rotate_x(
-			-event.relative.y * MOUSE_SENSITIVITY
+			-event.relative.y * mouse_sensitivity
 		)
 
 		head.rotation.x = clamp(
@@ -86,8 +113,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			deg_to_rad(-89.0),
 			deg_to_rad(89.0)
 		)
-
-	
 
 	if event.is_action_pressed("weapon_slot_1"):
 		weapon.select_weapon_slot(1)
@@ -109,9 +134,6 @@ func _unhandled_input(event: InputEvent) -> void:
 
 	if event.is_action_pressed("ui_cancel"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-
-
-
 
 
 func _physics_process(delta: float) -> void:

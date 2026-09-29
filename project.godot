@@ -15,8 +15,10 @@ config/features=PackedStringArray("4.7")
 
 [autoload]
 
-PauseMenu="*res://scenes/ui/pause_menu.tscn"
+SettingsManager="*res://scripts/systems/settings_manager.gd"
 AudioManager="*res://scripts/systems/audio_manager.gd"
+SceneTransition="*res://scripts/systems/scene_transition.gd"
+PauseMenu="*res://scenes/ui/pause_menu.tscn"
 
 [display]
 

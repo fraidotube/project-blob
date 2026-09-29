@@ -13,8 +13,23 @@ const OUTLINE_SHADER := preload(
 @export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0015
 @export var interaction_visual_roots: Array[NodePath] = []
 
+@export_group("Meter Audio")
+@export var switch_sound: AudioStream
+@export var power_on_sound: AudioStream
+@export var power_off_sound: AudioStream
+@export var hum_loop_sound: AudioStream
+@export_range(-40.0, 12.0, 0.5) var switch_volume_db := 0.0
+@export_range(-40.0, 12.0, 0.5) var power_volume_db := 0.0
+@export_range(-40.0, 12.0, 0.5) var hum_volume_db := -8.0
+@export_range(1.0, 50.0, 0.5) var audio_max_distance := 12.0
+@export_range(1.0, 50.0, 0.5) var hum_max_distance := 8.0
+
 var outline_material: ShaderMaterial
 var outlined_meshes: Array[GeometryInstance3D] = []
+
+var switch_audio: AudioStreamPlayer3D
+var power_audio: AudioStreamPlayer3D
+var hum_audio: AudioStreamPlayer3D
 
 
 func _setup_interaction_outline() -> void:
@@ -70,13 +85,43 @@ func get_interaction_color() -> Color:
 
 
 func _ready() -> void:
+	_setup_audio()
+
 	if power_system:
 		power_system.power_changed.connect(_on_power_changed)
-		_update_leds(power_system.is_power_on())
+
+		var is_on: bool = bool(power_system.is_power_on())
+
+		_update_leds(is_on)
+		_update_hum_state(is_on)
 	else:
 		_update_leds(false)
+		_update_hum_state(false)
 
 	_setup_interaction_outline()
+
+
+func _setup_audio() -> void:
+	switch_audio = AudioStreamPlayer3D.new()
+	switch_audio.name = "MeterSwitchAudio"
+	switch_audio.bus = &"SFX"
+	switch_audio.volume_db = switch_volume_db
+	switch_audio.max_distance = audio_max_distance
+	add_child(switch_audio)
+
+	power_audio = AudioStreamPlayer3D.new()
+	power_audio.name = "MeterPowerAudio"
+	power_audio.bus = &"SFX"
+	power_audio.volume_db = power_volume_db
+	power_audio.max_distance = audio_max_distance
+	add_child(power_audio)
+
+	hum_audio = AudioStreamPlayer3D.new()
+	hum_audio.name = "MeterHumAudio"
+	hum_audio.bus = &"SFX"
+	hum_audio.volume_db = hum_volume_db
+	hum_audio.max_distance = hum_max_distance
+	add_child(hum_audio)
 
 
 func get_interaction_name() -> String:
@@ -87,7 +132,7 @@ func get_interaction_action() -> String:
 	if power_system == null:
 		return "USA"
 
-	return "DISATTIVA" if power_system.is_power_on() else "ATTIVA"
+	return "DISATTIVA" if bool(power_system.is_power_on()) else "ATTIVA"
 
 
 func interact(_player: Node) -> void:
@@ -98,11 +143,57 @@ func toggle_meter() -> void:
 	if power_system == null:
 		return
 
+	_play_switch_sound()
 	power_system.toggle_power()
 
 
 func _on_power_changed(is_on: bool) -> void:
 	_update_leds(is_on)
+
+	if is_on:
+		_play_power_sound(power_on_sound)
+	else:
+		_play_power_sound(power_off_sound)
+
+	_update_hum_state(is_on)
+
+
+func _play_switch_sound() -> void:
+	if switch_audio == null or switch_sound == null:
+		return
+
+	switch_audio.stop()
+	switch_audio.stream = switch_sound
+	switch_audio.volume_db = switch_volume_db
+	switch_audio.max_distance = audio_max_distance
+	switch_audio.play()
+
+
+func _play_power_sound(stream: AudioStream) -> void:
+	if power_audio == null or stream == null:
+		return
+
+	power_audio.stop()
+	power_audio.stream = stream
+	power_audio.volume_db = power_volume_db
+	power_audio.max_distance = audio_max_distance
+	power_audio.play()
+
+
+func _update_hum_state(is_on: bool) -> void:
+	if hum_audio == null:
+		return
+
+	if not is_on or hum_loop_sound == null:
+		hum_audio.stop()
+		return
+
+	hum_audio.stream = hum_loop_sound
+	hum_audio.volume_db = hum_volume_db
+	hum_audio.max_distance = hum_max_distance
+
+	if not hum_audio.playing:
+		hum_audio.play()
 
 
 func _update_leds(is_on: bool) -> void:
