@@ -5,7 +5,6 @@ const SPRINT_SPEED := 8.0
 const CROUCH_SPEED := 2.8
 const JUMP_VELOCITY := 4.5
 
-# Baseline storica Project Blob.
 const BASE_MOUSE_SENSITIVITY := 0.004
 const SETTINGS_PATH := "user://settings.cfg"
 
@@ -23,6 +22,14 @@ const FOOTSTEP_CROUCH_INTERVAL := 0.60
 
 const LAND_MIN_SPEED := -2.0
 
+const DEATH_TITLE_TEXTURE := preload(
+	"res://assets/ui/sei_morto.png"
+)
+
+const DEATH_CONTINUE_TEXTURE := preload(
+	"res://assets/ui/n_continua.png"
+)
+
 @export var max_health := 100
 
 @export var footsteps_parquet: AudioStream
@@ -38,6 +45,18 @@ const LAND_MIN_SPEED := -2.0
 
 @export var jump_rock_start: AudioStream
 @export var jump_rock_land: AudioStream
+
+@export_group("Player Voice")
+@export var damage_voice_sounds: Array[AudioStream] = []
+@export var jump_voice_sounds: Array[AudioStream] = []
+@export var landing_voice_sounds: Array[AudioStream] = []
+@export var sprint_breath_sounds: Array[AudioStream] = []
+@export var death_voice_sounds: Array[AudioStream] = []
+
+@export_range(-40.0, 12.0, 0.5) var voice_volume_db: float = 0.0
+@export_range(0.0, 5.0, 0.1) var damage_voice_cooldown: float = 0.8
+@export_range(0.5, 20.0, 0.1) var sprint_breath_interval_min: float = 2.5
+@export_range(0.5, 20.0, 0.1) var sprint_breath_interval_max: float = 4.5
 
 @onready var head: Node3D = $Head
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
@@ -56,9 +75,15 @@ var is_dead := false
 var is_crouched := false
 var mouse_sensitivity := BASE_MOUSE_SENSITIVITY
 
+var voice_audio: AudioStreamPlayer
+var sprint_breath_audio: AudioStreamPlayer
+var sprint_breath_timer: Timer
+var damage_voice_timer: Timer
+
 
 func _ready() -> void:
 	_load_mouse_sensitivity()
+	_setup_voice_audio()
 
 	health = max_health
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -69,6 +94,31 @@ func _ready() -> void:
 		health,
 		max_health
 	)
+
+
+func _setup_voice_audio() -> void:
+	voice_audio = AudioStreamPlayer.new()
+	voice_audio.name = "PlayerVoiceAudio"
+	voice_audio.bus = &"Player"
+	voice_audio.volume_db = voice_volume_db
+	add_child(voice_audio)
+
+	sprint_breath_audio = AudioStreamPlayer.new()
+	sprint_breath_audio.name = "SprintBreathAudio"
+	sprint_breath_audio.bus = &"Player"
+	sprint_breath_audio.volume_db = voice_volume_db
+	add_child(sprint_breath_audio)
+
+	sprint_breath_timer = Timer.new()
+	sprint_breath_timer.name = "SprintBreathTimer"
+	sprint_breath_timer.one_shot = true
+	sprint_breath_timer.timeout.connect(_on_sprint_breath_timer_timeout)
+	add_child(sprint_breath_timer)
+
+	damage_voice_timer = Timer.new()
+	damage_voice_timer.name = "DamageVoiceCooldown"
+	damage_voice_timer.one_shot = true
+	add_child(damage_voice_timer)
 
 
 func _load_mouse_sensitivity() -> void:
@@ -94,20 +144,22 @@ func _load_mouse_sensitivity() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_dead:
-		if event.is_action_pressed("restart"):
+		if (
+			event is InputEventKey
+			and event.pressed
+			and not event.echo
+			and (
+				event.keycode == KEY_N
+				or event.physical_keycode == KEY_N
+			)
+		):
 			get_tree().reload_current_scene()
 
 		return
 
 	if event is InputEventMouseMotion:
-		rotate_y(
-			-event.relative.x * mouse_sensitivity
-		)
-
-		head.rotate_x(
-			-event.relative.y * mouse_sensitivity
-		)
-
+		rotate_y(-event.relative.x * mouse_sensitivity)
+		head.rotate_x(-event.relative.y * mouse_sensitivity)
 		head.rotation.x = clamp(
 			head.rotation.x,
 			deg_to_rad(-89.0),
@@ -140,6 +192,11 @@ func _physics_process(delta: float) -> void:
 	if is_dead:
 		velocity = Vector3.ZERO
 		footstep_timer.stop()
+		sprint_breath_timer.stop()
+
+		if sprint_breath_audio.playing:
+			sprint_breath_audio.stop()
+
 		return
 
 	var was_on_floor := is_on_floor()
@@ -155,6 +212,7 @@ func _physics_process(delta: float) -> void:
 		and not is_crouched
 	):
 		_play_jump_sound()
+		_play_random_voice(jump_voice_sounds)
 		velocity.y = JUMP_VELOCITY
 
 	var is_sprinting := (
@@ -178,11 +236,7 @@ func _physics_process(delta: float) -> void:
 
 	var direction := (
 		transform.basis
-		* Vector3(
-			input_dir.x,
-			0.0,
-			input_dir.y
-		)
+		* Vector3(input_dir.x, 0.0, input_dir.y)
 	).normalized()
 
 	var is_moving := direction != Vector3.ZERO
@@ -191,17 +245,8 @@ func _physics_process(delta: float) -> void:
 		velocity.x = direction.x * speed
 		velocity.z = direction.z * speed
 	else:
-		velocity.x = move_toward(
-			velocity.x,
-			0.0,
-			speed
-		)
-
-		velocity.z = move_toward(
-			velocity.z,
-			0.0,
-			speed
-		)
+		velocity.x = move_toward(velocity.x, 0.0, speed)
+		velocity.z = move_toward(velocity.z, 0.0, speed)
 
 	var vertical_speed_before_move := velocity.y
 
@@ -213,9 +258,10 @@ func _physics_process(delta: float) -> void:
 	)
 
 	if just_landed:
-		_play_landing_sound(
-			vertical_speed_before_move
-		)
+		_play_landing_sound(vertical_speed_before_move)
+
+		if vertical_speed_before_move <= LAND_MIN_SPEED:
+			_play_random_voice(landing_voice_sounds)
 
 	weapon.set_movement_state(
 		is_moving,
@@ -226,6 +272,88 @@ func _physics_process(delta: float) -> void:
 		is_sprinting,
 		just_landed
 	)
+
+	_update_sprint_breathing(
+		is_moving,
+		is_sprinting
+	)
+
+
+func _update_sprint_breathing(
+	is_moving: bool,
+	is_sprinting: bool
+) -> void:
+	if not is_moving or not is_sprinting:
+		sprint_breath_timer.stop()
+
+		if sprint_breath_audio.playing:
+			sprint_breath_audio.stop()
+
+		return
+
+	var valid := _get_valid_voice_sounds(
+		sprint_breath_sounds
+	)
+
+	if valid.is_empty():
+		sprint_breath_timer.stop()
+
+		if sprint_breath_audio.playing:
+			sprint_breath_audio.stop()
+
+		return
+
+	if sprint_breath_audio.playing:
+		return
+
+	if sprint_breath_timer.is_stopped():
+		sprint_breath_audio.stream = valid.pick_random()
+		sprint_breath_audio.volume_db = voice_volume_db
+		sprint_breath_audio.play()
+		_start_next_sprint_breath_timer()
+
+
+func _on_sprint_breath_timer_timeout() -> void:
+	pass
+
+
+func _start_next_sprint_breath_timer() -> void:
+	var minimum := minf(
+		sprint_breath_interval_min,
+		sprint_breath_interval_max
+	)
+	var maximum := maxf(
+		sprint_breath_interval_min,
+		sprint_breath_interval_max
+	)
+
+	sprint_breath_timer.start(
+		randf_range(minimum, maximum)
+	)
+
+
+func _play_random_voice(streams: Array[AudioStream]) -> void:
+	var valid := _get_valid_voice_sounds(streams)
+
+	if valid.is_empty():
+		return
+
+	voice_audio.stop()
+	voice_audio.stream = valid.pick_random()
+	voice_audio.volume_db = voice_volume_db
+	voice_audio.play()
+
+
+func _get_valid_voice_sounds(
+	streams: Array[AudioStream]
+) -> Array[AudioStream]:
+	var valid: Array[AudioStream] = []
+
+	for stream: AudioStream in streams:
+		if stream != null:
+			valid.append(stream)
+
+	return valid
 
 
 func _update_footsteps(
@@ -245,37 +373,28 @@ func _update_footsteps(
 		footstep_timer.stop()
 		return
 
-	var interval := _get_footstep_interval(
-		is_sprinting
-	)
+	var interval := _get_footstep_interval(is_sprinting)
 
 	if just_landed:
 		footstep_timer.start(interval)
 		return
 
 	if footstep_timer.is_stopped():
-		var footstep_stream := _get_footstep_stream(
-			is_sprinting
-		)
+		var footstep_stream := _get_footstep_stream(is_sprinting)
 
 		if footstep_stream == null:
 			return
 
 		footstep_audio.stream = footstep_stream
 		footstep_audio.play()
-
 		footstep_timer.start(interval)
 
 
-func _get_footstep_interval(
-	is_sprinting: bool
-) -> float:
+func _get_footstep_interval(is_sprinting: bool) -> float:
 	if is_crouched:
 		return FOOTSTEP_CROUCH_INTERVAL
-
 	if is_sprinting:
 		return FOOTSTEP_SPRINT_INTERVAL
-
 	return FOOTSTEP_WALK_INTERVAL
 
 
@@ -295,10 +414,8 @@ func _get_surface_type() -> String:
 	while current_node != null:
 		if current_node.is_in_group("surface_rock"):
 			return "rock"
-
 		if current_node.is_in_group("surface_tile"):
 			return "tile"
-
 		if current_node.is_in_group("surface_parquet"):
 			return "parquet"
 
@@ -307,28 +424,18 @@ func _get_surface_type() -> String:
 	return ""
 
 
-func _get_footstep_stream(
-	is_sprinting: bool
-) -> AudioStream:
+func _get_footstep_stream(is_sprinting: bool) -> AudioStream:
 	var surface_type := _get_surface_type()
 
 	match surface_type:
 		"rock":
-			if (
-				is_sprinting
-				and footsteps_rock_run != null
-			):
+			if is_sprinting and footsteps_rock_run != null:
 				return footsteps_rock_run
-
 			return footsteps_rock
 
 		"tile":
-			if (
-				is_sprinting
-				and footsteps_tile_run != null
-			):
+			if is_sprinting and footsteps_tile_run != null:
 				return footsteps_tile_run
-
 			return footsteps_tile
 
 		"parquet":
@@ -352,9 +459,7 @@ func _play_jump_sound() -> void:
 				jump_audio.play()
 
 
-func _play_landing_sound(
-	vertical_speed: float
-) -> void:
+func _play_landing_sound(vertical_speed: float) -> void:
 	if vertical_speed > LAND_MIN_SPEED:
 		return
 
@@ -440,12 +545,8 @@ func add_ammo(amount: int) -> void:
 	weapon.add_ammo(amount)
 
 
-func add_flashlight_battery(
-	amount: int = 1
-) -> bool:
-	return weapon.add_flashlight_battery(
-		amount
-	)
+func add_flashlight_battery(amount: int = 1) -> bool:
+	return weapon.add_flashlight_battery(amount)
 
 
 func take_damage(amount: int) -> void:
@@ -469,15 +570,160 @@ func take_damage(amount: int) -> void:
 
 	if health <= 0:
 		die()
+		return
+
+	if damage_voice_timer.is_stopped():
+		_play_random_voice(damage_voice_sounds)
+		damage_voice_timer.start(damage_voice_cooldown)
 
 
 func die() -> void:
+	if is_dead:
+		return
+
 	is_dead = true
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 	footstep_timer.stop()
+	sprint_breath_timer.stop()
 
-	get_tree().call_group(
-		"hud",
-		"show_death_screen"
+	if sprint_breath_audio.playing:
+		sprint_breath_audio.stop()
+
+	_play_random_voice(death_voice_sounds)
+
+	_hide_game_hud()
+	_play_death_camera_fall()
+	_show_death_overlay()
+
+
+func _hide_game_hud() -> void:
+	for hud: Node in get_tree().get_nodes_in_group("hud"):
+		var interface := hud.get_node_or_null("Interface")
+
+		if interface is CanvasItem:
+			interface.visible = false
+
+
+func _play_death_camera_fall() -> void:
+	var target_position := head.position
+	target_position.y = -0.55
+
+	var target_rotation := head.rotation
+	target_rotation.x += deg_to_rad(12.0)
+	target_rotation.z += deg_to_rad(78.0)
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.set_trans(Tween.TRANS_QUAD)
+	tween.set_ease(Tween.EASE_IN_OUT)
+
+	tween.tween_property(
+		head,
+		"position",
+		target_position,
+		0.90
 	)
+
+	tween.tween_property(
+		head,
+		"rotation",
+		target_rotation,
+		0.95
+	)
+
+
+func _show_death_overlay() -> void:
+	var death_layer := CanvasLayer.new()
+	death_layer.name = "DeathScreen"
+	death_layer.layer = 100
+	add_child(death_layer)
+
+	var root := Control.new()
+	root.name = "Root"
+	death_layer.add_child(root)
+	root.set_anchors_and_offsets_preset(
+		Control.PRESET_FULL_RECT
+	)
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var black_fade := ColorRect.new()
+	black_fade.name = "BlackFade"
+	black_fade.color = Color.BLACK
+	black_fade.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	black_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(black_fade)
+	black_fade.set_anchors_and_offsets_preset(
+		Control.PRESET_FULL_RECT
+	)
+
+	var death_title := TextureRect.new()
+	death_title.name = "DeathTitle"
+	death_title.texture = DEATH_TITLE_TEXTURE
+	death_title.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	death_title.stretch_mode = (
+		TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	)
+	death_title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	death_title.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	root.add_child(death_title)
+
+	death_title.anchor_left = 0.5
+	death_title.anchor_top = 0.5
+	death_title.anchor_right = 0.5
+	death_title.anchor_bottom = 0.5
+	death_title.offset_left = -600.0
+	death_title.offset_top = -290.0
+	death_title.offset_right = 600.0
+	death_title.offset_bottom = 110.0
+
+	var continue_prompt := TextureRect.new()
+	continue_prompt.name = "ContinuePrompt"
+	continue_prompt.texture = DEATH_CONTINUE_TEXTURE
+	continue_prompt.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	continue_prompt.stretch_mode = (
+		TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	)
+	continue_prompt.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	continue_prompt.modulate = Color(
+		1.0,
+		1.0,
+		1.0,
+		0.0
+	)
+	root.add_child(continue_prompt)
+
+	continue_prompt.anchor_left = 0.5
+	continue_prompt.anchor_top = 0.5
+	continue_prompt.anchor_right = 0.5
+	continue_prompt.anchor_bottom = 0.5
+	continue_prompt.offset_left = -420.0
+	continue_prompt.offset_top = 70.0
+	continue_prompt.offset_right = 420.0
+	continue_prompt.offset_bottom = 350.0
+
+	var fade_tween := create_tween()
+	fade_tween.set_parallel(true)
+	fade_tween.set_trans(Tween.TRANS_SINE)
+	fade_tween.set_ease(Tween.EASE_IN_OUT)
+
+	fade_tween.tween_property(
+		black_fade,
+		"modulate:a",
+		0.94,
+		1.45
+	)
+
+	fade_tween.tween_property(
+		death_title,
+		"modulate:a",
+		1.0,
+		0.85
+	).set_delay(0.45)
+
+	fade_tween.tween_property(
+		continue_prompt,
+		"modulate:a",
+		1.0,
+		0.70
+	).set_delay(1.15)

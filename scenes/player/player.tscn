@@ -13,15 +13,32 @@
 [ext_resource type="AudioStream" uid="uid://c4a1bmw8vivnb" path="res://assets/audio/player/footsteps/jump_tile_land.tres" id="8_fcs02"]
 [ext_resource type="AudioStream" uid="uid://bkeb4paikacj8" path="res://assets/audio/player/footsteps/jump_rock_start.tres" id="9_myrg7"]
 [ext_resource type="AudioStream" uid="uid://b7wiy16aqbxys" path="res://assets/audio/player/footsteps/jump_rock_land.tres" id="10_kvlxm"]
+[ext_resource type="AudioStream" uid="uid://c2m3u36f5nmn6" path="res://assets/audio/player/voice/Voice_Male_V1_Pain_Mono_01.wav" id="11_wva7c"]
+[ext_resource type="AudioStream" uid="uid://cjlyp0btkf3c4" path="res://assets/audio/player/voice/Voice_Male_V1_Pain_Mono_02.wav" id="12_7obkq"]
 [ext_resource type="AudioStream" uid="uid://cif7rifv0lc8b" path="res://assets/audio/player/footsteps/pistol_shots.tres" id="13_kvlxm"]
+[ext_resource type="AudioStream" uid="uid://wxu3eubwhkxa" path="res://assets/audio/player/voice/Voice_Male_V1_Pain_Mono_03.wav" id="13_vo27k"]
+[ext_resource type="AudioStream" uid="uid://be7aoittmgtm" path="res://assets/audio/player/voice/Voice_Male_V1_Pain_Mono_04.wav" id="14_genst"]
+[ext_resource type="AudioStream" uid="uid://dld226fyj8x13" path="res://assets/audio/player/voice/Voice_Male_V1_Jump_Mono_01.wav" id="14_kxw46"]
 [ext_resource type="AudioStream" uid="uid://bxs8w44d3xgr4" path="res://assets/audio/weapons/pistol/gunempty.ogg" id="14_uf5tr"]
+[ext_resource type="AudioStream" uid="uid://dg0gtp8ss4kke" path="res://assets/audio/player/voice/Voice_Male_V1_Jump_Mono_02.wav" id="15_8qxvo"]
 [ext_resource type="AudioStream" uid="uid://bte7irtnpew4s" path="res://assets/audio/weapons/pistol/reload.ogg" id="15_lgqa7"]
+[ext_resource type="AudioStream" uid="uid://dvrmm45821j0x" path="res://assets/audio/player/voice/Voice_Male_V1_Pain_Mono_05.wav" id="15_niom3"]
+[ext_resource type="AudioStream" uid="uid://fh6q2atuwaql" path="res://assets/audio/player/voice/Voice_Male_V1_Jump_Mono_03.wav" id="16_5q8fn"]
 [ext_resource type="AudioStream" uid="uid://bcde5urnj7omb" path="res://assets/audio/weapons/pistol/gunready.ogg" id="16_8ydkj"]
 [ext_resource type="AudioStream" uid="uid://yfp5l2tv3ua" path="res://assets/audio/player/footsteps/pistol_shell_casings.tres" id="17_3j4b4"]
+[ext_resource type="AudioStream" uid="uid://fd35pvcr2y0u" path="res://assets/audio/player/voice/Voice_Male_V1_Jump_Mono_04.wav" id="17_wva7c"]
 [ext_resource type="Texture2D" uid="uid://c6ivkfjw1ht2s" path="res://assets/textures/flashlight_cookie_soft_irregular.png" id="19_8ydkj"]
 [ext_resource type="Script" uid="uid://b3c2ab60a3gn" path="res://scripts/weapons/flashlight_beam_follow.gd" id="19_lgqa7"]
 [ext_resource type="AudioStream" uid="uid://dbs1f0duoox7m" path="res://assets/audio/weapons/flashlight/flashlight_click.wav" id="19_yj68g"]
+[ext_resource type="AudioStream" uid="uid://cpkc4p4lowofn" path="res://assets/audio/player/voice/Voice_Male_V1_Land_Mono_01.wav" id="20_ttakn"]
 [ext_resource type="PackedScene" path="res://scenes/ui/interaction_system.tscn" id="21_3j4b4"]
+[ext_resource type="AudioStream" uid="uid://dynm1e3byv0cr" path="res://assets/audio/player/voice/Voice_Male_V1_Land_Mono_02.wav" id="21_rw8a5"]
+[ext_resource type="AudioStream" uid="uid://djkm8nq4dua0x" path="res://assets/audio/player/voice/Voice_Male_V1_Land_Mono_03.wav" id="22_iwuka"]
+[ext_resource type="AudioStream" uid="uid://dcq213n64sulm" path="res://assets/audio/player/voice/Voice_Male_V1_Land_Mono_04.wav" id="23_hyqqp"]
+[ext_resource type="AudioStream" uid="uid://dfqxl8p3pjxx1" path="res://assets/audio/player/voice/corsa.wav" id="24_ds1xl"]
+[ext_resource type="AudioStream" uid="uid://d4blmkkun7quh" path="res://assets/audio/player/voice/morte2.wav" id="25_1u1sw"]
+[ext_resource type="AudioStream" uid="uid://22fhlfy8tpdt" path="res://assets/audio/player/voice/morte3.wav" id="26_2t3bg"]
+[ext_resource type="AudioStream" uid="uid://1o70n03fcc1v" path="res://assets/audio/player/voice/morte.wav" id="27_jrbya"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
 radius = 0.4
@@ -42,6 +59,11 @@ jump_tile_start = ExtResource("7_ugbui")
 jump_tile_land = ExtResource("8_fcs02")
 jump_rock_start = ExtResource("9_myrg7")
 jump_rock_land = ExtResource("10_kvlxm")
+damage_voice_sounds = Array[AudioStream]([ExtResource("11_wva7c"), ExtResource("12_7obkq"), ExtResource("13_vo27k"), ExtResource("14_genst"), ExtResource("15_niom3")])
+jump_voice_sounds = Array[AudioStream]([ExtResource("14_kxw46"), ExtResource("15_8qxvo"), ExtResource("16_5q8fn"), ExtResource("17_wva7c")])
+landing_voice_sounds = Array[AudioStream]([ExtResource("20_ttakn"), ExtResource("21_rw8a5"), ExtResource("22_iwuka"), ExtResource("23_hyqqp")])
+sprint_breath_sounds = Array[AudioStream]([ExtResource("24_ds1xl")])
+death_voice_sounds = Array[AudioStream]([null, ExtResource("25_1u1sw"), ExtResource("26_2t3bg"), ExtResource("27_jrbya")])
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1140553579]
 shape = SubResource("CapsuleShape3D_hbjui")
