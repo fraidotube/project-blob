@@ -11,8 +11,14 @@ const OUTLINE_SHADER := preload(
 @export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0015
 @export var interaction_visual_roots: Array[NodePath] = []
 
+@export_group("Remote Audio")
+@export var remote_sound: AudioStream
+@export_range(-40.0, 12.0, 0.5) var remote_volume_db := 0.0
+@export_range(1.0, 50.0, 0.5) var audio_max_distance := 6.0
+
 var outline_material: ShaderMaterial
 var outlined_meshes: Array[GeometryInstance3D] = []
+var remote_audio: AudioStreamPlayer3D
 
 
 func _setup_interaction_outline() -> void:
@@ -44,7 +50,7 @@ func _collect_interaction_geometry(node: Node) -> void:
 	if node.name == "InteractionOutline":
 		return
 	if node.name == "OutlineBuilder":
-		return
+			return
 	if node.name == "InteractionOutlineProxy":
 		return
 
@@ -68,7 +74,17 @@ func get_interaction_color() -> Color:
 
 
 func _ready() -> void:
+	_setup_remote_audio()
 	_setup_interaction_outline()
+
+
+func _setup_remote_audio() -> void:
+	remote_audio = AudioStreamPlayer3D.new()
+	remote_audio.name = "RemoteAudio"
+	remote_audio.bus = &"SFX"
+	remote_audio.volume_db = remote_volume_db
+	remote_audio.max_distance = audio_max_distance
+	add_child(remote_audio)
 
 
 func get_interaction_name() -> String:
@@ -83,5 +99,21 @@ func interact(_player: Node) -> void:
 	if tv_controller == null:
 		return
 
+	_play_remote_sound()
+
 	if tv_controller.has_method("toggle_tv"):
 		tv_controller.toggle_tv()
+
+
+func _play_remote_sound() -> void:
+	if remote_audio == null:
+		return
+
+	if remote_sound == null:
+		return
+
+	remote_audio.stop()
+	remote_audio.stream = remote_sound
+	remote_audio.volume_db = remote_volume_db
+	remote_audio.max_distance = audio_max_distance
+	remote_audio.play()

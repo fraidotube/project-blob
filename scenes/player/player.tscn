@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://cbatlw163lxtd"]
 
 [ext_resource type="Script" uid="uid://dql217vdoqylx" path="res://scripts/player/player.gd" id="1_8afob"]
+[ext_resource type="Script" uid="uid://dhg0k46fdojl4" path="res://scripts/player/camera_settings.gd" id="2_camera_settings"]
 [ext_resource type="Script" uid="uid://b2ewp6spvmhdj" path="res://scripts/weapons/weapon.gd" id="2_dovo2"]
-[ext_resource type="Script" path="res://scripts/player/camera_settings.gd" id="2_camera_settings"]
 [ext_resource type="PackedScene" uid="uid://duxcde5ki6v5x" path="res://scenes/weapons/lowworld_viewmodel.tscn" id="3_gmlin"]
 [ext_resource type="AudioStream" uid="uid://c7kd8r2ao12p2" path="res://assets/audio/player/footsteps/footsteps_tile.tres" id="3_p47bc"]
 [ext_resource type="AudioStream" uid="uid://bq61spvv6nj0k" path="res://assets/audio/player/footsteps/footsteps_tile_run.tres" id="4_fm80t"]
@@ -18,9 +18,9 @@
 [ext_resource type="AudioStream" uid="uid://bte7irtnpew4s" path="res://assets/audio/weapons/pistol/reload.ogg" id="15_lgqa7"]
 [ext_resource type="AudioStream" uid="uid://bcde5urnj7omb" path="res://assets/audio/weapons/pistol/gunready.ogg" id="16_8ydkj"]
 [ext_resource type="AudioStream" uid="uid://yfp5l2tv3ua" path="res://assets/audio/player/footsteps/pistol_shell_casings.tres" id="17_3j4b4"]
-[ext_resource type="AudioStream" uid="uid://ckeqqnh7l24xg" path="res://assets/audio/weapons/pistol/guntoggles.ogg" id="18_uf5tr"]
 [ext_resource type="Texture2D" uid="uid://c6ivkfjw1ht2s" path="res://assets/textures/flashlight_cookie_soft_irregular.png" id="19_8ydkj"]
 [ext_resource type="Script" uid="uid://b3c2ab60a3gn" path="res://scripts/weapons/flashlight_beam_follow.gd" id="19_lgqa7"]
+[ext_resource type="AudioStream" uid="uid://dbs1f0duoox7m" path="res://assets/audio/weapons/flashlight/flashlight_click.wav" id="19_yj68g"]
 [ext_resource type="PackedScene" path="res://scenes/ui/interaction_system.tscn" id="21_3j4b4"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
@@ -97,7 +97,7 @@ wait_time = 0.18
 one_shot = true
 
 [node name="FlashlightClickAudio" type="AudioStreamPlayer" parent="Head/Camera3D/WeaponHolder" unique_id=1346721656]
-stream = ExtResource("18_uf5tr")
+stream = ExtResource("19_yj68g")
 bus = &"Weapons"
 
 [node name="ViewmodelWallCast" type="ShapeCast3D" parent="Head/Camera3D" unique_id=640761384]
