@@ -1,6 +1,10 @@
 extends Node
 
+# Single source of truth: persistent autoload /root/SettingsManager.
+# A menu or a scene must never reload the file on entry.
 const SETTINGS_PATH := "user://settings.cfg"
+signal settings_changed
+var _loaded := false
 
 var resolution := Vector2i(1920, 1080)
 var window_mode := "BORDERLESS"
@@ -27,7 +31,10 @@ func _ready() -> void:
 	apply_settings()
 
 
-func load_settings() -> void:
+func load_settings(force: bool = false) -> void:
+	if _loaded and not force:
+		return
+	_loaded = true
 	var config := ConfigFile.new()
 
 	if config.load(SETTINGS_PATH) != OK:
@@ -108,7 +115,9 @@ func load_settings() -> void:
 
 
 func save_settings() -> void:
+	# Preserve any settings introduced by future versions of the game.
 	var config := ConfigFile.new()
+	config.load(SETTINGS_PATH)
 
 	config.set_value(
 		"video", "resolution", resolution
@@ -181,6 +190,7 @@ func apply_settings() -> void:
 	_apply_display()
 	_apply_rendering()
 	apply_audio()
+	settings_changed.emit()
 
 
 func apply_audio() -> void:
@@ -340,3 +350,9 @@ func _set_bus_volume(
 		bus_index,
 		volume_db
 	)
+
+
+# Reserved for explicit user-triggered reloads, never menu navigation.
+func reload_from_disk() -> void:
+	load_settings(true)
+	apply_settings()

@@ -221,6 +221,13 @@ var current_locomotion_animation := ""
 func _ready() -> void:
 	muzzle_flash.visible = false
 
+	# Il raycast non deve mai colpire il CharacterBody3D che lo possiede.
+	var player_body := get_node("../../..") as CollisionObject3D
+	if player_body == null:
+		push_error("WeaponRay: Player non trovato; verificare gerarchia WeaponHolder")
+	else:
+		weapon_ray.add_exception(player_body)
+
 	owns_pistol = false
 	owns_flashlight = false
 
@@ -1055,34 +1062,30 @@ func _on_shell_casing_timer_timeout() -> void:
 
 
 # ============================================================
-# BULLET IMPACT
+# BULLET IMPACT - Project Blob, materiali e suoni condivisi
 # ============================================================
 
 func spawn_bullet_impact(
 	hit_point: Vector3,
 	hit_normal: Vector3
 ) -> void:
+	# Nel poligono questa risorsa e' disattivata per lasciare attiva
+	# soltanto la diagnostica locale e non duplicare gli impatti.
 	if bullet_impact_scene == null:
 		return
 
-	var impact := bullet_impact_scene.instantiate()
-
-	if impact == null:
+	var game_scene := get_tree().current_scene
+	if game_scene == null:
 		return
 
-	get_tree().current_scene.add_child(
-		impact
-	)
+	var manager := game_scene.get_node_or_null("ImpactManager_Runtime")
+	if manager == null:
+		manager = preload("res://scripts/effects/impact_manager.gd").new()
+		manager.name = "ImpactManager_Runtime"
+		game_scene.add_child(manager)
 
-	impact.global_position = (
-		hit_point
-		+ hit_normal * bullet_impact_offset
-	)
-
-	impact.quaternion = Quaternion(
-		Vector3.UP,
-		hit_normal.normalized()
-	)
+	var collider: Object = weapon_ray.get_collider() if weapon_ray.is_colliding() else null
+	manager.spawn_impact(collider, hit_point, hit_normal)
 
 
 # ============================================================

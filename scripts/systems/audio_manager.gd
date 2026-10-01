@@ -13,6 +13,9 @@ const BUS_DEFINITIONS := [
 	{"name": "UI", "send": "Master", "base_db": 0.0}
 ]
 
+# Independent nominal mix for the pistol. Does not change SFX or impact audio.
+@export_range(-36.0, 0.0, 0.5) var pistol_shot_volume_db := -6.0
+
 var music_player: AudioStreamPlayer
 
 
@@ -27,7 +30,6 @@ func _ready() -> void:
 	)
 
 	if settings != null:
-		settings.load_settings()
 		settings.apply_audio()
 
 	_create_music_player()
@@ -119,7 +121,6 @@ func play_menu_music() -> void:
 	)
 
 	if settings != null:
-		settings.load_settings()
 		settings.apply_audio()
 
 	music_player.volume_db = -18.0
@@ -164,17 +165,8 @@ func fade_out_menu_music(
 
 
 func ensure_menu_music() -> void:
-	_ensure_audio_buses()
-	_configure_audio_routing()
-
-	var settings := get_node_or_null(
-		"/root/SettingsManager"
-	)
-
-	if settings != null:
-		settings.load_settings()
-		settings.apply_audio()
-
+	# Do not reconstruct the audio mix when returning to the main menu.
+	# _ready() configures buses once; current SettingsManager values persist.
 	if music_player == null:
 		_create_music_player()
 
@@ -239,9 +231,13 @@ func _route_audio_node(
 		node.set("bus", &"Player")
 		return
 
+	if "shotaudio" in node_name:
+		node.set("bus", &"Weapons")
+		node.set("volume_db", pistol_shot_volume_db)
+		return
+
 	if (
-		"shotaudio" in node_name
-		or "reloadaudio" in node_name
+		"reloadaudio" in node_name
 		or "emptyaudio" in node_name
 		or "readyaudio" in node_name
 		or "shellcasing" in node_name

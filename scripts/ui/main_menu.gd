@@ -102,10 +102,6 @@ func _audio_manager() -> Node:
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
-	var settings := _settings()
-	settings.load_settings()
-	settings.apply_settings()
-
 	_create_fov_control()
 	_build_options()
 	_show_main()
@@ -190,9 +186,7 @@ func _build_options() -> void:
 				fps_option.item_count - 1
 			)
 
-	render_scale_slider.value = (
-		settings.render_scale
-	)
+	render_scale_slider.set_value_no_signal(settings.render_scale)
 
 	_update_render_scale_label(
 		settings.render_scale
@@ -214,16 +208,14 @@ func _build_options() -> void:
 	fxaa_check.button_pressed = settings.fxaa_enabled
 	taa_check.button_pressed = settings.taa_enabled
 
-	master_slider.value = settings.master_volume
-	music_slider.value = settings.music_volume
-	sfx_slider.value = settings.sfx_volume
-	ui_slider.value = settings.ui_volume
+	master_slider.set_value_no_signal(settings.master_volume)
+	music_slider.set_value_no_signal(settings.music_volume)
+	sfx_slider.set_value_no_signal(settings.sfx_volume)
+	ui_slider.set_value_no_signal(settings.ui_volume)
 
-	sensitivity_slider.value = (
-		settings.mouse_sensitivity
-	)
+	sensitivity_slider.set_value_no_signal(settings.mouse_sensitivity)
 
-	fov_slider.value = settings.camera_fov
+	fov_slider.set_value_no_signal(settings.camera_fov)
 
 	_update_audio_labels()
 	_update_sensitivity_label(
@@ -240,6 +232,7 @@ func _show_main() -> void:
 
 
 func _show_options() -> void:
+	_build_options()
 	main_panel.visible = false
 	options_panel.visible = true
 
@@ -283,10 +276,6 @@ func _on_quit_pressed() -> void:
 
 
 func _on_back_pressed() -> void:
-	var settings := _settings()
-
-	settings.load_settings()
-	settings.apply_settings()
 	_build_options()
 	_show_main()
 
