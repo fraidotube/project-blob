@@ -39,6 +39,7 @@
 [ext_resource type="AudioStream" uid="uid://d4blmkkun7quh" path="res://assets/audio/player/voice/morte2.wav" id="25_1u1sw"]
 [ext_resource type="AudioStream" uid="uid://22fhlfy8tpdt" path="res://assets/audio/player/voice/morte3.wav" id="26_2t3bg"]
 [ext_resource type="AudioStream" uid="uid://1o70n03fcc1v" path="res://assets/audio/player/voice/morte.wav" id="27_jrbya"]
+[ext_resource type="Script" path="res://scripts/player/viewmodel_depth_override.gd" id="28_viewmodel_depth_override"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
 radius = 0.4
@@ -164,6 +165,9 @@ volume_db = -8.0
 bus = &"Player"
 
 [node name="InteractionSystem" parent="." unique_id=322344732 instance=ExtResource("21_3j4b4")]
+
+[node name="ViewmodelDepthOverride" type="Node" parent="."]
+script = ExtResource("28_viewmodel_depth_override")
 
 [editable path="Head/Camera3D/WeaponHolder/LowWorldViewModel"]
 [editable path="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male"]
