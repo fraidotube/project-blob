@@ -1,7 +1,6 @@
 extends CanvasLayer
 
 const HITMARKER_DURATION := 0.10
-const DAMAGE_FLASH_DURATION := 0.12
 
 const BATTERY_SEGMENTS := 8
 const BATTERY_SEGMENT_SIZE := 100.0 / BATTERY_SEGMENTS
@@ -42,6 +41,12 @@ const WEAPON_FLASHLIGHT = preload(
 # ============================================================
 # HUD
 # ============================================================
+
+@export_group("Damage Feedback")
+@export_range(0.15, 2.0, 0.05) var damage_flash_duration := 0.65
+@export_range(0.0, 1.0, 0.05) var damage_vignette_strength := 0.95
+@export_range(0.0, 1.0, 0.05) var damage_center_wash := 0.20
+@export_range(0.0, 2.0, 0.05) var damage_texture_strength := 1.15
 
 @onready var crosshair_image: TextureRect = (
 	$Interface/CrosshairImage
@@ -96,6 +101,8 @@ var bullet_icons: Array[TextureRect] = []
 
 var hitmarker_time_left := 0.0
 var damage_flash_time_left := 0.0
+var damage_vignette: ColorRect
+var _damage_vignette_material: ShaderMaterial
 
 
 # ============================================================
@@ -108,6 +115,8 @@ func _ready() -> void:
 	hit_marker_image.visible = false
 	damage_overlay_image.visible = false
 	death_label.visible = false
+
+	_setup_damage_vignette()
 
 	bullet_icons = [
 		$Interface/HudBar/BulletRow/Bullet01,
@@ -130,6 +139,41 @@ func _ready() -> void:
 	update_mission("TROVA UNA VIA D'USCITA")
 
 
+func _setup_damage_vignette() -> void:
+	# The overlay lives inside Interface, *behind* the existing HUD and texture.
+	# Nothing in hud.tscn or its original PNG is replaced.
+	damage_vignette = ColorRect.new()
+	damage_vignette.name = "DamageVignette"
+	damage_vignette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	damage_vignette.visible = false
+	damage_vignette.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+	var shader := Shader.new()
+	shader.code = """
+shader_type canvas_item;
+render_mode unshaded;
+uniform float intensity = 0.0;
+uniform float center_wash = 0.20;
+void fragment() {
+    vec2 p = (UV - vec2(0.5)) * vec2(1.55, 1.0);
+    float radial = length(p);
+    float edge = smoothstep(0.17, 0.77, radial);
+    float alpha = intensity * mix(center_wash, 0.89, edge);
+    COLOR = vec4(0.83, 0.012, 0.018, alpha);
+}
+"""
+	_damage_vignette_material = ShaderMaterial.new()
+	_damage_vignette_material.shader = shader
+	_damage_vignette_material.set_shader_parameter("intensity", 0.0)
+	_damage_vignette_material.set_shader_parameter(
+		"center_wash", damage_center_wash
+	)
+	damage_vignette.material = _damage_vignette_material
+	$Interface.add_child(damage_vignette)
+	$Interface.move_child(damage_vignette, 0)
+	damage_vignette.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+
 # ============================================================
 # PROCESS
 # ============================================================
@@ -142,10 +186,17 @@ func _process(delta: float) -> void:
 			hit_marker_image.visible = false
 
 	if damage_flash_time_left > 0.0:
-		damage_flash_time_left -= delta
+		damage_flash_time_left = maxf(
+			damage_flash_time_left - delta, 0.0
+		)
 
-		if damage_flash_time_left <= 0.0:
-			damage_overlay_image.visible = false
+		var fade := damage_flash_time_left / maxf(damage_flash_duration, 0.01)
+		# A brief strong peak followed by a smoother, visible fade.
+		var intensity := fade * fade * (3.0 - 2.0 * fade)
+		_set_damage_intensity(intensity)
+	else:
+		if damage_vignette != null and damage_vignette.visible:
+			_set_damage_intensity(0.0)
 
 
 # ============================================================
@@ -162,8 +213,27 @@ func show_hitmarker() -> void:
 # ============================================================
 
 func show_damage_flash() -> void:
-	damage_overlay_image.visible = true
-	damage_flash_time_left = DAMAGE_FLASH_DURATION
+	# Called by Player.take_damage(), as in the original implementation.
+	# Multiple consecutive hits restart the flash rather than creating tweens.
+	damage_flash_time_left = damage_flash_duration
+	_set_damage_intensity(1.0)
+
+
+func _set_damage_intensity(intensity: float) -> void:
+	var amount := clampf(intensity, 0.0, 1.0)
+	if damage_vignette != null:
+		damage_vignette.visible = amount > 0.001
+		_damage_vignette_material.set_shader_parameter(
+			"intensity", amount * damage_vignette_strength
+		)
+		_damage_vignette_material.set_shader_parameter(
+			"center_wash", damage_center_wash
+		)
+	damage_overlay_image.visible = amount > 0.001
+	damage_overlay_image.modulate = Color(
+		1.0, 0.55, 0.55,
+		clampf(amount * damage_texture_strength, 0.0, 1.0)
+	)
 
 
 # ============================================================
@@ -341,6 +411,9 @@ func show_death_screen() -> void:
 	crosshair_image.visible = false
 	hit_marker_image.visible = false
 	damage_overlay_image.visible = false
+	if damage_vignette != null:
+		damage_vignette.visible = false
+	damage_flash_time_left = 0.0
 
 	death_label.visible = true
 

@@ -39,7 +39,7 @@
 [ext_resource type="AudioStream" uid="uid://d4blmkkun7quh" path="res://assets/audio/player/voice/morte2.wav" id="25_1u1sw"]
 [ext_resource type="AudioStream" uid="uid://22fhlfy8tpdt" path="res://assets/audio/player/voice/morte3.wav" id="26_2t3bg"]
 [ext_resource type="AudioStream" uid="uid://1o70n03fcc1v" path="res://assets/audio/player/voice/morte.wav" id="27_jrbya"]
-[ext_resource type="Script" path="res://scripts/player/viewmodel_depth_override.gd" id="28_viewmodel_depth_override"]
+[ext_resource type="Script" uid="uid://co56k1iv3mka3" path="res://scripts/player/viewmodel_depth_override.gd" id="28_viewmodel_depth_override"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
 radius = 0.4
@@ -85,6 +85,65 @@ starting_spare_batteries = 2
 
 [node name="LowWorldViewModel" parent="Head/Camera3D/WeaponHolder" unique_id=514129486 instance=ExtResource("3_gmlin")]
 transform = Transform3D(-3, 0, -4.5298742e-07, 0, 3, 0, 4.5298742e-07, 0, -3, -0.111851215, 0.11060953, 0.16929638)
+
+[node name="Skeleton3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms" parent_id_path=PackedInt32Array(514129486, 394924321, 1201424799) index="0" unique_id=949106662]
+bones/0/position = Vector3(0, -0.083063886, 0.13776238)
+bones/1/position = Vector3(0.28722095, -0.068871416, 0.15084192)
+bones/2/rotation = Quaternion(-0.9461358, 0.047631793, -0.32009244, 0.009952227)
+bones/3/rotation = Quaternion(-0.14675435, -0.00015665055, 0.27708298, 0.9495726)
+bones/4/rotation = Quaternion(-0.11436721, -0.23997876, -0.15336534, 0.9517402)
+bones/5/position = Vector3(-0.018953675, 0.024930572, 0.003084464)
+bones/5/rotation = Quaternion(0.28403223, 0.117027916, 0.2957023, 0.9045388)
+bones/6/rotation = Quaternion(0.0051975767, 0.12347773, 0.091615334, 0.9880956)
+bones/7/rotation = Quaternion(4.802012e-06, 7.805203e-07, 0.16085018, 0.9869788)
+bones/8/rotation = Quaternion(0.5987316, -0.033105318, -0.037147395, 0.79940265)
+bones/9/rotation = Quaternion(0.40205213, 3.2972895e-07, 5.4714967e-08, 0.9156168)
+bones/10/rotation = Quaternion(0.27260485, -8.8465825e-08, -9.922761e-08, 0.9621261)
+bones/11/rotation = Quaternion(0.6353744, -0.09987294, -0.09112541, 0.7602769)
+bones/12/rotation = Quaternion(0.41695473, -4.6118092e-08, 3.2803424e-08, 0.90892726)
+bones/13/rotation = Quaternion(0.2726048, 1.402081e-07, -8.363611e-08, 0.9621261)
+bones/14/rotation = Quaternion(0.6759315, -0.16331504, -0.128127, 0.7071268)
+bones/15/rotation = Quaternion(0.37794742, 0.0004500262, 0.001100293, 0.9258263)
+bones/16/rotation = Quaternion(0.2726049, 4.3673015e-05, 0.00015507164, 0.9621261)
+bones/17/rotation = Quaternion(0.71033, -0.21743624, -0.1208926, 0.6584359)
+bones/18/rotation = Quaternion(0.32727656, -0.0004965201, -0.0014329748, 0.9449274)
+bones/19/rotation = Quaternion(0.09494771, 3.0540232e-06, 3.0495585e-05, 0.99548227)
+bones/20/position = Vector3(-0.09409627, 0.11120625, -0.16890818)
+bones/21/rotation = Quaternion(0.49904945, -0.10721254, -0.56934625, 0.6444378)
+bones/22/rotation = Quaternion(-0.28756687, 0.00013017237, -0.5429474, 0.7889952)
+bones/23/rotation = Quaternion(-0.06139303, 0.29938608, 0.2137687, 0.927848)
+bones/24/position = Vector3(0.020377342, 0.02328114, 0.0025461752)
+bones/24/rotation = Quaternion(0.36766958, -0.14242838, -0.31085336, 0.8648141)
+bones/25/rotation = Quaternion(-0.00226478, -0.15649243, 0.329503, 0.93109226)
+bones/26/rotation = Quaternion(4.136551e-06, -2.6437308e-06, 0.2315823, 0.97281533)
+bones/27/position = Vector3(0.025572859, 0.08610702, 0.0020132677)
+bones/27/rotation = Quaternion(0.036909368, -0.019180521, 0.16121149, 0.98604304)
+bones/28/rotation = Quaternion(0.5982446, -4.031814e-07, 1.031907e-07, 0.8013136)
+bones/29/rotation = Quaternion(0.57763433, 6.139109e-08, 1.8560542e-07, 0.8162956)
+bones/30/position = Vector3(0.0039881095, 0.08499106, -0.010203708)
+bones/30/rotation = Quaternion(0.5335902, 0.035254467, 0.11893267, 0.83659655)
+bones/31/rotation = Quaternion(0.655426, 0.024701145, 0.005063987, 0.75483835)
+bones/32/rotation = Quaternion(0.18496084, 1.4810613e-08, 4.7192787e-09, 0.98274595)
+bones/33/position = Vector3(-0.016533611, 0.07997562, -0.010074741)
+bones/33/rotation = Quaternion(0.61361355, 0.12505387, 0.07273603, 0.7762405)
+bones/34/rotation = Quaternion(0.57983744, -0.0007378598, -0.0010353505, 0.81473124)
+bones/35/rotation = Quaternion(0.28970525, -2.5023415e-05, -8.421506e-05, 0.95711595)
+bones/36/position = Vector3(-0.031468704, 0.06778373, -0.005561656)
+bones/36/rotation = Quaternion(0.57297957, 0.20462747, 0.14590894, 0.7800851)
+bones/37/rotation = Quaternion(0.62016267, 0.0010469351, 0.0013238479, 0.7844714)
+bones/38/rotation = Quaternion(0.16458274, -3.375463e-05, -0.0002008404, 0.98636323)
+bones/39/position = Vector3(0.00878793, -0.047764204, 0.3862855)
+bones/39/rotation = Quaternion(0.31592223, -0.5479094, -0.7218082, -0.28103647)
+bones/40/position = Vector3(0.015311331, -0.14342548, 0.17070314)
+bones/41/position = Vector3(-0.091591835, -0.03353981, 0.14117068)
+bones/41/rotation = Quaternion(0.5435815, 0.507768, 0.49984854, 0.4436692)
+bones/42/position = Vector3(-0.28703704, -0.18421502, 0.0024917424)
+
+[node name="PistolSocket" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="1" unique_id=2144907275]
+transform = Transform3D(-0.015353411, 0.10849203, 0.9939784, -0.05844502, 0.9922988, -0.109211445, -0.9981724, -0.0597698, -0.0088941455, -0.09158684, 0.061569348, 0.14961636)
+
+[node name="FlashlightSocket" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="2" unique_id=1078999935]
+transform = Transform3D(-0.015353411, 0.10849203, 0.9939784, -0.05844502, 0.9922988, -0.109211445, -0.9981724, -0.0597698, -0.0088941455, -0.09158684, 0.061569348, 0.14961636)
 
 [node name="FlashlightLight" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/FlashlightSocket/Flashlight" parent_id_path=PackedInt32Array(514129486, 873452566) index="1" unique_id=184043557]
 visible = false
@@ -166,7 +225,7 @@ bus = &"Player"
 
 [node name="InteractionSystem" parent="." unique_id=322344732 instance=ExtResource("21_3j4b4")]
 
-[node name="ViewmodelDepthOverride" type="Node" parent="."]
+[node name="ViewmodelDepthOverride" type="Node" parent="." unique_id=130023733]
 script = ExtResource("28_viewmodel_depth_override")
 
 [editable path="Head/Camera3D/WeaponHolder/LowWorldViewModel"]
