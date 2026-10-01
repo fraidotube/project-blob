@@ -8,11 +8,11 @@ const JUMP_VELOCITY := 4.5
 const BASE_MOUSE_SENSITIVITY := 0.004
 const SETTINGS_PATH := "user://settings.cfg"
 
-const STAND_HEIGHT := 1.8
-const CROUCH_HEIGHT := 1.2
+const STAND_HEIGHT := 1.6
+const CROUCH_HEIGHT := 1
 
-const STAND_HEAD_Y := 0.9
-const CROUCH_HEAD_Y := 0.45
+const STAND_HEAD_Y := 0.80
+const CROUCH_HEAD_Y := 0.35
 
 const CROUCH_TRANSITION_SPEED := 8.0
 
