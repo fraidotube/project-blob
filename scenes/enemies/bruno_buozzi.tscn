@@ -1,11 +1,15 @@
 [gd_scene format=3 uid="uid://dph7ie7kygqv"]
 
 [ext_resource type="PackedScene" uid="uid://cptelt0tmhw08" path="res://assets/models/enemies/bruno_buozzi/Meshy_AI_Mutated_Tennis_Player_All_Animations.glb" id="1_614cq"]
+[ext_resource type="Script" uid="uid://4b04yryhkxov" path="res://scripts/enemies/bruno_buozzi.gd" id="1_qjdtd"]
 [ext_resource type="PackedScene" uid="uid://draro5b8q7xmx" path="res://assets/models/enemies/bruno_buozzi/tennis-racket-wilson-blade/source/Formats/Racket_Wilson_Blade.fbx" id="2_qjdtd"]
 
 [node name="BrunoBuozzi" type="CharacterBody3D" unique_id=349952186]
+script = ExtResource("1_qjdtd")
+test_mode = true
 
 [node name="Meshy_AI_Mutated_Tennis_Player_All_Animations" parent="." unique_id=119878717 instance=ExtResource("1_614cq")]
+transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 0, 0, 0)
 
 [node name="GeneralSkeleton" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character" parent_id_path=PackedInt32Array(119878717, 2120972805) index="0" unique_id=1057418453]
 bones/0/position = Vector3(0.0048416276, 0.9189234, -0.013369762)
@@ -42,5 +46,8 @@ bone_idx = 17
 [node name="Racket_Wilson_Blade" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton/BoneAttachment3D" unique_id=711081019 instance=ExtResource("2_qjdtd")]
 transform = Transform3D(-0.046956904, 0.060550623, -0.022993175, 0.019671105, -0.013726291, -0.07631932, -0.061710015, -0.05045016, -0.006831882, -0.17854476, 0.013577044, -0.23423566)
 visible = false
+
+[node name="TennisBallSpawn" type="Marker3D" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton/BoneAttachment3D" unique_id=1830396671]
+transform = Transform3D(1.0000001, -2.2351742e-08, -2.9802322e-08, 2.2351742e-08, 1.0000001, 1.4901161e-08, 2.9802322e-08, -1.4901161e-08, 1.0000001, 0.034821212, -0.014861703, -0.035254776)
 
 [editable path="Meshy_AI_Mutated_Tennis_Player_All_Animations"]
