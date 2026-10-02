@@ -4,6 +4,9 @@
 [ext_resource type="Script" uid="uid://4b04yryhkxov" path="res://scripts/enemies/bruno_buozzi.gd" id="1_qjdtd"]
 [ext_resource type="PackedScene" uid="uid://draro5b8q7xmx" path="res://assets/models/enemies/bruno_buozzi/tennis-racket-wilson-blade/source/Formats/Racket_Wilson_Blade.fbx" id="2_qjdtd"]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
+radius = 0.4272461
+
 [node name="BrunoBuozzi" type="CharacterBody3D" unique_id=349952186]
 script = ExtResource("1_qjdtd")
 test_mode = true
@@ -49,5 +52,9 @@ visible = false
 
 [node name="TennisBallSpawn" type="Marker3D" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton/BoneAttachment3D" unique_id=1830396671]
 transform = Transform3D(1.0000001, -2.2351742e-08, -2.9802322e-08, 2.2351742e-08, 1.0000001, 1.4901161e-08, 2.9802322e-08, -1.4901161e-08, 1.0000001, 0.034821212, -0.014861703, -0.035254776)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=528159894]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95134366, 0)
+shape = SubResource("CapsuleShape3D_hbjui")
 
 [editable path="Meshy_AI_Mutated_Tennis_Player_All_Animations"]
