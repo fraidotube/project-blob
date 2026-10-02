@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://blirjsvfkbm7y" path="res://scripts/debug/shooting_range_diagnostics.gd" id="4_debug"]
 [ext_resource type="Script" uid="uid://c7p6l4clactqh" path="res://scripts/debug/shooting_range_impact_preview.gd" id="5_impact_preview"]
 [ext_resource type="PackedScene" uid="uid://dph7ie7kygqv" path="res://scenes/enemies/bruno_buozzi.tscn" id="6_t0t43"]
+[ext_resource type="PackedScene" uid="uid://draro5b8q7xmx" path="res://assets/models/enemies/bruno_buozzi/tennis-racket-wilson-blade/source/Formats/Racket_Wilson_Blade.fbx" id="7_ccbyl"]
 
 [sub_resource type="Environment" id="range_environment"]
 background_mode = 1
@@ -247,3 +248,12 @@ outline_size = 10
 
 [node name="BrunoBuozzi" parent="." unique_id=349952186 instance=ExtResource("6_t0t43")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.83930326, 0.1500001, -0.7714133)
+
+[node name="BrunoRacketPickup" type="Node3D" parent="." unique_id=1961442864 groups=["bruno_racket_target"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5737123, 0.17504835, -1.5238311)
+
+[node name="Racket_Wilson_Blade" parent="BrunoRacketPickup" unique_id=711081019 instance=ExtResource("7_ccbyl")]
+transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 0, 0, 0)
+
+[node name="PickupPosition" type="Marker3D" parent="BrunoRacketPickup" unique_id=459059776]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21495008, 0, -0.41696787)

@@ -10,45 +10,52 @@ radius = 0.4272461
 [node name="BrunoBuozzi" type="CharacterBody3D" unique_id=349952186]
 script = ExtResource("1_qjdtd")
 test_mode = true
+max_health = 30
 
 [node name="Meshy_AI_Mutated_Tennis_Player_All_Animations" parent="." unique_id=119878717 instance=ExtResource("1_614cq")]
 transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 0, 0, 0)
 
-[node name="GeneralSkeleton" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character" parent_id_path=PackedInt32Array(119878717, 2120972805) index="0" unique_id=1057418453]
-bones/0/position = Vector3(0.0048416276, 0.9189234, -0.013369762)
-bones/0/rotation = Quaternion(-0.042407554, -0.00074448966, -0.008473379, 0.99906427)
-bones/1/rotation = Quaternion(0.03337028, -0.001195629, -0.00072544755, 0.9994421)
-bones/2/rotation = Quaternion(-0.065126486, -0.02164541, -0.00069977803, 0.997642)
-bones/3/rotation = Quaternion(2.2939257e-09, 4.4529994e-13, -1.7035234e-12, 1)
-bones/4/rotation = Quaternion(0.09019343, -0.02162529, -0.00021098944, 0.99568945)
-bones/5/rotation = Quaternion(0.09881091, -0.032086033, -0.05353856, 0.99314684)
-bones/7/rotation = Quaternion(3.850841e-08, 0.75377613, 0.6548208, -0.05505732)
-bones/8/rotation = Quaternion(-0.41981226, -0.5438214, -0.39647058, 0.60895574)
-bones/9/rotation = Quaternion(-0.5954663, 0.3901546, -0.4270881, 0.55748993)
-bones/10/rotation = Quaternion(-0.024994358, 0.11840308, 0.016010875, 0.9925219)
-bones/11/rotation = Quaternion(0.045917347, -0.005726817, -0.010465247, 0.998874)
-bones/12/rotation = Quaternion(1.9773415e-07, 0.893532, 1.1248069e-09, -0.44899955)
-bones/13/rotation = Quaternion(-0.39234796, 0.58838254, 0.39621246, 0.5855637)
-bones/14/rotation = Quaternion(-0.619134, -0.38173264, 0.42550856, 0.5384196)
-bones/15/rotation = Quaternion(-0.025025927, -0.13415301, -0.015961686, 0.990516)
-bones/16/rotation = Quaternion(0.046415757, 0.011242462, 0.009996678, 0.9988089)
-bones/18/rotation = Quaternion(0.9990135, 0.026069835, -0.035320923, 0.006707256)
-bones/19/rotation = Quaternion(0.1957801, 0.007977272, 0.035372224, 0.9799773)
-bones/20/rotation = Quaternion(-0.61022806, 0.11000405, -0.14401908, 0.7712195)
-bones/21/rotation = Quaternion(0.021565076, 0.933446, -0.24749026, 0.25877082)
-bones/23/rotation = Quaternion(0.9917835, -0.057461128, 0.1139028, 0.009479959)
-bones/24/rotation = Quaternion(0.16295636, -0.008807493, -0.032094564, 0.9860719)
-bones/25/rotation = Quaternion(-0.56246257, -0.22371559, 0.21015057, 0.7677396)
-bones/26/rotation = Quaternion(-0.05285496, 0.840975, -0.23870608, -0.48268697)
+[node name="GeneralSkeleton" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character" parent_id_path=PackedInt32Array(119878717, 1063155321) index="0" unique_id=588036241]
+bones/0/position = Vector3(0.004841627, 0.9189234, -0.013369758)
+bones/0/rotation = Quaternion(-0.042407565, -0.0007444257, -0.008473379, 0.99906427)
+bones/1/rotation = Quaternion(0.99901336, 0.026069969, -0.035322476, 0.0067072865)
+bones/2/rotation = Quaternion(0.1957799, 0.00797733, 0.03537218, 0.97997725)
+bones/3/rotation = Quaternion(-0.6102281, 0.110003844, -0.14401865, 0.77121955)
+bones/4/rotation = Quaternion(0.021564383, 0.93344617, -0.2474904, 0.25877014)
+bones/6/rotation = Quaternion(0.99178374, -0.057460956, 0.11390108, 0.009479876)
+bones/7/rotation = Quaternion(0.16295649, -0.008807529, -0.032094613, 0.98607177)
+bones/8/rotation = Quaternion(-0.5624618, -0.22371598, 0.2101516, 0.76773965)
+bones/9/rotation = Quaternion(-0.0528566, 0.84097505, -0.23870534, -0.48268726)
+bones/11/rotation = Quaternion(0.033370323, -0.0011956282, -0.000725448, 0.9994421)
+bones/12/rotation = Quaternion(-0.0651265, -0.021645416, -0.00069977774, 0.997642)
+bones/13/rotation = Quaternion(5.5588316e-09, -5.4133128e-08, -8.1490703e-10, 1)
+bones/14/rotation = Quaternion(-0.41981226, -0.54382145, -0.39647055, 0.6089556)
+bones/15/rotation = Quaternion(-0.5954663, 0.39015472, -0.42708823, 0.5574898)
+bones/16/rotation = Quaternion(-0.024994347, 0.11840307, 0.016010877, 0.99252194)
+bones/17/rotation = Quaternion(0.045917343, -0.005726768, -0.010465201, 0.998874)
+bones/18/rotation = Quaternion(1.7629515e-07, 0.893532, -3.298716e-08, -0.44899955)
+bones/19/rotation = Quaternion(0.090193465, -0.02162529, -0.00021098966, 0.99568945)
+bones/20/rotation = Quaternion(0.09881088, -0.032086074, -0.053538535, 0.99314684)
+bones/21/rotation = Quaternion(9.652088e-08, 0.75377613, 0.6548208, -0.055057347)
+bones/23/rotation = Quaternion(-0.392348, 0.58838254, 0.39621243, 0.58556366)
+bones/24/rotation = Quaternion(-0.61913407, -0.38173267, 0.42550865, 0.5384196)
+bones/25/rotation = Quaternion(-0.025025902, -0.13415296, -0.015961742, 0.99051607)
+bones/26/rotation = Quaternion(0.046415847, 0.011242424, 0.009996633, 0.998809)
+
+[node name="mixamorig_Head" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton" index="0" unique_id=1551841827]
+transform = Transform3D(0.98190194, 0.09201286, -0.16553643, -0.12797508, 0.9666609, -0.22178641, 0.1396104, 0.23895703, 0.96094155, 0.014089513, 1.4077246, -0.051900283)
 
 [node name="BoneAttachment3D" type="BoneAttachment3D" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton" index="1" unique_id=1764864201]
-transform = Transform3D(0.6730973, -0.2872776, -0.6814777, -0.31295633, -0.9455424, 0.08948677, -0.67007387, 0.15303944, -0.7263474, -0.3424014, 0.74857605, 0.0033845846)
+transform = Transform3D(0.6730967, -0.28727767, -0.6814777, -0.31295666, -0.94554174, 0.0894867, -0.67007387, 0.1530396, -0.72634685, -0.34240097, 0.7485762, 0.0033845939)
 bone_name = "mixamorig_RightHandMiddle4"
-bone_idx = 17
+bone_idx = 27
 
 [node name="Racket_Wilson_Blade" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton/BoneAttachment3D" unique_id=711081019 instance=ExtResource("2_qjdtd")]
 transform = Transform3D(-0.046956904, 0.060550623, -0.022993175, 0.019671105, -0.013726291, -0.07631932, -0.061710015, -0.05045016, -0.006831882, -0.17854476, 0.013577044, -0.23423566)
 visible = false
+
+[node name="RacketBallSpawn" type="Marker3D" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton/BoneAttachment3D/Racket_Wilson_Blade" unique_id=1513841100]
+transform = Transform3D(1.5743194, -1.4901161e-08, -6.7055225e-08, 1.3411045e-07, 0.9563297, -1.5832484e-08, -2.9802322e-08, 1.1269003e-07, 1.0629346, 2.5729587, 0.5881891, 0.17789173)
 
 [node name="TennisBallSpawn" type="Marker3D" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton/BoneAttachment3D" unique_id=1830396671]
 transform = Transform3D(1.0000001, -2.2351742e-08, -2.9802322e-08, 2.2351742e-08, 1.0000001, 1.4901161e-08, 2.9802322e-08, -1.4901161e-08, 1.0000001, 0.034821212, -0.014861703, -0.035254776)
