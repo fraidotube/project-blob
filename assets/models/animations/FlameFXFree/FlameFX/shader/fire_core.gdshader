@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode unshaded, blend_mix;
+render_mode unshaded, blend_mix, fog_disabled;
 
 group_uniforms Color;
 uniform vec3 primary_color : source_color;
