@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Material" path="res://assets/vfx/EffettoEsplosione/ExplosionMaterial_PB47.tres" id="1_material"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_original"]
+angle_max = 1.0
+initial_velocity_min = 0.51
+initial_velocity_max = 1.0
+angular_velocity_min = 0.0
+angular_velocity_max = 10.28
+gravity = Vector3(0, 0, 0)
+linear_accel_min = -1.0
+linear_accel_max = -1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_original"]
+
+[node name="BigExplosionPB47" type="Node3D"]
+
+; Original Explosion1 particle settings restored.
+[node name="Explosion1" type="GPUParticles3D" parent="."]
+transform = Transform3D(0.996103, 0, 0, 0, 0.996103, 0, 0, 0, 1, -0.00112057, -0.00427759, -0.00190479)
+material_override = ExtResource("1_material")
+amount = 20
+lifetime = 2.13
+one_shot = true
+explosiveness = 0.91
+randomness = 0.84
+fixed_fps = 30
+visibility_aabb = AABB(-4, -4, -4.79199, 8, 8, 8)
+process_material = SubResource("ParticleProcessMaterial_original")
+draw_pass_1 = SubResource("QuadMesh_original")
+
+; Original Explosion2 transform/explosiveness restored.
+[node name="Explosion2" type="GPUParticles3D" parent="."]
+transform = Transform3D(-0.88341, 0.321487, 0.330613, 0.460227, 0.617097, 0.634615, 0, 0.712782, -0.69854, -0.00112057, -0.00427759, -0.00190479)
+material_override = ExtResource("1_material")
+amount = 5
+lifetime = 2.13
+one_shot = true
+explosiveness = 0.35
+randomness = 0.84
+fixed_fps = 30
+visibility_aabb = AABB(-4, -4, -4.79199, 8, 8, 8)
+process_material = SubResource("ParticleProcessMaterial_original")
+draw_pass_1 = SubResource("QuadMesh_original")

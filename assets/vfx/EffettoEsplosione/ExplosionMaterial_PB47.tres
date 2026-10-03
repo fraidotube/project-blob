@@ -1,0 +1,100 @@
+[gd_resource type="ShaderMaterial" load_steps=13 format=3]
+
+[ext_resource type="Shader" path="res://assets/vfx/EffettoEsplosione/ExplosionShader_PB47.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" path="res://assets/vfx/EffettoEsplosione/smokesprite.png" id="2_smoke"]
+[ext_resource type="Texture2D" path="res://assets/vfx/EffettoEsplosione/normal+.png" id="3_nplus"]
+[ext_resource type="Texture2D" path="res://assets/vfx/EffettoEsplosione/normal-.png" id="4_nminus"]
+
+; Smoke stays black/dark charcoal over the whole density range.
+[sub_resource type="Gradient" id="Gradient_smoke_color"]
+offsets = PackedFloat32Array(0.0, 0.45, 0.75, 1.0)
+colors = PackedColorArray(
+	0.002, 0.003, 0.004, 1,
+	0.006, 0.007, 0.009, 1,
+	0.014, 0.016, 0.020, 1,
+	0.035, 0.040, 0.045, 1
+)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_smoke_color"]
+gradient = SubResource("Gradient_smoke_color")
+width = 256
+
+; Original blend helper preserved.
+[sub_resource type="Gradient" id="Gradient_blend_help"]
+offsets = PackedFloat32Array(0.139394, 0.448485, 0.724242)
+colors = PackedColorArray(
+	0, 0, 0, 1,
+	0.74, 0.74, 0.74, 1,
+	1, 1, 1, 1
+)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_blend_help"]
+gradient = SubResource("Gradient_blend_help")
+width = 256
+
+; Original lifetime falloff preserved.
+[sub_resource type="Gradient" id="Gradient_emission_falloff"]
+offsets = PackedFloat32Array(0, 0.0434783, 0.319876)
+colors = PackedColorArray(
+	0, 0, 0, 1,
+	0.438202, 0.438202, 0.438202, 1,
+	1, 1, 1, 1
+)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_emission_falloff"]
+gradient = SubResource("Gradient_emission_falloff")
+width = 64
+
+; Corrected hot-core emission ramp.
+; Key point:
+; the old/original ramp's FIRST defined colour was near-white at ~0.382.
+; GradientTexture clamps all values below that first offset to that first
+; colour. In Godot 4 this made low-energy smoke pixels emit WHITE light.
+;
+; We explicitly define BLACK for the low-energy region, then transition
+; into the hot white/orange/red core, and finally back to black.
+[sub_resource type="Gradient" id="Gradient_emission_color"]
+offsets = PackedFloat32Array(
+	0.0,
+	0.30,
+	0.38,
+	0.46,
+	0.55,
+	0.61,
+	1.0
+)
+colors = PackedColorArray(
+	0, 0, 0, 1,
+	0, 0, 0, 1,
+	0.95, 0.22, 0.04, 1,
+	1.0, 0.72, 0.24, 1,
+	1.0, 0.08, 0.01, 1,
+	0, 0, 0, 1,
+	0, 0, 0, 1
+)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_emission_color"]
+gradient = SubResource("Gradient_emission_color")
+width = 256
+
+[resource]
+shader = ExtResource("1_shader")
+
+shader_parameter/particle_h_frames = 8.0
+shader_parameter/particle_v_frames = 8.0
+shader_parameter/particles_anim_loop = false
+shader_parameter/still_frame = -1.0
+
+shader_parameter/smoke_sprite = ExtResource("2_smoke")
+shader_parameter/smoke_color_ramp = SubResource("GradientTexture_smoke_color")
+shader_parameter/blend_help = SubResource("GradientTexture_blend_help")
+shader_parameter/soft_limit = 0.1
+shader_parameter/blend_scale = 0.1
+shader_parameter/smoke_opacity_multiplier = 1.0
+
+shader_parameter/emission_falloff_multiplier = 1.0
+shader_parameter/emission_falloff = SubResource("GradientTexture_emission_falloff")
+shader_parameter/emission_color_ramp = SubResource("GradientTexture_emission_color")
+
+shader_parameter/normal_plus = ExtResource("3_nplus")
+shader_parameter/normal_minus = ExtResource("4_nminus")

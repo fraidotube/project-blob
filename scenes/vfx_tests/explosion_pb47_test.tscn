@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scenes/vfx_tests/explosion_pb47_test.gd" id="1_script"]
+
+[sub_resource type="Environment" id="Environment_test"]
+background_mode = 1
+background_color = Color(0.025, 0.025, 0.03, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.30, 0.30, 0.32, 1)
+ambient_light_energy = 0.55
+glow_enabled = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+size = Vector2(14, 14)
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.16, 0.16, 0.17, 1)
+roughness = 0.9
+
+[sub_resource type="BoxMesh" id="WallMesh"]
+size = Vector3(8, 4, 0.2)
+
+[node name="ExplosionPB47Test" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_test")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+position = Vector3(0, 1.7, 5.0)
+rotation_degrees = Vector3(-7, 0, 0)
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-50, -30, 0)
+light_energy = 1.0
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_floor")
+material_override = SubResource("FloorMaterial")
+
+[node name="Wall" type="MeshInstance3D" parent="."]
+position = Vector3(0, 2, -2.5)
+mesh = SubResource("WallMesh")
+material_override = SubResource("FloorMaterial")
