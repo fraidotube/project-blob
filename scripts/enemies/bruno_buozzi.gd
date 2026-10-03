@@ -18,7 +18,6 @@ enum State {
 @export_category("Test")
 @export var test_mode: bool = false
 @export var test_start_delay: float = 2.0
-
 @export var has_racket: bool = false
 
 
@@ -28,7 +27,6 @@ enum State {
 
 @export_category("Health")
 @export var max_health: int = 180
-
 @export var headshot_height: float = 1.55
 @export var headshot_multiplier: float = 2.0
 
@@ -45,12 +43,9 @@ enum State {
 @export var detection_distance: float = 18.0
 @export var eye_height: float = 1.55
 @export var player_target_height: float = 0.85
-
 @export var player_memory_time: float = 5.0
-
 @export var search_duration: float = 3.0
 @export var search_rotation_speed: float = 1.8
-
 @export var last_position_reached_distance: float = 0.75
 
 
@@ -60,20 +55,55 @@ enum State {
 
 @export_category("Movement")
 @export var rotation_speed: float = 7.0
-
 @export var phase_1_walk_speed: float = 1.60
 @export var phase_2_walk_speed: float = 1.90
 @export var phase_3_walk_speed: float = 2.20
-
 @export var phase_3_run_speed: float = 4.50
 @export var phase_3_run_distance: float = 6.50
-
 @export var preferred_ball_distance: float = 5.50
 @export var minimum_ball_distance: float = 2.50
 @export var maximum_ball_distance: float = 10.0
-
 @export var preferred_melee_distance: float = 2.20
 @export var maximum_melee_distance: float = 5.00
+
+
+# ============================================================
+# NAVIGATION
+# ============================================================
+
+@export_category("Navigation")
+@export var navigation_repath_distance: float = 0.45
+@export var navigation_direct_fallback: bool = true
+@export var phase_2_racket_run_speed: float = 3.80
+@export var phase_3_racket_run_speed: float = 4.50
+
+
+# ============================================================
+# ACTION SHIELD
+# ============================================================
+
+@export_category("Action Shield")
+@export var shield_enabled: bool = true
+@export var shield_vertical_offset: float = 1.05
+@export var shield_scale: float = 1.15
+@export var shield_pulse_speed: float = 3.2
+@export var shield_pulse_amount: float = 0.025
+@export var shield_hidden_during_down_states: bool = true
+@export var shield_hit_duration: float = 0.33
+@export var shield_hit_color: Color = Color(1.0, 0.08, 0.22, 1.0)
+
+const ACTION_SHIELD_SCENE: PackedScene = preload(
+	"res://assets/vfx/shields/scifi_shield/bruno_scifi_shield.tscn"
+)
+
+
+# ============================================================
+# DEATH VISUAL
+# ============================================================
+
+@export_category("Death Visual")
+@export var death_visual_drop: float = 0.10
+@export var death_visual_drop_time: float = 0.15
 
 
 # ============================================================
@@ -81,12 +111,8 @@ enum State {
 # ============================================================
 
 @export_category("Racket Pickup")
-
 @export var racket_pickup_distance: float = 0.25
-
-# Verificato visivamente.
 @export_range(0.0, 1.0, 0.01) var racket_pickup_fraction: float = 0.20
-
 @export var racket_pickup_animation_speed: float = 1.0
 
 
@@ -95,29 +121,22 @@ enum State {
 # ============================================================
 
 @export_category("Normal Tennis Ball")
-
 @export var tennis_ball_projectile_scene: PackedScene = preload(
 	"res://scenes/enemies/tennis_ball_projectile.tscn"
 )
-
 @export var ball_damage: int = 15
 @export var base_ball_release_time: float = 0.57
 @export var ball_target_height: float = 0.80
-
 @export var phase_1_ball_flight_time: float = 0.55
 @export var phase_2_ball_flight_time: float = 0.42
 @export var phase_3_ball_flight_time: float = 0.30
-
 @export var phase_1_cast_speed: float = 1.00
 @export var phase_2_cast_speed: float = 1.25
 @export var phase_3_cast_speed: float = 1.50
-
 @export var phase_1_ball_cooldown_min: float = 1.30
 @export var phase_1_ball_cooldown_max: float = 2.00
-
 @export var phase_2_ball_cooldown_min: float = 0.90
 @export var phase_2_ball_cooldown_max: float = 1.50
-
 @export var phase_3_ball_cooldown_min: float = 0.55
 @export var phase_3_ball_cooldown_max: float = 1.10
 
@@ -127,13 +146,10 @@ enum State {
 # ============================================================
 
 @export_category("Explosive Racket Ball")
-
 @export var explosive_ball_gravity: float = 22.0
-
 @export var phase_1_explosive_flight_time: float = 0.72
 @export var phase_2_explosive_flight_time: float = 0.60
 @export var phase_3_explosive_flight_time: float = 0.48
-
 @export_range(0.0, 1.0) var phase_1_explosive_ball_chance: float = 0.10
 @export_range(0.0, 1.0) var phase_2_explosive_ball_chance: float = 0.20
 @export_range(0.0, 1.0) var phase_3_explosive_ball_chance: float = 0.32
@@ -144,51 +160,72 @@ enum State {
 # ============================================================
 
 @export_category("Racket Melee")
-
 @export var left_slash_damage: int = 18
 @export var charged_slash_damage: int = 28
-
 @export var left_slash_range: float = 3.60
 @export var charged_slash_range: float = 5.00
-
 @export var melee_cone_dot: float = 0.25
-
 @export var left_slash_hit_fraction: float = 0.48
 @export var charged_slash_hit_fraction: float = 0.55
-
 @export var phase_1_melee_cooldown_min: float = 0.80
 @export var phase_1_melee_cooldown_max: float = 1.20
-
 @export var phase_2_melee_cooldown_min: float = 0.58
 @export var phase_2_melee_cooldown_max: float = 0.90
-
 @export var phase_3_melee_cooldown_min: float = 0.38
 @export var phase_3_melee_cooldown_max: float = 0.65
-
 @export var phase_1_melee_animation_speed: float = 1.00
 @export var phase_2_melee_animation_speed: float = 1.15
 @export var phase_3_melee_animation_speed: float = 1.30
 
 
 # ============================================================
+# MELEE WAVE
+# ============================================================
+
+@export_category("Melee Wave")
+@export var melee_wave_scene: PackedScene = preload(
+	"res://assets/vfx/bruno_melee_banana3d/bruno_melee_banana3d.tscn"
+)
+@export var melee_wave_enabled: bool = true
+@export var melee_wave_spawn_height_fallback: float = 1.15
+@export var melee_wave_forward_offset_fallback: float = 0.90
+
+
+# ============================================================
 # NODES
 # ============================================================
+
+@onready var model_root: Node3D = (
+	$Meshy_AI_Mutated_Tennis_Player_All_Animations
+)
 
 @onready var animation_player: AnimationPlayer = (
 	$Meshy_AI_Mutated_Tennis_Player_All_Animations/AnimationPlayer
 )
 
 @onready var tennis_ball_spawn: Marker3D = (
-	$Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton/BoneAttachment3D/TennisBallSpawn
+	$Meshy_AI_Mutated_Tennis_Player_All_Animations
+	/target_character
+	/GeneralSkeleton
+	/BoneAttachment3D
+	/TennisBallSpawn
 )
 
 @onready var racket_visual: Node3D = (
-	$Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton/BoneAttachment3D/Racket_Wilson_Blade
+	$Meshy_AI_Mutated_Tennis_Player_All_Animations
+	/target_character
+	/GeneralSkeleton
+	/BoneAttachment3D
+	/Racket_Wilson_Blade
 )
 
 @onready var racket_ball_spawn: Marker3D = get_node_or_null(
-	"Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton/BoneAttachment3D/Racket_Wilson_Blade/RacketBallSpawn"
+	"Meshy_AI_Mutated_Tennis_Player_All_Animations/"
+	+ "target_character/GeneralSkeleton/"
+	+ "BoneAttachment3D/Racket_Wilson_Blade/RacketBallSpawn"
 ) as Marker3D
+
+@onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 
 
 # ============================================================
@@ -196,13 +233,34 @@ enum State {
 # ============================================================
 
 var player: CharacterBody3D = null
-
 var racket_target: Node3D = null
 var racket_pickup_position: Marker3D = null
-
 var state: State = State.IDLE
-
 var rng := RandomNumberGenerator.new()
+
+
+# ============================================================
+# NAVIGATION STATE
+# ============================================================
+
+var navigation_ready: bool = false
+var navigation_target_initialized: bool = false
+var last_navigation_target: Vector3 = Vector3.ZERO
+
+
+# ============================================================
+# SHIELD / DEATH VISUAL STATE
+# ============================================================
+
+var shield_root: Node3D = null
+var shield_mesh: MeshInstance3D = null
+var shield_material: ShaderMaterial = null
+var shield_active: bool = false
+var shield_pulse_phase: float = 0.0
+var shield_hit_active: bool = false
+var shield_hit_elapsed: float = 0.0
+
+var death_visual_settled: bool = false
 
 
 # ============================================================
@@ -210,11 +268,7 @@ var rng := RandomNumberGenerator.new()
 # ============================================================
 
 var health: int = 0
-
-# 1, 2, 3.
-# Indipendente da has_racket.
 var combat_phase: int = 1
-
 var pending_combat_phase: int = 1
 var phase_transition_active: bool = false
 var invulnerable: bool = false
@@ -225,10 +279,8 @@ var invulnerable: bool = false
 # ============================================================
 
 var player_visible: bool = false
-
 var last_known_player_position: Vector3 = Vector3.ZERO
 var player_memory_timer: float = 0.0
-
 var search_timer: float = 0.0
 
 
@@ -240,11 +292,9 @@ var ball_released: bool = false
 var cast_elapsed: float = 0.0
 var ball_cooldown: float = 0.0
 var burst_remaining: int = 0
-
 var melee_cooldown: float = 0.0
 var melee_hit_done: bool = false
 var current_melee_animation: StringName = &""
-
 var racket_pickup_done: bool = false
 
 
@@ -253,11 +303,9 @@ var racket_pickup_done: bool = false
 # ============================================================
 
 var boss_bar_layer: CanvasLayer = null
-
 var boss_segment_1: ProgressBar = null
 var boss_segment_2: ProgressBar = null
 var boss_segment_3: ProgressBar = null
-
 var boss_hp_label: Label = null
 var boss_phase_label: Label = null
 
@@ -272,17 +320,12 @@ const ANIM_IDLE: StringName = &"Idle_8"
 const ANIM_WALK: StringName = &"Casual_Walk"
 const ANIM_RACKET_WALK: StringName = &"Spear_Walk"
 const ANIM_RUN: StringName = &"Running"
-
 const ANIM_BALL_CAST: StringName = &"mage_soell_cast_4"
-
 const ANIM_LEFT_SLASH: StringName = &"Left_Slash"
 const ANIM_CHARGED_SLASH: StringName = &"Charged_Slash"
-
 const ANIM_RACKET_PICKUP: StringName = &"Male_Bend_Over_Pick_Up"
-
 const ANIM_FALLING_DOWN: StringName = &"falling_down"
 const ANIM_STAND_UP: StringName = &"Stand_Up7"
-
 const ANIM_DEATH_FRONT: StringName = &"Shot_and_Fall_Backward"
 const ANIM_DEATH_BACK: StringName = &"Shot_in_the_Back_and_Fall"
 
@@ -298,33 +341,27 @@ func _ready() -> void:
 	combat_phase = 1
 	pending_combat_phase = 1
 
-	player = (
-		get_tree()
-		.get_first_node_in_group("player")
-		as CharacterBody3D
-	)
+	player = get_tree().get_first_node_in_group("player") as CharacterBody3D
 
 	if animation_player == null:
-		push_error(
-			"BrunoBuozzi: AnimationPlayer non trovato."
-		)
+		push_error("BrunoBuozzi: AnimationPlayer non trovato.")
 		return
 
 	if tennis_ball_spawn == null:
-		push_error(
-			"BrunoBuozzi: TennisBallSpawn non trovato."
-		)
+		push_error("BrunoBuozzi: TennisBallSpawn non trovato.")
 		return
 
 	if racket_visual == null:
-		push_error(
-			"BrunoBuozzi: racchetta in mano non trovata."
-		)
+		push_error("BrunoBuozzi: racchetta in mano non trovata.")
 		return
 
-	animation_player.animation_finished.connect(
-		_on_animation_finished
-	)
+	if navigation_agent == null:
+		push_error("BrunoBuozzi: NavigationAgent3D non trovato.")
+		return
+
+	_create_action_shield()
+
+	animation_player.animation_finished.connect(_on_animation_finished)
 
 	_sync_racket_visual()
 
@@ -332,9 +369,7 @@ func _ready() -> void:
 		_find_racket_target()
 
 	if player != null:
-		last_known_player_position = (
-			player.global_position
-		)
+		last_known_player_position = player.global_position
 
 	_update_player_visibility()
 
@@ -342,12 +377,22 @@ func _ready() -> void:
 		_create_boss_bar()
 		_update_boss_bar()
 
-	_set_state(
-		State.IDLE
-	)
+	_set_state(State.IDLE)
+
+	_setup_navigation.call_deferred()
 
 	if test_mode:
 		_start_test_after_delay()
+
+
+func _setup_navigation() -> void:
+	await get_tree().physics_frame
+
+	if not is_inside_tree():
+		return
+
+	navigation_ready = true
+	_invalidate_navigation_target()
 
 
 # ============================================================
@@ -355,32 +400,23 @@ func _ready() -> void:
 # ============================================================
 
 func _physics_process(delta: float) -> void:
-	# Anche morto / a terra deve continuare a subire la gravità.
+	_update_action_shield(delta)
+
 	if not is_on_floor():
-		velocity += (
-			get_gravity()
-			* delta
-		)
+		velocity += get_gravity() * delta
 
 	if state == State.DEAD:
 		_stop_horizontal_motion()
 		move_and_slide()
 		return
 
-	if (
-		state == State.DOWN
-		or state == State.GETTING_UP
-	):
+	if state == State.DOWN or state == State.GETTING_UP:
 		_stop_horizontal_motion()
 		move_and_slide()
 		return
 
 	if player == null or not is_instance_valid(player):
-		player = (
-			get_tree()
-			.get_first_node_in_group("player")
-			as CharacterBody3D
-		)
+		player = get_tree().get_first_node_in_group("player") as CharacterBody3D
 
 	if (
 		not has_racket
@@ -391,9 +427,7 @@ func _physics_process(delta: float) -> void:
 	):
 		_find_racket_target()
 
-	_update_perception(
-		delta
-	)
+	_update_perception(delta)
 
 	if ball_cooldown > 0.0:
 		ball_cooldown -= delta
@@ -404,55 +438,243 @@ func _physics_process(delta: float) -> void:
 	match state:
 		State.IDLE:
 			_process_idle()
-
 		State.MOVE_TO_PLAYER:
-			_process_move_to_player(
-				delta
-			)
-
+			_process_move_to_player(delta)
 		State.SEEK_RACKET:
-			_process_seek_racket(
-				delta
-			)
-
+			_process_seek_racket(delta)
 		State.PICKUP_RACKET:
 			_process_pickup_racket()
-
 		State.BALL_ATTACK:
-			_process_ball_attack(
-				delta
-			)
-
+			_process_ball_attack(delta)
 		State.MELEE_ATTACK:
-			_process_melee_attack(
-				delta
-			)
-
+			_process_melee_attack(delta)
 		State.SEARCH_PLAYER:
-			_process_search_player(
-				delta
-			)
-
+			_process_search_player(delta)
 		State.DOWN:
 			pass
-
 		State.GETTING_UP:
 			pass
-
 		State.DEAD:
 			pass
 
 	move_and_slide()
 
 
+
+
 # ============================================================
-# TEST START
+# ACTION SHIELD
+# ============================================================
+
+func _create_action_shield() -> void:
+	if not shield_enabled:
+		return
+
+	if shield_root != null:
+		return
+
+	if ACTION_SHIELD_SCENE == null:
+		push_error(
+			"BrunoBuozzi: scena scudo Sci-Fi non disponibile."
+		)
+		return
+
+	var shield_instance := ACTION_SHIELD_SCENE.instantiate()
+
+	if not shield_instance is Node3D:
+		push_error(
+			"BrunoBuozzi: la scena dello scudo non ha root Node3D."
+		)
+
+		shield_instance.queue_free()
+		return
+
+	shield_root = shield_instance as Node3D
+	shield_root.name = "BrunoActionShield"
+	shield_root.position = Vector3(
+		0.0,
+		shield_vertical_offset,
+		0.0
+	)
+
+	shield_root.scale = Vector3.ONE * shield_scale
+	shield_root.visible = false
+
+	add_child(shield_root)
+
+	shield_mesh = shield_root.get_node_or_null("ShieldMesh") as MeshInstance3D
+
+	if shield_mesh != null:
+		var base_material := shield_mesh.get_surface_override_material(0)
+
+		if base_material == null:
+			base_material = shield_mesh.get_active_material(0)
+
+		if base_material is ShaderMaterial:
+			shield_material = (base_material as ShaderMaterial).duplicate() as ShaderMaterial
+			shield_mesh.set_surface_override_material(0, shield_material)
+			shield_material.set_shader_parameter("hit_progress", 1.0)
+			shield_material.set_shader_parameter("hit_color", shield_hit_color)
+			shield_material.set_shader_parameter("hit_position", Vector3.UP)
+
+
+func _set_action_shield(active: bool) -> void:
+	shield_active = active
+	_refresh_action_shield_visibility()
+
+	if active:
+		invulnerable = true
+	else:
+		shield_hit_active = false
+		shield_hit_elapsed = 0.0
+		_reset_shield_hit_visual()
+
+		if (
+			not phase_transition_active
+			and state != State.DEAD
+		):
+			invulnerable = false
+
+
+func _should_show_action_shield() -> bool:
+	if not shield_active:
+		return false
+
+	if shield_hidden_during_down_states:
+		if (
+			state == State.DOWN
+			or state == State.GETTING_UP
+			or state == State.DEAD
+		):
+			return false
+
+	return true
+
+
+func _refresh_action_shield_visibility() -> void:
+	if shield_root == null:
+		return
+
+	shield_root.visible = _should_show_action_shield()
+
+
+func _reset_shield_hit_visual() -> void:
+	if shield_material == null:
+		return
+
+	shield_material.set_shader_parameter("hit_progress", 1.0)
+
+
+func _trigger_shield_hit(world_hit_point: Vector3) -> void:
+	if not shield_active:
+		return
+
+	if shield_root == null or shield_material == null:
+		return
+
+	if not _should_show_action_shield():
+		return
+
+	var local_hit := shield_root.to_local(world_hit_point)
+
+	if local_hit.length_squared() <= 0.0001:
+		local_hit = Vector3.UP
+	else:
+		local_hit = local_hit.normalized()
+
+	shield_material.set_shader_parameter("hit_position", local_hit)
+	shield_material.set_shader_parameter("hit_color", shield_hit_color)
+	shield_material.set_shader_parameter("hit_progress", 0.0)
+
+	shield_hit_active = true
+	shield_hit_elapsed = 0.0
+
+
+func _update_action_shield(delta: float) -> void:
+	_refresh_action_shield_visibility()
+
+	if not shield_active:
+		return
+
+	if shield_root == null:
+		return
+
+	shield_pulse_phase += (
+		delta
+		* shield_pulse_speed
+	)
+
+	var pulse := sin(
+		shield_pulse_phase
+	)
+
+	var current_scale := (
+		shield_scale
+		* (
+			1.0
+			+ pulse
+			* shield_pulse_amount
+		)
+	)
+
+	shield_root.scale = (
+		Vector3.ONE
+		* current_scale
+	)
+
+	if shield_hit_active and shield_material != null:
+		shield_hit_elapsed += delta
+
+		var duration := maxf(shield_hit_duration, 0.01)
+		var progress := clampf(
+			shield_hit_elapsed / duration,
+			0.0,
+			1.0
+		)
+
+		shield_material.set_shader_parameter("hit_progress", progress)
+
+		if progress >= 1.0:
+			shield_hit_active = false
+
+
+# ============================================================
+# DEATH VISUAL
+# ============================================================
+
+func _settle_dead_visual() -> void:
+	if death_visual_settled:
+		return
+
+	death_visual_settled = true
+
+	if model_root == null:
+		return
+
+	var target_position := model_root.position
+	target_position.y -= death_visual_drop
+
+	if death_visual_drop_time <= 0.0:
+		model_root.position = target_position
+		return
+
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_SINE)
+	tween.set_ease(Tween.EASE_OUT)
+	tween.tween_property(
+		model_root,
+		"position",
+		target_position,
+		death_visual_drop_time
+	)
+
+
+# ============================================================
+# TEST
 # ============================================================
 
 func _start_test_after_delay() -> void:
-	await get_tree().create_timer(
-		test_start_delay
-	).timeout
+	await get_tree().create_timer(test_start_delay).timeout
 
 	if not is_inside_tree():
 		return
@@ -465,80 +687,123 @@ func _start_test_after_delay() -> void:
 		and racket_pickup_position != null
 		and is_instance_valid(racket_pickup_position)
 	):
-		_set_state(
-			State.SEEK_RACKET
-		)
+		_set_state(State.SEEK_RACKET)
 		return
 
 	if player_visible:
-		_set_state(
-			State.MOVE_TO_PLAYER
-		)
+		_set_state(State.MOVE_TO_PLAYER)
+
+
+# ============================================================
+# NAVIGATION
+# ============================================================
+
+func _invalidate_navigation_target() -> void:
+	navigation_target_initialized = false
+
+
+func _direct_direction_to(target_position: Vector3) -> Vector3:
+	var direction := target_position - global_position
+	direction.y = 0.0
+
+	if direction.length_squared() <= 0.0001:
+		return Vector3.ZERO
+
+	return direction.normalized()
+
+
+func _get_navigation_direction(target_position: Vector3) -> Vector3:
+	if navigation_agent == null:
+		if navigation_direct_fallback:
+			return _direct_direction_to(target_position)
+		return Vector3.ZERO
+
+	if not navigation_ready:
+		if navigation_direct_fallback:
+			return _direct_direction_to(target_position)
+		return Vector3.ZERO
+
+	var navigation_map := navigation_agent.get_navigation_map()
+
+	if not navigation_map.is_valid():
+		if navigation_direct_fallback:
+			return _direct_direction_to(target_position)
+		return Vector3.ZERO
+
+	var map_iteration := NavigationServer3D.map_get_iteration_id(navigation_map)
+
+	if map_iteration == 0:
+		if navigation_direct_fallback:
+			return _direct_direction_to(target_position)
+		return Vector3.ZERO
+
+	var needs_new_target := not navigation_target_initialized
+
+	if navigation_target_initialized:
+		var target_shift := last_navigation_target.distance_to(target_position)
+
+		if target_shift >= navigation_repath_distance:
+			needs_new_target = true
+
+	if needs_new_target:
+		navigation_agent.target_position = target_position
+		last_navigation_target = target_position
+		navigation_target_initialized = true
+
+	var next_path_position := navigation_agent.get_next_path_position()
+
+	var navigation_finished := navigation_agent.is_navigation_finished()
+
+	var delta_to_next := next_path_position - global_position
+	delta_to_next.y = 0.0
+
+	if navigation_finished:
+		return Vector3.ZERO
+
+	if delta_to_next.length_squared() <= 0.0001:
+		return Vector3.ZERO
+
+	return delta_to_next.normalized()
 
 
 # ============================================================
 # HEALTH / DAMAGE
 # ============================================================
 
-func take_bullet_hit(
-	base_damage: int,
-	hit_point: Vector3
-) -> void:
+func take_bullet_hit(base_damage: int, hit_point: Vector3) -> void:
 	if state == State.DEAD:
 		return
 
 	if invulnerable:
+		_trigger_shield_hit(hit_point)
 		return
 
 	var is_headshot := (
 		hit_point.y
-		>= global_position.y
-		+ headshot_height
+		>= global_position.y + headshot_height
 	)
 
-	var final_damage := (
-		base_damage
-	)
+	var final_damage := base_damage
 
 	if is_headshot:
 		final_damage = maxi(
 			1,
-			roundi(
-				float(base_damage)
-				* headshot_multiplier
-			)
+			roundi(float(base_damage) * headshot_multiplier)
 		)
 
-	_apply_damage(
-		final_damage
-	)
+	_apply_damage(final_damage)
 
 
-func take_damage(
-	amount: int
-) -> void:
-	_apply_damage(
-		amount
-	)
+func take_damage(amount: int) -> void:
+	_apply_damage(amount)
 
 
-func _apply_damage(
-	amount: int
-) -> void:
-	if state == State.DEAD:
-		return
-
-	if invulnerable:
-		return
-
-	if amount <= 0:
+func _apply_damage(amount: int) -> void:
+	if state == State.DEAD or invulnerable or amount <= 0:
 		return
 
 	health -= amount
-	health = maxi(
-		health,
-		0
-	)
+	health = maxi(health, 0)
 
 	_update_boss_bar()
 
@@ -555,65 +820,40 @@ func _apply_damage(
 		_die()
 		return
 
-	var segment_health := (
-		_get_segment_health()
-	)
+	var segment_health := _get_segment_health()
 
-	if (
-		combat_phase == 1
-		and health <= segment_health * 2
-	):
-		_start_phase_transition(
-			2
-		)
+	if combat_phase == 1 and health <= segment_health * 2:
+		_start_phase_transition(2)
 		return
 
-	if (
-		combat_phase == 2
-		and health <= segment_health
-	):
-		_start_phase_transition(
-			3
-		)
+	if combat_phase == 2 and health <= segment_health:
+		_start_phase_transition(3)
 		return
 
 
 func _get_segment_health() -> int:
 	return maxi(
 		1,
-		ceili(
-			float(max_health)
-			/ 3.0
-		)
+		ceili(float(max_health) / 3.0)
 	)
 
 
-func _start_phase_transition(
-	new_phase: int
-) -> void:
-	if phase_transition_active:
-		return
-
-	if state == State.DEAD:
+func _start_phase_transition(new_phase: int) -> void:
+	if phase_transition_active or state == State.DEAD:
 		return
 
 	phase_transition_active = true
-	invulnerable = true
-
-	pending_combat_phase = clampi(
-		new_phase,
-		1,
-		3
-	)
+	pending_combat_phase = clampi(new_phase, 1, 3)
+	_set_action_shield(true)
 
 	state = State.DOWN
 
+	_invalidate_navigation_target()
 	_stop_horizontal_motion()
 
 	burst_remaining = 0
 	ball_released = false
 	cast_elapsed = 0.0
-
 	melee_hit_done = false
 	current_melee_animation = &""
 
@@ -626,7 +866,6 @@ func _start_phase_transition(
 
 func _start_getting_up() -> void:
 	state = State.GETTING_UP
-
 	_stop_horizontal_motion()
 
 	_play_animation(
@@ -637,15 +876,11 @@ func _start_getting_up() -> void:
 
 
 func _finish_phase_transition() -> void:
-	combat_phase = (
-		pending_combat_phase
-	)
-
+	combat_phase = pending_combat_phase
 	phase_transition_active = false
-	invulnerable = false
+	_set_action_shield(false)
 
 	_update_boss_bar()
-
 	_resume_after_action()
 
 
@@ -654,11 +889,12 @@ func _die() -> void:
 		return
 
 	state = State.DEAD
-	invulnerable = true
 	phase_transition_active = false
-
+	_set_action_shield(false)
+	invulnerable = true
 	health = 0
 
+	_invalidate_navigation_target()
 	_stop_horizontal_motion()
 
 	burst_remaining = 0
@@ -667,14 +903,10 @@ func _die() -> void:
 
 	_update_boss_bar()
 
-	var death_animation := (
-		ANIM_DEATH_FRONT
-	)
+	var death_animation := ANIM_DEATH_FRONT
 
 	if _player_is_behind_bruno():
-		death_animation = (
-			ANIM_DEATH_BACK
-		)
+		death_animation = ANIM_DEATH_BACK
 
 	_play_animation(
 		death_animation,
@@ -687,40 +919,23 @@ func _player_is_behind_bruno() -> bool:
 	if player == null:
 		return false
 
-	var to_player := (
-		player.global_position
-		- global_position
-	)
-
+	var to_player := player.global_position - global_position
 	to_player.y = 0.0
 
 	if to_player.length_squared() <= 0.0001:
 		return false
 
-	to_player = (
-		to_player.normalized()
-	)
+	to_player = to_player.normalized()
 
-	# Bruno guarda lungo +Z.
-	var forward := (
-		global_transform.basis.z
-	)
-
+	var forward := global_transform.basis.z
 	forward.y = 0.0
 
 	if forward.length_squared() <= 0.0001:
 		return false
 
-	forward = (
-		forward.normalized()
-	)
+	forward = forward.normalized()
 
-	return (
-		forward.dot(
-			to_player
-		)
-		< 0.0
-	)
+	return forward.dot(to_player) < 0.0
 
 
 # ============================================================
@@ -728,38 +943,24 @@ func _player_is_behind_bruno() -> bool:
 # ============================================================
 
 func _find_racket_target() -> void:
-	var node := (
-		get_tree()
-		.get_first_node_in_group(
-			RACKET_TARGET_GROUP
-		)
-	)
+	var node := get_tree().get_first_node_in_group(RACKET_TARGET_GROUP)
 
 	if not node is Node3D:
 		racket_target = null
 		racket_pickup_position = null
 		return
 
-	racket_target = (
-		node as Node3D
-	)
+	racket_target = node as Node3D
 
-	var marker := (
-		racket_target
-		.get_node_or_null(
-			"PickupPosition"
-		)
-	)
+	var marker := racket_target.get_node_or_null("PickupPosition")
 
 	if marker is Marker3D:
-		racket_pickup_position = (
-			marker as Marker3D
-		)
+		racket_pickup_position = marker as Marker3D
 	else:
 		racket_pickup_position = null
-
 		push_error(
-			"BrunoBuozzi: PickupPosition non trovato dentro BrunoRacketPickup."
+			"BrunoBuozzi: PickupPosition non trovato "
+			+ "dentro BrunoRacketPickup."
 		)
 
 
@@ -767,9 +968,7 @@ func _find_racket_target() -> void:
 # PERCEPTION
 # ============================================================
 
-func _update_perception(
-	delta: float
-) -> void:
+func _update_perception(delta: float) -> void:
 	if player == null:
 		player_visible = false
 		return
@@ -777,90 +976,56 @@ func _update_perception(
 	_update_player_visibility()
 
 	if player_visible:
-		last_known_player_position = (
-			player.global_position
-		)
-
-		player_memory_timer = (
-			player_memory_time
-		)
+		last_known_player_position = player.global_position
+		player_memory_timer = player_memory_time
 	else:
 		if player_memory_timer > 0.0:
 			player_memory_timer -= delta
 
 
 func _update_player_visibility() -> void:
-	player_visible = (
-		_has_line_of_sight_to_player()
-	)
+	player_visible = _has_line_of_sight_to_player()
 
 
 func _has_line_of_sight_to_player() -> bool:
 	if player == null:
 		return false
 
-	var distance := (
-		global_position
-		.distance_to(
-			player.global_position
-		)
-	)
+	var distance := global_position.distance_to(player.global_position)
 
 	if distance > detection_distance:
 		return false
 
-	var from_position := (
-		global_position
-		+ Vector3.UP
-		* eye_height
-	)
-
+	var from_position := global_position + Vector3.UP * eye_height
 	var to_position := (
 		player.global_position
-		+ Vector3.UP
-		* player_target_height
+		+ Vector3.UP * player_target_height
 	)
 
-	var query := (
-		PhysicsRayQueryParameters3D.create(
-			from_position,
-			to_position
-		)
+	var query := PhysicsRayQueryParameters3D.create(
+		from_position,
+		to_position
 	)
 
-	query.exclude = [
-		get_rid()
-	]
-
+	query.exclude = [get_rid()]
 	query.collide_with_areas = false
 	query.collide_with_bodies = true
 
 	var result := (
 		get_world_3d()
 		.direct_space_state
-		.intersect_ray(
-			query
-		)
+		.intersect_ray(query)
 	)
 
 	if result.is_empty():
 		return true
 
-	var collider = (
-		result.get(
-			"collider"
-		)
-	)
+	var collider = result.get("collider")
 
 	if collider == player:
 		return true
 
-	if (
-		collider is Node
-		and collider.is_in_group(
-			"player"
-		)
-	):
+	if collider is Node and collider.is_in_group("player"):
 		return true
 
 	return false
@@ -882,65 +1047,47 @@ func _process_idle() -> void:
 	if not has_racket:
 		if (
 			racket_pickup_position != null
-			and is_instance_valid(
-				racket_pickup_position
-			)
+			and is_instance_valid(racket_pickup_position)
 		):
-			_set_state(
-				State.SEEK_RACKET
-			)
+			_set_state(State.SEEK_RACKET)
 			return
 
 		if player_visible:
-			_set_state(
-				State.MOVE_TO_PLAYER
-			)
+			_set_state(State.MOVE_TO_PLAYER)
 
 		return
 
 	if player_visible:
-		_set_state(
-			State.MOVE_TO_PLAYER
-		)
+		_set_state(State.MOVE_TO_PLAYER)
 		return
 
 	if player_memory_timer > 0.0:
-		_set_state(
-			State.MOVE_TO_PLAYER
-		)
+		_set_state(State.MOVE_TO_PLAYER)
 
 
 # ============================================================
 # SEEK RACKET
 # ============================================================
 
-func _process_seek_racket(
-	delta: float
-) -> void:
+func _process_seek_racket(delta: float) -> void:
 	if has_racket:
 		_resume_after_action()
 		return
 
 	if (
 		racket_pickup_position == null
-		or not is_instance_valid(
-			racket_pickup_position
-		)
+		or not is_instance_valid(racket_pickup_position)
 	):
 		_find_racket_target()
 
 	if racket_pickup_position == null:
-		_set_state(
-			State.IDLE
-		)
+		_set_state(State.IDLE)
 		return
 
 	if player_visible:
 		var player_distance := (
 			global_position
-			.distance_to(
-				player.global_position
-			)
+			.distance_to(player.global_position)
 		)
 
 		if (
@@ -951,52 +1098,30 @@ func _process_seek_racket(
 			start_ball_attack()
 			return
 
-	var target_position := (
-		racket_pickup_position
-		.global_position
-	)
+	var target_position := racket_pickup_position.global_position
 
-	var direction := (
-		target_position
-		- global_position
-	)
+	var direct_distance := global_position.distance_to(target_position)
 
-	direction.y = 0.0
-
-	var distance := (
-		direction.length()
-	)
-
-	if distance <= racket_pickup_distance:
+	if direct_distance <= racket_pickup_distance:
 		_start_racket_pickup()
 		return
+
+	var direction := _get_navigation_direction(target_position)
 
 	if direction.length_squared() <= 0.0001:
 		_stop_horizontal_motion()
 		return
 
-	direction = (
-		direction.normalized()
-	)
+	_rotate_toward(direction, delta)
 
-	if (
-		combat_phase == 3
-		and distance > phase_3_run_distance
-	):
-		velocity.x = (
-			direction.x
-			* phase_3_run_speed
-		)
+	if combat_phase >= 2:
+		var racket_run_speed := phase_2_racket_run_speed
 
-		velocity.z = (
-			direction.z
-			* phase_3_run_speed
-		)
+		if combat_phase >= 3:
+			racket_run_speed = phase_3_racket_run_speed
 
-		_rotate_toward(
-			direction,
-			delta
-		)
+		velocity.x = direction.x * racket_run_speed
+		velocity.z = direction.z * racket_run_speed
 
 		_play_animation(
 			ANIM_RUN,
@@ -1006,24 +1131,8 @@ func _process_seek_racket(
 
 		return
 
-	var speed := (
-		_get_walk_speed()
-	)
-
-	velocity.x = (
-		direction.x
-		* speed
-	)
-
-	velocity.z = (
-		direction.z
-		* speed
-	)
-
-	_rotate_toward(
-		direction,
-		delta
-	)
+	velocity.x = direction.x * phase_1_walk_speed
+	velocity.z = direction.z * phase_1_walk_speed
 
 	_play_animation(
 		ANIM_WALK,
@@ -1042,33 +1151,24 @@ func _start_racket_pickup() -> void:
 
 	if (
 		racket_pickup_position == null
-		or not is_instance_valid(
-			racket_pickup_position
-		)
+		or not is_instance_valid(racket_pickup_position)
 	):
 		return
 
 	state = State.PICKUP_RACKET
+	_set_action_shield(true)
 
+	_invalidate_navigation_target()
 	_stop_horizontal_motion()
 
-	var snap_position := (
-		racket_pickup_position
-		.global_position
-	)
+	var snap_position := racket_pickup_position.global_position
+	var new_position := global_position
 
-	global_position.x = (
-		snap_position.x
-	)
+	new_position.x = snap_position.x
+	new_position.z = snap_position.z
 
-	global_position.z = (
-		snap_position.z
-	)
-
-	rotation.y = (
-		racket_pickup_position
-		.global_rotation.y
-	)
+	global_position = new_position
+	rotation.y = racket_pickup_position.global_rotation.y
 
 	racket_pickup_done = false
 
@@ -1082,23 +1182,16 @@ func _start_racket_pickup() -> void:
 func _process_pickup_racket() -> void:
 	_stop_horizontal_motion()
 
-	if racket_pickup_done:
+	if racket_pickup_done or animation_player == null:
 		return
 
-	if animation_player == null:
-		return
-
-	var animation_length := (
-		animation_player
-		.current_animation_length
-	)
+	var animation_length := animation_player.current_animation_length
 
 	if animation_length <= 0.0:
 		return
 
 	var normalized_position := (
-		animation_player
-		.current_animation_position
+		animation_player.current_animation_position
 		/ animation_length
 	)
 
@@ -1116,64 +1209,44 @@ func _complete_racket_pickup() -> void:
 
 	if (
 		racket_target != null
-		and is_instance_valid(
-			racket_target
-		)
+		and is_instance_valid(racket_target)
 	):
-		racket_target.remove_from_group(
-			RACKET_TARGET_GROUP
-		)
-
+		racket_target.remove_from_group(RACKET_TARGET_GROUP)
 		racket_target.visible = false
 		racket_target.queue_free()
 
 	racket_target = null
 	racket_pickup_position = null
 
-	set_has_racket(
-		true
-	)
+	set_has_racket(true)
 
 
 # ============================================================
 # MOVE TO PLAYER
 # ============================================================
 
-func _process_move_to_player(
-	delta: float
-) -> void:
+func _process_move_to_player(delta: float) -> void:
 	if player == null:
-		_set_state(
-			State.IDLE
-		)
+		_set_state(State.IDLE)
 		return
 
 	if (
 		not has_racket
 		and racket_pickup_position != null
-		and is_instance_valid(
-			racket_pickup_position
-		)
+		and is_instance_valid(racket_pickup_position)
 	):
-		_set_state(
-			State.SEEK_RACKET
-		)
+		_set_state(State.SEEK_RACKET)
 		return
 
 	if player_visible:
 		var visible_distance := (
 			global_position
-			.distance_to(
-				player.global_position
-			)
+			.distance_to(player.global_position)
 		)
 
 		if has_racket:
-			if _try_racket_attack(
-				visible_distance
-			):
+			if _try_racket_attack(visible_distance):
 				return
-
 		else:
 			if (
 				ball_cooldown <= 0.0
@@ -1183,39 +1256,23 @@ func _process_move_to_player(
 				start_ball_attack()
 				return
 
-	var target_position := (
-		last_known_player_position
-	)
+	var target_position := last_known_player_position
 
 	if player_visible:
-		target_position = (
-			player.global_position
-		)
+		target_position = player.global_position
 
-	var direction := (
-		target_position
-		- global_position
-	)
-
-	direction.y = 0.0
-
-	var distance := (
-		direction.length()
-	)
+	var direct_distance := global_position.distance_to(target_position)
 
 	if (
 		not player_visible
-		and distance
-		<= last_position_reached_distance
+		and direct_distance <= last_position_reached_distance
 	):
 		_stop_horizontal_motion()
 
 		if has_racket:
 			_start_search_player()
 		else:
-			_set_state(
-				State.IDLE
-			)
+			_set_state(State.IDLE)
 
 		return
 
@@ -1226,39 +1283,29 @@ func _process_move_to_player(
 		if has_racket:
 			_start_search_player()
 		else:
-			_set_state(
-				State.IDLE
-			)
+			_set_state(State.IDLE)
 
 		return
+
+	var direction := _get_navigation_direction(target_position)
 
 	if direction.length_squared() <= 0.0001:
 		_stop_horizontal_motion()
-		return
 
-	direction = (
-		direction.normalized()
-	)
+		if not player_visible and has_racket:
+			_start_search_player()
+
+		return
 
 	if player_visible:
 		if (
 			combat_phase == 3
-			and distance > phase_3_run_distance
+			and direct_distance > phase_3_run_distance
 		):
-			velocity.x = (
-				direction.x
-				* phase_3_run_speed
-			)
+			velocity.x = direction.x * phase_3_run_speed
+			velocity.z = direction.z * phase_3_run_speed
 
-			velocity.z = (
-				direction.z
-				* phase_3_run_speed
-			)
-
-			_rotate_toward(
-				direction,
-				delta
-			)
+			_rotate_toward(direction, delta)
 
 			_play_animation(
 				ANIM_RUN,
@@ -1270,14 +1317,10 @@ func _process_move_to_player(
 
 		if (
 			has_racket
-			and distance
-			<= preferred_melee_distance
+			and direct_distance <= preferred_melee_distance
 		):
 			_stop_horizontal_motion()
-
-			_face_player(
-				delta
-			)
+			_face_player(delta)
 
 			if melee_cooldown <= 0.0:
 				_start_melee_attack()
@@ -1286,44 +1329,23 @@ func _process_move_to_player(
 
 		if (
 			not has_racket
-			and distance
-			<= preferred_ball_distance
+			and direct_distance <= preferred_ball_distance
 		):
 			_stop_horizontal_motion()
-
-			_face_player(
-				delta
-			)
-
+			_face_player(delta)
 			return
 
-	var speed := (
-		_get_walk_speed()
-	)
+	var speed := _get_walk_speed()
 
-	velocity.x = (
-		direction.x
-		* speed
-	)
+	velocity.x = direction.x * speed
+	velocity.z = direction.z * speed
 
-	velocity.z = (
-		direction.z
-		* speed
-	)
+	_rotate_toward(direction, delta)
 
-	_rotate_toward(
-		direction,
-		delta
-	)
-
-	var movement_animation := (
-		ANIM_WALK
-	)
+	var movement_animation := ANIM_WALK
 
 	if has_racket:
-		movement_animation = (
-			ANIM_RACKET_WALK
-		)
+		movement_animation = ANIM_RACKET_WALK
 
 	_play_animation(
 		movement_animation,
@@ -1336,9 +1358,7 @@ func _process_move_to_player(
 # RACKET ATTACK DECISION
 # ============================================================
 
-func _try_racket_attack(
-	distance: float
-) -> bool:
+func _try_racket_attack(distance: float) -> bool:
 	if (
 		melee_cooldown <= 0.0
 		and distance <= maximum_melee_distance
@@ -1356,10 +1376,7 @@ func _try_racket_attack(
 	if not ball_available:
 		return false
 
-	if (
-		rng.randf()
-		<= _get_explosive_ball_chance()
-	):
+	if rng.randf() <= _get_explosive_ball_chance():
 		start_ball_attack()
 		return true
 
@@ -1374,18 +1391,15 @@ func start_ball_attack() -> void:
 	if state == State.BALL_ATTACK:
 		return
 
-	if not player_visible:
+	if not player_visible or player == null:
 		return
 
-	if player == null:
-		return
+	_invalidate_navigation_target()
 
 	if has_racket:
 		burst_remaining = 1
 	else:
-		burst_remaining = (
-			_choose_normal_burst_count()
-		)
+		burst_remaining = _choose_normal_burst_count()
 
 	_start_next_ball_in_burst()
 
@@ -1401,17 +1415,15 @@ func _start_next_ball_in_burst() -> void:
 		return
 
 	burst_remaining -= 1
-
 	state = State.BALL_ATTACK
+	_set_action_shield(true)
 
 	_stop_horizontal_motion()
 
 	ball_released = false
 	cast_elapsed = 0.0
 
-	_face_player(
-		1.0
-	)
+	_face_player(1.0)
 
 	_play_animation(
 		ANIM_BALL_CAST,
@@ -1420,9 +1432,7 @@ func _start_next_ball_in_burst() -> void:
 	)
 
 
-func _process_ball_attack(
-	delta: float
-) -> void:
+func _process_ball_attack(delta: float) -> void:
 	_stop_horizontal_motion()
 
 	if not player_visible:
@@ -1430,9 +1440,7 @@ func _process_ball_attack(
 		_finish_ball_burst()
 		return
 
-	_face_player(
-		delta
-	)
+	_face_player(delta)
 
 	cast_elapsed += delta
 
@@ -1446,7 +1454,6 @@ func _process_ball_attack(
 		and cast_elapsed >= release_time
 	):
 		ball_released = true
-
 		_release_tennis_ball()
 
 
@@ -1454,65 +1461,33 @@ func _release_tennis_ball() -> void:
 	if tennis_ball_projectile_scene == null:
 		return
 
-	if player == null:
+	if player == null or not player_visible:
 		return
 
-	if not player_visible:
-		return
+	var projectile := tennis_ball_projectile_scene.instantiate()
+	get_tree().current_scene.add_child(projectile)
 
-	var projectile := (
-		tennis_ball_projectile_scene
-		.instantiate()
-	)
-
-	get_tree().current_scene.add_child(
-		projectile
-	)
-
-	var start_position := (
-		tennis_ball_spawn
-		.global_position
-	)
+	var start_position := tennis_ball_spawn.global_position
 
 	var target_position := (
 		player.global_position
-		+ Vector3.UP
-		* ball_target_height
+		+ Vector3.UP * ball_target_height
 	)
 
-	var flight_time := (
-		_get_normal_ball_flight_time()
-	)
-
+	var flight_time := _get_normal_ball_flight_time()
 	var gravity_override := -1.0
 
 	if has_racket:
 		if racket_ball_spawn != null:
-			start_position = (
-				racket_ball_spawn
-				.global_position
-			)
+			start_position = racket_ball_spawn.global_position
 		else:
-			start_position = (
-				racket_visual
-				.global_position
-			)
+			start_position = racket_visual.global_position
 
-		target_position = (
-			_get_explosive_ground_target()
-		)
+		target_position = _get_explosive_ground_target()
+		flight_time = _get_explosive_ball_flight_time()
+		gravity_override = explosive_ball_gravity
 
-		flight_time = (
-			_get_explosive_ball_flight_time()
-		)
-
-		gravity_override = (
-			explosive_ball_gravity
-		)
-
-	if projectile.has_method(
-		"launch"
-	):
+	if projectile.has_method("launch"):
 		projectile.launch(
 			start_position,
 			target_position,
@@ -1530,21 +1505,12 @@ func _get_explosive_ground_target() -> Vector3:
 	if player == null:
 		return global_position
 
-	var ray_start := (
-		player.global_position
-		+ Vector3.UP * 2.0
-	)
+	var ray_start := player.global_position + Vector3.UP * 2.0
+	var ray_end := player.global_position + Vector3.DOWN * 4.0
 
-	var ray_end := (
-		player.global_position
-		+ Vector3.DOWN * 4.0
-	)
-
-	var query := (
-		PhysicsRayQueryParameters3D.create(
-			ray_start,
-			ray_end
-		)
+	var query := PhysicsRayQueryParameters3D.create(
+		ray_start,
+		ray_end
 	)
 
 	query.collide_with_areas = false
@@ -1552,18 +1518,13 @@ func _get_explosive_ground_target() -> Vector3:
 
 	if player is CollisionObject3D:
 		query.exclude = [
-			(
-				player
-				as CollisionObject3D
-			).get_rid()
+			(player as CollisionObject3D).get_rid()
 		]
 
 	var result := (
 		get_world_3d()
 		.direct_space_state
-		.intersect_ray(
-			query
-		)
+		.intersect_ray(query)
 	)
 
 	if not result.is_empty():
@@ -1577,6 +1538,7 @@ func _get_explosive_ground_target() -> Vector3:
 
 func _finish_ball_burst() -> void:
 	burst_remaining = 0
+	_set_action_shield(false)
 
 	ball_cooldown = rng.randf_range(
 		_get_ball_cooldown_min(),
@@ -1593,28 +1555,20 @@ func _choose_normal_burst_count() -> int:
 		1:
 			if roll < 0.55:
 				return 1
-
 			if roll < 0.90:
 				return 2
-
 			return 3
-
 		2:
 			if roll < 0.30:
 				return 1
-
 			if roll < 0.75:
 				return 2
-
 			return 3
-
 		3:
 			if roll < 0.10:
 				return 1
-
 			if roll < 0.50:
 				return 2
-
 			return 3
 
 	return 1
@@ -1632,12 +1586,12 @@ func _start_melee_attack() -> void:
 		return
 
 	state = State.MELEE_ATTACK
+	_set_action_shield(true)
 
+	_invalidate_navigation_target()
 	_stop_horizontal_motion()
 
-	_face_player(
-		1.0
-	)
+	_face_player(1.0)
 
 	melee_hit_done = false
 
@@ -1646,18 +1600,13 @@ func _start_melee_attack() -> void:
 	match combat_phase:
 		2:
 			charged_chance = 0.40
-
 		3:
 			charged_chance = 0.55
 
 	if rng.randf() <= charged_chance:
-		current_melee_animation = (
-			ANIM_CHARGED_SLASH
-		)
+		current_melee_animation = ANIM_CHARGED_SLASH
 	else:
-		current_melee_animation = (
-			ANIM_LEFT_SLASH
-		)
+		current_melee_animation = ANIM_LEFT_SLASH
 
 	_play_animation(
 		current_melee_animation,
@@ -1666,85 +1615,199 @@ func _start_melee_attack() -> void:
 	)
 
 
-func _process_melee_attack(
-	delta: float
-) -> void:
+func _process_melee_attack(delta: float) -> void:
 	_stop_horizontal_motion()
 
 	if player_visible:
-		_face_player(
-			delta
-		)
+		_face_player(delta)
 
-	if melee_hit_done:
+	if melee_hit_done or animation_player == null:
 		return
 
-	if animation_player == null:
-		return
-
-	var animation_length := (
-		animation_player
-		.current_animation_length
-	)
+	var animation_length := animation_player.current_animation_length
 
 	if animation_length <= 0.0:
 		return
 
 	var normalized_position := (
-		animation_player
-		.current_animation_position
+		animation_player.current_animation_position
 		/ animation_length
 	)
 
-	var hit_fraction := (
-		left_slash_hit_fraction
-	)
+	var hit_fraction := left_slash_hit_fraction
 
-	if (
-		current_melee_animation
-		== ANIM_CHARGED_SLASH
-	):
-		hit_fraction = (
-			charged_slash_hit_fraction
-		)
+	if current_melee_animation == ANIM_CHARGED_SLASH:
+		hit_fraction = charged_slash_hit_fraction
 
 	if normalized_position < hit_fraction:
 		return
 
 	melee_hit_done = true
-
 	_apply_melee_wind_attack()
 
 
 func _apply_melee_wind_attack() -> void:
-	var attack_range := (
-		left_slash_range
+	var attack_range := left_slash_range
+	var attack_damage := left_slash_damage
+
+	if current_melee_animation == ANIM_CHARGED_SLASH:
+		attack_range = charged_slash_range
+		attack_damage = charged_slash_damage
+
+	if melee_wave_enabled:
+		if _spawn_melee_wave(
+			attack_damage
+		):
+			return
+
+	# SAFE fallback:
+	# if the VFX scene is missing or cannot be started,
+	# Bruno still deals the old direct melee damage.
+	_apply_melee_fallback_damage(
+		attack_range,
+		attack_damage
 	)
 
-	var attack_damage := (
-		left_slash_damage
-	)
 
-	if (
-		current_melee_animation
-		== ANIM_CHARGED_SLASH
+# ============================================================
+# MELEE WAVE
+# ============================================================
+
+func _spawn_melee_wave(
+	attack_damage: int
+) -> bool:
+	if melee_wave_scene == null:
+		push_warning(
+			"BrunoBuozzi: melee_wave_scene non assegnata."
+		)
+		return false
+
+	var world := get_tree().current_scene
+
+	if world == null:
+		return false
+
+	var instance := melee_wave_scene.instantiate()
+
+	if not instance is Node3D:
+		push_warning(
+			"BrunoBuozzi: la scena Melee Wave non ha root Node3D."
+		)
+
+		instance.queue_free()
+		return false
+
+	var wave := instance as Node3D
+
+	# Set gameplay properties before starting the wave.
+	# The visual timing/scale/distance remain controlled by the
+	# bruno_melee_banana3d.tscn Inspector values.
+	if _object_has_property(
+		wave,
+		"damage_enabled"
 	):
-		attack_range = (
-			charged_slash_range
+		wave.set(
+			"damage_enabled",
+			true
 		)
 
-		attack_damage = (
-			charged_slash_damage
+	if _object_has_property(
+		wave,
+		"damage_amount"
+	):
+		wave.set(
+			"damage_amount",
+			attack_damage
 		)
 
-	_create_wind_slash_visual(
-		attack_range
+	world.add_child(
+		wave
 	)
 
-	if player == null:
-		return
+	var spawn_position := _get_melee_wave_spawn_position()
 
-	if not player_visible:
+	var direction := _get_melee_wave_direction(
+		spawn_position
+	)
+
+	if not wave.has_method(
+		"start_wave"
+	):
+		push_warning(
+			"BrunoBuozzi: Melee Wave senza metodo start_wave()."
+		)
+
+		wave.queue_free()
+		return false
+
+	wave.call(
+		"start_wave",
+		spawn_position,
+		direction
+	)
+
+	return true
+
+
+func _get_melee_wave_spawn_position() -> Vector3:
+	if (
+		racket_ball_spawn != null
+		and is_instance_valid(
+			racket_ball_spawn
+		)
+	):
+		return racket_ball_spawn.global_position
+
+	var forward := global_transform.basis.z
+	forward.y = 0.0
+
+	if forward.length_squared() <= 0.0001:
+		forward = Vector3.BACK
+
+	forward = forward.normalized()
+
+	return (
+		global_position
+		+ Vector3.UP
+			* melee_wave_spawn_height_fallback
+		+ forward
+			* melee_wave_forward_offset_fallback
+	)
+
+
+func _get_melee_wave_direction(
+	spawn_position: Vector3
+) -> Vector3:
+	if (
+		player != null
+		and is_instance_valid(
+			player
+		)
+	):
+		var to_player := (
+			player.global_position
+			- spawn_position
+		)
+
+		to_player.y = 0.0
+
+		if to_player.length_squared() > 0.0001:
+			return to_player.normalized()
+
+	var forward := global_transform.basis.z
+	forward.y = 0.0
+
+	if forward.length_squared() <= 0.0001:
+		forward = Vector3.BACK
+
+	return forward.normalized()
+
+
+func _apply_melee_fallback_damage(
+	attack_range: float,
+	attack_damage: int
+) -> void:
+	if player == null or not player_visible:
 		return
 
 	var to_player := (
@@ -1754,34 +1817,25 @@ func _apply_melee_wind_attack() -> void:
 
 	to_player.y = 0.0
 
-	var distance := (
-		to_player.length()
-	)
+	var distance := to_player.length()
 
-	if distance > attack_range:
+	if (
+		distance > attack_range
+		or distance <= 0.001
+	):
 		return
 
-	if distance <= 0.001:
-		return
-
-	var forward := (
-		global_transform.basis.z
-	)
-
+	var forward := global_transform.basis.z
 	forward.y = 0.0
 
-	forward = (
-		forward.normalized()
-	)
+	if forward.length_squared() <= 0.0001:
+		return
 
-	var direction := (
-		to_player.normalized()
-	)
+	forward = forward.normalized()
 
-	var facing_dot := (
-		forward.dot(
-			direction
-		)
+	var direction := to_player.normalized()
+	var facing_dot := forward.dot(
+		direction
 	)
 
 	if facing_dot < melee_cone_dot:
@@ -1795,162 +1849,27 @@ func _apply_melee_wind_attack() -> void:
 		)
 
 
-# ============================================================
-# WIND VISUAL
-# ============================================================
+func _object_has_property(
+	object: Object,
+	property_name: StringName
+) -> bool:
+	if object == null:
+		return false
 
-func _create_wind_slash_visual(
-	attack_range: float
-) -> void:
-	var world := (
-		get_tree().current_scene
-	)
+	for property_info: Dictionary in (
+		object.get_property_list()
+	):
+		var name_value: Variant = property_info.get(
+			"name",
+			""
+		)
 
-	if world == null:
-		return
+		if StringName(
+			String(name_value)
+		) == property_name:
+			return true
 
-	var effect := Node3D.new()
-
-	effect.name = (
-		"BrunoWindSlash"
-	)
-
-	world.add_child(
-		effect
-	)
-
-	var forward := (
-		global_transform.basis.z
-	)
-
-	forward.y = 0.0
-
-	if forward.length_squared() <= 0.0001:
-		forward = Vector3.BACK
-
-	forward = (
-		forward.normalized()
-	)
-
-	effect.global_position = (
-		global_position
-		+ Vector3.UP * 1.15
-		+ forward * 0.90
-	)
-
-	effect.global_rotation = (
-		global_rotation
-	)
-
-	var mesh_instance := (
-		MeshInstance3D.new()
-	)
-
-	effect.add_child(
-		mesh_instance
-	)
-
-	var sphere := (
-		SphereMesh.new()
-	)
-
-	sphere.radius = 0.50
-	sphere.height = 1.0
-	sphere.radial_segments = 24
-	sphere.rings = 12
-
-	mesh_instance.mesh = sphere
-
-	mesh_instance.scale = Vector3(
-		1.60,
-		0.16,
-		0.35
-	)
-
-	var material := (
-		StandardMaterial3D.new()
-	)
-
-	material.transparency = (
-		BaseMaterial3D.TRANSPARENCY_ALPHA
-	)
-
-	material.shading_mode = (
-		BaseMaterial3D.SHADING_MODE_UNSHADED
-	)
-
-	material.albedo_color = Color(
-		0.72,
-		0.90,
-		1.0,
-		0.30
-	)
-
-	material.emission_enabled = true
-
-	material.emission = Color(
-		0.55,
-		0.82,
-		1.0,
-		1.0
-	)
-
-	material.emission_energy_multiplier = 2.0
-
-	mesh_instance.material_override = (
-		material
-	)
-
-	var target_position := (
-		effect.global_position
-		+ forward
-		* attack_range
-	)
-
-	var tween := (
-		effect.create_tween()
-	)
-
-	tween.set_parallel(
-		true
-	)
-
-	tween.set_trans(
-		Tween.TRANS_QUAD
-	)
-
-	tween.set_ease(
-		Tween.EASE_OUT
-	)
-
-	tween.tween_property(
-		effect,
-		"global_position",
-		target_position,
-		0.24
-	)
-
-	tween.tween_property(
-		mesh_instance,
-		"scale",
-		Vector3(
-			2.50,
-			0.10,
-			0.18
-		),
-		0.24
-	)
-
-	tween.tween_property(
-		material,
-		"albedo_color:a",
-		0.0,
-		0.24
-	)
-
-	tween.chain().tween_callback(
-		effect.queue_free
-	)
+	return false
 
 
 # ============================================================
@@ -1961,32 +1880,19 @@ func _start_search_player() -> void:
 	if state == State.SEARCH_PLAYER:
 		return
 
-	search_timer = (
-		search_duration
-	)
-
-	_set_state(
-		State.SEARCH_PLAYER
-	)
+	search_timer = search_duration
+	_set_state(State.SEARCH_PLAYER)
 
 
-func _process_search_player(
-	delta: float
-) -> void:
+func _process_search_player(delta: float) -> void:
 	_stop_horizontal_motion()
 
 	if player_visible:
-		_set_state(
-			State.MOVE_TO_PLAYER
-		)
+		_set_state(State.MOVE_TO_PLAYER)
 		return
 
 	search_timer -= delta
-
-	rotation.y += (
-		search_rotation_speed
-		* delta
-	)
+	rotation.y += search_rotation_speed * delta
 
 	_play_animation(
 		ANIM_IDLE,
@@ -1998,10 +1904,7 @@ func _process_search_player(
 		return
 
 	player_memory_timer = 0.0
-
-	_set_state(
-		State.IDLE
-	)
+	_set_state(State.IDLE)
 
 
 # ============================================================
@@ -2015,34 +1918,24 @@ func _resume_after_action() -> void:
 	if not has_racket:
 		if (
 			racket_pickup_position != null
-			and is_instance_valid(
-				racket_pickup_position
-			)
+			and is_instance_valid(racket_pickup_position)
 		):
-			_set_state(
-				State.SEEK_RACKET
-			)
+			_set_state(State.SEEK_RACKET)
 			return
 
 	if player_visible:
-		_set_state(
-			State.MOVE_TO_PLAYER
-		)
+		_set_state(State.MOVE_TO_PLAYER)
 		return
 
 	if player_memory_timer > 0.0:
-		_set_state(
-			State.MOVE_TO_PLAYER
-		)
+		_set_state(State.MOVE_TO_PLAYER)
 		return
 
 	if has_racket:
 		_start_search_player()
 		return
 
-	_set_state(
-		State.IDLE
-	)
+	_set_state(State.IDLE)
 
 
 # ============================================================
@@ -2053,10 +1946,8 @@ func _get_walk_speed() -> float:
 	match combat_phase:
 		1:
 			return phase_1_walk_speed
-
 		2:
 			return phase_2_walk_speed
-
 		3:
 			return phase_3_walk_speed
 
@@ -2067,10 +1958,8 @@ func _get_normal_ball_flight_time() -> float:
 	match combat_phase:
 		1:
 			return phase_1_ball_flight_time
-
 		2:
 			return phase_2_ball_flight_time
-
 		3:
 			return phase_3_ball_flight_time
 
@@ -2081,10 +1970,8 @@ func _get_explosive_ball_flight_time() -> float:
 	match combat_phase:
 		1:
 			return phase_1_explosive_flight_time
-
 		2:
 			return phase_2_explosive_flight_time
-
 		3:
 			return phase_3_explosive_flight_time
 
@@ -2095,10 +1982,8 @@ func _get_cast_animation_speed() -> float:
 	match combat_phase:
 		1:
 			return phase_1_cast_speed
-
 		2:
 			return phase_2_cast_speed
-
 		3:
 			return phase_3_cast_speed
 
@@ -2109,10 +1994,8 @@ func _get_explosive_ball_chance() -> float:
 	match combat_phase:
 		1:
 			return phase_1_explosive_ball_chance
-
 		2:
 			return phase_2_explosive_ball_chance
-
 		3:
 			return phase_3_explosive_ball_chance
 
@@ -2123,10 +2006,8 @@ func _get_ball_cooldown_min() -> float:
 	match combat_phase:
 		1:
 			return phase_1_ball_cooldown_min
-
 		2:
 			return phase_2_ball_cooldown_min
-
 		3:
 			return phase_3_ball_cooldown_min
 
@@ -2137,10 +2018,8 @@ func _get_ball_cooldown_max() -> float:
 	match combat_phase:
 		1:
 			return phase_1_ball_cooldown_max
-
 		2:
 			return phase_2_ball_cooldown_max
-
 		3:
 			return phase_3_ball_cooldown_max
 
@@ -2151,10 +2030,8 @@ func _get_melee_animation_speed() -> float:
 	match combat_phase:
 		1:
 			return phase_1_melee_animation_speed
-
 		2:
 			return phase_2_melee_animation_speed
-
 		3:
 			return phase_3_melee_animation_speed
 
@@ -2165,10 +2042,8 @@ func _get_melee_cooldown_min() -> float:
 	match combat_phase:
 		1:
 			return phase_1_melee_cooldown_min
-
 		2:
 			return phase_2_melee_cooldown_min
-
 		3:
 			return phase_3_melee_cooldown_min
 
@@ -2179,10 +2054,8 @@ func _get_melee_cooldown_max() -> float:
 	match combat_phase:
 		1:
 			return phase_1_melee_cooldown_max
-
 		2:
 			return phase_2_melee_cooldown_max
-
 		3:
 			return phase_3_melee_cooldown_max
 
@@ -2193,11 +2066,8 @@ func _get_melee_cooldown_max() -> float:
 # RACKET
 # ============================================================
 
-func set_has_racket(
-	value: bool
-) -> void:
+func set_has_racket(value: bool) -> void:
 	has_racket = value
-
 	_sync_racket_visual()
 
 
@@ -2205,22 +2075,24 @@ func _sync_racket_visual() -> void:
 	if racket_visual == null:
 		return
 
-	racket_visual.visible = (
-		has_racket
-	)
+	racket_visual.visible = has_racket
 
 
 # ============================================================
 # STATE
 # ============================================================
 
-func _set_state(
-	new_state: State
-) -> void:
+func _set_state(new_state: State) -> void:
 	if state == new_state:
 		return
 
 	state = new_state
+
+	if (
+		state == State.MOVE_TO_PLAYER
+		or state == State.SEEK_RACKET
+	):
+		_invalidate_navigation_target()
 
 	match state:
 		State.IDLE:
@@ -2231,31 +2103,22 @@ func _set_state(
 				0.15,
 				1.0
 			)
-
 		State.MOVE_TO_PLAYER:
 			pass
-
 		State.SEEK_RACKET:
 			pass
-
 		State.PICKUP_RACKET:
 			pass
-
 		State.BALL_ATTACK:
 			pass
-
 		State.MELEE_ATTACK:
 			pass
-
 		State.SEARCH_PLAYER:
 			_stop_horizontal_motion()
-
 		State.DOWN:
 			_stop_horizontal_motion()
-
 		State.GETTING_UP:
 			_stop_horizontal_motion()
-
 		State.DEAD:
 			_stop_horizontal_motion()
 
@@ -2264,10 +2127,7 @@ func _set_state(
 # ROTATION
 # ============================================================
 
-func _rotate_toward(
-	direction: Vector3,
-	delta: float
-) -> void:
+func _rotate_toward(direction: Vector3, delta: float) -> void:
 	if direction.length_squared() <= 0.0001:
 		return
 
@@ -2279,22 +2139,15 @@ func _rotate_toward(
 	rotation.y = lerp_angle(
 		rotation.y,
 		target_yaw,
-		rotation_speed
-		* delta
+		rotation_speed * delta
 	)
 
 
-func _face_player(
-	delta: float
-) -> void:
+func _face_player(delta: float) -> void:
 	if player == null:
 		return
 
-	var direction := (
-		player.global_position
-		- global_position
-	)
-
+	var direction := player.global_position - global_position
 	direction.y = 0.0
 
 	if direction.length_squared() <= 0.0001:
@@ -2323,22 +2176,17 @@ func _play_animation(
 	if animation_player == null:
 		return
 
-	if not animation_player.has_animation(
-		animation_name
-	):
+	if not animation_player.has_animation(animation_name):
 		push_warning(
 			"BrunoBuozzi: animazione non trovata: "
 			+ String(animation_name)
 		)
 		return
 
-	animation_player.speed_scale = (
-		playback_speed
-	)
+	animation_player.speed_scale = playback_speed
 
 	if (
-		animation_player.current_animation
-		== animation_name
+		animation_player.current_animation == animation_name
 		and animation_player.is_playing()
 	):
 		return
@@ -2349,12 +2197,14 @@ func _play_animation(
 	)
 
 
-func _on_animation_finished(
-	animation_name: StringName
-) -> void:
-	# --------------------------------------------------------
-	# CADUTA TRA FASI
-	# --------------------------------------------------------
+func _on_animation_finished(animation_name: StringName) -> void:
+	if state == State.DEAD:
+		if (
+			animation_name == ANIM_DEATH_FRONT
+			or animation_name == ANIM_DEATH_BACK
+		):
+			_settle_dead_visual()
+		return
 
 	if state == State.DOWN:
 		if animation_name != ANIM_FALLING_DOWN:
@@ -2363,30 +2213,12 @@ func _on_animation_finished(
 		_start_getting_up()
 		return
 
-
-	# --------------------------------------------------------
-	# RIALZATA
-	# --------------------------------------------------------
-
 	if state == State.GETTING_UP:
 		if animation_name != ANIM_STAND_UP:
 			return
 
 		_finish_phase_transition()
 		return
-
-
-	# --------------------------------------------------------
-	# DEAD
-	# --------------------------------------------------------
-
-	if state == State.DEAD:
-		return
-
-
-	# --------------------------------------------------------
-	# PICKUP
-	# --------------------------------------------------------
 
 	if state == State.PICKUP_RACKET:
 		if animation_name != ANIM_RACKET_PICKUP:
@@ -2395,13 +2227,9 @@ func _on_animation_finished(
 		if not racket_pickup_done:
 			_complete_racket_pickup()
 
+		_set_action_shield(false)
 		_resume_after_action()
 		return
-
-
-	# --------------------------------------------------------
-	# BALL
-	# --------------------------------------------------------
 
 	if state == State.BALL_ATTACK:
 		if animation_name != ANIM_BALL_CAST:
@@ -2410,20 +2238,12 @@ func _on_animation_finished(
 		ball_released = false
 		cast_elapsed = 0.0
 
-		if (
-			burst_remaining > 0
-			and player_visible
-		):
+		if burst_remaining > 0 and player_visible:
 			_start_next_ball_in_burst()
 			return
 
 		_finish_ball_burst()
 		return
-
-
-	# --------------------------------------------------------
-	# MELEE
-	# --------------------------------------------------------
 
 	if state == State.MELEE_ATTACK:
 		if (
@@ -2434,6 +2254,7 @@ func _on_animation_finished(
 
 		melee_hit_done = false
 		current_melee_animation = &""
+		_set_action_shield(false)
 
 		melee_cooldown = rng.randf_range(
 			_get_melee_cooldown_min(),
@@ -2448,289 +2269,98 @@ func _on_animation_finished(
 # ============================================================
 
 func _create_boss_bar() -> void:
-	boss_bar_layer = (
-		CanvasLayer.new()
-	)
-
-	boss_bar_layer.name = (
-		"BrunoBossBar"
-	)
-
+	boss_bar_layer = CanvasLayer.new()
+	boss_bar_layer.name = "BrunoBossBar"
 	boss_bar_layer.layer = 100
-
-	add_child(
-		boss_bar_layer
-	)
+	add_child(boss_bar_layer)
 
 	var root := Control.new()
+	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	boss_bar_layer.add_child(root)
 
-	root.set_anchors_and_offsets_preset(
-		Control.PRESET_FULL_RECT
-	)
-
-	root.mouse_filter = (
-		Control.MOUSE_FILTER_IGNORE
-	)
-
-	boss_bar_layer.add_child(
-		root
-	)
-
-	var center := (
-		CenterContainer.new()
-	)
-
-	center.set_anchors_preset(
-		Control.PRESET_TOP_WIDE
-	)
-
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	center.offset_top = 8.0
 	center.offset_bottom = 82.0
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(center)
 
-	center.mouse_filter = (
-		Control.MOUSE_FILTER_IGNORE
-	)
+	var panel := PanelContainer.new()
+	panel.custom_minimum_size = Vector2(560.0, 64.0)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	center.add_child(panel)
 
-	root.add_child(
-		center
-	)
-
-	var panel := (
-		PanelContainer.new()
-	)
-
-	panel.custom_minimum_size = Vector2(
-		560.0,
-		64.0
-	)
-
-	panel.mouse_filter = (
-		Control.MOUSE_FILTER_IGNORE
-	)
-
-	center.add_child(
-		panel
-	)
-
-	var panel_style := (
-		StyleBoxFlat.new()
-	)
-
-	panel_style.bg_color = Color(
-		0.025,
-		0.015,
-		0.015,
-		0.92
-	)
-
-	panel_style.border_color = Color(
-		0.65,
-		0.05,
-		0.03,
-		1.0
-	)
-
-	panel_style.set_border_width_all(
-		2
-	)
-
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.025, 0.015, 0.015, 0.92)
+	panel_style.border_color = Color(0.65, 0.05, 0.03, 1.0)
+	panel_style.set_border_width_all(2)
 	panel_style.corner_radius_top_left = 7
 	panel_style.corner_radius_top_right = 7
 	panel_style.corner_radius_bottom_left = 7
 	panel_style.corner_radius_bottom_right = 7
+	panel.add_theme_stylebox_override("panel", panel_style)
 
-	panel.add_theme_stylebox_override(
-		"panel",
-		panel_style
-	)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_top", 5)
+	margin.add_theme_constant_override("margin_bottom", 5)
+	panel.add_child(margin)
 
-	var margin := (
-		MarginContainer.new()
-	)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 3)
+	margin.add_child(column)
 
-	margin.add_theme_constant_override(
-		"margin_left",
-		12
-	)
+	var title := Label.new()
+	title.text = boss_name
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 18)
+	column.add_child(title)
 
-	margin.add_theme_constant_override(
-		"margin_right",
-		12
-	)
+	var segments := HBoxContainer.new()
+	segments.add_theme_constant_override("separation", 5)
+	column.add_child(segments)
 
-	margin.add_theme_constant_override(
-		"margin_top",
-		5
-	)
+	boss_segment_1 = _create_boss_segment()
+	boss_segment_2 = _create_boss_segment()
+	boss_segment_3 = _create_boss_segment()
 
-	margin.add_theme_constant_override(
-		"margin_bottom",
-		5
-	)
+	segments.add_child(boss_segment_1)
+	segments.add_child(boss_segment_2)
+	segments.add_child(boss_segment_3)
 
-	panel.add_child(
-		margin
-	)
+	boss_hp_label = Label.new()
+	boss_hp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	boss_hp_label.add_theme_font_size_override("font_size", 11)
+	column.add_child(boss_hp_label)
 
-	var column := (
-		VBoxContainer.new()
-	)
-
-	column.add_theme_constant_override(
-		"separation",
-		3
-	)
-
-	margin.add_child(
-		column
-	)
-
-	var title := (
-		Label.new()
-	)
-
-	title.text = (
-		boss_name
-	)
-
-	title.horizontal_alignment = (
-		HORIZONTAL_ALIGNMENT_CENTER
-	)
-
-	title.add_theme_font_size_override(
-		"font_size",
-		18
-	)
-
-	column.add_child(
-		title
-	)
-
-	var segments := (
-		HBoxContainer.new()
-	)
-
-	segments.add_theme_constant_override(
-		"separation",
-		5
-	)
-
-	column.add_child(
-		segments
-	)
-
-	boss_segment_1 = (
-		_create_boss_segment()
-	)
-
-	boss_segment_2 = (
-		_create_boss_segment()
-	)
-
-	boss_segment_3 = (
-		_create_boss_segment()
-	)
-
-	segments.add_child(
-		boss_segment_1
-	)
-
-	segments.add_child(
-		boss_segment_2
-	)
-
-	segments.add_child(
-		boss_segment_3
-	)
-
-	boss_hp_label = (
-		Label.new()
-	)
-
-	boss_hp_label.horizontal_alignment = (
-		HORIZONTAL_ALIGNMENT_CENTER
-	)
-
-	boss_hp_label.add_theme_font_size_override(
-		"font_size",
-		11
-	)
-
-	column.add_child(
-		boss_hp_label
-	)
-
-	boss_phase_label = (
-		Label.new()
-	)
-
-	boss_phase_label.horizontal_alignment = (
-		HORIZONTAL_ALIGNMENT_CENTER
-	)
-
-	boss_phase_label.add_theme_font_size_override(
-		"font_size",
-		10
-	)
-
-	column.add_child(
-		boss_phase_label
-	)
+	boss_phase_label = Label.new()
+	boss_phase_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	boss_phase_label.add_theme_font_size_override("font_size", 10)
+	column.add_child(boss_phase_label)
 
 
 func _create_boss_segment() -> ProgressBar:
-	var bar := (
-		ProgressBar.new()
-	)
-
+	var bar := ProgressBar.new()
 	bar.show_percentage = false
+	bar.custom_minimum_size = Vector2(170.0, 12.0)
 
-	bar.custom_minimum_size = Vector2(
-		170.0,
-		12.0
-	)
-
-	var background := (
-		StyleBoxFlat.new()
-	)
-
-	background.bg_color = Color(
-		0.10,
-		0.03,
-		0.03,
-		1.0
-	)
-
+	var background := StyleBoxFlat.new()
+	background.bg_color = Color(0.10, 0.03, 0.03, 1.0)
 	background.corner_radius_top_left = 3
 	background.corner_radius_top_right = 3
 	background.corner_radius_bottom_left = 3
 	background.corner_radius_bottom_right = 3
+	bar.add_theme_stylebox_override("background", background)
 
-	bar.add_theme_stylebox_override(
-		"background",
-		background
-	)
-
-	var fill := (
-		StyleBoxFlat.new()
-	)
-
-	fill.bg_color = Color(
-		0.82,
-		0.04,
-		0.025,
-		1.0
-	)
-
+	var fill := StyleBoxFlat.new()
+	fill.bg_color = Color(0.82, 0.04, 0.025, 1.0)
 	fill.corner_radius_top_left = 3
 	fill.corner_radius_top_right = 3
 	fill.corner_radius_bottom_left = 3
 	fill.corner_radius_bottom_right = 3
-
-	bar.add_theme_stylebox_override(
-		"fill",
-		fill
-	)
+	bar.add_theme_stylebox_override("fill", fill)
 
 	return bar
 
@@ -2739,9 +2369,7 @@ func _update_boss_bar() -> void:
 	if boss_bar_layer == null:
 		return
 
-	var segment := (
-		_get_segment_health()
-	)
+	var segment := _get_segment_health()
 
 	var segment_1_value := clampi(
 		health,
@@ -2762,43 +2390,19 @@ func _update_boss_bar() -> void:
 	)
 
 	if boss_segment_1 != null:
-		boss_segment_1.max_value = (
-			segment
-		)
-
-		boss_segment_1.value = (
-			segment_1_value
-		)
+		boss_segment_1.max_value = segment
+		boss_segment_1.value = segment_1_value
 
 	if boss_segment_2 != null:
-		boss_segment_2.max_value = (
-			segment
-		)
-
-		boss_segment_2.value = (
-			segment_2_value
-		)
+		boss_segment_2.max_value = segment
+		boss_segment_2.value = segment_2_value
 
 	if boss_segment_3 != null:
-		boss_segment_3.max_value = (
-			segment
-		)
-
-		boss_segment_3.value = (
-			segment_3_value
-		)
+		boss_segment_3.max_value = segment
+		boss_segment_3.value = segment_3_value
 
 	if boss_hp_label != null:
-		boss_hp_label.text = (
-			"%d / %d"
-			% [
-				health,
-				max_health
-			]
-		)
+		boss_hp_label.text = "%d / %d" % [health, max_health]
 
 	if boss_phase_label != null:
-		boss_phase_label.text = (
-			"FASE %d"
-			% combat_phase
-		)
+		boss_phase_label.text = "FASE %d" % combat_phase

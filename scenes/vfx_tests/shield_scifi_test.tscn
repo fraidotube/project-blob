@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://dmxd3pwkpkgn4"]
+
+[ext_resource type="PackedScene" path="res://assets/vfx/shields/scifi_shield/shield_1_projectblob.tscn" id="1_shield"]
+
+[sub_resource type="Environment" id="Environment_test"]
+background_mode = 1
+background_color = Color(0.018, 0.012, 0.028, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.22, 0.18, 0.32, 1)
+ambient_light_energy = 0.7
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="Material_dummy"]
+albedo_color = Color(0.22, 0.22, 0.25, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="BoxMesh_dummy"]
+size = Vector3(0.65, 1.8, 0.45)
+
+[node name="ShieldVFXTest" type="Node3D" unique_id=1941558018]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1396681403]
+environment = SubResource("Environment_test")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=586826070]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 1.25, 5.2)
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=273479031]
+transform = Transform3D(0.88294756, 0.31413782, -0.34888536, 0, 0.7431448, 0.6691306, 0.46947157, -0.59080726, 0.6561579, 0, 0, 0)
+light_energy = 1.4
+
+[node name="Dummy" type="MeshInstance3D" parent="." unique_id=692780072]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+visible = false
+material_override = SubResource("Material_dummy")
+mesh = SubResource("BoxMesh_dummy")
+
+[node name="Shield" parent="." unique_id=1746011085 instance=ExtResource("1_shield")]
+transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 0, 0.9, 0)

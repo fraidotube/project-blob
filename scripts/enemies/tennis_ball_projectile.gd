@@ -6,6 +6,11 @@ signal impacted(
 )
 
 
+const EXPLOSION_VFX_SCENE: PackedScene = preload(
+	"res://assets/vfx/EffettoEsplosione/BigExplosionScene_PB47.tscn"
+)
+
+
 @export_category("Flight")
 @export var projectile_gravity: float = 9.8
 @export var default_flight_time: float = 0.55
@@ -14,11 +19,17 @@ signal impacted(
 
 @export_category("Damage")
 @export var normal_damage_radius: float = 0.80
-@export var explosive_damage_radius: float = 3.25
+@export var explosive_damage_radius: float = 5.5
 
 
 @export_category("Visual")
 @export var spin_speed: float = 18.0
+
+
+@export_category("Explosion VFX")
+@export var explosion_vfx_scale: float = 1.0
+@export var explosion_vfx_vertical_offset: float = 0.0
+@export var explosion_vfx_cleanup_time: float = 3.0
 
 
 @onready var ball_visual: Node3D = $tennis_ball
@@ -224,7 +235,9 @@ func _impact(
 	_apply_area_damage()
 
 	if explosive:
-		_create_explosion_visual()
+		_create_explosion_visual(
+			world_position
+		)
 
 	impacted.emit(
 		global_position,
@@ -279,7 +292,9 @@ func _apply_area_damage() -> void:
 			)
 
 
-func _create_explosion_visual() -> void:
+func _create_explosion_visual(
+	world_position: Vector3
+) -> void:
 	var world := (
 		get_tree().current_scene
 	)
@@ -287,10 +302,17 @@ func _create_explosion_visual() -> void:
 	if world == null:
 		return
 
-	var explosion := Node3D.new()
+	var explosion_instance := (
+		EXPLOSION_VFX_SCENE.instantiate()
+	)
 
-	explosion.name = (
-		"TennisBallExplosion"
+	if not explosion_instance is Node3D:
+		explosion_instance.queue_free()
+		return
+
+	var explosion := (
+		explosion_instance
+		as Node3D
 	)
 
 	world.add_child(
@@ -298,94 +320,50 @@ func _create_explosion_visual() -> void:
 	)
 
 	explosion.global_position = (
-		global_position
+		world_position
+		+ Vector3.UP
+		* explosion_vfx_vertical_offset
 	)
 
-	var mesh_instance := (
-		MeshInstance3D.new()
+	explosion.scale = (
+		Vector3.ONE
+		* explosion_vfx_scale
 	)
 
-	explosion.add_child(
-		mesh_instance
+	_restart_explosion_particles(
+		explosion
 	)
 
-	var sphere := SphereMesh.new()
-
-	sphere.radius = 0.50
-	sphere.height = 1.0
-	sphere.radial_segments = 24
-	sphere.rings = 12
-
-	mesh_instance.mesh = sphere
-
-	var material := (
-		StandardMaterial3D.new()
+	var cleanup_time := maxf(
+		explosion_vfx_cleanup_time,
+		0.1
 	)
 
-	material.transparency = (
-		BaseMaterial3D.TRANSPARENCY_ALPHA
+	get_tree().create_timer(
+		cleanup_time
+	).timeout.connect(
+		func() -> void:
+			if is_instance_valid(
+				explosion
+			):
+				explosion.queue_free()
 	)
 
-	material.shading_mode = (
-		BaseMaterial3D.SHADING_MODE_UNSHADED
-	)
 
-	material.albedo_color = Color(
-		1.0,
-		0.04,
-		0.02,
-		0.72
-	)
+func _restart_explosion_particles(
+	root: Node
+) -> void:
+	for child: Node in (
+		root.get_children()
+	):
+		if child is GPUParticles3D:
+			var particles := (
+				child
+				as GPUParticles3D
+			)
 
-	material.emission_enabled = true
+			particles.restart()
 
-	material.emission = Color(
-		1.0,
-		0.02,
-		0.01,
-		1.0
-	)
-
-	material.emission_energy_multiplier = 5.0
-
-	mesh_instance.material_override = (
-		material
-	)
-
-	mesh_instance.scale = (
-		Vector3.ONE * 0.25
-	)
-
-	var tween := (
-		explosion.create_tween()
-	)
-
-	tween.set_parallel(
-		true
-	)
-
-	tween.set_trans(
-		Tween.TRANS_QUAD
-	)
-
-	tween.set_ease(
-		Tween.EASE_OUT
-	)
-
-	tween.tween_property(
-		mesh_instance,
-		"scale",
-		Vector3.ONE * 3.25,
-		0.22
-	)
-
-	tween.tween_property(
-		material,
-		"albedo_color:a",
-		0.0,
-		0.24
-	)
-
-	tween.chain().tween_callback(
-		explosion.queue_free
-	)
+		_restart_explosion_particles(
+			child
+		)

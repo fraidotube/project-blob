@@ -89,6 +89,7 @@ _data = {
 
 [node name="TennisBallProjectile" type="Area3D" unique_id=2141114956]
 script = ExtResource("1_lq0l4")
+explosion_vfx_scale = 2.2
 
 [node name="tennis_ball" parent="." unique_id=508918899 instance=ExtResource("2_w1h5j")]
 

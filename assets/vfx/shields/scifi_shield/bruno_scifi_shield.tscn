@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="ArrayMesh" path="res://assets/vfx/shields/scifi_shield/mesh_shield_1.obj" id="1_mesh"]
+[ext_resource type="Material" path="res://assets/vfx/shields/scifi_shield/material_shield_1.tres" id="2_material"]
+
+[node name="BrunoSciFiShield" type="Node3D"]
+
+[node name="ShieldMesh" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_mesh")
+surface_material_override/0 = ExtResource("2_material")

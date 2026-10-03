@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://c7p6l4clactqh" path="res://scripts/debug/shooting_range_impact_preview.gd" id="5_impact_preview"]
 [ext_resource type="PackedScene" uid="uid://dph7ie7kygqv" path="res://scenes/enemies/bruno_buozzi.tscn" id="6_t0t43"]
 [ext_resource type="PackedScene" uid="uid://draro5b8q7xmx" path="res://assets/models/enemies/bruno_buozzi/tennis-racket-wilson-blade/source/Formats/Racket_Wilson_Blade.fbx" id="7_ccbyl"]
+[ext_resource type="PackedScene" uid="uid://goh3vkv8vodf" path="res://assets/vfx/EffettoEsplosione/BigExplosionScene.tscn" id="8_lbw23"]
 
 [sub_resource type="Environment" id="range_environment"]
 background_mode = 1
@@ -68,6 +69,15 @@ size = Vector3(1.3, 1, 1)
 [sub_resource type="BoxShape3D" id="close_shape"]
 size = Vector3(1.3, 1, 1)
 
+[sub_resource type="NavigationMesh" id="NavigationMesh_hbjui"]
+vertices = PackedVector3Array(-9, 0.3157463, -8, -7.75, 0.3157463, -8, -7.5, 0.3157463, -8.75, -9, 0.3157463, -10.75, 7.5, 0.3157463, -8.75, 7.75, 0.3157463, -8, 9, 0.3157463, -8, 9, 0.3157463, -10.75, -7.5, 0.3157463, -7.25, 9, 0.3157463, -1.25, 5.5, 0.3157463, -1.25, 5.25, 0.3157463, -0.25, 9, 0.3157463, 12, 3, 0.3157463, -2, 2.75, 0.3157463, -7.25, 3.25, 0.3157463, -0.25, -9, 0.3157463, 12, 7.5, 0.3157463, -7.25, 5.25, 0.3157463, -2.5, 3.25, 0.3157463, -2.5)
+polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(5, 4, 6), PackedInt32Array(6, 4, 7), PackedInt32Array(2, 3, 4), PackedInt32Array(4, 3, 7), PackedInt32Array(0, 1, 8), PackedInt32Array(10, 9, 11), PackedInt32Array(11, 9, 12), PackedInt32Array(8, 14, 13), PackedInt32Array(8, 15, 0), PackedInt32Array(0, 15, 16), PackedInt32Array(16, 15, 12), PackedInt32Array(8, 13, 15), PackedInt32Array(15, 11, 12), PackedInt32Array(17, 5, 6), PackedInt32Array(10, 18, 9), PackedInt32Array(9, 18, 17), PackedInt32Array(9, 17, 6), PackedInt32Array(19, 13, 14), PackedInt32Array(19, 14, 18), PackedInt32Array(18, 14, 17)]
+geometry_source_geometry_mode = 1
+geometry_source_group_name = &"navigation_source"
+agent_height = 1.9
+agent_radius = 0.45
+agent_max_climb = 0.35
+
 [node name="ShootingRange" type="Node3D" unique_id=466145746]
 script = ExtResource("4_debug")
 
@@ -82,14 +92,14 @@ shadow_enabled = true
 [node name="Floor" type="StaticBody3D" parent="." unique_id=559637275 groups=["surface_concrete"]]
 metadata/surface_type = "concrete"
 
-[node name="Mesh" type="MeshInstance3D" parent="Floor" unique_id=1551958917]
+[node name="Mesh" type="MeshInstance3D" parent="Floor" unique_id=1551958917 groups=["navigation_source"]]
 mesh = SubResource("floor_mesh")
 surface_material_override/0 = SubResource("mat_floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=778337966]
 shape = SubResource("floor_shape")
 
-[node name="Backstop" type="StaticBody3D" parent="." unique_id=1988955316 groups=["surface_concrete"]]
+[node name="Backstop" type="StaticBody3D" parent="." unique_id=1988955316 groups=["navigation_source", "surface_concrete"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, -11.5)
 metadata/surface_type = "concrete"
 
@@ -127,7 +137,7 @@ text = "PROJECT BLOB | SHOOTING RANGE
 Avvicinati alla pistola e premi E. Poi spara ai bersagli."
 autowrap_mode = 3
 
-[node name="TargetConcrete" type="StaticBody3D" parent="." unique_id=591715737 groups=["surface_concrete"]]
+[node name="TargetConcrete" type="StaticBody3D" parent="." unique_id=591715737 groups=["navigation_source", "surface_concrete"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.55, -8)
 metadata/surface_type = "concrete"
 
@@ -147,7 +157,7 @@ text = "CEMENTO"
 font_size = 72
 outline_size = 14
 
-[node name="TargetWood" type="StaticBody3D" parent="." unique_id=463478556 groups=["surface_wood"]]
+[node name="TargetWood" type="StaticBody3D" parent="." unique_id=463478556 groups=["navigation_source", "surface_wood"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1.55, -8)
 metadata/surface_type = "wood"
 
@@ -167,7 +177,7 @@ text = "LEGNO"
 font_size = 72
 outline_size = 14
 
-[node name="TargetMetal" type="StaticBody3D" parent="." unique_id=303794442 groups=["surface_metal"]]
+[node name="TargetMetal" type="StaticBody3D" parent="." unique_id=303794442 groups=["navigation_source", "surface_metal"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.55, -8)
 metadata/surface_type = "metal"
 
@@ -187,7 +197,7 @@ text = "METALLO"
 font_size = 72
 outline_size = 14
 
-[node name="TargetGlass" type="StaticBody3D" parent="." unique_id=96921020 groups=["surface_glass"]]
+[node name="TargetGlass" type="StaticBody3D" parent="." unique_id=96921020 groups=["navigation_source", "surface_glass"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1.55, -8)
 metadata/surface_type = "glass"
 
@@ -207,7 +217,7 @@ text = "VETRO"
 font_size = 72
 outline_size = 14
 
-[node name="TargetUnclassified" type="StaticBody3D" parent="." unique_id=792672451 groups=["surface_unclassified"]]
+[node name="TargetUnclassified" type="StaticBody3D" parent="." unique_id=792672451 groups=["navigation_source", "surface_unclassified"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1.55, -8)
 metadata/surface_type = "unclassified"
 
@@ -227,8 +237,8 @@ text = "SENZA TIPO"
 font_size = 72
 outline_size = 14
 
-[node name="CloseObstacle" type="StaticBody3D" parent="." unique_id=632734071 groups=["surface_concrete"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6, 0.65, 2)
+[node name="CloseObstacle" type="StaticBody3D" parent="." unique_id=632734071 groups=["navigation_source", "surface_concrete"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.254803, 0.65, -1.3167605)
 metadata/surface_type = "concrete"
 
 [node name="Mesh" type="MeshInstance3D" parent="CloseObstacle" unique_id=576545756]
@@ -250,10 +260,17 @@ outline_size = 10
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.83930326, 0.1500001, -0.7714133)
 
 [node name="BrunoRacketPickup" type="Node3D" parent="." unique_id=1961442864 groups=["bruno_racket_target"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5737123, 0.17504835, -1.5238311)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.080713, 0.17504835, -9.3729515)
 
 [node name="Racket_Wilson_Blade" parent="BrunoRacketPickup" unique_id=711081019 instance=ExtResource("7_ccbyl")]
 transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 0, 0, 0)
 
 [node name="PickupPosition" type="Marker3D" parent="BrunoRacketPickup" unique_id=459059776]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21495008, 0, -0.41696787)
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="." unique_id=1589828635]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2842536, 0)
+navigation_mesh = SubResource("NavigationMesh_hbjui")
+
+[node name="Node3D" parent="." unique_id=1710758000 instance=ExtResource("8_lbw23")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.71159, 0.7565944, -0.5276444)

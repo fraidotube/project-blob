@@ -1,0 +1,122 @@
+[gd_scene format=3 uid="uid://dxrklu3r5cksc"]
+
+[ext_resource type="Script" uid="uid://l6p7y80bqcc8" path="res://scenes/vfx_tests/bruno_melee_banana3d_debug_test.gd" id="1_script"]
+
+[sub_resource type="Environment" id="Environment_debug"]
+background_mode = 1
+background_color = Color(0.015, 0.015, 0.02, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.22, 0.22, 0.27, 1)
+ambient_light_energy = 0.65
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="Material_floor"]
+albedo_color = Color(0.09, 0.09, 0.1, 1)
+roughness = 0.95
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+size = Vector2(34, 18)
+
+[sub_resource type="StandardMaterial3D" id="Material_track"]
+shading_mode = 0
+albedo_color = Color(0.12, 0.55, 0.95, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_track"]
+size = Vector3(0.12, 0.02, 15)
+
+[sub_resource type="StandardMaterial3D" id="Material_spawn"]
+shading_mode = 0
+albedo_color = Color(0.15, 1, 0.25, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_spawn"]
+radius = 0.18
+height = 0.36
+
+[sub_resource type="StandardMaterial3D" id="Material_target"]
+shading_mode = 0
+albedo_color = Color(1, 0.12, 0.1, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_target"]
+radius = 0.2
+height = 0.4
+
+[sub_resource type="StandardMaterial3D" id="Material_post"]
+shading_mode = 0
+albedo_color = Color(0.95, 0.78, 0.12, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_post"]
+top_radius = 0.035
+bottom_radius = 0.035
+radial_segments = 8
+
+[node name="BrunoMeleeBanana3DDebugTest" type="Node3D" unique_id=1892922618]
+script = ExtResource("1_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1861604464]
+environment = SubResource("Environment_debug")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1635876363]
+transform = Transform3D(0.88294756, 0.3488854, -0.3141378, 0, 0.66913056, 0.74314487, 0.46947157, -0.656158, 0.5908072, 0, 0, 0)
+light_energy = 0.8
+
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=906480662]
+material_override = SubResource("Material_floor")
+mesh = SubResource("PlaneMesh_floor")
+
+[node name="Track" type="MeshInstance3D" parent="." unique_id=802348603]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0.5)
+material_override = SubResource("Material_track")
+mesh = SubResource("BoxMesh_track")
+
+[node name="SpawnMarker" type="Marker3D" parent="." unique_id=1461187710]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, -7)
+
+[node name="SpawnVisible" type="MeshInstance3D" parent="SpawnMarker" unique_id=179841067]
+material_override = SubResource("Material_spawn")
+mesh = SubResource("SphereMesh_spawn")
+
+[node name="TargetMarker" type="Marker3D" parent="." unique_id=712716057]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 8)
+
+[node name="TargetVisible" type="MeshInstance3D" parent="TargetMarker" unique_id=585344951]
+material_override = SubResource("Material_target")
+mesh = SubResource("SphereMesh_target")
+
+[node name="Post0" type="MeshInstance3D" parent="." unique_id=1083670737]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, -7)
+material_override = SubResource("Material_post")
+mesh = SubResource("CylinderMesh_post")
+
+[node name="Post3" type="MeshInstance3D" parent="." unique_id=476215636]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, -4)
+material_override = SubResource("Material_post")
+mesh = SubResource("CylinderMesh_post")
+
+[node name="Post6" type="MeshInstance3D" parent="." unique_id=997588023]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, -1)
+material_override = SubResource("Material_post")
+mesh = SubResource("CylinderMesh_post")
+
+[node name="Post9" type="MeshInstance3D" parent="." unique_id=1132164679]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, 2)
+material_override = SubResource("Material_post")
+mesh = SubResource("CylinderMesh_post")
+
+[node name="Post12" type="MeshInstance3D" parent="." unique_id=961114635]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, 5)
+material_override = SubResource("Material_post")
+mesh = SubResource("CylinderMesh_post")
+
+[node name="Post15" type="MeshInstance3D" parent="." unique_id=1313496954]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1, 8)
+material_override = SubResource("Material_post")
+mesh = SubResource("CylinderMesh_post")
+
+[node name="CameraSide" type="Camera3D" parent="." unique_id=242683778]
+transform = Transform3D(-4.371139e-08, -0.28401536, 0.95881975, 0, 0.95881975, 0.28401536, -1, 1.2414706e-08, -4.1911342e-08, 12.5, 5, 0.5)
+
+[node name="CameraTop" type="Camera3D" parent="." unique_id=1326208074]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 19, 0.5)
+
+[node name="CameraFront" type="Camera3D" parent="." unique_id=1364448719]
+transform = Transform3D(-1, 5.337033e-09, -8.7259714e-08, 0, 0.9981348, 0.06104854, 8.742278e-08, 0.06104854, -0.9981348, 0, 2, 11.5)

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://assets/vfx/bruno_melee_wave/bruno_melee_wave.gd" id="1_script"]
+[ext_resource type="Material" path="res://assets/vfx/bruno_melee_wave/bruno_melee_wave_material.tres" id="2_material"]
+
+[node name="BrunoMeleeWave" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="SlashMesh" type="MeshInstance3D" parent="."]
+material_override = ExtResource("2_material")
+cast_shadow = 0

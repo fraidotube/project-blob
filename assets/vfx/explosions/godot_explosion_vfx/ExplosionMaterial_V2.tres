@@ -1,0 +1,56 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://fbmpyhf3iivc"]
+
+[ext_resource type="Shader" path="res://assets/vfx/explosions/godot_explosion_vfx/ExplosionShader_V2.tres" id="1_shader"]
+[ext_resource type="Texture2D" uid="uid://ddnrjjdb2nmyk" path="res://assets/vfx/explosions/godot_explosion_vfx/normal+.png" id="2_normal_plus"]
+[ext_resource type="Texture2D" uid="uid://bfbbwj7f1pf83" path="res://assets/vfx/explosions/godot_explosion_vfx/normal-.png" id="3_normal_minus"]
+[ext_resource type="Texture2D" uid="uid://bdmisj3f8mai2" path="res://assets/vfx/explosions/godot_explosion_vfx/smokesprite.png" id="4_smoke"]
+
+[sub_resource type="Gradient" id="Gradient_soft"]
+offsets = PackedFloat32Array(0, 0.05, 0.34, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.25, 0.25, 0.25, 1, 0.72, 0.72, 0.72, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_soft"]
+gradient = SubResource("Gradient_soft")
+width = 128
+
+[sub_resource type="Gradient" id="Gradient_falloff"]
+offsets = PackedFloat32Array(0, 0.12, 0.5, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0.4, 0.4, 0.4, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_falloff"]
+gradient = SubResource("Gradient_falloff")
+
+[sub_resource type="Gradient" id="Gradient_emission"]
+offsets = PackedFloat32Array(0, 0.25, 0.43, 0.56, 0.7, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0.35, 0, 0, 1, 1, 0.02, 0, 1, 1, 0.22, 0.01, 1, 1, 0.82, 0.22, 1, 1, 1, 0.85, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_emission"]
+gradient = SubResource("Gradient_emission")
+width = 512
+
+[sub_resource type="Gradient" id="Gradient_smoke"]
+offsets = PackedFloat32Array(0, 0.35, 0.72, 1)
+colors = PackedColorArray(0.005, 0.006, 0.008, 1, 0.015, 0.018, 0.024, 1, 0.045, 0.05, 0.06, 1, 0.11, 0.12, 0.14, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_smoke"]
+gradient = SubResource("Gradient_smoke")
+width = 512
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/particle_h_frames = 8.0
+shader_parameter/particle_v_frames = 8.0
+shader_parameter/particles_anim_loop = false
+shader_parameter/still_frame = -1.0
+shader_parameter/tex_frg_2 = ExtResource("4_smoke")
+shader_parameter/tex_frg_27 = SubResource("GradientTexture_smoke")
+shader_parameter/tex_frg_24 = SubResource("GradientTexture_soft")
+shader_parameter/Soft_limit = 0.08
+shader_parameter/blend_scale = 0.08
+shader_parameter/emission_falloff_multiplier = 0.38
+shader_parameter/emission_strength = 9.0
+shader_parameter/tex_frg_25 = SubResource("GradientTexture_falloff")
+shader_parameter/tex_frg_26 = SubResource("GradientTexture_emission")
+shader_parameter/tex_frg_16 = ExtResource("2_normal_plus")
+shader_parameter/tex_frg_17 = ExtResource("3_normal_minus")

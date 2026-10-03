@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://d0gy8p748y5vt"]
+
+[ext_resource type="PackedScene" path="res://assets/vfx/explosions/godot_explosion_vfx/project_blob_explosion.tscn" id="1_explosion"]
+[ext_resource type="Script" uid="uid://behwnqnsfep1c" path="res://scenes/vfx_tests/explosion_vfx_test.gd" id="2_script"]
+
+[sub_resource type="Environment" id="Environment_test"]
+background_mode = 1
+background_color = Color(0.012, 0.012, 0.018, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.25, 0.22, 0.18, 1)
+ambient_light_energy = 0.5
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.11, 0.11, 0.12, 1)
+roughness = 0.85
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+size = Vector2(14, 14)
+
+[node name="ExplosionVFXTest" type="Node3D" unique_id=1279691409]
+script = ExtResource("2_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=483061892]
+environment = SubResource("Environment_test")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1971743117]
+transform = Transform3D(1, 0, 0, 0, 0.97437006, 0.22495104, 0, -0.22495104, 0.97437006, 0, 2.2, 6.2)
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=510424592]
+transform = Transform3D(0.90630776, 0.29883623, -0.29883623, 0, 0.70710677, 0.70710677, 0.42261827, -0.6408563, 0.6408563, 0, 0, 0)
+light_energy = 1.8
+
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=1077070069]
+material_override = SubResource("FloorMaterial")
+mesh = SubResource("PlaneMesh_floor")
+
+[node name="Explosion" parent="." unique_id=1798500717 instance=ExtResource("1_explosion")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
+
+[node name="Explosion1" parent="Explosion" index="0"]
+emitting = false
+
+[node name="Explosion2" parent="Explosion" index="1"]
+emitting = false
+
+[editable path="Explosion"]

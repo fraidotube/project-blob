@@ -1,0 +1,58 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://assets/vfx/bruno_melee_wave3d/bruno_melee_wave3d.gd" id="1_script"]
+[ext_resource type="Shader" path="res://assets/vfx/bruno_melee_wave3d/bruno_melee_wave3d.gdshader" id="2_shader"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_core"]
+noise_type = 3
+frequency = 0.045
+fractal_type = 1
+fractal_octaves = 4
+fractal_lacunarity = 2.0
+fractal_gain = 0.52
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture_core"]
+width = 256
+height = 256
+seamless = true
+normalize = true
+noise = SubResource("FastNoiseLite_core")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_core"]
+shader = ExtResource("2_shader")
+shader_parameter/noise_tex = SubResource("NoiseTexture_core")
+shader_parameter/inner_color = Color(1, 0.11, 0.005, 1)
+shader_parameter/outer_color = Color(0.36, 0.015, 0.55, 1)
+shader_parameter/hot_color = Color(1, 0.88, 0.25, 1)
+shader_parameter/scroll_speed = 3.3
+shader_parameter/noise_scale = 4.8
+shader_parameter/distortion = 0.15
+shader_parameter/fresnel_power = 2.8
+shader_parameter/alpha_strength = 0.94
+shader_parameter/dissolve = 0.0
+shader_parameter/emission_strength = 5.8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_shell"]
+shader = ExtResource("2_shader")
+shader_parameter/noise_tex = SubResource("NoiseTexture_core")
+shader_parameter/inner_color = Color(0.75, 0.02, 0.01, 1)
+shader_parameter/outer_color = Color(0.50, 0.01, 0.80, 1)
+shader_parameter/hot_color = Color(1, 0.32, 0.03, 1)
+shader_parameter/scroll_speed = 2.2
+shader_parameter/noise_scale = 3.1
+shader_parameter/distortion = 0.30
+shader_parameter/fresnel_power = 1.8
+shader_parameter/alpha_strength = 0.38
+shader_parameter/dissolve = 0.0
+shader_parameter/emission_strength = 2.5
+
+[node name="BrunoMeleeWave3D" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Core" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_core")
+cast_shadow = 0
+
+[node name="Shell" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_shell")
+cast_shadow = 0

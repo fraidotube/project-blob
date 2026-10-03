@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://cu81nqa81qtol"]
+
+[ext_resource type="Script" uid="uid://m32ptnuskjcw" path="res://scenes/vfx_tests/bruno_melee_banana3d_test.gd" id="1_script"]
+
+[sub_resource type="Environment" id="Environment_test"]
+background_mode = 1
+background_color = Color(0.012, 0.012, 0.018, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.18, 0.18, 0.22, 1)
+ambient_light_energy = 0.5
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.11, 0.11, 0.12, 1)
+roughness = 0.9
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+size = Vector2(30, 30)
+
+[sub_resource type="BoxMesh" id="WallMesh"]
+size = Vector3(10, 5, 0.2)
+
+[node name="BrunoMeleeBanana3DTest" type="Node3D" unique_id=673104697]
+script = ExtResource("1_script")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1297385633]
+environment = SubResource("Environment_test")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=970069899]
+transform = Transform3D(0.99586236, 0, -0.09087461, 0, 1, 0, 0.09087461, 0, 0.99586236, -0.09186554, 1.55, 3.1429152)
+current = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1709940378]
+transform = Transform3D(0.90630776, 0.30908343, -0.28822497, 0, 0.6819984, 0.7313537, 0.42261827, -0.66283154, 0.6181004, 0, 0, 0)
+light_energy = 0.75
+
+[node name="Floor" type="MeshInstance3D" parent="." unique_id=1890180875]
+material_override = SubResource("FloorMaterial")
+mesh = SubResource("PlaneMesh_floor")
+
+[node name="Wall" type="MeshInstance3D" parent="." unique_id=650122004]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3, -8.5)
+material_override = SubResource("FloorMaterial")
+mesh = SubResource("WallMesh")

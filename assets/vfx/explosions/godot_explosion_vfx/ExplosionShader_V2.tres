@@ -1,0 +1,103 @@
+[gd_resource type="Shader" format=3]
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+uniform float particle_h_frames = 8;
+uniform float particle_v_frames = 8;
+uniform bool particles_anim_loop = false;
+uniform float still_frame = -1;
+uniform sampler2D tex_frg_2;
+uniform sampler2D tex_frg_27 : source_color;
+uniform sampler2D tex_frg_24;
+uniform float Soft_limit = 0.08;
+uniform float blend_scale = 0.08;
+uniform float emission_falloff_multiplier = 0.38;
+uniform float emission_strength = 9.0;
+uniform sampler2D tex_frg_25 : source_color;
+uniform sampler2D tex_frg_26 : source_color;
+uniform sampler2D tex_frg_16;
+uniform sampler2D tex_frg_17;
+uniform sampler2D depth_texture : source_color, hint_depth_texture;
+
+void vertex() {
+	mat4 mat_world = mat4(
+		normalize(INV_VIEW_MATRIX[0]) * length(MODEL_MATRIX[0]),
+		normalize(INV_VIEW_MATRIX[1]) * length(MODEL_MATRIX[0]),
+		normalize(INV_VIEW_MATRIX[2]) * length(MODEL_MATRIX[2]),
+		MODEL_MATRIX[3]
+	);
+	MODELVIEW_MATRIX = VIEW_MATRIX * mat_world;
+
+	float h_frames = particle_h_frames;
+	float v_frames = particle_v_frames;
+	float particle_total_frames = h_frames * v_frames;
+	float particle_frame = floor(INSTANCE_CUSTOM.y * particle_total_frames);
+
+	if (still_frame > -0.01) {
+		particle_frame = floor(still_frame);
+	} else if (!particles_anim_loop) {
+		particle_frame = clamp(particle_frame, 0.0, particle_total_frames - 1.0);
+	} else {
+		particle_frame = mod(particle_frame, particle_total_frames);
+	}
+
+	UV /= vec2(h_frames, v_frames);
+	UV += vec2(
+		mod(particle_frame, h_frames) / h_frames,
+		floor(particle_frame / h_frames) / v_frames
+	);
+
+	COLOR.rgb = INSTANCE_CUSTOM.xyz;
+}
+
+void fragment() {
+	vec4 smoke_sample = texture(tex_frg_2, UV);
+	float smoke_alpha = smoke_sample.a;
+
+	vec3 c = smoke_sample.rgb;
+	float density = max(max(c.r, c.g), c.b);
+
+	vec4 smoke_color = texture(tex_frg_27, vec2(density));
+	vec4 soft_curve = texture(tex_frg_24, vec2(density));
+
+	float soft_limit_local = Soft_limit + (1.0 - soft_curve.x) * blend_scale;
+
+	float depth = texture(depth_texture, SCREEN_UV).x;
+	vec4 upos = INV_PROJECTION_MATRIX * vec4(
+		SCREEN_UV * 2.0 - 1.0,
+		depth * 2.0 - 1.0,
+		1.0
+	);
+	float pixel_position = upos.z / upos.w;
+
+	vec4 zpos = INV_PROJECTION_MATRIX * vec4(
+		SCREEN_UV * 2.0 - 1.0,
+		FRAGCOORD.z * 2.0 - 1.0,
+		1.0
+	);
+	float cur_pos = zpos.z / zpos.w;
+
+	float soft_factor = clamp(
+		abs(cur_pos - pixel_position) * (1.0 / soft_limit_local),
+		0.0,
+		1.0
+	);
+
+	float alpha = smoke_alpha * soft_factor;
+
+	vec2 lifetime_uv = vec2(COLOR.y);
+	vec4 falloff_curve = texture(tex_frg_25, lifetime_uv);
+	float emission_lookup = density + emission_falloff_multiplier * falloff_curve.x;
+	vec4 emission_color = texture(tex_frg_26, vec2(emission_lookup));
+
+	vec4 normal_plus = texture(tex_frg_16, UV);
+	vec4 normal_minus = texture(tex_frg_17, UV);
+
+	ALBEDO = smoke_color.rgb;
+	ALPHA = alpha;
+	EMISSION = emission_color.rgb * emission_strength;
+	NORMAL = normal_plus.rgb - normal_minus.rgb;
+}
+"
