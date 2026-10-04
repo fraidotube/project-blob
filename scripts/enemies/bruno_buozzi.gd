@@ -28,7 +28,7 @@ enum State {
 @export_category("Activation / Cinematic")
 @export var start_active: bool = true
 @export var cinematic_start_hidden: bool = false
-@export var cinematic_start_animation: StringName = &"Sitting_Clap"
+@export var cinematic_start_animation: StringName = &"mie/sitting_clap1"
 
 @export var cinematic_walk_speed: float = 1.6
 @export var cinematic_arrival_distance: float = 0.35
@@ -346,13 +346,104 @@ const ACTION_SHIELD_SCENE: PackedScene = preload(
 )
 
 
+func _get_current_animation_real_duration() -> float:
+	if animation_player == null:
+		return 0.0
+
+	var length := animation_player.current_animation_length
+	var speed := absf(animation_player.speed_scale)
+
+	if length <= 0.0:
+		return 0.0
+
+	if speed <= 0.0001:
+		speed = 1.0
+
+	return length / speed
+
+
+func _set_model_visual_y(target_y: float) -> void:
+	if model_root == null:
+		return
+
+	var position := model_root.position
+	position.y = target_y
+	model_root.position = position
+
+
+func _kill_visual_y_tween() -> void:
+	if (
+		visual_y_tween != null
+		and visual_y_tween.is_valid()
+	):
+		visual_y_tween.kill()
+
+	visual_y_tween = null
+
+
+func _start_visual_y_animation(
+	target_y: float,
+	duration: float
+) -> void:
+	if model_root == null:
+		return
+
+	_kill_visual_y_tween()
+
+	if duration <= 0.0:
+		_set_model_visual_y(target_y)
+		return
+
+	visual_y_tween = create_tween()
+	visual_y_tween.set_trans(Tween.TRANS_SINE)
+	visual_y_tween.set_ease(Tween.EASE_IN_OUT)
+	visual_y_tween.tween_property(
+		model_root,
+		"position:y",
+		target_y,
+		duration
+	)
+
+
+func _start_delayed_visual_y_animation(
+	target_y: float,
+	delay: float,
+	duration: float
+) -> void:
+	if model_root == null:
+		return
+
+	_kill_visual_y_tween()
+
+	visual_y_tween = create_tween()
+	visual_y_tween.set_trans(Tween.TRANS_SINE)
+	visual_y_tween.set_ease(Tween.EASE_IN_OUT)
+
+	if delay > 0.0:
+		visual_y_tween.tween_interval(delay)
+
+	visual_y_tween.tween_property(
+		model_root,
+		"position:y",
+		target_y,
+		maxf(duration, 0.01)
+	)
+
+
 # ============================================================
 # DEATH VISUAL
 # ============================================================
 
 @export_category("Death Visual")
-@export var death_visual_drop: float = 0.10
-@export var death_visual_drop_time: float = 0.15
+@export var death_visual_y_offset: float = 0.78
+@export var death_reach_ground_time: float = 2.20
+
+@export_category("Visual Animation Offsets")
+@export var fall_visual_y_offset: float = 0.78
+@export var sitting_visual_y_offset: float = 0.48
+@export var fall_reach_ground_time: float = 1.46
+@export var getup_start_rise_time: float = 4.58
+@export var getup_reach_standing_time: float = 6.21
 
 
 # ============================================================
@@ -426,6 +517,15 @@ const ACTION_SHIELD_SCENE: PackedScene = preload(
 @export var phase_2_melee_animation_speed: float = 1.15
 @export var phase_3_melee_animation_speed: float = 1.30
 
+@export_category("Combat Rhythm")
+@export var hit_reaction_cooldown_time: float = 1.25
+@export var phase_1_post_attack_idle_min: float = 0.65
+@export var phase_1_post_attack_idle_max: float = 1.20
+@export var phase_2_post_attack_idle_min: float = 0.25
+@export var phase_2_post_attack_idle_max: float = 0.55
+@export var phase_3_post_attack_idle_min: float = 0.0
+@export var phase_3_post_attack_idle_max: float = 0.0
+
 
 # ============================================================
 # MELEE WAVE
@@ -445,39 +545,38 @@ const ACTION_SHIELD_SCENE: PackedScene = preload(
 # ============================================================
 
 @onready var model_root: Node3D = (
-	$Meshy_AI_Mutated_Tennis_Player_All_Animations
+	$BetterBuozzi
 )
 
 
 @onready var general_skeleton: Skeleton3D = (
-	$Meshy_AI_Mutated_Tennis_Player_All_Animations
-	/target_character
+	$BetterBuozzi
+	/Armature
 	/GeneralSkeleton
 )
 
 @onready var animation_player: AnimationPlayer = (
-	$Meshy_AI_Mutated_Tennis_Player_All_Animations/AnimationPlayer
+	$BetterBuozzi/AnimationPlayer
 )
 
 @onready var tennis_ball_spawn: Marker3D = (
-	$Meshy_AI_Mutated_Tennis_Player_All_Animations
-	/target_character
+	$BetterBuozzi
+	/Armature
 	/GeneralSkeleton
 	/BoneAttachment3D
 	/TennisBallSpawn
 )
 
 @onready var racket_visual: Node3D = (
-	$Meshy_AI_Mutated_Tennis_Player_All_Animations
-	/target_character
+	$BetterBuozzi
+	/Armature
 	/GeneralSkeleton
 	/BoneAttachment3D
 	/Racket_Wilson_Blade
 )
 
 @onready var racket_ball_spawn: Marker3D = get_node_or_null(
-	"Meshy_AI_Mutated_Tennis_Player_All_Animations/"
-	+ "target_character/GeneralSkeleton/"
+	"BetterBuozzi/Armature/GeneralSkeleton/"
 	+ "BoneAttachment3D/Racket_Wilson_Blade/RacketBallSpawn"
 ) as Marker3D
 
@@ -572,11 +671,17 @@ var search_timer: float = 0.0
 var ball_released: bool = false
 var cast_elapsed: float = 0.0
 var ball_cooldown: float = 0.0
+var current_ball_animation: StringName = &""
 var burst_remaining: int = 0
 var melee_cooldown: float = 0.0
 var melee_hit_done: bool = false
 var current_melee_animation: StringName = &""
 var racket_pickup_done: bool = false
+var hit_reaction_active: bool = false
+var current_hit_reaction_animation: StringName = &""
+var hit_reaction_cooldown: float = 0.0
+var post_attack_idle_timer: float = 0.0
+var visual_y_tween: Tween = null
 
 
 # ============================================================
@@ -597,20 +702,24 @@ var boss_phase_label: Label = null
 
 const RACKET_TARGET_GROUP: StringName = &"bruno_racket_target"
 
-const ANIM_IDLE: StringName = &"Idle_8"
-const ANIM_WALK: StringName = &"Casual_Walk"
-const ANIM_RACKET_WALK: StringName = &"Spear_Walk"
-const ANIM_RUN: StringName = &"Running"
-const ANIM_BALL_CAST: StringName = &"mage_soell_cast_4"
-const ANIM_LEFT_SLASH: StringName = &"Left_Slash"
-const ANIM_CHARGED_SLASH: StringName = &"Charged_Slash"
-const ANIM_RACKET_PICKUP: StringName = &"Male_Bend_Over_Pick_Up"
-const ANIM_FALLING_DOWN: StringName = &"falling_down"
-const ANIM_STAND_UP: StringName = &"Stand_Up7"
-const ANIM_DEATH_FRONT: StringName = &"Shot_and_Fall_Backward"
-const ANIM_DEATH_BACK: StringName = &"Shot_in_the_Back_and_Fall"
-const ANIM_SITTING_CLAP: StringName = &"Sitting_Clap"
-const ANIM_SIT_TO_STAND: StringName = &"Sit_to_Stand_Transition_M"
+const ANIM_IDLE: StringName = &"mie/idle_combat"
+const ANIM_RACKET_IDLE: StringName = &"mie/idle_racchetta"
+const ANIM_WALK: StringName = &"mie/walking"
+const ANIM_RACKET_WALK: StringName = &"mie/walking"
+const ANIM_RUN: StringName = &"mie/running"
+const ANIM_BALL_CAST: StringName = &"mie/lancio_pallina"
+const ANIM_RACKET_BALL_CAST: StringName = &"mie/recchetta_dritto"
+const ANIM_LEFT_SLASH: StringName = &"mie/recchetta_dritto"
+const ANIM_CHARGED_SLASH: StringName = &"mie/racchetta_rovescio"
+const ANIM_RACKET_PICKUP: StringName = &"mie/raccogli"
+const ANIM_HIT_SMALL_1: StringName = &"mie/combat_small_hit"
+const ANIM_HIT_SMALL_2: StringName = &"mie/combat_small_hit2"
+const ANIM_FALLING_DOWN: StringName = &"mie/caduta"
+const ANIM_STAND_UP: StringName = &"mie/rialzati"
+const ANIM_DEATH_FRONT: StringName = &"mie/morte2"
+const ANIM_DEATH_BACK: StringName = &"mie/morte2"
+const ANIM_SITTING_CLAP: StringName = &"mie/sitting_clap1"
+const ANIM_SIT_TO_STAND: StringName = &"mie/sit_to_to stand"
 
 
 # ============================================================
@@ -630,6 +739,13 @@ func _ready() -> void:
 				"mixamorig_Hips"
 			)
 		)
+
+		if cinematic_hips_bone_index < 0:
+			cinematic_hips_bone_index = (
+				general_skeleton.find_bone(
+					"mixamorig:Hips"
+				)
+			)
 
 	if body_collision_shape != null:
 		original_collider_disabled = (
@@ -748,6 +864,14 @@ func _prepare_cinematic_start() -> void:
 		animation_player != null
 		and cinematic_start_animation != &""
 	):
+		if (
+			cinematic_start_animation == ANIM_SITTING_CLAP
+			or String(cinematic_start_animation).contains("sitting_")
+		):
+			_set_model_visual_y(
+				cinematic_model_base_position.y - sitting_visual_y_offset
+			)
+
 		_play_animation(
 			cinematic_start_animation,
 			0.0,
@@ -776,6 +900,10 @@ func cinematic_play_animation(
 
 
 func cinematic_play_sitting() -> void:
+	_set_model_visual_y(
+		cinematic_model_base_position.y - sitting_visual_y_offset
+	)
+
 	cinematic_play_animation(
 		ANIM_SITTING_CLAP,
 		0.15,
@@ -784,10 +912,19 @@ func cinematic_play_sitting() -> void:
 
 
 func cinematic_play_sit_to_stand() -> void:
+	_set_model_visual_y(
+		cinematic_model_base_position.y - sitting_visual_y_offset
+	)
+
 	cinematic_play_animation(
 		ANIM_SIT_TO_STAND,
 		0.15,
 		1.0
+	)
+
+	_start_visual_y_animation(
+		cinematic_model_base_position.y,
+		_get_current_animation_real_duration()
 	)
 
 
@@ -837,11 +974,22 @@ func cinematic_play_animation_and_wait(
 
 		cinematic_hips_anchor_active = true
 
+	if animation_name == ANIM_SIT_TO_STAND:
+		_set_model_visual_y(
+			cinematic_model_base_position.y - sitting_visual_y_offset
+		)
+
 	_play_animation(
 		animation_name,
 		blend_time,
 		playback_speed
 	)
+
+	if animation_name == ANIM_SIT_TO_STAND:
+		_start_visual_y_animation(
+			cinematic_model_base_position.y,
+			_get_current_animation_real_duration()
+		)
 
 	while (
 		is_inside_tree()
@@ -1120,6 +1268,10 @@ func _restore_combat_collider() -> void:
 
 
 func start_boss_fight() -> void:
+	_set_model_visual_y(
+		cinematic_model_base_position.y
+	)
+
 	if state == State.DEAD:
 		return
 
@@ -1216,6 +1368,29 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
+	if hit_reaction_active:
+		_stop_horizontal_motion()
+		move_and_slide()
+		return
+
+	if post_attack_idle_timer > 0.0:
+		post_attack_idle_timer -= delta
+		_stop_horizontal_motion()
+
+		_play_animation(
+			_get_combat_idle_animation(),
+			0.12,
+			1.0
+		)
+
+		move_and_slide()
+
+		if post_attack_idle_timer <= 0.0:
+			post_attack_idle_timer = 0.0
+			_resume_after_idle_pause()
+
+		return
+
 	if player == null or not is_instance_valid(player):
 		player = get_tree().get_first_node_in_group("player") as CharacterBody3D
 
@@ -1235,6 +1410,12 @@ func _physics_process(delta: float) -> void:
 
 	if melee_cooldown > 0.0:
 		melee_cooldown -= delta
+
+	if hit_reaction_cooldown > 0.0:
+		hit_reaction_cooldown = maxf(
+			0.0,
+			hit_reaction_cooldown - delta
+		)
 
 	match state:
 		State.IDLE:
@@ -1452,22 +1633,12 @@ func _settle_dead_visual() -> void:
 	if model_root == null:
 		return
 
-	var target_position := model_root.position
-	target_position.y -= death_visual_drop
+	_kill_visual_y_tween()
 
-	if death_visual_drop_time <= 0.0:
-		model_root.position = target_position
-		return
-
-	var tween := create_tween()
-	tween.set_trans(Tween.TRANS_SINE)
-	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(
-		model_root,
-		"position",
-		target_position,
-		death_visual_drop_time
+	_set_model_visual_y(
+		cinematic_model_base_position.y - death_visual_y_offset
 	)
+
 
 
 # ============================================================
@@ -1631,6 +1802,59 @@ func _apply_damage(amount: int) -> void:
 		_start_phase_transition(3)
 		return
 
+	if not has_racket:
+		_start_unarmed_hit_reaction()
+
+
+func _start_unarmed_hit_reaction() -> void:
+	if has_racket:
+		return
+
+	if hit_reaction_cooldown > 0.0:
+		return
+
+	if (
+		state == State.DEAD
+		or state == State.DOWN
+		or state == State.GETTING_UP
+		or phase_transition_active
+	):
+		return
+
+	var choices: Array[StringName] = [
+		ANIM_HIT_SMALL_1,
+		ANIM_HIT_SMALL_2
+	]
+
+	var chosen := choices[
+		rng.randi_range(
+			0,
+			choices.size() - 1
+		)
+	]
+
+	if (
+		animation_player == null
+		or not animation_player.has_animation(chosen)
+	):
+		push_warning(
+			"BrunoBuozzi: animazione hit non trovata: "
+			+ String(chosen)
+		)
+		return
+
+	hit_reaction_active = true
+	current_hit_reaction_animation = chosen
+
+	_set_action_shield(true)
+	_stop_horizontal_motion()
+
+	_play_animation(
+		chosen,
+		0.05,
+		1.0
+	)
+
 
 func _get_segment_health() -> int:
 	return maxi(
@@ -1644,6 +1868,8 @@ func _start_phase_transition(new_phase: int) -> void:
 		return
 
 	phase_transition_active = true
+	post_attack_idle_timer = 0.0
+	hit_reaction_cooldown = 0.0
 	pending_combat_phase = clampi(new_phase, 1, 3)
 	_set_action_shield(true)
 
@@ -1655,8 +1881,11 @@ func _start_phase_transition(new_phase: int) -> void:
 	burst_remaining = 0
 	ball_released = false
 	cast_elapsed = 0.0
+	current_ball_animation = &""
 	melee_hit_done = false
 	current_melee_animation = &""
+	hit_reaction_active = false
+	current_hit_reaction_animation = &""
 
 	_play_animation(
 		ANIM_FALLING_DOWN,
@@ -1664,15 +1893,54 @@ func _start_phase_transition(new_phase: int) -> void:
 		1.0
 	)
 
+	var fall_duration := minf(
+		fall_reach_ground_time,
+		_get_current_animation_real_duration()
+	)
+
+	_start_visual_y_animation(
+		cinematic_model_base_position.y - fall_visual_y_offset,
+		fall_duration
+	)
+
 
 func _start_getting_up() -> void:
 	state = State.GETTING_UP
 	_stop_horizontal_motion()
 
+	_set_model_visual_y(
+		cinematic_model_base_position.y - fall_visual_y_offset
+	)
+
 	_play_animation(
 		ANIM_STAND_UP,
 		0.08,
 		1.0
+	)
+
+	var animation_duration := (
+		_get_current_animation_real_duration()
+	)
+
+	var rise_start := minf(
+		getup_start_rise_time,
+		animation_duration
+	)
+
+	var rise_end := minf(
+		getup_reach_standing_time,
+		animation_duration
+	)
+
+	var rise_duration := maxf(
+		rise_end - rise_start,
+		0.01
+	)
+
+	_start_delayed_visual_y_animation(
+		cinematic_model_base_position.y,
+		rise_start,
+		rise_duration
 	)
 
 
@@ -1690,6 +1958,8 @@ func _die() -> void:
 		return
 
 	state = State.DEAD
+	post_attack_idle_timer = 0.0
+	hit_reaction_cooldown = 0.0
 	phase_transition_active = false
 	_set_action_shield(false)
 	invulnerable = true
@@ -1701,18 +1971,25 @@ func _die() -> void:
 	burst_remaining = 0
 	ball_released = false
 	melee_hit_done = true
+	hit_reaction_active = false
+	current_hit_reaction_animation = &""
 
 	_update_boss_bar()
 
-	var death_animation := ANIM_DEATH_FRONT
-
-	if _player_is_behind_bruno():
-		death_animation = ANIM_DEATH_BACK
-
 	_play_animation(
-		death_animation,
+		ANIM_DEATH_FRONT,
 		0.08,
 		1.0
+	)
+
+	# La morte2 è in-place: il modello visuale deve scendere
+	# insieme alla caduta senza spostare CharacterBody/collider.
+	_start_visual_y_animation(
+		cinematic_model_base_position.y - death_visual_y_offset,
+		minf(
+			death_reach_ground_time,
+			_get_current_animation_real_duration()
+		)
 	)
 
 
@@ -1840,7 +2117,7 @@ func _process_idle() -> void:
 	_stop_horizontal_motion()
 
 	_play_animation(
-		ANIM_IDLE,
+		_get_combat_idle_animation(),
 		0.15,
 		1.0
 	)
@@ -2231,8 +2508,13 @@ func _start_next_ball_in_burst() -> void:
 
 	_face_player(1.0)
 
+	if has_racket:
+		current_ball_animation = ANIM_RACKET_BALL_CAST
+	else:
+		current_ball_animation = ANIM_BALL_CAST
+
 	_play_animation(
-		ANIM_BALL_CAST,
+		current_ball_animation,
 		0.04,
 		_get_cast_animation_speed()
 	)
@@ -2351,7 +2633,7 @@ func _finish_ball_burst() -> void:
 		_get_ball_cooldown_max()
 	)
 
-	_resume_after_action()
+	_start_post_attack_idle_pause()
 
 
 func _choose_normal_burst_count() -> int:
@@ -2449,6 +2731,11 @@ func _process_melee_attack(delta: float) -> void:
 		return
 
 	melee_hit_done = true
+
+	# Da questo istante l'onda è partita: Bruno torna vulnerabile
+	# anche se l'animazione della racchetta deve ancora terminare.
+	_set_action_shield(false)
+
 	_apply_melee_wind_attack()
 
 
@@ -2718,6 +3005,86 @@ func _process_search_player(delta: float) -> void:
 # RESUME
 # ============================================================
 
+func _get_post_attack_idle_min() -> float:
+	match combat_phase:
+		1:
+			return phase_1_post_attack_idle_min
+		2:
+			return phase_2_post_attack_idle_min
+		3:
+			return phase_3_post_attack_idle_min
+
+	return 0.0
+
+
+func _get_post_attack_idle_max() -> float:
+	match combat_phase:
+		1:
+			return phase_1_post_attack_idle_max
+		2:
+			return phase_2_post_attack_idle_max
+		3:
+			return phase_3_post_attack_idle_max
+
+	return 0.0
+
+
+func _start_post_attack_idle_pause() -> void:
+	if state == State.DEAD:
+		return
+
+	var idle_min := maxf(
+		_get_post_attack_idle_min(),
+		0.0
+	)
+
+	var idle_max := maxf(
+		_get_post_attack_idle_max(),
+		idle_min
+	)
+
+	if idle_max <= 0.0:
+		_resume_after_action()
+		return
+
+	post_attack_idle_timer = rng.randf_range(
+		idle_min,
+		idle_max
+	)
+
+	state = State.IDLE
+	_stop_horizontal_motion()
+
+	_play_animation(
+		_get_combat_idle_animation(),
+		0.12,
+		1.0
+	)
+
+
+func _resume_after_idle_pause() -> void:
+	if state == State.DEAD:
+		return
+
+	if not has_racket:
+		if (
+			racket_pickup_position != null
+			and is_instance_valid(racket_pickup_position)
+		):
+			_set_state(State.SEEK_RACKET)
+			return
+
+	if player_visible or player_memory_timer > 0.0:
+		_set_state(State.MOVE_TO_PLAYER)
+		return
+
+	if has_racket:
+		_start_search_player()
+		return
+
+	_set_state(State.IDLE)
+
+
 func _resume_after_action() -> void:
 	if state == State.DEAD:
 		return
@@ -2885,6 +3252,13 @@ func _sync_racket_visual() -> void:
 	racket_visual.visible = has_racket
 
 
+func _get_combat_idle_animation() -> StringName:
+	if has_racket:
+		return ANIM_RACKET_IDLE
+
+	return ANIM_IDLE
+
+
 # ============================================================
 # STATE
 # ============================================================
@@ -2906,7 +3280,7 @@ func _set_state(new_state: State) -> void:
 			_stop_horizontal_motion()
 
 			_play_animation(
-				ANIM_IDLE,
+				_get_combat_idle_animation(),
 				0.15,
 				1.0
 			)
@@ -3005,6 +3379,24 @@ func _play_animation(
 
 
 func _on_animation_finished(animation_name: StringName) -> void:
+	if hit_reaction_active:
+		if animation_name == current_hit_reaction_animation:
+			hit_reaction_active = false
+			current_hit_reaction_animation = &""
+			_set_action_shield(false)
+
+			hit_reaction_cooldown = maxf(
+				hit_reaction_cooldown_time,
+				0.0
+			)
+
+			# La hit reaction non introduce una pausa idle:
+			# Bruno torna subito alla sua AI. I colpi ricevuti
+			# durante il cooldown fanno comunque danno, ma non
+			# possono riavviare immediatamente un'altra reaction.
+			_resume_after_action()
+			return
+
 	if state == State.DEAD:
 		if (
 			animation_name == ANIM_DEATH_FRONT
@@ -3017,12 +3409,17 @@ func _on_animation_finished(animation_name: StringName) -> void:
 		if animation_name != ANIM_FALLING_DOWN:
 			return
 
+		# Nessuna pausa: appena termina caduta parte subito rialzati.
 		_start_getting_up()
 		return
 
 	if state == State.GETTING_UP:
 		if animation_name != ANIM_STAND_UP:
 			return
+
+		_set_model_visual_y(
+			cinematic_model_base_position.y
+		)
 
 		_finish_phase_transition()
 		return
@@ -3039,11 +3436,12 @@ func _on_animation_finished(animation_name: StringName) -> void:
 		return
 
 	if state == State.BALL_ATTACK:
-		if animation_name != ANIM_BALL_CAST:
+		if animation_name != current_ball_animation:
 			return
 
 		ball_released = false
 		cast_elapsed = 0.0
+		current_ball_animation = &""
 
 		if burst_remaining > 0 and player_visible:
 			_start_next_ball_in_burst()
@@ -3068,7 +3466,7 @@ func _on_animation_finished(animation_name: StringName) -> void:
 			_get_melee_cooldown_max()
 		)
 
-		_resume_after_action()
+		_start_post_attack_idle_pause()
 
 
 # ============================================================

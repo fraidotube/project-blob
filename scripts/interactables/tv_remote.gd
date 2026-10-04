@@ -102,8 +102,19 @@ func interact(_player: Node) -> void:
 
 	_play_remote_sound()
 
-	if tv_controller.has_method("toggle_tv"):
-		tv_controller.toggle_tv()
+	if not tv_controller.has_method("toggle_tv"):
+		return
+
+	var tv_started := bool(
+		tv_controller.call(
+			"toggle_tv"
+		)
+	)
+
+	# La cinematic parte SOLO se la TV si è realmente accesa.
+	# Se il contatore è spento, toggle_tv() restituisce false.
+	if not tv_started:
+		return
 
 	if (
 		cinematic_controller != null

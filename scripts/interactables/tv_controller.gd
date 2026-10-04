@@ -38,21 +38,35 @@ func _ready() -> void:
 		audio_player.volume_db = outside_volume_db
 
 
-func toggle_tv() -> void:
+func is_power_available() -> bool:
 	if power_system == null:
-		return
+		return false
 
-	if not bool(power_system.is_power_on()):
-		return
+	if not power_system.has_method("is_power_on"):
+		return false
+
+	return bool(
+		power_system.is_power_on()
+	)
+
+
+func toggle_tv() -> bool:
+	if not is_power_available():
+		return false
 
 	if tv_on:
 		turn_off_tv()
-	else:
-		turn_on_tv()
+		return false
+
+	turn_on_tv()
+	return true
 
 
 func turn_on_tv() -> void:
 	if tv_on:
+		return
+
+	if not is_power_available():
 		return
 
 	tv_on = true
