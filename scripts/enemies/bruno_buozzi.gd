@@ -65,6 +65,7 @@ enum State {
 @export var maximum_ball_distance: float = 10.0
 @export var preferred_melee_distance: float = 2.20
 @export var maximum_melee_distance: float = 5.00
+@export var maximum_racket_wave_distance: float = 15.0
 
 
 # ============================================================
@@ -1359,28 +1360,33 @@ func _process_move_to_player(delta: float) -> void:
 # ============================================================
 
 func _try_racket_attack(distance: float) -> bool:
-	if (
-		melee_cooldown <= 0.0
-		and distance <= maximum_melee_distance
-	):
-		_start_melee_attack()
-		return true
+	# With the racket Bruno's PRIMARY attack is the air wave.
+	# The explosive tennis ball becomes the rarer special attack.
+	#
+	# Without the racket this function is never used, so Bruno keeps
+	# his original tennis-ball-only behaviour.
 
-	var ball_available := (
+	if melee_cooldown > 0.0:
+		return false
+
+	if distance > maximum_racket_wave_distance:
+		return false
+
+	var explosive_ball_available: bool = (
 		ball_cooldown <= 0.0
-		and distance > maximum_melee_distance
 		and distance >= minimum_ball_distance
 		and distance <= maximum_ball_distance
 	)
 
-	if not ball_available:
-		return false
-
-	if rng.randf() <= _get_explosive_ball_chance():
+	if (
+		explosive_ball_available
+		and rng.randf() <= _get_explosive_ball_chance()
+	):
 		start_ball_attack()
 		return true
 
-	return false
+	_start_melee_attack()
+	return true
 
 
 # ============================================================
@@ -1743,7 +1749,8 @@ func _spawn_melee_wave(
 	wave.call(
 		"start_wave",
 		spawn_position,
-		direction
+		direction,
+		self
 	)
 
 	return true

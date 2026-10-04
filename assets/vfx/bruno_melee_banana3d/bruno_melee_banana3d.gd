@@ -25,6 +25,19 @@ extends Node3D
 @export var damage_half_height: float = 1.15
 @export var damage_half_depth: float = 1.05
 
+
+@export_category("Obstacle Interaction")
+@export var obstacle_interaction_enabled: bool = true
+@export_flags_3d_physics var obstacle_collision_mask: int = 1
+@export_enum("Stop", "Attenuate") var obstacle_mode: int = 0
+@export_range(0.0, 3.0, 0.05) var obstacle_check_start_distance: float = 0.80
+@export_range(0.0, 1.0, 0.05) var obstacle_power_loss: float = 0.55
+@export_range(0.0, 1.0, 0.05) var obstacle_min_power: float = 0.20
+@export_range(0.02, 1.0, 0.01) var obstacle_stop_fade_time: float = 0.12
+@export_range(3, 21, 2) var obstacle_horizontal_rays: int = 13
+@export_range(0.1, 1.0, 0.05) var obstacle_width_factor: float = 0.85
+@export var obstacle_debug_print: bool = false
+
 @onready var core: MeshInstance3D = $Core
 @onready var shell: MeshInstance3D = $Shell
 
@@ -38,6 +51,16 @@ var started: bool = false
 
 var damaged_targets: Dictionary = {}
 
+var previous_position_world: Vector3 = Vector3.ZERO
+var source_body_rid: RID
+var ignored_obstacle_rids: Array[RID] = []
+var power_multiplier: float = 1.0
+var stopping_on_obstacle: bool = false
+var obstacle_stop_elapsed: float = 0.0
+var obstacle_stop_position_world: Vector3 = Vector3.ZERO
+var base_core_emission_boost: float = 1.0
+var base_shell_emission_boost: float = 1.0
+
 
 func _ready() -> void:
 	_build_banana_meshes()
@@ -49,7 +72,8 @@ func _ready() -> void:
 
 func start_wave(
 	spawn_global_position: Vector3,
-	direction_world: Vector3
+	direction_world: Vector3,
+	source_node: Node = null
 ) -> void:
 	global_position = spawn_global_position
 
@@ -75,9 +99,23 @@ func start_wave(
 	)
 
 	start_position_world = global_position
+	previous_position_world = global_position
 	elapsed = 0.0
 	scale = start_scale
 	damaged_targets.clear()
+	ignored_obstacle_rids.clear()
+	power_multiplier = 1.0
+	stopping_on_obstacle = false
+	obstacle_stop_elapsed = 0.0
+	obstacle_stop_position_world = global_position
+
+	source_body_rid = RID()
+
+	if source_node is CollisionObject3D:
+		source_body_rid = (
+			source_node as CollisionObject3D
+		).get_rid()
+
 	started = true
 
 	set_process(true)
@@ -87,15 +125,19 @@ func _process(delta: float) -> void:
 	if not started:
 		return
 
+	if stopping_on_obstacle:
+		_process_obstacle_stop(delta)
+		return
+
 	elapsed += delta
 
-	var t := clampf(
+	var t: float = clampf(
 		elapsed / maxf(lifetime, 0.01),
 		0.0,
 		1.0
 	)
 
-	var motion_t := 0.0
+	var motion_t: float = 0.0
 
 	if t > grow_only_fraction:
 		motion_t = inverse_lerp(
@@ -110,34 +152,61 @@ func _process(delta: float) -> void:
 		1.0
 	)
 
-	# Continuous straight-line motion.
-	global_position = (
+	var grow_t: float = smoothstep(
+		0.0,
+		1.0,
+		t
+	)
+
+	var next_scale: Vector3 = start_scale.lerp(
+		end_scale,
+		grow_t
+	)
+
+	var next_position_world: Vector3 = (
 		start_position_world
 		+ travel_direction_world
 		* travel_distance
 		* motion_t
 	)
 
-	global_position.y = (
-		start_position_world.y
-	)
+	next_position_world.y = start_position_world.y
 
-	# Continuous visible expansion.
-	var grow_t := smoothstep(
-		0.0,
-		1.0,
-		t
-	)
+	if (
+		obstacle_interaction_enabled
+		and start_position_world.distance_to(
+			next_position_world
+		) >= obstacle_check_start_distance
+	):
+		var visual_half_width: float = (
+			width
+			* next_scale.x
+			* 0.5
+			* obstacle_width_factor
+		)
 
-	scale = start_scale.lerp(
-		end_scale,
-		grow_t
-	)
+		var obstacle_hit: Dictionary = (
+			_find_obstacle_between(
+				previous_position_world,
+				next_position_world,
+				visual_half_width
+			)
+		)
+
+		if not obstacle_hit.is_empty():
+			if _handle_obstacle_hit(
+				obstacle_hit
+			):
+				return
+
+	global_position = next_position_world
+	previous_position_world = global_position
+	scale = next_scale
 
 	if damage_enabled:
 		_check_player_damage()
 
-	var dissolve_value := 0.0
+	var dissolve_value: float = 0.0
 
 	if t > fade_start_fraction:
 		dissolve_value = inverse_lerp(
@@ -146,20 +215,298 @@ func _process(delta: float) -> void:
 			t
 		)
 
+	_set_dissolve(
+		dissolve_value
+	)
+
+	if t >= 1.0:
+		queue_free()
+
+
+func _find_obstacle_between(
+	from_world: Vector3,
+	to_world: Vector3,
+	half_width_world: float
+) -> Dictionary:
+	if from_world.distance_squared_to(
+		to_world
+	) <= 0.000001:
+		return {}
+
+	var ray_count: int = maxi(
+		obstacle_horizontal_rays,
+		3
+	)
+
+	if ray_count % 2 == 0:
+		ray_count += 1
+
+	var right_world: Vector3 = global_transform.basis.x
+	right_world.y = 0.0
+
+	if right_world.length_squared() <= 0.0001:
+		right_world = Vector3.RIGHT
+
+	right_world = right_world.normalized()
+
+	var exclude_rids: Array[RID] = []
+
+	if source_body_rid.is_valid():
+		exclude_rids.append(
+			source_body_rid
+		)
+
+	for obstacle_rid: RID in ignored_obstacle_rids:
+		if obstacle_rid.is_valid():
+			exclude_rids.append(
+				obstacle_rid
+			)
+
+	var best_hit: Dictionary = {}
+	var best_travel_distance: float = INF
+
+	for ray_index: int in range(ray_count):
+		var ray_t: float = 0.5
+
+		if ray_count > 1:
+			ray_t = (
+				float(ray_index)
+				/ float(ray_count - 1)
+			)
+
+		var lateral_offset: float = lerpf(
+			-half_width_world,
+			half_width_world,
+			ray_t
+		)
+
+		var lateral_world: Vector3 = (
+			right_world
+			* lateral_offset
+		)
+
+		var ray_from: Vector3 = (
+			from_world
+			+ lateral_world
+		)
+
+		var ray_to: Vector3 = (
+			to_world
+			+ lateral_world
+		)
+
+		var query := PhysicsRayQueryParameters3D.create(
+			ray_from,
+			ray_to
+		)
+
+		query.collision_mask = obstacle_collision_mask
+		query.collide_with_bodies = true
+		query.collide_with_areas = false
+		query.hit_from_inside = false
+		query.exclude = exclude_rids
+
+		var result: Dictionary = (
+			get_world_3d()
+			.direct_space_state
+			.intersect_ray(
+				query
+			)
+		)
+
+		if result.is_empty():
+			continue
+
+		var collider_value: Variant = result.get(
+			"collider"
+		)
+
+		if collider_value is Node:
+			var collider_node := collider_value as Node
+
+			if collider_node.is_in_group(
+				"player"
+			):
+				continue
+
+		var hit_position_value: Variant = result.get(
+			"position"
+		)
+
+		if not hit_position_value is Vector3:
+			continue
+
+		var hit_position := (
+			hit_position_value as Vector3
+		)
+
+		var ray_travel_distance: float = (
+			ray_from.distance_to(
+				hit_position
+			)
+		)
+
+		if ray_travel_distance >= best_travel_distance:
+			continue
+
+		best_travel_distance = ray_travel_distance
+		best_hit = result.duplicate()
+
+		var root_stop_position: Vector3 = (
+			from_world
+			+ travel_direction_world
+			* ray_travel_distance
+		)
+
+		root_stop_position.y = start_position_world.y
+
+		best_hit[
+			"wave_root_position"
+		] = root_stop_position
+
+	if (
+		obstacle_debug_print
+		and not best_hit.is_empty()
+	):
+		var debug_collider: Variant = best_hit.get(
+			"collider"
+		)
+
+		print(
+			"[BrunoWave] obstacle hit: ",
+			debug_collider
+		)
+
+	return best_hit
+
+
+func _handle_obstacle_hit(
+	hit: Dictionary
+) -> bool:
+	var hit_position_value: Variant = hit.get(
+		"position"
+	)
+
+	if not hit_position_value is Vector3:
+		return false
+
+	var hit_position := (
+		hit_position_value as Vector3
+	)
+
+	var root_position_value: Variant = hit.get(
+		"wave_root_position"
+	)
+
+	var wave_stop_position: Vector3 = hit_position
+
+	if root_position_value is Vector3:
+		wave_stop_position = (
+			root_position_value as Vector3
+		)
+
+	var rid_value: Variant = hit.get(
+		"rid"
+	)
+
+	var obstacle_rid := RID()
+
+	if rid_value is RID:
+		obstacle_rid = rid_value as RID
+
+	if obstacle_mode == 0:
+		global_position = wave_stop_position
+		previous_position_world = wave_stop_position
+		obstacle_stop_position_world = wave_stop_position
+		obstacle_stop_elapsed = 0.0
+		stopping_on_obstacle = true
+
+		return true
+
+	# Attenuate mode:
+	# each physical collider removes power only once.
+	power_multiplier *= (
+		1.0
+		- clampf(
+			obstacle_power_loss,
+			0.0,
+			1.0
+		)
+	)
+
+	if obstacle_rid.is_valid():
+		ignored_obstacle_rids.append(
+			obstacle_rid
+		)
+
+	if power_multiplier <= obstacle_min_power:
+		global_position = wave_stop_position
+		previous_position_world = wave_stop_position
+		obstacle_stop_position_world = wave_stop_position
+		obstacle_stop_elapsed = 0.0
+		stopping_on_obstacle = true
+
+		return true
+
+	_apply_power_to_materials()
+
+	return false
+
+
+func _process_obstacle_stop(
+	delta: float
+) -> void:
+	obstacle_stop_elapsed += delta
+	global_position = obstacle_stop_position_world
+
+	var stop_t: float = clampf(
+		obstacle_stop_elapsed
+		/ maxf(
+			obstacle_stop_fade_time,
+			0.02
+		),
+		0.0,
+		1.0
+	)
+
+	_set_dissolve(
+		stop_t
+	)
+
+	if stop_t >= 1.0:
+		queue_free()
+
+
+func _set_dissolve(
+	value: float
+) -> void:
 	if core_material != null:
 		core_material.set_shader_parameter(
 			"dissolve",
-			dissolve_value
+			value
 		)
 
 	if shell_material != null:
 		shell_material.set_shader_parameter(
 			"dissolve",
-			dissolve_value
+			value
 		)
 
-	if t >= 1.0:
-		queue_free()
+
+func _apply_power_to_materials() -> void:
+	if core_material != null:
+		core_material.set_shader_parameter(
+			"emission_boost",
+			base_core_emission_boost
+			* power_multiplier
+		)
+
+	if shell_material != null:
+		shell_material.set_shader_parameter(
+			"emission_boost",
+			base_shell_emission_boost
+			* power_multiplier
+		)
 
 
 func _check_player_damage() -> void:
@@ -205,8 +552,16 @@ func _check_player_damage() -> void:
 		if node.has_method(
 			"take_damage"
 		):
+			var effective_damage: int = maxi(
+				1,
+				roundi(
+					float(damage_amount)
+					* power_multiplier
+				)
+			)
+
 			node.take_damage(
-				damage_amount
+				effective_damage
 			)
 
 			damaged_targets[
@@ -506,6 +861,17 @@ func _duplicate_materials() -> void:
 			core_material
 		)
 
+		var core_emission_value: Variant = (
+			core_material.get_shader_parameter(
+				"emission_boost"
+			)
+		)
+
+		if core_emission_value is float:
+			base_core_emission_boost = float(
+				core_emission_value
+			)
+
 	var shell_active := (
 		shell.get_active_material(0)
 	)
@@ -519,3 +885,14 @@ func _duplicate_materials() -> void:
 		shell.material_override = (
 			shell_material
 		)
+
+		var shell_emission_value: Variant = (
+			shell_material.get_shader_parameter(
+				"emission_boost"
+			)
+		)
+
+		if shell_emission_value is float:
+			base_shell_emission_boost = float(
+				shell_emission_value
+			)
