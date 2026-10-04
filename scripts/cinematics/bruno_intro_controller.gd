@@ -9,6 +9,7 @@ extends Node
 @export var camera_stand_point: Marker3D
 @export var cinematic_lights: Array[Light3D] = []
 @export var tv_music_audio: AudioStreamPlayer3D
+@export var hud_root: Node
 
 @export_category("Camera / Video Timeline")
 @export var video_lead_before_camera: float = 0.75
@@ -31,7 +32,8 @@ extends Node
 @export_range(0.0, 3.0, 0.05) var reveal_energy_multiplier: float = 0.75
 
 @export_category("Dialogue Audio")
-@export var dialogue_audio: AudioStream
+@export var dialogue_audio_part1: AudioStream
+@export var dialogue_audio_part2: AudioStream
 @export_range(-40.0, 12.0, 0.5) var dialogue_volume_db: float = 3.0
 @export var dialogue_bus: StringName = &"Master"
 @export_range(-60.0, 6.0, 0.5) var tv_dialogue_volume_db: float = -28.0
@@ -44,29 +46,52 @@ extends Node
 @export var sitting_pose_time: float = 0.0
 
 # Timeline relativa all'inizio di dialogoBruno.mp3.
-# Prima prova: curiamo soprattutto l'apertura seduta.
+# Prima regia guidata dal parlato reale:
+# clap -> dialogo seduto -> alzata -> cammino -> bow -> talking
+# -> risata -> talking mano dx -> seconda risata -> look away -> happy hand.
 @export var initial_clap_playback_speed: float = 1.00
-@export var first_sitting_laugh_time: float = 19.50
-@export var stand_start_time: float = 23.00
-@export var walk_start_time: float = 26.00
-@export var standing_talk_start_time: float = 28.00
-@export var standing_talk_first_end_time: float = 56.00
-@export var first_laugh_time: float = 57.00
-@export var angry_talk_start_time: float = 70.00
-@export var angry_talk_end_time: float = 82.00
+
+# PARTE 1 - tempi relativi a dialogoBruno2_p1.mp3
+@export var part1_laugh_time: float = 11.55
+
+# PARTE 2 - tempi relativi a dialogoBruno2_p2.mp3.
+# La parte 2 parte SOLO dopo alzata + cammino + arrivo + rotazione.
+@export var p2_bow_time: float = 4.20
+@export var p2_laugh_1_time: float = 23.75
+@export var p2_tennis_look_time: float = 25.00
+@export var p2_happy_hand_time: float = 27.35
+@export var p2_stretching_time: float = 30.25
+@export var p2_laugh_2_time: float = 44.95
+@export var p2_angry_time: float = 48.10
+@export var p2_challenge_time: float = 50.20
+@export var p2_disappointed_time: float = 58.70
+@export var p2_laugh_3_time: float = 68.05
+@export var p2_final_yell_time: float = 74.20
+
+@export var short_laugh_max_duration: float = 3.50
+@export_range(0.0, 2.0, 0.05) var boss_start_delay_after_camera_return: float = 0.75
 
 @export var stand_animation: StringName = &"mie/sit_to_to stand"
 @export var standing_idle_animation: StringName = &"mie/idle"
 @export var walk_animation: StringName = &"mie/walking"
+@export_range(0.40, 2.00, 0.05) var intro_cinematic_walk_speed: float = 1.10
 
 @export_category("Standing Dialogue Animations")
 @export var talk_hands_open_animation: StringName = &"mie/talking1"
 @export var talk_right_hand_animation: StringName = &"mie/talking2"
+@export var talk_3_animation: StringName = &"mie/talking3"
+@export var talk_4_animation: StringName = &"mie/talking4"
+@export var talk_5_animation: StringName = &"mie/talking5"
+@export var talk_6_animation: StringName = &"mie/talking6"
 @export var talk_passionately_animation: StringName = &"mie/talking_mano_dx"
 @export var talk_left_animation: StringName = &"mie/talking_sfida"
+@export var stretching_animation: StringName = &"mie/talking_stretching"
 @export var extra_idle_1_animation: StringName = &"mie/idle"
 @export var extra_idle_2_animation: StringName = &"mie/breathing_idle"
-@export var laugh_animation: StringName = &""
+@export var bow_animation: StringName = &"mie/bow"
+@export var laugh_animation: StringName = &"mie/laughing"
+@export var look_away_animation: StringName = &"mie/look_away"
+@export var happy_hand_animation: StringName = &"mie/happy_hand"
 @export var angry_talk_animation: StringName = &"mie/talking_angry"
 
 @export_range(0.05, 2.0, 0.05) var standing_anim_blend_time: float = 0.20
@@ -79,8 +104,22 @@ extends Node
 @export_category("Test Sequence")
 @export var lock_player_during_test: bool = true
 
+@export_category("Dialogue Preview")
+@export var dialogue_preview_mode: bool = false
+@export var dialogue_preview_auto_start: bool = false
+@export_range(0.0, 136.0, 0.5) var dialogue_preview_start_time: float = 0.0
+@export var dialogue_preview_keep_player_free: bool = true
+@export var dialogue_preview_trigger_key: Key = KEY_F9
+
+@export_category("F9 Combat Debug")
+@export var combat_debug_f9_enabled: bool = true
+@export var combat_debug_restore_intro_blockers: bool = true
+
 @export_category("Intro Collision Blockers")
 @export var intro_blocker_group: StringName = &"bruno_intro_blocker"
+
+@export_category("Debug")
+@export var debug_animation_timeline: bool = true
 
 var intro_started: bool = false
 var intro_start_msec: int = 0
@@ -90,6 +129,10 @@ var cinematic_camera: Camera3D = null
 var player_camera: Camera3D = null
 var bruno_animation_player: AnimationPlayer = null
 var dialogue_player: AudioStreamPlayer = null
+var dialogue_preview_started: bool = false
+
+var bruno_original_cinematic_walk_speed: float = 0.0
+var bruno_cinematic_walk_speed_captured: bool = false
 
 var rng := RandomNumberGenerator.new()
 
@@ -100,9 +143,17 @@ var original_light_states: Dictionary = {}
 var intro_blocker_collision_states: Dictionary = {}
 var intro_blockers_disabled: bool = false
 
+var hud_visibility_captured: bool = false
+var hud_original_visible: bool = true
+
 
 func _ready() -> void:
 	rng.randomize()
+
+	# V29 NORMAL TEST:
+	# forza la modalità reale TV -> cinematic -> boss.
+	dialogue_preview_mode = false
+	dialogue_preview_auto_start = false
 
 	if player == null:
 		player = (
@@ -121,9 +172,116 @@ func _ready() -> void:
 			tv_music_audio.volume_db
 		)
 
+	if dialogue_preview_mode:
+		_prepare_dialogue_preview()
+
+		if dialogue_preview_auto_start:
+			dialogue_preview_started = true
+			_start_dialogue_preview.call_deferred()
+
+		return
+
+	# Modalità gioco normale:
 	# Bruno esiste già nella scena, ma resta invisibile e fermo
 	# nella posa seduta fino al reveal.
 	_prepare_bruno_hidden_pose()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not event is InputEventKey:
+		return
+
+	var key_event := event as InputEventKey
+
+	if not key_event.pressed or key_event.echo:
+		return
+
+	if key_event.keycode != KEY_F9:
+		return
+
+	if combat_debug_f9_enabled and not dialogue_preview_mode:
+		_start_combat_debug_from_cinematic_end()
+		return
+
+	if not dialogue_preview_mode:
+		return
+
+	if dialogue_preview_started:
+		print(
+			"[BrunoIntro][PREVIEW] già avviata."
+		)
+		return
+
+	dialogue_preview_started = true
+	_start_dialogue_preview.call_deferred()
+
+
+func _start_combat_debug_from_cinematic_end() -> void:
+	if bruno == null:
+		push_error(
+			"BrunoIntroController COMBAT DEBUG: Bruno mancante."
+		)
+		return
+
+	if point_1 == null:
+		push_error(
+			"BrunoIntroController COMBAT DEBUG: Point1 mancante."
+		)
+		return
+
+	if player == null:
+		push_error(
+			"BrunoIntroController COMBAT DEBUG: Player mancante."
+		)
+		return
+
+	print(
+		"[BrunoIntro][COMBAT DEBUG] F9: salto diretto a fine cinematic."
+	)
+
+	if dialogue_player != null:
+		dialogue_player.stop()
+
+	_restore_player_camera()
+	_unlock_player()
+	_restore_hud_visibility()
+
+	if bruno.has_method("cinematic_lock"):
+		bruno.call("cinematic_lock")
+
+	if bruno.has_method("cinematic_set_visible"):
+		bruno.call(
+			"cinematic_set_visible",
+			true
+		)
+
+	if bruno is Node3D:
+		var bruno_3d := bruno as Node3D
+		bruno_3d.global_position = point_1.global_position
+
+		var direction := (
+			player.global_position
+			- bruno_3d.global_position
+		)
+		direction.y = 0.0
+
+		if direction.length_squared() > 0.000001:
+			bruno_3d.rotation.y = atan2(
+				direction.x,
+				direction.z
+			)
+
+	print(
+		"[BrunoIntro][COMBAT DEBUG] Bruno posizionato a ",
+		point_1.global_position
+	)
+
+	if combat_debug_restore_intro_blockers:
+		restore_intro_blockers()
+	else:
+		_disable_intro_blockers()
+
+	start_boss_fight()
 
 
 func start_intro() -> void:
@@ -172,14 +330,26 @@ func start_intro() -> void:
 		)
 		return
 
-	if dialogue_audio == null:
+	if dialogue_audio_part1 == null:
 		push_error(
-			"BrunoIntroController: Dialogue Audio mancante."
+			"BrunoIntroController: Dialogue Audio Part1 mancante."
+		)
+		return
+
+	if dialogue_audio_part2 == null:
+		push_error(
+			"BrunoIntroController: Dialogue Audio Part2 mancante."
 		)
 		return
 
 	_resolve_player_camera()
 	_resolve_bruno_animation_player()
+
+	if bruno_animation_player == null:
+		push_error(
+			"BrunoIntroController: cutscene annullata, AnimationPlayer di Bruno non disponibile."
+		)
+		return
 
 	if player_camera == null:
 		push_error(
@@ -190,6 +360,7 @@ func start_intro() -> void:
 	intro_started = true
 	intro_start_msec = Time.get_ticks_msec()
 
+	_capture_and_hide_hud()
 	_disable_intro_blockers()
 
 	if bruno.has_method("cinematic_lock"):
@@ -201,11 +372,180 @@ func start_intro() -> void:
 
 
 # ============================================================
+# DIALOGUE PREVIEW MODE
+# ============================================================
+
+func _prepare_dialogue_preview() -> void:
+	if bruno == null:
+		push_error(
+			"BrunoIntroController PREVIEW: riferimento Bruno mancante."
+		)
+		return
+
+	_resolve_bruno_animation_player()
+
+	if bruno_animation_player == null:
+		push_error(
+			"BrunoIntroController PREVIEW: AnimationPlayer Bruno non disponibile."
+		)
+		return
+
+	if bruno.has_method("cinematic_lock"):
+		bruno.call("cinematic_lock")
+
+	if bruno.has_method("cinematic_set_visible"):
+		bruno.call(
+			"cinematic_set_visible",
+			true
+		)
+
+	# In preview non tocchiamo TV, luci, camera o collision blocker.
+	# Prepariamo solo Bruno nella posa iniziale della timeline.
+	if dialogue_preview_start_time <= 0.001:
+		if bruno.has_method("cinematic_play_sitting"):
+			bruno.call("cinematic_play_sitting")
+
+		_freeze_bruno_sitting_pose()
+	else:
+		# Per ora gli start intermedi servono soprattutto per ascolto/debug.
+		# Bruno parte in posa neutra; la timeline verrà sincronizzata
+		# al tempo richiesto senza eseguire l'intro TV.
+		_play_bruno_animation(
+			talk_hands_open_animation,
+			0.0,
+			1.0
+		)
+
+	if dialogue_preview_keep_player_free:
+		_unlock_player()
+
+	print(
+		"[BrunoIntro][PREVIEW] pronto | start=",
+		"%.2f" % dialogue_preview_start_time,
+		" | player_free=",
+		dialogue_preview_keep_player_free
+	)
+
+	if not dialogue_preview_auto_start:
+		print(
+			"[BrunoIntro][PREVIEW] premi ",
+			OS.get_keycode_string(dialogue_preview_trigger_key),
+			" per avviare audio + timeline."
+		)
+
+
+func _debug_print_dialogue_animation_lengths() -> void:
+	if not debug_animation_timeline:
+		return
+
+	if bruno_animation_player == null:
+		return
+
+	var names: Array[StringName] = [
+		talk_hands_open_animation,
+		talk_right_hand_animation,
+		talk_3_animation,
+		talk_4_animation,
+		talk_5_animation,
+		talk_6_animation,
+		stretching_animation,
+		angry_talk_animation,
+		talk_left_animation,
+		&"mie/disappointed",
+		laugh_animation,
+		&"mie/talking_urla"
+	]
+
+	print("[BrunoIntro][ANIM LENGTHS] -----")
+
+	for animation_name in names:
+		if not bruno_animation_player.has_animation(animation_name):
+			print(
+				"[BrunoIntro][ANIM LENGTHS] MISSING ",
+				String(animation_name)
+			)
+			continue
+
+		var animation := bruno_animation_player.get_animation(
+			animation_name
+		)
+
+		if animation == null:
+			continue
+
+		print(
+			"[BrunoIntro][ANIM LENGTHS] ",
+			String(animation_name),
+			" = ",
+			"%.3f" % animation.length,
+			" s"
+		)
+
+
+func _start_dialogue_preview() -> void:
+	if not dialogue_preview_mode:
+		return
+
+	_capture_and_hide_hud()
+
+	if dialogue_player == null:
+		_setup_dialogue_player()
+
+	if dialogue_audio_part1 == null:
+		push_error(
+			"BrunoIntroController PREVIEW: Dialogue Audio Part1 mancante."
+		)
+		return
+
+	if dialogue_audio_part2 == null:
+		push_error(
+			"BrunoIntroController PREVIEW: Dialogue Audio Part2 mancante."
+		)
+		return
+
+	_resolve_bruno_animation_player()
+
+	if bruno_animation_player == null:
+		push_error(
+			"BrunoIntroController PREVIEW: AnimationPlayer Bruno non disponibile."
+		)
+		return
+
+	_debug_print_dialogue_animation_lengths()
+
+	# Con la nuova regia a due file la preview completa parte sempre da p1.
+	# Start Time resta nell'Inspector per compatibilità, ma non viene usato.
+	if dialogue_preview_start_time > 0.001:
+		push_warning(
+			"BrunoIntroController PREVIEW: Start Time ignorato nella modalità audio a due parti."
+		)
+
+	_play_dialogue_part1()
+
+	print(
+		"[BrunoIntro][PREVIEW] F9 -> PARTE 1 + movimento silenzioso + PARTE 2"
+	)
+
+	await _run_dialogue_animation_timeline()
+
+
+func _run_dialogue_preview_from_time(
+	_start_time: float
+) -> void:
+	push_warning(
+		"BrunoIntroController: preview da timestamp disabilitata nella modalità audio a due parti."
+	)
+
+
+# ============================================================
 # INTRO TIMELINE
 # ============================================================
 
 func _run_intro_timeline() -> void:
-	if lock_player_during_test:
+	if (
+		lock_player_during_test
+		and not dialogue_preview_mode
+	):
 		_lock_player()
 
 	# TV/video/audio sono già partiti dal telecomando PRIMA di start_intro().
@@ -310,27 +650,60 @@ func _setup_dialogue_player() -> void:
 
 
 func _start_dialogue_sequence() -> void:
-	dialogue_start_msec = Time.get_ticks_msec()
-
 	_duck_tv_music()
 
 	if dialogue_player == null:
 		_setup_dialogue_player()
 
+	_play_dialogue_part1()
+
+	print(
+		"[BrunoIntro] Dialogo PARTE 1 iniziato."
+	)
+
+
+func _play_dialogue_part1() -> void:
+	if dialogue_player == null:
+		_setup_dialogue_player()
+
+	if dialogue_audio_part1 == null:
+		push_error(
+			"BrunoIntroController: Dialogue Audio Part1 mancante."
+		)
+		return
+
+	dialogue_start_msec = Time.get_ticks_msec()
+
 	dialogue_player.stop()
-	dialogue_player.stream = dialogue_audio
+	dialogue_player.stream = dialogue_audio_part1
 	dialogue_player.bus = dialogue_bus
 	dialogue_player.volume_db = dialogue_volume_db
 	dialogue_player.play()
 
-	_play_bruno_animation(
-		sitting_clap_animation,
-		0.10,
-		initial_clap_playback_speed
-	)
+
+func _play_dialogue_part2() -> void:
+	if dialogue_player == null:
+		_setup_dialogue_player()
+
+	if dialogue_audio_part2 == null:
+		push_error(
+			"BrunoIntroController: Dialogue Audio Part2 mancante."
+		)
+		return
+
+	# IMPORTANTE:
+	# la timeline torna a zero qui. Tutti i cue p2_* sono relativi
+	# all'inizio del secondo MP3, non all'inizio della cinematic.
+	dialogue_start_msec = Time.get_ticks_msec()
+
+	dialogue_player.stop()
+	dialogue_player.stream = dialogue_audio_part2
+	dialogue_player.bus = dialogue_bus
+	dialogue_player.volume_db = dialogue_volume_db
+	dialogue_player.play()
 
 	print(
-		"[BrunoIntro] Dialogo iniziato. Timeline animazioni = 0.0 s"
+		"[BrunoIntro] Dialogo PARTE 2 iniziato: timeline p2 = 0.0 s"
 	)
 
 
@@ -375,9 +748,71 @@ func restore_tv_music_volume() -> void:
 # DIALOGUE ANIMATION TIMELINE
 # ============================================================
 
+func _bruno_has_property(
+	property_name: StringName
+) -> bool:
+	if bruno == null:
+		return false
+
+	for property_info: Dictionary in bruno.get_property_list():
+		if StringName(String(property_info.get("name", ""))) == property_name:
+			return true
+
+	return false
+
+
+func _apply_intro_walk_speed() -> void:
+	if not _bruno_has_property(&"cinematic_walk_speed"):
+		push_warning(
+			"BrunoIntroController: Bruno non espone cinematic_walk_speed."
+		)
+		return
+
+	if not bruno_cinematic_walk_speed_captured:
+		bruno_original_cinematic_walk_speed = float(
+			bruno.get("cinematic_walk_speed")
+		)
+		bruno_cinematic_walk_speed_captured = true
+
+	bruno.set(
+		"cinematic_walk_speed",
+		intro_cinematic_walk_speed
+	)
+
+	print(
+		"[BrunoIntro] cinematic_walk_speed intro = ",
+		"%.2f" % intro_cinematic_walk_speed
+	)
+
+
+func _restore_bruno_cinematic_walk_speed() -> void:
+	if not bruno_cinematic_walk_speed_captured:
+		return
+
+	if not _bruno_has_property(&"cinematic_walk_speed"):
+		return
+
+	bruno.set(
+		"cinematic_walk_speed",
+		bruno_original_cinematic_walk_speed
+	)
+
+	print(
+		"[BrunoIntro] cinematic_walk_speed ripristinata = ",
+		"%.2f" % bruno_original_cinematic_walk_speed
+	)
+
+	bruno_cinematic_walk_speed_captured = false
+
+
 func _run_dialogue_animation_timeline() -> void:
-	# Apertura: clap breve, poi Bruno parla seduto.
-	# La quota sitting viene impostata dal Bruno stesso.
+	if debug_animation_timeline:
+		print("[BrunoIntro][TIMELINE] TWO-PART START")
+
+	# ========================================================
+	# PARTE 1 - 13.009 s
+	# Bruno è seduto. Clap -> sitting talk -> risata finale.
+	# ========================================================
 	if bruno != null and bruno.has_method("cinematic_play_sitting"):
 		bruno.call("cinematic_play_sitting")
 	else:
@@ -394,31 +829,6 @@ func _run_dialogue_animation_timeline() -> void:
 	if not is_inside_tree():
 		return
 
-	# Dopo il clap passa subito al talking seduto.
-	_play_bruno_animation(
-		sitting_talk_animation,
-		0.12,
-		1.0
-	)
-
-	# Prima risata del dialogo, circa 19/20 secondi.
-	await _wait_until_dialogue_time(
-		first_sitting_laugh_time
-	)
-
-	if not is_inside_tree():
-		return
-
-	await _play_one_animation_and_wait(
-		sitting_laugh_animation,
-		0.12,
-		1.0
-	)
-
-	if not is_inside_tree():
-		return
-
-	# Finita la risata torna subito a parlare seduto.
 	_play_bruno_animation(
 		sitting_talk_animation,
 		0.12,
@@ -426,69 +836,64 @@ func _run_dialogue_animation_timeline() -> void:
 	)
 
 	await _wait_until_dialogue_time(
-		stand_start_time
+		part1_laugh_time
 	)
 
 	if not is_inside_tree():
 		return
 
-	# Alzata + movimento camera verso BrunoCameraStandPoint.
+	# La risata audio della p1 è corta: l'animazione viene interrotta
+	# naturalmente quando termina il file e comincia l'alzata.
+	_play_bruno_animation(
+		laugh_animation,
+		0.12,
+		1.0
+	)
+
+	if dialogue_player != null and dialogue_player.playing:
+		await dialogue_player.finished
+
+	if not is_inside_tree():
+		return
+
+	print(
+		"[BrunoIntro][TIMELINE] P1 FINITA -> movimento silenzioso"
+	)
+
+	# ========================================================
+	# SILENZIO REALE TRA P1 E P2
+	# Nessun timer artificiale: il secondo audio aspetta Bruno.
+	# ========================================================
+
+	# Alzata a velocità naturale.
 	_start_cinematic_camera_move(
 		camera_stand_point,
 		camera_move_to_stand_time
 	)
 
-	var stand_available_time := maxf(
-		walk_start_time
-		- stand_start_time,
-		0.10
-	)
-
-	var stand_speed := (
-		_get_animation_speed_to_fit(
-			stand_animation,
-			stand_available_time
-		)
-	)
-
-	if bruno.has_method(
-		"cinematic_play_animation_and_wait"
-	):
+	if bruno.has_method("cinematic_play_animation_and_wait"):
 		await bruno.call(
 			"cinematic_play_animation_and_wait",
 			stand_animation,
 			0.10,
-			stand_speed
+			1.0
 		)
 	else:
-		_play_bruno_animation(
+		await _play_one_animation_and_wait(
 			stand_animation,
-			0.10,
-			stand_speed
-		)
-
-	if (
-		bruno_animation_player != null
-		and _dialogue_elapsed_seconds()
-			< walk_start_time
-	):
-		_play_bruno_animation(
-			standing_idle_animation,
 			0.10,
 			1.0
 		)
 
-	await _wait_until_dialogue_time(
-		walk_start_time
-	)
-
 	if not is_inside_tree():
 		return
 
-	# 26 s: cammina verso il marker già validato.
-	if bruno.has_method(
-		"cinematic_move_to"
-	):
+	# Cammino verso Point1.
+	# Velocità cinematicamente più lenta; la velocità originale
+	# viene ripristinata prima della boss battle.
+	_apply_intro_walk_speed()
+
+	if bruno.has_method("cinematic_move_to"):
 		bruno.call(
 			"cinematic_move_to",
 			point_1.global_position,
@@ -498,101 +903,339 @@ func _run_dialogue_animation_timeline() -> void:
 	while (
 		is_inside_tree()
 		and bruno != null
-		and bruno.has_method(
-			"cinematic_is_moving"
-		)
-		and bool(
-			bruno.call(
-				"cinematic_is_moving"
-			)
-		)
+		and bruno.has_method("cinematic_is_moving")
+		and bool(bruno.call("cinematic_is_moving"))
 	):
 		await get_tree().process_frame
 
 	if not is_inside_tree():
 		return
 
-	if bruno.has_method(
-		"cinematic_stop_move"
-	):
+	# Arrivo: niente idle. Talking leggero mentre si gira.
+	if bruno.has_method("cinematic_stop_move"):
 		bruno.call(
 			"cinematic_stop_move",
+			talk_6_animation
+		)
+
+	await _turn_bruno_toward_focus()
+
+	if not is_inside_tree():
+		return
+
+	# ========================================================
+	# PARTE 2
+	# Parte ESATTAMENTE quando Bruno è arrivato e ci sta guardando.
+	# Da qui tutti i tempi tornano a 0.
+	# ========================================================
+	_play_dialogue_part2()
+
+	_play_bruno_animation(
+		talk_6_animation,
+		standing_anim_blend_time,
+		1.0
+	)
+
+	# --------------------------------------------------------
+	# 0 -> 4.20
+	# "Visto che sei arrivato... possiamo presentarci."
+	# Gesti piccoli/naturali.
+	# --------------------------------------------------------
+	await _play_continuous_talk_until(
+		p2_bow_time,
+		[
+			talk_6_animation,
+			talk_5_animation,
 			talk_hands_open_animation
+		],
+		false
+	)
+
+	if not is_inside_tree():
+		return
+
+	# --------------------------------------------------------
+	# ~4.20
+	# "Bruno Buozzi. Responsabile acquisti."
+	# BOW completo.
+	# --------------------------------------------------------
+	await _play_one_shot_then_talk_until(
+		bow_animation,
+		p2_laugh_1_time
+	)
+
+	if not is_inside_tree():
+		return
+
+	# --------------------------------------------------------
+	# Fino a ~23.75:
+	# offerte / prezzi / Blob / firme / autorizzazioni.
+	# Mix vario. talking3 compare poco.
+	# --------------------------------------------------------
+	# _play_one_shot_then_talk_until ha già coperto questo tratto.
+
+	# --------------------------------------------------------
+	# ~23.75: risata dopo "se la viene a prendere".
+	# Deve finire PRIMA del tennis.
+	# --------------------------------------------------------
+	await _wait_until_dialogue_time(
+		p2_laugh_1_time
+	)
+
+	await _play_animation_for_max_time(
+		laugh_animation,
+		maxf(
+			p2_tennis_look_time
+			- _dialogue_elapsed_seconds(),
+			0.05
+		)
+	)
+
+	if not is_inside_tree():
+		return
+
+	# --------------------------------------------------------
+	# ~25.00: "E poi... c'è il tennis."
+	# --------------------------------------------------------
+	await _wait_until_dialogue_time(
+		p2_tennis_look_time
+	)
+
+	await _play_one_shot_then_talk_until(
+		look_away_animation,
+		p2_happy_hand_time
+	)
+
+	if not is_inside_tree():
+		return
+
+	# --------------------------------------------------------
+	# ~27.35: "Ahhh... il tennis."
+	# --------------------------------------------------------
+	await _wait_until_dialogue_time(
+		p2_happy_hand_time
+	)
+
+	await _play_one_shot_then_talk_until(
+		happy_hand_animation,
+		p2_stretching_time
+	)
+
+	if not is_inside_tree():
+		return
+
+	# --------------------------------------------------------
+	# ~30.25: blocco stretching.
+	# La clip dura 8.867 s e qui viene lasciata completa.
+	# --------------------------------------------------------
+	await _wait_until_dialogue_time(
+		p2_stretching_time
+	)
+
+	await _play_one_animation_and_wait(
+		stretching_animation,
+		standing_anim_blend_time,
+		1.0
+	)
+
+	if not is_inside_tree():
+		return
+
+	# Dritto / rovescio / servizio / stile / Roger:
+	# gesti piccoli di testa e sguardo, niente idle.
+	if _dialogue_elapsed_seconds() < p2_laugh_2_time:
+		await _play_continuous_talk_until(
+			p2_laugh_2_time,
+			[
+				talk_4_animation,
+				talk_6_animation,
+				talk_5_animation,
+				talk_hands_open_animation
+			],
+			false
 		)
 
-	# Da qui in poi Bruno guarda la camera.
-	await _turn_bruno_toward_camera()
-
-	# 28 -> 56 s: mix di idle e talking, senza animazione angry.
-	await _wait_until_dialogue_time(
-		standing_talk_start_time
-	)
-
 	if not is_inside_tree():
 		return
 
-	await _play_standing_mix_until(
-		standing_talk_first_end_time
-	)
-
-	# 57 s: risata.
-	await _wait_until_dialogue_time(
-		first_laugh_time
-	)
-
-	if not is_inside_tree():
-		return
-
-	if laugh_animation != &"" and _animation_exists(laugh_animation):
-		await _play_one_animation_and_wait(
-			laugh_animation,
-			standing_anim_blend_time,
-			1.0
+	# --------------------------------------------------------
+	# ~44.95: risata dopo "Quasi alla Roger".
+	# --------------------------------------------------------
+	await _play_animation_for_max_time(
+		laugh_animation,
+		maxf(
+			p2_angry_time
+			- _dialogue_elapsed_seconds(),
+			0.05
 		)
-
-	# Dopo questo punto torna al mix normale fino a 1:10.
-	if _dialogue_elapsed_seconds() < angry_talk_start_time:
-		await _play_standing_mix_until(
-			angry_talk_start_time
-		)
-
-	if not is_inside_tree():
-		return
-
-	# 1:10 -> 1:22: talking angry.
-	await _wait_until_dialogue_time(
-		angry_talk_start_time
 	)
 
 	if not is_inside_tree():
 		return
 
-	await _loop_animation_until(
+	# --------------------------------------------------------
+	# ~48.10: "[annoyed] Che c'è? Non mi credi?"
+	# talking_angry SOLO per questa finestra: viene tagliato.
+	# --------------------------------------------------------
+	await _wait_until_dialogue_time(
+		p2_angry_time
+	)
+
+	await _play_animation_for_max_time(
 		angry_talk_animation,
-		angry_talk_end_time
+		maxf(
+			p2_challenge_time
+			- _dialogue_elapsed_seconds(),
+			0.05
+		)
 	)
 
 	if not is_inside_tree():
 		return
 
-	# 1:22: la risata in piedi verrà agganciata quando fissiamo
-	# il nome definitivo della nuova animazione.
-	if laugh_animation != &"" and _animation_exists(laugh_animation):
-		await _play_one_animation_and_wait(
-			laugh_animation,
-			standing_anim_blend_time,
-			1.0
+	# --------------------------------------------------------
+	# ~50.20: "Allora facciamo così. Ti sfido."
+	# talking_sfida una sola volta.
+	# --------------------------------------------------------
+	await _wait_until_dialogue_time(
+		p2_challenge_time
+	)
+
+	await _play_one_animation_and_wait(
+		talk_left_animation,
+		standing_anim_blend_time,
+		1.0
+	)
+
+	if not is_inside_tree():
+		return
+
+	# Dopo la sfida: torna a parlare normalmente.
+	if _dialogue_elapsed_seconds() < p2_disappointed_time:
+		await _play_continuous_talk_until(
+			p2_disappointed_time,
+			[
+				talk_hands_open_animation,
+				talk_5_animation,
+				talk_right_hand_animation,
+				talk_6_animation
+			],
+			false
 		)
 
 	if not is_inside_tree():
 		return
 
-	# Poi torna ai talking normali fino alla fine dell'audio.
-	await _play_standing_mix_until_dialogue_end()
-
-	print(
-		"[BrunoIntro] Timeline dialogo completata fino alla fine audio."
+	# --------------------------------------------------------
+	# ~58.70: "Però... aspetta. Mi manca la racchetta."
+	# disappointed completo (4.183 s).
+	# --------------------------------------------------------
+	await _wait_until_dialogue_time(
+		p2_disappointed_time
 	)
+
+	await _play_one_animation_and_wait(
+		&"mie/disappointed",
+		standing_anim_blend_time,
+		1.0
+	)
+
+	if not is_inside_tree():
+		return
+
+	# "È qui fuori... io vado a prenderla... puoi correre,
+	# spararmi, nasconderti..." -> talking vari.
+	if _dialogue_elapsed_seconds() < p2_laugh_3_time:
+		await _play_continuous_talk_until(
+			p2_laugh_3_time,
+			[
+				talk_4_animation,
+				talk_passionately_animation,
+				talk_6_animation,
+				talk_5_animation,
+				talk_hands_open_animation,
+				talk_3_animation,
+				talk_right_hand_animation
+			],
+			false
+		)
+
+	if not is_inside_tree():
+		return
+
+	# --------------------------------------------------------
+	# ~68.05: ultima risata.
+	# --------------------------------------------------------
+	await _wait_until_dialogue_time(
+		p2_laugh_3_time
+	)
+
+	await _play_animation_for_max_time(
+		laugh_animation,
+		minf(
+			short_laugh_max_duration,
+			maxf(
+				p2_final_yell_time
+				- _dialogue_elapsed_seconds()
+				- 0.20,
+				0.05
+			)
+		)
+	)
+
+	if not is_inside_tree():
+		return
+
+	# "Poi vediamo quanto sei bravo." + raccordo verso finale.
+	if _dialogue_elapsed_seconds() < p2_final_yell_time:
+		await _play_continuous_talk_until(
+			p2_final_yell_time,
+			[
+				talk_6_animation,
+				talk_5_animation,
+				talk_hands_open_animation
+			],
+			false
+		)
+
+	if not is_inside_tree():
+		return
+
+	# --------------------------------------------------------
+	# ~74.20:
+	# talking_urla parte prima della parola finale, così il gesto
+	# costruisce l'urlo e "SERVIZIO!" cade nella parte conclusiva.
+	# L'audio resta il master della chiusura.
+	# --------------------------------------------------------
+	await _wait_until_dialogue_time(
+		p2_final_yell_time
+	)
+
+	if not is_inside_tree():
+		return
+
+	_play_bruno_animation(
+		&"mie/talking_urla",
+		0.10,
+		1.0
+	)
+
+	if (
+		dialogue_player != null
+		and dialogue_player.playing
+	):
+		await dialogue_player.finished
+
+	if not is_inside_tree():
+		return
+
+	if debug_animation_timeline:
+		print(
+			"[BrunoIntro][TIMELINE] AUDIO P2 FINITO -> ritorno camera/player | t_p2=",
+			"%.2f" % _dialogue_elapsed_seconds()
+		)
+
+	await _finish_cinematic_and_start_boss()
 
 
 func _start_cinematic_camera_move(
@@ -692,6 +1335,50 @@ func _play_standing_mix_until_dialogue_end() -> void:
 	)
 
 
+func _default_talking_mix() -> Array[StringName]:
+	return [
+		talk_hands_open_animation,
+		talk_3_animation,
+		talk_right_hand_animation,
+		talk_5_animation,
+		talk_4_animation,
+		talk_passionately_animation,
+		talk_6_animation,
+		talk_hands_open_animation,
+		talk_4_animation,
+		talk_right_hand_animation,
+		talk_3_animation,
+		talk_6_animation,
+		talk_5_animation
+	]
+
+
+func _play_one_shot_then_talk_until(
+	animation_name: StringName,
+	next_event_time: float
+) -> void:
+	var remaining := (
+		next_event_time
+		- _dialogue_elapsed_seconds()
+	)
+
+	if remaining > 0.0:
+		await _play_animation_for_max_time(
+			animation_name,
+			remaining
+		)
+
+	if not is_inside_tree():
+		return
+
+	if _dialogue_elapsed_seconds() < next_event_time:
+		await _play_continuous_talk_until(
+			next_event_time,
+			_default_talking_mix(),
+			false
+		)
+
+
 func _play_continuous_talk_until(
 	end_time_seconds: float,
 	talk_sequence: Array[StringName],
@@ -728,6 +1415,9 @@ func _play_continuous_talk_until(
 		if not _animation_exists(
 			animation_name
 		):
+			# SAFE: mai ciclare senza yield. Un nome errato non deve
+			# poter congelare il main thread di Godot.
+			await get_tree().process_frame
 			continue
 
 		var remaining := (
@@ -832,6 +1522,14 @@ func _play_one_animation_and_wait(
 		/ safe_speed
 	)
 
+	if debug_animation_timeline:
+		print(
+			"[BrunoIntro][ANIM] WAIT ONE ",
+			String(animation_name),
+			" | duration=",
+			"%.3f" % duration
+		)
+
 	_play_bruno_animation(
 		animation_name,
 		blend_time,
@@ -861,8 +1559,22 @@ func _wait_current_animation_end(
 		0.01
 	)
 
+	var wait_time := animation.length / speed
+
+	if debug_animation_timeline:
+		print(
+			"[BrunoIntro][ANIM] WAIT CURRENT ",
+			String(animation_name),
+			" | len=",
+			"%.3f" % animation.length,
+			" | speed=",
+			"%.3f" % speed,
+			" | wait=",
+			"%.3f" % wait_time
+		)
+
 	await get_tree().create_timer(
-		animation.length / speed
+		wait_time
 	).timeout
 
 
@@ -870,6 +1582,10 @@ func _animation_exists(
 	animation_name: StringName
 ) -> bool:
 	if bruno_animation_player == null:
+		push_error(
+			"BrunoIntroController: AnimationPlayer nullo mentre cerco: "
+			+ String(animation_name)
+		)
 		return false
 
 	if bruno_animation_player.has_animation(
@@ -881,6 +1597,12 @@ func _animation_exists(
 		"BrunoIntroController: animazione non trovata: "
 		+ String(animation_name)
 	)
+
+	if debug_animation_timeline:
+		print(
+			"[BrunoIntro][ANIM] Disponibili: ",
+			bruno_animation_player.get_animation_list()
+		)
 
 	return false
 
@@ -963,6 +1685,22 @@ func _play_bruno_animation(
 		)
 		return
 
+	if debug_animation_timeline:
+		var anim := bruno_animation_player.get_animation(
+			animation_name
+		)
+
+		print(
+			"[BrunoIntro][ANIM] PLAY ",
+			String(animation_name),
+			" | t_dialogo=",
+			"%.2f" % _dialogue_elapsed_seconds(),
+			" | len=",
+			"%.3f" % (anim.length if anim != null else -1.0),
+			" | speed=",
+			"%.3f" % playback_speed
+		)
+
 	bruno_animation_player.play(
 		animation_name,
 		blend_time,
@@ -970,20 +1708,48 @@ func _play_bruno_animation(
 	)
 
 
-func _turn_bruno_toward_camera() -> void:
+func _turn_bruno_toward_focus() -> void:
 	if bruno == null:
-		return
-
-	if cinematic_camera == null:
 		return
 
 	if not bruno is Node3D:
 		return
 
 	var bruno_3d := bruno as Node3D
+	var focus_position := Vector3.ZERO
+	var focus_valid := false
+
+	# Modalità cinematica normale: guarda la camera della cutscene.
+	if (
+		cinematic_camera != null
+		and is_instance_valid(cinematic_camera)
+	):
+		focus_position = cinematic_camera.global_position
+		focus_valid = true
+
+	# Modalità preview F9: non esiste la camera cinematica,
+	# quindi Bruno guarda il player reale.
+	elif (
+		dialogue_preview_mode
+		and player != null
+		and is_instance_valid(player)
+	):
+		focus_position = player.global_position
+		focus_valid = true
+
+	# Fallback: usa la camera del player se disponibile.
+	elif (
+		player_camera != null
+		and is_instance_valid(player_camera)
+	):
+		focus_position = player_camera.global_position
+		focus_valid = true
+
+	if not focus_valid:
+		return
 
 	var direction := (
-		cinematic_camera.global_position
+		focus_position
 		- bruno_3d.global_position
 	)
 
@@ -1289,15 +2055,32 @@ func _resolve_bruno_animation_player() -> void:
 	bruno_animation_player = null
 
 	if bruno == null:
+		push_error(
+			"BrunoIntroController: Bruno non assegnato, impossibile risolvere AnimationPlayer."
+		)
 		return
 
 	var candidate := bruno.get_node_or_null(
-		"Meshy_AI_Mutated_Tennis_Player_All_Animations/AnimationPlayer"
+		"BetterBuozzi/AnimationPlayer"
 	)
 
-	if candidate is AnimationPlayer:
-		bruno_animation_player = (
-			candidate as AnimationPlayer
+	if not candidate is AnimationPlayer:
+		push_error(
+			"BrunoIntroController: BetterBuozzi/AnimationPlayer non trovato."
+		)
+		return
+
+	bruno_animation_player = candidate as AnimationPlayer
+
+	if debug_animation_timeline:
+		print(
+			"[BrunoIntro][ANIM] AnimationPlayer risolto: ",
+			bruno_animation_player.get_path()
+		)
+
+		print(
+			"[BrunoIntro][ANIM] Animazioni disponibili: ",
+			bruno_animation_player.get_animation_list()
 		)
 
 
@@ -1437,6 +2220,147 @@ func restore_intro_blockers() -> void:
 	print(
 		"[BrunoIntro] Collisioni intro ripristinate."
 	)
+
+
+func _finish_cinematic_and_start_boss() -> void:
+	# IMPORTANTE:
+	# la velocità lenta vale SOLO per il movimento cinematografico.
+	# Prima del combattimento ripristiniamo il valore originale.
+	_restore_bruno_cinematic_walk_speed()
+
+	# Terminato l'audio, prima restituisce la visuale al Player.
+	_restore_player_camera()
+
+	# Ridà il controllo al Player.
+	_unlock_player()
+
+	# La HUD è rimasta nascosta per tutta la cinematic e torna ora.
+	_restore_hud_visibility()
+
+	# Breve assestamento sulla visuale del Player.
+	if boss_start_delay_after_camera_return > 0.0:
+		await get_tree().create_timer(
+			boss_start_delay_after_camera_return
+		).timeout
+
+	if not is_inside_tree():
+		return
+
+	# Ripristina i blocker temporaneamente disabilitati.
+	restore_intro_blockers()
+
+	# NON tocchiamo la logica di combattimento:
+	# richiama il metodo esistente di Bruno, già validato nel poligono
+	# (SEEK_RACKET / MOVE_TO_PLAYER / navigation / velocità di fase).
+	start_boss_fight()
+
+	print(
+		"[BrunoIntro] NORMAL: camera/HUD ripristinati -> start_boss_fight esistente."
+	)
+
+
+func _restore_player_camera() -> void:
+	if (
+		player_camera == null
+		or not is_instance_valid(player_camera)
+	):
+		_resolve_player_camera()
+
+	if (
+		player_camera != null
+		and is_instance_valid(player_camera)
+	):
+		player_camera.make_current()
+
+	if (
+		cinematic_camera != null
+		and is_instance_valid(cinematic_camera)
+	):
+		cinematic_camera.queue_free()
+
+	cinematic_camera = null
+
+
+func _capture_and_hide_hud() -> void:
+	if hud_root == null:
+		push_warning(
+			"[HUD DEBUG] HUD Root NON assegnato: la HUD non può sparire."
+		)
+		return
+
+	print(
+		"[HUD DEBUG] root=",
+		hud_root.get_path(),
+		" class=",
+		hud_root.get_class()
+	)
+
+	if not hud_visibility_captured:
+		if hud_root is CanvasLayer:
+			hud_original_visible = (
+				hud_root as CanvasLayer
+			).visible
+			hud_visibility_captured = true
+
+		elif hud_root is CanvasItem:
+			hud_original_visible = (
+				hud_root as CanvasItem
+			).visible
+			hud_visibility_captured = true
+
+		else:
+			push_warning(
+				"[HUD DEBUG] HUD Root non è CanvasLayer/CanvasItem."
+			)
+			return
+
+	print(
+		"[HUD DEBUG] visible PRIMA=",
+		hud_original_visible
+	)
+
+	if hud_root is CanvasLayer:
+		(hud_root as CanvasLayer).visible = false
+
+	elif hud_root is CanvasItem:
+		(hud_root as CanvasItem).visible = false
+
+	var visible_after := true
+
+	if hud_root is CanvasLayer:
+		visible_after = (
+			hud_root as CanvasLayer
+		).visible
+
+	elif hud_root is CanvasItem:
+		visible_after = (
+			hud_root as CanvasItem
+		).visible
+
+	print(
+		"[HUD DEBUG] visible DOPO hide=",
+		visible_after
+	)
+
+
+func _restore_hud_visibility() -> void:
+	if hud_root == null:
+		return
+
+	if not hud_visibility_captured:
+		return
+
+	if hud_root is CanvasLayer:
+		(hud_root as CanvasLayer).visible = (
+			hud_original_visible
+		)
+
+	elif hud_root is CanvasItem:
+		(hud_root as CanvasItem).visible = (
+			hud_original_visible
+	)
+
+	hud_visibility_captured = false
 
 
 func start_boss_fight() -> void:
