@@ -22,6 +22,26 @@ enum State {
 
 
 # ============================================================
+# ACTIVATION / CINEMATIC INTRO
+# ============================================================
+
+@export_category("Activation / Cinematic")
+@export var start_active: bool = true
+@export var cinematic_start_hidden: bool = false
+@export var cinematic_start_animation: StringName = &"Sitting_Clap"
+
+@export var cinematic_walk_speed: float = 1.6
+@export var cinematic_arrival_distance: float = 0.35
+@export var cinematic_rotation_speed: float = 7.0
+@export var cinematic_disable_collider: bool = true
+@export var cinematic_shrink_collider: bool = true
+@export_range(0.05, 0.50, 0.01) var cinematic_collider_radius: float = 0.16
+@export var cinematic_debug_logging: bool = true
+@export_range(0.05, 2.0, 0.05) var cinematic_debug_interval: float = 0.25
+@export_range(0.20, 1.00, 0.01) var cinematic_path_desired_distance: float = 0.35
+
+
+# ============================================================
 # HEALTH / BOSS
 # ============================================================
 
@@ -77,6 +97,234 @@ enum State {
 @export var navigation_direct_fallback: bool = true
 @export var phase_2_racket_run_speed: float = 3.80
 @export var phase_3_racket_run_speed: float = 4.50
+
+
+# ============================================================
+# CINEMATIC MOVEMENT
+# ============================================================
+
+func _process_cinematic_move(delta: float) -> void:
+	var horizontal_to_target := (
+		cinematic_move_target
+		- global_position
+	)
+
+	horizontal_to_target.y = 0.0
+
+	var distance_to_target: float = (
+		horizontal_to_target.length()
+	)
+
+	if (
+		distance_to_target
+		<= cinematic_arrival_distance
+	):
+		_cinematic_debug_write(
+			"ARRIVED threshold root=%s dist=%.4f" % [
+				str(global_position),
+				distance_to_target
+			]
+		)
+
+		cinematic_stop_move()
+		return
+
+	var direction := _get_navigation_direction(
+		cinematic_move_target
+	)
+
+	cinematic_debug_elapsed += delta
+
+	if (
+		cinematic_debug_logging
+		and cinematic_debug_elapsed
+			>= cinematic_debug_interval
+	):
+		cinematic_debug_elapsed = 0.0
+		_cinematic_debug_snapshot(
+			direction,
+			distance_to_target
+		)
+
+	if direction == Vector3.ZERO:
+		_stop_horizontal_motion()
+		return
+
+	var desired_yaw := atan2(
+		direction.x,
+		direction.z
+	)
+
+	rotation.y = lerp_angle(
+		rotation.y,
+		desired_yaw,
+		cinematic_rotation_speed * delta
+	)
+
+	var movement_distance: float = minf(
+		cinematic_walk_speed * delta,
+		distance_to_target
+	)
+
+	var next_position := global_position
+
+	next_position.x += (
+		direction.x
+		* movement_distance
+	)
+
+	next_position.z += (
+		direction.z
+		* movement_distance
+	)
+
+	next_position.y = global_position.y
+
+	global_position = next_position
+	velocity = Vector3.ZERO
+
+
+# ============================================================
+# CINEMATIC DEBUG LOG
+# ============================================================
+
+func _open_cinematic_debug_log() -> void:
+	if not cinematic_debug_logging:
+		return
+
+	cinematic_debug_file = FileAccess.open(
+		cinematic_debug_path,
+		FileAccess.WRITE
+	)
+
+	if cinematic_debug_file == null:
+		push_warning(
+			"BrunoBuozzi: impossibile creare il log cinematico."
+		)
+		return
+
+	_cinematic_debug_write(
+		"=== BRUNO CINEMATIC DEBUG START ==="
+	)
+
+	_cinematic_debug_write(
+		"root=%s model=%s nav_agent_parent=%s" % [
+			str(global_position),
+			str(model_root.global_position if model_root != null else Vector3.ZERO),
+			str(
+				navigation_agent.get_parent().global_position
+				if (
+					navigation_agent != null
+					and navigation_agent.get_parent() is Node3D
+				)
+				else Vector3.ZERO
+			)
+		]
+	)
+
+
+func _cinematic_debug_write(
+	message: String
+) -> void:
+	if not cinematic_debug_logging:
+		return
+
+	var stamped := (
+		"[%0.3f] %s" % [
+			Time.get_ticks_msec() / 1000.0,
+			message
+		]
+	)
+
+	print(
+		"[BrunoCinematicDebug] ",
+		message
+	)
+
+	if cinematic_debug_file != null:
+		cinematic_debug_file.store_line(
+			stamped
+		)
+
+		cinematic_debug_file.flush()
+
+
+func _cinematic_debug_snapshot(
+	direction: Vector3,
+	distance_to_target: float
+) -> void:
+	var next_path_position := Vector3.ZERO
+	var nav_finished := false
+	var nav_map_valid := false
+	var map_iteration: int = -1
+	var path_index: int = -1
+	var path_size: int = -1
+
+	if navigation_agent != null:
+		next_path_position = (
+			navigation_agent.get_next_path_position()
+		)
+
+		nav_finished = (
+			navigation_agent.is_navigation_finished()
+		)
+
+		var navigation_map := (
+			navigation_agent.get_navigation_map()
+		)
+
+		nav_map_valid = (
+			navigation_map.is_valid()
+		)
+
+		if nav_map_valid:
+			map_iteration = (
+				NavigationServer3D.map_get_iteration_id(
+					navigation_map
+				)
+			)
+
+		path_index = (
+			navigation_agent.get_current_navigation_path_index()
+		)
+
+		path_size = (
+			navigation_agent.get_current_navigation_path().size()
+		)
+
+	var hips_world := Vector3.ZERO
+
+	if (
+		general_skeleton != null
+		and cinematic_hips_bone_index >= 0
+	):
+		hips_world = _get_hips_world_position()
+
+	_cinematic_debug_write(
+		(
+			"root=%s model=%s hips=%s target=%s dist=%.4f "
+			+ "dir=%s next=%s nav_finished=%s "
+			+ "map_valid=%s iteration=%d path_index=%d path_size=%d "
+			+ "nav_target=%s path_desired=%.3f collider_disabled=%s walk_hips_lock=%s"
+		) % [
+			str(global_position),
+			str(model_root.global_position if model_root != null else Vector3.ZERO),
+			str(hips_world),
+			str(cinematic_move_target),
+			distance_to_target,
+			str(direction),
+			str(next_path_position),
+			str(nav_finished),
+			str(nav_map_valid),
+			map_iteration,
+			path_index,
+			path_size,
+			str(navigation_agent.target_position if navigation_agent != null else Vector3.ZERO),
+			navigation_agent.path_desired_distance if navigation_agent != null else 0.0,
+			str(body_collision_shape.disabled if body_collision_shape != null else false),
+			str(cinematic_walk_hips_lock_active)
+		]
+	)
 
 
 # ============================================================
@@ -200,6 +448,13 @@ const ACTION_SHIELD_SCENE: PackedScene = preload(
 	$Meshy_AI_Mutated_Tennis_Player_All_Animations
 )
 
+
+@onready var general_skeleton: Skeleton3D = (
+	$Meshy_AI_Mutated_Tennis_Player_All_Animations
+	/target_character
+	/GeneralSkeleton
+)
+
 @onready var animation_player: AnimationPlayer = (
 	$Meshy_AI_Mutated_Tennis_Player_All_Animations/AnimationPlayer
 )
@@ -227,6 +482,7 @@ const ACTION_SHIELD_SCENE: PackedScene = preload(
 ) as Marker3D
 
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
+@onready var body_collision_shape: CollisionShape3D = $CollisionShape3D
 
 
 # ============================================================
@@ -238,6 +494,30 @@ var racket_target: Node3D = null
 var racket_pickup_position: Marker3D = null
 var state: State = State.IDLE
 var rng := RandomNumberGenerator.new()
+
+var ai_active: bool = true
+var cinematic_locked: bool = false
+var cinematic_move_active: bool = false
+var cinematic_move_target: Vector3 = Vector3.ZERO
+var cinematic_move_animation: StringName = &"Casual_Walk"
+
+var cinematic_hips_anchor_active: bool = false
+var cinematic_hips_anchor_world: Vector3 = Vector3.ZERO
+var cinematic_model_base_position: Vector3 = Vector3.ZERO
+var cinematic_hips_bone_index: int = -1
+var original_collider_shape: Shape3D
+var original_collider_disabled: bool = false
+var original_capsule_radius: float = 0.0
+var original_capsule_height: float = 0.0
+var cinematic_collider_is_shrunk: bool = false
+
+var cinematic_walk_hips_lock_active: bool = false
+var cinematic_walk_hips_anchor_local: Vector3 = Vector3.ZERO
+
+var cinematic_debug_elapsed: float = 0.0
+var cinematic_debug_file: FileAccess
+var cinematic_debug_path: String = "user://bruno_cinematic_debug.log"
+var original_path_desired_distance: float = 0.20
 
 
 # ============================================================
@@ -329,6 +609,8 @@ const ANIM_FALLING_DOWN: StringName = &"falling_down"
 const ANIM_STAND_UP: StringName = &"Stand_Up7"
 const ANIM_DEATH_FRONT: StringName = &"Shot_and_Fall_Backward"
 const ANIM_DEATH_BACK: StringName = &"Shot_in_the_Back_and_Fall"
+const ANIM_SITTING_CLAP: StringName = &"Sitting_Clap"
+const ANIM_SIT_TO_STAND: StringName = &"Sit_to_Stand_Transition_M"
 
 
 # ============================================================
@@ -337,6 +619,44 @@ const ANIM_DEATH_BACK: StringName = &"Shot_in_the_Back_and_Fall"
 
 func _ready() -> void:
 	rng.randomize()
+
+	_open_cinematic_debug_log()
+
+	cinematic_model_base_position = model_root.position
+
+	if general_skeleton != null:
+		cinematic_hips_bone_index = (
+			general_skeleton.find_bone(
+				"mixamorig_Hips"
+			)
+		)
+
+	if body_collision_shape != null:
+		original_collider_disabled = (
+			body_collision_shape.disabled
+		)
+
+	if (
+		body_collision_shape != null
+		and body_collision_shape.shape != null
+	):
+		original_collider_shape = (
+			body_collision_shape.shape
+		)
+
+		if original_collider_shape is CapsuleShape3D:
+			var original_capsule := (
+				original_collider_shape
+				as CapsuleShape3D
+			)
+
+			original_capsule_radius = (
+				original_capsule.radius
+			)
+
+			original_capsule_height = (
+				original_capsule.height
+			)
 
 	health = max_health
 	combat_phase = 1
@@ -360,6 +680,10 @@ func _ready() -> void:
 		push_error("BrunoBuozzi: NavigationAgent3D non trovato.")
 		return
 
+	original_path_desired_distance = (
+		navigation_agent.path_desired_distance
+	)
+
 	_create_action_shield()
 
 	animation_player.animation_finished.connect(_on_animation_finished)
@@ -374,16 +698,479 @@ func _ready() -> void:
 
 	_update_player_visibility()
 
-	if show_boss_bar:
-		_create_boss_bar()
-		_update_boss_bar()
+	ai_active = start_active
+	cinematic_locked = not start_active
 
-	_set_state(State.IDLE)
+	if start_active:
+		if show_boss_bar:
+			_create_boss_bar()
+			_update_boss_bar()
+
+		_set_state(State.IDLE)
+	else:
+		_prepare_cinematic_start()
 
 	_setup_navigation.call_deferred()
 
-	if test_mode:
+	if test_mode and start_active:
 		_start_test_after_delay()
+
+
+# ============================================================
+# ACTIVATION / CINEMATIC API
+# ============================================================
+
+func _prepare_cinematic_start() -> void:
+	ai_active = false
+	cinematic_locked = true
+	_stop_horizontal_motion()
+
+	_enable_cinematic_collider()
+
+	if navigation_agent != null:
+		navigation_agent.path_desired_distance = (
+			cinematic_path_desired_distance
+		)
+
+	invulnerable = true
+	player_visible = false
+
+	if navigation_agent != null:
+		navigation_agent.target_position = global_position
+
+	_set_action_shield(false)
+	invulnerable = true
+
+	if model_root != null:
+		model_root.visible = not cinematic_start_hidden
+
+	if (
+		animation_player != null
+		and cinematic_start_animation != &""
+	):
+		_play_animation(
+			cinematic_start_animation,
+			0.0,
+			1.0
+		)
+
+
+func cinematic_set_visible(visible_state: bool) -> void:
+	if model_root != null:
+		model_root.visible = visible_state
+
+
+func cinematic_play_animation(
+	animation_name: StringName,
+	blend_time: float = 0.15,
+	playback_speed: float = 1.0
+) -> void:
+	if ai_active:
+		return
+
+	_play_animation(
+		animation_name,
+		blend_time,
+		playback_speed
+	)
+
+
+func cinematic_play_sitting() -> void:
+	cinematic_play_animation(
+		ANIM_SITTING_CLAP,
+		0.15,
+		1.0
+	)
+
+
+func cinematic_play_sit_to_stand() -> void:
+	cinematic_play_animation(
+		ANIM_SIT_TO_STAND,
+		0.15,
+		1.0
+	)
+
+
+func cinematic_lock() -> void:
+	ai_active = false
+	cinematic_locked = true
+	cinematic_move_active = false
+	_stop_horizontal_motion()
+
+	_enable_cinematic_collider()
+
+	if navigation_agent != null:
+		navigation_agent.path_desired_distance = (
+			cinematic_path_desired_distance
+		)
+	player_visible = false
+	invulnerable = true
+
+	if navigation_agent != null:
+		navigation_agent.target_position = global_position
+
+	_set_action_shield(false)
+	invulnerable = true
+
+
+func cinematic_play_animation_and_wait(
+	animation_name: StringName,
+	blend_time: float = 0.15,
+	playback_speed: float = 1.0
+) -> void:
+	if ai_active:
+		return
+
+	if animation_player == null:
+		return
+
+	var compensate_horizontal_hips: bool = (
+		animation_name == ANIM_SIT_TO_STAND
+		and general_skeleton != null
+		and cinematic_hips_bone_index >= 0
+	)
+
+	if compensate_horizontal_hips:
+		cinematic_hips_anchor_world = (
+			_get_hips_world_position()
+		)
+
+		cinematic_hips_anchor_active = true
+
+	_play_animation(
+		animation_name,
+		blend_time,
+		playback_speed
+	)
+
+	while (
+		is_inside_tree()
+		and animation_player != null
+		and animation_player.is_playing()
+		and animation_player.current_animation == String(animation_name)
+	):
+		await get_tree().process_frame
+
+		if compensate_horizontal_hips:
+			_compensate_cinematic_hips_xz()
+
+	if compensate_horizontal_hips:
+		_compensate_cinematic_hips_xz()
+		_commit_cinematic_model_offset()
+
+	cinematic_hips_anchor_active = false
+
+
+func _get_hips_world_position() -> Vector3:
+	if (
+		general_skeleton == null
+		or cinematic_hips_bone_index < 0
+	):
+		return global_position
+
+	var hips_pose: Transform3D = (
+		general_skeleton.get_bone_global_pose(
+			cinematic_hips_bone_index
+		)
+	)
+
+	return general_skeleton.to_global(
+		hips_pose.origin
+	)
+
+
+func _compensate_cinematic_hips_xz() -> void:
+	if not cinematic_hips_anchor_active:
+		return
+
+	if (
+		general_skeleton == null
+		or cinematic_hips_bone_index < 0
+		or model_root == null
+	):
+		return
+
+	var current_hips_world := (
+		_get_hips_world_position()
+	)
+
+	var correction_world := (
+		cinematic_hips_anchor_world
+		- current_hips_world
+	)
+
+	correction_world.y = 0.0
+
+	model_root.global_position += correction_world
+
+
+func _commit_cinematic_model_offset() -> void:
+	if model_root == null:
+		return
+
+	var local_offset := (
+		model_root.position
+		- cinematic_model_base_position
+	)
+
+	local_offset.y = 0.0
+
+	if local_offset.length_squared() <= 0.000001:
+		model_root.position.x = cinematic_model_base_position.x
+		model_root.position.z = cinematic_model_base_position.z
+		return
+
+	var world_offset := (
+		global_transform.basis
+		* local_offset
+	)
+
+	world_offset.y = 0.0
+
+	global_position += world_offset
+
+	model_root.position.x = cinematic_model_base_position.x
+	model_root.position.z = cinematic_model_base_position.z
+
+	_invalidate_navigation_target()
+
+
+func cinematic_move_to(
+	target_position: Vector3,
+	walk_animation: StringName = &"Casual_Walk"
+) -> void:
+	if ai_active:
+		return
+
+	cinematic_move_target = target_position
+	cinematic_move_target.y = global_position.y
+	cinematic_move_animation = walk_animation
+	cinematic_move_active = true
+	cinematic_debug_elapsed = 0.0
+	_invalidate_navigation_target()
+
+	_cinematic_debug_write(
+		"MOVE_START target=%s root=%s model=%s" % [
+			str(cinematic_move_target),
+			str(global_position),
+			str(model_root.global_position if model_root != null else Vector3.ZERO)
+		]
+	)
+
+	if (
+		general_skeleton != null
+		and cinematic_hips_bone_index >= 0
+	):
+		cinematic_walk_hips_anchor_local = (
+			to_local(
+				_get_hips_world_position()
+			)
+		)
+
+		cinematic_walk_hips_lock_active = true
+
+	if cinematic_move_animation != &"":
+		_play_animation(
+			cinematic_move_animation,
+			0.15,
+			1.0
+		)
+
+
+func cinematic_stop_move(
+	idle_animation: StringName = &"Idle_3"
+) -> void:
+	_cinematic_debug_write(
+		"MOVE_STOP root=%s distance_to_target=%.4f" % [
+			str(global_position),
+			global_position.distance_to(cinematic_move_target)
+		]
+	)
+
+	cinematic_move_active = false
+	cinematic_walk_hips_lock_active = false
+	_stop_horizontal_motion()
+	_invalidate_navigation_target()
+
+	if model_root != null:
+		model_root.position.x = (
+			cinematic_model_base_position.x
+		)
+
+		model_root.position.z = (
+			cinematic_model_base_position.z
+		)
+
+	if navigation_agent != null:
+		navigation_agent.target_position = global_position
+
+	if idle_animation != &"":
+		_play_animation(
+			idle_animation,
+			0.15,
+			1.0
+		)
+
+
+func cinematic_is_moving() -> bool:
+	return cinematic_move_active
+
+
+func _compensate_cinematic_walk_hips_xz() -> void:
+	if not cinematic_walk_hips_lock_active:
+		return
+
+	if (
+		general_skeleton == null
+		or cinematic_hips_bone_index < 0
+		or model_root == null
+	):
+		return
+
+	var current_hips_local := (
+		to_local(
+			_get_hips_world_position()
+		)
+	)
+
+	var correction_local := (
+		cinematic_walk_hips_anchor_local
+		- current_hips_local
+	)
+
+	correction_local.y = 0.0
+
+	var correction_world := (
+		global_transform.basis
+		* correction_local
+	)
+
+	correction_world.y = 0.0
+
+	model_root.global_position += (
+		correction_world
+	)
+
+
+func _enable_cinematic_collider() -> void:
+	if body_collision_shape == null:
+		return
+
+	if cinematic_disable_collider:
+		body_collision_shape.set_deferred(
+			"disabled",
+			true
+		)
+
+		cinematic_collider_is_shrunk = false
+		return
+
+	if not cinematic_shrink_collider:
+		return
+
+	if cinematic_collider_is_shrunk:
+		return
+
+	if original_collider_shape == null:
+		return
+
+	if not original_collider_shape is CapsuleShape3D:
+		push_warning(
+			"BrunoBuozzi: collider cinematico supportato solo per CapsuleShape3D."
+		)
+		return
+
+	var cinematic_capsule := (
+		original_collider_shape.duplicate()
+		as CapsuleShape3D
+	)
+
+	if cinematic_capsule == null:
+		return
+
+	cinematic_capsule.radius = minf(
+		cinematic_collider_radius,
+		original_capsule_radius
+	)
+
+	cinematic_capsule.height = maxf(
+		original_capsule_height,
+		cinematic_capsule.radius * 2.0
+	)
+
+	body_collision_shape.shape = cinematic_capsule
+	cinematic_collider_is_shrunk = true
+
+
+func _restore_combat_collider() -> void:
+	if body_collision_shape == null:
+		return
+
+	if original_collider_shape != null:
+		body_collision_shape.shape = (
+			original_collider_shape
+		)
+
+	body_collision_shape.set_deferred(
+		"disabled",
+		original_collider_disabled
+	)
+
+	cinematic_collider_is_shrunk = false
+
+
+func start_boss_fight() -> void:
+	if state == State.DEAD:
+		return
+
+	_restore_combat_collider()
+
+	if navigation_agent != null:
+		navigation_agent.path_desired_distance = (
+			original_path_desired_distance
+		)
+
+	if model_root != null:
+		model_root.visible = true
+
+	cinematic_locked = false
+	cinematic_move_active = false
+	cinematic_walk_hips_lock_active = false
+	ai_active = true
+
+	if not phase_transition_active:
+		invulnerable = false
+
+	if (
+		show_boss_bar
+		and boss_bar_layer == null
+	):
+		_create_boss_bar()
+
+	_update_boss_bar()
+
+	if (
+		not has_racket
+		and (
+			racket_target == null
+			or not is_instance_valid(racket_target)
+		)
+	):
+		_find_racket_target()
+
+	if player == null or not is_instance_valid(player):
+		player = (
+			get_tree()
+			.get_first_node_in_group("player")
+			as CharacterBody3D
+		)
+
+	if player != null:
+		last_known_player_position = player.global_position
+
+	_update_player_visibility()
+	_invalidate_navigation_target()
+	_set_state(State.IDLE)
 
 
 func _setup_navigation() -> void:
@@ -396,12 +1183,25 @@ func _setup_navigation() -> void:
 	_invalidate_navigation_target()
 
 
+func _process(_delta: float) -> void:
+	if cinematic_walk_hips_lock_active:
+		_compensate_cinematic_walk_hips_xz()
+
+
 # ============================================================
 # PHYSICS
 # ============================================================
 
 func _physics_process(delta: float) -> void:
 	_update_action_shield(delta)
+
+	if not ai_active:
+		if cinematic_move_active:
+			_process_cinematic_move(delta)
+		else:
+			velocity = Vector3.ZERO
+
+		return
 
 	if not is_on_floor():
 		velocity += get_gravity() * delta
