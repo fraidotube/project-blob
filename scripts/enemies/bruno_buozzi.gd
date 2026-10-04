@@ -20,6 +20,10 @@ enum State {
 @export var test_start_delay: float = 2.0
 @export var has_racket: bool = false
 
+@export_category("Boss Movement Debug")
+@export var boss_movement_debug: bool = true
+@export_range(0.10, 2.00, 0.05) var boss_movement_debug_interval: float = 0.40
+
 
 # ============================================================
 # ACTIVATION / CINEMATIC INTRO
@@ -95,6 +99,12 @@ enum State {
 @export_category("Navigation")
 @export var navigation_repath_distance: float = 0.45
 @export var navigation_direct_fallback: bool = true
+@export_range(0.20, 1.00, 0.01) var combat_path_desired_distance: float = 0.35
+@export_range(0.01, 0.25, 0.01) var combat_horizontal_waypoint_skip_distance: float = 0.08
+@export_category("Combat Collider Test")
+@export var use_narrow_combat_collider: bool = true
+@export_range(0.10, 0.50, 0.01) var narrow_combat_collider_radius: float = 0.18
+@export var debug_slide_collisions: bool = true
 @export var phase_2_racket_run_speed: float = 3.80
 @export var phase_3_racket_run_speed: float = 4.50
 
@@ -440,10 +450,12 @@ func _start_delayed_visual_y_animation(
 
 @export_category("Visual Animation Offsets")
 @export var fall_visual_y_offset: float = 0.78
-@export var sitting_visual_y_offset: float = 0.48
+@export var sitting_visual_y_offset: float = 0.33
 @export var fall_reach_ground_time: float = 1.46
 @export var getup_start_rise_time: float = 4.58
 @export var getup_reach_standing_time: float = 6.21
+@export var sit_to_stand_start_rise_time: float = 0.70
+@export var sit_to_stand_reach_standing_time: float = 1.70
 
 
 # ============================================================
@@ -626,6 +638,12 @@ var original_path_desired_distance: float = 0.20
 var navigation_ready: bool = false
 var navigation_target_initialized: bool = false
 var last_navigation_target: Vector3 = Vector3.ZERO
+
+# Diagnostica movimento boss: non altera la logica AI.
+var boss_debug_elapsed: float = 0.0
+var boss_debug_due: bool = false
+var boss_debug_last_nav_reason: String = "not_called"
+var boss_debug_last_direction: Vector3 = Vector3.ZERO
 
 
 # ============================================================
@@ -922,9 +940,22 @@ func cinematic_play_sit_to_stand() -> void:
 		1.0
 	)
 
-	_start_visual_y_animation(
+	var animation_duration := _get_current_animation_real_duration()
+
+	var rise_start := minf(
+		sit_to_stand_start_rise_time,
+		animation_duration
+	)
+
+	var rise_end := minf(
+		sit_to_stand_reach_standing_time,
+		animation_duration
+	)
+
+	_start_delayed_visual_y_animation(
 		cinematic_model_base_position.y,
-		_get_current_animation_real_duration()
+		rise_start,
+		maxf(rise_end - rise_start, 0.01)
 	)
 
 
@@ -986,9 +1017,22 @@ func cinematic_play_animation_and_wait(
 	)
 
 	if animation_name == ANIM_SIT_TO_STAND:
-		_start_visual_y_animation(
+		var animation_duration := _get_current_animation_real_duration()
+
+		var rise_start := minf(
+			sit_to_stand_start_rise_time,
+			animation_duration
+		)
+
+		var rise_end := minf(
+			sit_to_stand_reach_standing_time,
+			animation_duration
+		)
+
+		_start_delayed_visual_y_animation(
 			cinematic_model_base_position.y,
-			_get_current_animation_real_duration()
+			rise_start,
+			maxf(rise_end - rise_start, 0.01)
 		)
 
 	while (
@@ -1250,6 +1294,59 @@ func _enable_cinematic_collider() -> void:
 	cinematic_collider_is_shrunk = true
 
 
+func _apply_narrow_combat_collider() -> void:
+	if not use_narrow_combat_collider:
+		return
+
+	if body_collision_shape == null:
+		return
+
+	if original_collider_shape == null:
+		return
+
+	if not original_collider_shape is CapsuleShape3D:
+		push_warning(
+			"BrunoBuozzi: narrow combat collider supportato solo per CapsuleShape3D."
+		)
+		return
+
+	var combat_capsule := (
+		original_collider_shape.duplicate()
+		as CapsuleShape3D
+	)
+
+	if combat_capsule == null:
+		return
+
+	combat_capsule.radius = minf(
+		narrow_combat_collider_radius,
+		original_capsule_radius
+	)
+
+	# Altezza invariata: riduciamo solo l'ingombro laterale.
+	combat_capsule.height = maxf(
+		original_capsule_height,
+		combat_capsule.radius * 2.0
+	)
+
+	body_collision_shape.shape = combat_capsule
+	body_collision_shape.set_deferred(
+		"disabled",
+		false
+	)
+
+	if boss_movement_debug:
+		print(
+			"[BOSS MOVE DEBUG] NARROW COMBAT COLLIDER",
+			" | original_radius=",
+			"%.3f" % original_capsule_radius,
+			" test_radius=",
+			"%.3f" % combat_capsule.radius,
+			" height=",
+			"%.3f" % combat_capsule.height
+		)
+
+
 func _restore_combat_collider() -> void:
 	if body_collision_shape == null:
 		return
@@ -1267,7 +1364,120 @@ func _restore_combat_collider() -> void:
 	cinematic_collider_is_shrunk = false
 
 
+
+func _boss_state_name(value: State) -> String:
+	match value:
+		State.IDLE:
+			return "IDLE"
+		State.MOVE_TO_PLAYER:
+			return "MOVE_TO_PLAYER"
+		State.SEEK_RACKET:
+			return "SEEK_RACKET"
+		State.PICKUP_RACKET:
+			return "PICKUP_RACKET"
+		State.BALL_ATTACK:
+			return "BALL_ATTACK"
+		State.MELEE_ATTACK:
+			return "MELEE_ATTACK"
+		State.SEARCH_PLAYER:
+			return "SEARCH_PLAYER"
+		State.DOWN:
+			return "DOWN"
+		State.GETTING_UP:
+			return "GETTING_UP"
+		State.DEAD:
+			return "DEAD"
+	return "UNKNOWN"
+
+
+func _boss_debug_begin_frame(delta: float) -> void:
+	if not boss_movement_debug:
+		boss_debug_due = false
+		return
+
+	boss_debug_elapsed += delta
+	if boss_debug_elapsed >= boss_movement_debug_interval:
+		boss_debug_elapsed = 0.0
+		boss_debug_due = true
+	else:
+		boss_debug_due = false
+
+
+func _boss_debug_snapshot(label: String) -> void:
+	if not boss_movement_debug or not boss_debug_due:
+		return
+
+	var player_dist := -1.0
+	var player_pos := Vector3.ZERO
+
+	if player != null and is_instance_valid(player):
+		player_pos = player.global_position
+		player_dist = global_position.distance_to(player_pos)
+
+	var racket_valid := (
+		racket_pickup_position != null
+		and is_instance_valid(racket_pickup_position)
+	)
+
+	var racket_pos := Vector3.ZERO
+	if racket_valid:
+		racket_pos = racket_pickup_position.global_position
+
+	var nav_target := Vector3.ZERO
+	var nav_next := Vector3.ZERO
+	var nav_finished := false
+	var nav_ready_now := navigation_ready
+	var path_size := -1
+	var path_index := -1
+	var path_desired := -1.0
+
+	if navigation_agent != null:
+		nav_target = navigation_agent.target_position
+		nav_next = navigation_agent.get_next_path_position()
+		nav_finished = navigation_agent.is_navigation_finished()
+		path_size = navigation_agent.get_current_navigation_path().size()
+		path_index = navigation_agent.get_current_navigation_path_index()
+		path_desired = navigation_agent.path_desired_distance
+
+	print(
+		"[BOSS MOVE DEBUG] ", label,
+		" | state=", _boss_state_name(state),
+		" ai=", ai_active,
+		" cin_locked=", cinematic_locked,
+		" cin_move=", cinematic_move_active,
+		" has_racket=", has_racket,
+		" player_visible=", player_visible,
+		" memory=", "%.2f" % player_memory_timer,
+		" pos=", global_position,
+		" vel=", velocity,
+		" player_pos=", player_pos,
+		" player_dist=", "%.3f" % player_dist,
+		" racket_valid=", racket_valid,
+		" racket_pos=", racket_pos,
+		" nav_ready=", nav_ready_now,
+		" nav_target=", nav_target,
+		" nav_next=", nav_next,
+		" nav_finished=", nav_finished,
+		" path_idx=", path_index,
+		" path_size=", path_size,
+		" path_desired=", "%.3f" % path_desired,
+		" nav_reason=", boss_debug_last_nav_reason,
+		" nav_dir=", boss_debug_last_direction
+	)
+
+
 func start_boss_fight() -> void:
+	if boss_movement_debug:
+		print(
+			"[BOSS MOVE DEBUG] START_BOSS_FIGHT ENTER",
+			" | pos=", global_position,
+			" state=", _boss_state_name(state),
+			" ai=", ai_active,
+			" cin_locked=", cinematic_locked,
+			" cin_move=", cinematic_move_active,
+			" has_racket=", has_racket
+		)
+
 	_set_model_visual_y(
 		cinematic_model_base_position.y
 	)
@@ -1276,11 +1486,20 @@ func start_boss_fight() -> void:
 		return
 
 	_restore_combat_collider()
+	_apply_narrow_combat_collider()
 
 	if navigation_agent != null:
 		navigation_agent.path_desired_distance = (
-			original_path_desired_distance
+			combat_path_desired_distance
 		)
+
+		if boss_movement_debug:
+			print(
+				"[BOSS MOVE DEBUG] COMBAT path_desired_distance=",
+				"%.3f" % navigation_agent.path_desired_distance,
+				" | original=",
+				"%.3f" % original_path_desired_distance
+			)
 
 	if model_root != null:
 		model_root.visible = true
@@ -1324,6 +1543,23 @@ func start_boss_fight() -> void:
 	_invalidate_navigation_target()
 	_set_state(State.IDLE)
 
+	if boss_movement_debug:
+		print(
+			"[BOSS MOVE DEBUG] START_BOSS_FIGHT READY",
+			" | state=", _boss_state_name(state),
+			" ai=", ai_active,
+			" cin_locked=", cinematic_locked,
+			" cin_move=", cinematic_move_active,
+			" player_visible=", player_visible,
+			" racket_valid=",
+			(
+				racket_pickup_position != null
+				and is_instance_valid(racket_pickup_position)
+			),
+			" pos=", global_position
+		)
+
+
 
 func _setup_navigation() -> void:
 	await get_tree().physics_frame
@@ -1345,7 +1581,11 @@ func _process(_delta: float) -> void:
 # ============================================================
 
 func _physics_process(delta: float) -> void:
+	_boss_debug_begin_frame(delta)
 	_update_action_shield(delta)
+
+	if boss_debug_due:
+		_boss_debug_snapshot("PHYSICS_BEGIN")
 
 	if not ai_active:
 		if cinematic_move_active:
@@ -1439,7 +1679,68 @@ func _physics_process(delta: float) -> void:
 		State.DEAD:
 			pass
 
+	if boss_debug_due:
+		_boss_debug_snapshot("PRE_MOVE_AND_SLIDE")
+
+	var boss_debug_before_move := global_position
 	move_and_slide()
+
+	if boss_debug_due:
+		print(
+			"[BOSS MOVE DEBUG] POST_MOVE_AND_SLIDE",
+			" | before=", boss_debug_before_move,
+			" after=", global_position,
+			" moved=", "%.5f" % boss_debug_before_move.distance_to(global_position),
+			" vel_after=", velocity
+		)
+
+
+		if debug_slide_collisions:
+			var collision_count := get_slide_collision_count()
+
+			print(
+				"[BOSS COLLISION DEBUG] count=",
+				collision_count
+			)
+
+			for collision_index in range(collision_count):
+				var collision := get_slide_collision(
+					collision_index
+				)
+
+				if collision == null:
+					continue
+
+				var collider_object := collision.get_collider()
+				var collider_name := "<null>"
+				var collider_path := "<non-node>"
+
+				if collider_object is Node:
+					var collider_node := collider_object as Node
+					collider_name = collider_node.name
+					collider_path = str(
+						collider_node.get_path()
+					)
+				elif collider_object != null:
+					collider_name = str(collider_object)
+
+				print(
+					"[BOSS COLLISION DEBUG] #",
+					collision_index,
+					" collider=",
+					collider_name,
+					" path=",
+					collider_path,
+					" normal=",
+					collision.get_normal(),
+					" position=",
+					collision.get_position(),
+					" travel=",
+					collision.get_travel(),
+					" remainder=",
+					collision.get_remainder()
+				)
+
 
 
 
@@ -1685,12 +1986,16 @@ func _direct_direction_to(target_position: Vector3) -> Vector3:
 
 
 func _get_navigation_direction(target_position: Vector3) -> Vector3:
+	boss_debug_last_nav_reason = "start"
+	boss_debug_last_direction = Vector3.ZERO
 	if navigation_agent == null:
+		boss_debug_last_nav_reason = "no_navigation_agent"
 		if navigation_direct_fallback:
 			return _direct_direction_to(target_position)
 		return Vector3.ZERO
 
 	if not navigation_ready:
+		boss_debug_last_nav_reason = "navigation_not_ready"
 		if navigation_direct_fallback:
 			return _direct_direction_to(target_position)
 		return Vector3.ZERO
@@ -1698,6 +2003,7 @@ func _get_navigation_direction(target_position: Vector3) -> Vector3:
 	var navigation_map := navigation_agent.get_navigation_map()
 
 	if not navigation_map.is_valid():
+		boss_debug_last_nav_reason = "navigation_map_invalid"
 		if navigation_direct_fallback:
 			return _direct_direction_to(target_position)
 		return Vector3.ZERO
@@ -1705,6 +2011,7 @@ func _get_navigation_direction(target_position: Vector3) -> Vector3:
 	var map_iteration := NavigationServer3D.map_get_iteration_id(navigation_map)
 
 	if map_iteration == 0:
+		boss_debug_last_nav_reason = "navigation_map_iteration_zero"
 		if navigation_direct_fallback:
 			return _direct_direction_to(target_position)
 		return Vector3.ZERO
@@ -1730,12 +2037,71 @@ func _get_navigation_direction(target_position: Vector3) -> Vector3:
 	delta_to_next.y = 0.0
 
 	if navigation_finished:
+		boss_debug_last_nav_reason = "navigation_finished"
 		return Vector3.ZERO
 
 	if delta_to_next.length_squared() <= 0.0001:
+		# IMPORTANTE:
+		# La cinematic usa questa stessa funzione. Non cambiamo il suo
+		# comportamento: il workaround seguente vale SOLO per l'AI di
+		# combattimento.
+		var combat_navigation_active := (
+			ai_active
+			and not cinematic_locked
+			and not cinematic_move_active
+		)
+
+		if combat_navigation_active:
+			var current_path := (
+				navigation_agent
+				.get_current_navigation_path()
+			)
+			var current_index := (
+				navigation_agent
+				.get_current_navigation_path_index()
+			)
+
+			# In alcuni cambi di quota il waypoint corrente può avere
+			# praticamente la stessa X/Z di Bruno ma una Y abbastanza
+			# diversa da non essere considerato raggiunto dall'Agent.
+			# In quel caso cerchiamo SOLO per la direzione di movimento
+			# il primo waypoint successivo realmente distante sul piano.
+			for path_index in range(
+				current_index + 1,
+				current_path.size()
+			):
+				var candidate := current_path[path_index]
+				var candidate_delta := (
+					candidate
+					- global_position
+				)
+				candidate_delta.y = 0.0
+
+				if (
+					candidate_delta.length()
+					<= combat_horizontal_waypoint_skip_distance
+				):
+					continue
+
+				boss_debug_last_direction = (
+					candidate_delta.normalized()
+				)
+				boss_debug_last_nav_reason = (
+					"combat_skip_vertical_waypoint"
+					+ "|from_idx="
+					+ str(current_index)
+					+ "|to_idx="
+					+ str(path_index)
+				)
+
+				return boss_debug_last_direction
+
+		boss_debug_last_nav_reason = "next_path_equals_current"
 		return Vector3.ZERO
 
-	return delta_to_next.normalized()
+	boss_debug_last_direction = delta_to_next.normalized()
+	boss_debug_last_nav_reason = "direction_ok"
+	return boss_debug_last_direction
 
 
 # ============================================================
@@ -3267,7 +3633,20 @@ func _set_state(new_state: State) -> void:
 	if state == new_state:
 		return
 
+	var previous_state := state
 	state = new_state
+
+	if boss_movement_debug:
+		print(
+			"[BOSS MOVE DEBUG] STATE ",
+			_boss_state_name(previous_state),
+			" -> ",
+			_boss_state_name(state),
+			" | pos=", global_position,
+			" vel=", velocity,
+			" player_visible=", player_visible,
+			" has_racket=", has_racket
+		)
 
 	if (
 		state == State.MOVE_TO_PLAYER
