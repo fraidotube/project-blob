@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://clq4dehi6ht3u"]
+
+[ext_resource type="PackedScene" uid="uid://draro5b8q7xmx" path="res://assets/models/enemies/bruno_buozzi/tennis-racket-wilson-blade/source/Formats/Racket_Wilson_Blade.fbx" id="1_a3n76"]
+
+[node name="BrunoRacketPickup" type="Node3D" unique_id=1153053581 groups=["bruno_racket_target"]]
+
+[node name="Racket_Wilson_Blade" parent="." unique_id=711081019 instance=ExtResource("1_a3n76")]
+transform = Transform3D(0.08, 0, 0, 0, 0.08, 0, 0, 0, 0.08, 0, 0, 0)
+
+[node name="PickupPosition" type="Marker3D" parent="." unique_id=1637370259]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.21495008, 0, -0.41696787)

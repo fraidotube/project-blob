@@ -1,6 +1,7 @@
 extends Area3D
 
 @export var tv_controller: Node
+@export var cinematic_controller: Node
 @export var interaction_name := "TELECOMANDO"
 
 const OUTLINE_SHADER := preload(
@@ -50,7 +51,7 @@ func _collect_interaction_geometry(node: Node) -> void:
 	if node.name == "InteractionOutline":
 		return
 	if node.name == "OutlineBuilder":
-			return
+		return
 	if node.name == "InteractionOutlineProxy":
 		return
 
@@ -103,6 +104,16 @@ func interact(_player: Node) -> void:
 
 	if tv_controller.has_method("toggle_tv"):
 		tv_controller.toggle_tv()
+
+	if (
+		cinematic_controller != null
+		and cinematic_controller.has_method(
+			"start_intro"
+		)
+	):
+		cinematic_controller.call(
+			"start_intro"
+		)
 
 
 func _play_remote_sound() -> void:

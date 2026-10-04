@@ -9,44 +9,43 @@ radius = 0.4272461
 
 [node name="BrunoBuozzi" type="CharacterBody3D" unique_id=349952186]
 script = ExtResource("1_qjdtd")
-test_mode = true
-max_health = 30
+start_active = false
 
 [node name="Meshy_AI_Mutated_Tennis_Player_All_Animations" parent="." unique_id=119878717 instance=ExtResource("1_614cq")]
 transform = Transform3D(1.15, 0, 0, 0, 1.15, 0, 0, 0, 1.15, 0, 0, 0)
 
 [node name="GeneralSkeleton" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character" parent_id_path=PackedInt32Array(119878717, 683758428) index="0" unique_id=2104236765]
-bones/0/position = Vector3(0.0036413749, 0.939472, -0.02283869)
-bones/0/rotation = Quaternion(-0.043830585, 0.0039860383, -0.0029347385, 0.9990268)
-bones/1/rotation = Quaternion(0.97094756, 0.011731356, -0.124207616, 0.20419548)
-bones/2/rotation = Quaternion(0.14182036, 0.008035919, 0.027305944, 0.9894831)
-bones/3/rotation = Quaternion(-0.543323, 0.08718315, -0.093382895, 0.82974625)
-bones/4/rotation = Quaternion(0.026851146, 0.9174812, -0.30812573, 0.2501321)
-bones/6/rotation = Quaternion(0.98796403, 0.02784346, 0.11728446, -0.09693385)
-bones/7/rotation = Quaternion(0.132454, -0.008829664, -0.027227277, 0.9907759)
-bones/8/rotation = Quaternion(-0.5942791, -0.24151564, 0.30358216, 0.70451427)
-bones/9/rotation = Quaternion(-0.046810016, 0.8414646, -0.24862629, -0.47742146)
-bones/11/rotation = Quaternion(0.08597282, 0.0112674255, -0.0051179184, 0.9962207)
-bones/12/rotation = Quaternion(0.040340204, 0.011507439, -0.0038280815, 0.9991125)
-bones/13/rotation = Quaternion(5.5588316e-09, -5.4133128e-08, -6.984917e-10, 1)
-bones/14/rotation = Quaternion(-0.5621849, -0.4040366, -0.5430411, 0.4751937)
-bones/15/rotation = Quaternion(-0.412615, 0.4164784, -0.32939383, 0.7401313)
-bones/16/rotation = Quaternion(0.020844283, 0.1184139, -0.013353432, 0.9926557)
-bones/17/rotation = Quaternion(-0.040069204, -0.11079796, 0.010303966, 0.99298143)
-bones/18/rotation = Quaternion(1.3467852e-07, 0.893532, -1.624398e-08, -0.44899955)
-bones/19/rotation = Quaternion(-0.20624341, -0.012375172, -0.0038354555, 0.97841495)
-bones/20/rotation = Quaternion(0.24596702, -0.047055323, -0.020517342, 0.967918)
-bones/21/rotation = Quaternion(9.3688655e-08, 0.75377613, 0.6548208, -0.055057343)
-bones/23/rotation = Quaternion(-0.5292688, 0.43732202, 0.5851737, 0.43150413)
-bones/24/rotation = Quaternion(-0.3247047, -0.3567042, 0.38509643, 0.78678447)
-bones/25/rotation = Quaternion(0.11030773, -0.13307312, 0.070354275, 0.9824328)
-bones/26/rotation = Quaternion(-0.06318669, 0.38702193, 0.01318294, 0.91980845)
+bones/0/position = Vector3(-0.0101692295, 0.6309269, -0.6849311)
+bones/0/rotation = Quaternion(-0.100811124, 0.03808863, -0.013728154, 0.9940815)
+bones/1/rotation = Quaternion(0.7864685, 0.14018889, -0.11819121, 0.58978415)
+bones/2/rotation = Quaternion(0.744139, 0.005561514, 0.11598724, 0.6578549)
+bones/3/rotation = Quaternion(-0.56058586, 0.116069146, -0.22791716, 0.78760725)
+bones/4/rotation = Quaternion(0.02021891, 0.93727183, -0.23085918, 0.26041666)
+bones/6/rotation = Quaternion(0.770558, -0.15070161, 0.1745859, 0.5941795)
+bones/7/rotation = Quaternion(0.6552264, -0.00701309, -0.10966639, 0.7473972)
+bones/8/rotation = Quaternion(-0.39561877, -0.3098866, 0.26152396, 0.8240518)
+bones/9/rotation = Quaternion(-0.055168387, 0.8388381, -0.24916214, -0.4808592)
+bones/11/rotation = Quaternion(0.29785535, 0.0023865602, -0.028587809, 0.9541799)
+bones/12/rotation = Quaternion(0.029921087, 0.008519527, 0.018932868, 0.9993367)
+bones/13/rotation = Quaternion(-1.6298153e-09, -5.308539e-08, -1.8626458e-09, 1)
+bones/14/rotation = Quaternion(-0.5513765, -0.40904412, -0.570845, 0.45033634)
+bones/15/rotation = Quaternion(-0.113765046, 0.50732297, -0.40673804, 0.7511626)
+bones/16/rotation = Quaternion(0.45408025, 0.09970382, -0.29088432, 0.8362156)
+bones/17/rotation = Quaternion(0.12418619, 0.50050503, 0.10379251, 0.8504703)
+bones/18/rotation = Quaternion(1.4714021e-07, 0.893532, -3.2928913e-08, -0.44899955)
+bones/19/rotation = Quaternion(0.011255572, -0.03470978, 0.021330351, 0.9991064)
+bones/20/rotation = Quaternion(-0.07557416, -0.06975914, -0.045169532, 0.99367094)
+bones/21/rotation = Quaternion(1.0354302e-07, 0.75377613, 0.6548208, -0.055057347)
+bones/23/rotation = Quaternion(-0.50523186, 0.45385134, 0.6067043, 0.41312173)
+bones/24/rotation = Quaternion(-0.18030354, -0.2491518, 0.4370267, 0.8452347)
+bones/25/rotation = Quaternion(0.1995171, -0.1304243, 0.12725213, 0.9628028)
+bones/26/rotation = Quaternion(0.2636064, -0.3988694, 0.0013556406, 0.8783012)
 
 [node name="mixamorig_Head" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton" index="0" unique_id=965521384]
-transform = Transform3D(0.9955151, 0.05062611, -0.07991717, -0.0685115, 0.9683515, -0.24000296, 0.06523749, 0.24440174, 0.96747684, 0.013619209, 1.4252377, -0.007946678)
+transform = Transform3D(0.9794107, 0.14171572, -0.14377514, -0.18061468, 0.93326825, -0.31046516, 0.09018296, 0.33004075, 0.93964887, 0.024000634, 1.0815592, -0.5454)
 
 [node name="BoneAttachment3D" type="BoneAttachment3D" parent="Meshy_AI_Mutated_Tennis_Player_All_Animations/target_character/GeneralSkeleton" index="1" unique_id=1764864201]
-transform = Transform3D(0.9798527, -0.0867492, -0.17989779, -0.1429241, -0.93372893, -0.32821, -0.13950413, 0.34730917, -0.9273157, -0.28319967, 0.69814694, 0.22448444)
+transform = Transform3D(-0.37818903, 0.27740404, -0.8831873, -0.889987, -0.37149307, 0.26441646, -0.2547477, 0.8860244, 0.3873806, -0.20136547, 0.50988376, -0.19812603)
 bone_name = "mixamorig_RightHandMiddle4"
 bone_idx = 27
 
@@ -68,5 +67,6 @@ shape = SubResource("CapsuleShape3D_hbjui")
 path_desired_distance = 0.2
 target_desired_distance = 0.1
 path_height_offset = 0.4
+debug_enabled = true
 
 [editable path="Meshy_AI_Mutated_Tennis_Player_All_Animations"]
