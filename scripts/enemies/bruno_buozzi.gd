@@ -108,6 +108,17 @@ enum State {
 @export var phase_2_racket_run_speed: float = 3.80
 @export var phase_3_racket_run_speed: float = 4.50
 
+@export_category("Combat Stuck Recovery")
+@export var combat_stuck_recovery_enabled: bool = true
+@export_range(0.05, 0.35, 0.01) var combat_step_height: float = 0.20
+@export_range(0.05, 0.40, 0.01) var combat_step_forward_distance: float = 0.18
+@export_range(0.01, 0.20, 0.01) var combat_step_floor_probe_extra: float = 0.06
+@export_range(0.10, 2.00, 0.05) var combat_stuck_trigger_time: float = 0.45
+@export_range(0.05, 0.80, 0.05) var combat_stuck_retry_delay: float = 0.40
+@export_range(0.05, 0.50, 0.01) var combat_stuck_progress_ratio: float = 0.20
+@export var combat_stuck_force_repath: bool = true
+@export var combat_stuck_debug: bool = true
+
 
 # ============================================================
 # CINEMATIC MOVEMENT
@@ -644,6 +655,11 @@ var boss_debug_elapsed: float = 0.0
 var boss_debug_due: bool = false
 var boss_debug_last_nav_reason: String = "not_called"
 var boss_debug_last_direction: Vector3 = Vector3.ZERO
+
+# Recupero anti-incastro SOLO per il movimento AI di combattimento.
+# Non viene mai usato dalla cinematic.
+var combat_stuck_elapsed: float = 0.0
+var combat_stuck_retry_timer: float = 0.0
 
 
 # ============================================================
@@ -1683,7 +1699,20 @@ func _physics_process(delta: float) -> void:
 		_boss_debug_snapshot("PRE_MOVE_AND_SLIDE")
 
 	var boss_debug_before_move := global_position
-	move_and_slide()
+	var combat_intended_velocity := Vector3(
+		velocity.x,
+		0.0,
+		velocity.z
+	)
+
+	var combat_had_collision := move_and_slide()
+
+	_process_combat_stuck_recovery(
+		delta,
+		boss_debug_before_move,
+		combat_intended_velocity,
+		combat_had_collision
+	)
 
 	if boss_debug_due:
 		print(
@@ -1973,6 +2002,202 @@ func _start_test_after_delay() -> void:
 
 func _invalidate_navigation_target() -> void:
 	navigation_target_initialized = false
+
+
+func _combat_stuck_recovery_allowed() -> bool:
+	if not combat_stuck_recovery_enabled:
+		return false
+
+	if not ai_active:
+		return false
+
+	if cinematic_locked or cinematic_move_active:
+		return false
+
+	if state != State.MOVE_TO_PLAYER and state != State.SEEK_RACKET:
+		return false
+
+	if hit_reaction_active:
+		return false
+
+	return true
+
+
+func _reset_combat_stuck_recovery() -> void:
+	combat_stuck_elapsed = 0.0
+
+
+func _process_combat_stuck_recovery(
+	delta: float,
+	before_move_position: Vector3,
+	intended_velocity: Vector3,
+	had_collision: bool
+) -> void:
+	if combat_stuck_retry_timer > 0.0:
+		combat_stuck_retry_timer = maxf(
+			0.0,
+			combat_stuck_retry_timer - delta
+		)
+
+	if not _combat_stuck_recovery_allowed():
+		_reset_combat_stuck_recovery()
+		return
+
+	var intended_speed := intended_velocity.length()
+
+	if intended_speed <= 0.05:
+		_reset_combat_stuck_recovery()
+		return
+
+	var moved_delta := global_position - before_move_position
+	moved_delta.y = 0.0
+
+	var expected_distance := intended_speed * delta
+	var minimum_progress := (
+		expected_distance
+		* combat_stuck_progress_ratio
+	)
+
+	var movement_is_blocked := (
+		had_collision
+		and moved_delta.length() < minimum_progress
+	)
+
+	if not movement_is_blocked:
+		_reset_combat_stuck_recovery()
+		return
+
+	combat_stuck_elapsed += delta
+
+	if combat_stuck_elapsed < combat_stuck_trigger_time:
+		return
+
+	if combat_stuck_retry_timer > 0.0:
+		return
+
+	var direction := intended_velocity.normalized()
+
+	if _try_combat_step_up(direction):
+		if combat_stuck_debug:
+			print(
+				"[BOSS STUCK RECOVERY] STEP_UP",
+				" | state=", _boss_state_name(state),
+				" | pos=", global_position,
+				" | step_height=", "%.2f" % combat_step_height
+			)
+
+		_reset_combat_stuck_recovery()
+		combat_stuck_retry_timer = combat_stuck_retry_delay
+
+		# Dopo lo step chiediamo un nuovo path dal nuovo punto reale.
+		_invalidate_navigation_target()
+		return
+
+	if combat_stuck_force_repath:
+		_force_combat_repath()
+
+	if combat_stuck_debug:
+		print(
+			"[BOSS STUCK RECOVERY] REPATH",
+			" | state=", _boss_state_name(state),
+			" | pos=", global_position,
+			" | nav_target=", last_navigation_target
+		)
+
+	_reset_combat_stuck_recovery()
+	combat_stuck_retry_timer = combat_stuck_retry_delay
+
+
+func _try_combat_step_up(direction: Vector3) -> bool:
+	if direction.length_squared() <= 0.0001:
+		return false
+
+	if not is_on_floor():
+		return false
+
+	var step_height := maxf(
+		combat_step_height,
+		0.01
+	)
+
+	var forward_distance := maxf(
+		combat_step_forward_distance,
+		0.01
+	)
+
+	var horizontal_direction := Vector3(
+		direction.x,
+		0.0,
+		direction.z
+	)
+
+	if horizontal_direction.length_squared() <= 0.0001:
+		return false
+
+	horizontal_direction = horizontal_direction.normalized()
+
+	var up_motion := Vector3.UP * step_height
+	var forward_motion := (
+		horizontal_direction * forward_distance
+	)
+
+	# 1) Deve esserci spazio sopra Bruno.
+	if test_move(global_transform, up_motion):
+		return false
+
+	# 2) Alla quota rialzata deve poter avanzare oltre il piccolo ostacolo.
+	var raised_transform := global_transform
+	raised_transform.origin += up_motion
+
+	if test_move(raised_transform, forward_motion):
+		return false
+
+	# 3) Dopo l'avanzamento deve esserci nuovamente un piano sotto i piedi.
+	# Questo evita che lo step-up lo faccia salire nel vuoto.
+	var forward_transform := raised_transform
+	forward_transform.origin += forward_motion
+
+	var down_motion := Vector3.DOWN * (
+		step_height
+		+ maxf(combat_step_floor_probe_extra, 0.01)
+	)
+
+	if not test_move(forward_transform, down_motion):
+		return false
+
+	# Esegue lo step usando la fisica del CharacterBody3D.
+	var up_collision := move_and_collide(up_motion)
+
+	if up_collision != null:
+		return false
+
+	var forward_collision := move_and_collide(forward_motion)
+
+	if forward_collision != null:
+		return false
+
+	move_and_collide(down_motion)
+
+	return true
+
+
+func _force_combat_repath() -> void:
+	if navigation_agent == null:
+		return
+
+	if not navigation_ready:
+		return
+
+	if not navigation_target_initialized:
+		return
+
+	var target := last_navigation_target
+
+	# Forza una nuova richiesta di percorso dalla posizione reale attuale.
+	navigation_target_initialized = false
+	navigation_agent.target_position = target
+	last_navigation_target = target
+	navigation_target_initialized = true
 
 
 func _direct_direction_to(target_position: Vector3) -> Vector3:
