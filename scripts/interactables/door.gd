@@ -89,6 +89,12 @@ var door_body_rest_transform: Transform3D
 var door_audio: AudioStreamPlayer3D
 var close_sound_pending := false
 
+# SAFE:
+# false = comportamento storico identico per tutte le porte.
+# true = questa specifica istanza viene mantenuta aperta e
+#        non può essere chiusa/interagita finché non viene sbloccata.
+var forced_open: bool = false
+
 
 func _ready() -> void:
 	door_body_rest_transform = door_body.transform
@@ -149,14 +155,23 @@ func get_interaction_name() -> String:
 
 
 func get_interaction_action() -> String:
+	if forced_open:
+		return "APERTA"
+
 	return "CHIUDI" if is_open else "APRI"
 
 
 func interact(_player: Node) -> void:
+	if forced_open:
+		return
+
 	toggle_door()
 
 
 func toggle_door() -> void:
+	if forced_open:
+		return
+
 	if is_open:
 		close_door()
 	else:
@@ -165,6 +180,12 @@ func toggle_door() -> void:
 
 func open_door() -> void:
 	if is_open:
+		# Se viene forzata mentre è già aperta, assicuriamo comunque
+		# che nessun auto-close rimanga pendente.
+		if forced_open:
+			auto_close_pending = false
+			if auto_close_timer != null:
+				auto_close_timer.stop()
 		return
 
 	is_open = true
@@ -174,11 +195,14 @@ func open_door() -> void:
 
 	_play_door_sound(open_sound)
 
-	if auto_close:
+	if auto_close and not forced_open:
 		auto_close_timer.start(auto_close_delay)
 
 
 func close_door() -> void:
+	if forced_open:
+		return
+
 	if not is_open:
 		return
 
@@ -190,6 +214,49 @@ func close_door() -> void:
 	close_sound_pending = (
 		close_sound != null
 	)
+
+
+# ============================================================
+# FORCED OPEN API
+# ============================================================
+
+func set_forced_open(value: bool) -> void:
+	if forced_open == value:
+		# Anche in chiamate ripetute, se deve essere forzata aperta
+		# garantiamo che il target resti quello corretto.
+		if forced_open:
+			_force_open_now()
+		return
+
+	forced_open = value
+
+	if forced_open:
+		_force_open_now()
+	else:
+		# Dopo lo sblocco la porta resta fisicamente aperta.
+		# Torna semplicemente ad essere una normale porta interagibile.
+		auto_close_pending = false
+		if auto_close_timer != null:
+			auto_close_timer.stop()
+
+
+func is_forced_open() -> bool:
+	return forced_open
+
+
+func _force_open_now() -> void:
+	auto_close_pending = false
+	close_sound_pending = false
+
+	if auto_close_timer != null:
+		auto_close_timer.stop()
+
+	if not is_open:
+		is_open = true
+		target_rotation_y = deg_to_rad(open_angle)
+		_play_door_sound(open_sound)
+	else:
+		target_rotation_y = deg_to_rad(open_angle)
 
 
 func _play_door_sound(stream: AudioStream) -> void:
@@ -207,6 +274,9 @@ func _play_door_sound(stream: AudioStream) -> void:
 
 
 func _on_auto_close_timeout() -> void:
+	if forced_open:
+		return
+
 	if not is_open:
 		return
 
@@ -225,5 +295,9 @@ func _on_body_exited(body: Node) -> void:
 	if body.name == "Player":
 		player_inside = false
 
-		if auto_close_pending and is_open:
+		if (
+			auto_close_pending
+			and is_open
+			and not forced_open
+		):
 			close_door()

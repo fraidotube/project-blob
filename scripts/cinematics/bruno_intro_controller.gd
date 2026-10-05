@@ -14,7 +14,7 @@ extends Node
 @export_category("Camera / Video Timeline")
 @export var video_lead_before_camera: float = 0.75
 @export var camera_move_to_tv_time: float = 11.00
-@export var flicker_start_time: float = 12.00
+@export var flicker_start_time: float = 10.00
 @export var blackout_time: float = 17.00
 @export var reveal_time: float = 18.00
 @export var camera_move_to_reveal_time: float = 1.80
@@ -26,6 +26,11 @@ extends Node
 @export var flicker_min_interval: float = 0.06
 @export var flicker_max_interval: float = 0.22
 @export_range(0.0, 1.0, 0.01) var flicker_off_chance: float = 0.42
+
+@export_category("Electricity Cinematic Audio")
+@export var electricity_cinematic_audio: AudioStream
+@export_range(-40.0, 12.0, 0.5) var electricity_cinematic_volume_db: float = 0.0
+@export var electricity_cinematic_bus: StringName = &"Master"
 
 @export_category("Purple Reveal")
 @export var reveal_light_color: Color = Color("9a36ff")
@@ -129,6 +134,7 @@ var cinematic_camera: Camera3D = null
 var player_camera: Camera3D = null
 var bruno_animation_player: AnimationPlayer = null
 var dialogue_player: AudioStreamPlayer = null
+var electricity_cinematic_player: AudioStreamPlayer = null
 var dialogue_preview_started: bool = false
 
 var bruno_original_cinematic_walk_speed: float = 0.0
@@ -165,6 +171,7 @@ func _ready() -> void:
 	_resolve_player_camera()
 	_resolve_bruno_animation_player()
 	_setup_dialogue_player()
+	_setup_electricity_cinematic_player()
 	_capture_original_light_states()
 
 	if tv_music_audio != null:
@@ -241,6 +248,9 @@ func _start_combat_debug_from_cinematic_end() -> void:
 
 	if dialogue_player != null:
 		dialogue_player.stop()
+
+	if electricity_cinematic_player != null:
+		electricity_cinematic_player.stop()
 
 	_restore_player_camera()
 	_unlock_player()
@@ -574,13 +584,16 @@ func _run_intro_timeline() -> void:
 	if not is_inside_tree():
 		return
 
-	# 12 s: inizio flicker.
+	# 10 s: inizio effetto elettrico.
+	# Audio e flicker partono insieme.
 	await _wait_until_intro_time(
 		flicker_start_time
 	)
 
 	if not is_inside_tree():
 		return
+
+	_start_electricity_cinematic_audio()
 
 	await _run_light_flicker_until(
 		blackout_time
@@ -601,6 +614,7 @@ func _run_intro_timeline() -> void:
 		)
 
 	# 18 s: reveal.
+	# L'audio elettrico termina esattamente con il reveal viola.
 	await _wait_until_intro_time(
 		reveal_time
 	)
@@ -608,6 +622,7 @@ func _run_intro_timeline() -> void:
 	if not is_inside_tree():
 		return
 
+	_stop_electricity_cinematic_audio()
 	_apply_purple_reveal_lights()
 
 	if bruno.has_method("cinematic_set_visible"):
@@ -647,6 +662,42 @@ func _setup_dialogue_player() -> void:
 	dialogue_player.bus = dialogue_bus
 	dialogue_player.volume_db = dialogue_volume_db
 	add_child(dialogue_player)
+
+
+func _setup_electricity_cinematic_player() -> void:
+	if electricity_cinematic_player != null:
+		return
+
+	electricity_cinematic_player = AudioStreamPlayer.new()
+	electricity_cinematic_player.name = "ElectricityCinematicAudio"
+	electricity_cinematic_player.bus = electricity_cinematic_bus
+	electricity_cinematic_player.volume_db = electricity_cinematic_volume_db
+	add_child(electricity_cinematic_player)
+
+
+func _start_electricity_cinematic_audio() -> void:
+	if electricity_cinematic_audio == null:
+		push_warning(
+			"BrunoIntroController: Electricity Cinematic Audio non assegnato."
+		)
+		return
+
+	if electricity_cinematic_player == null:
+		_setup_electricity_cinematic_player()
+
+	electricity_cinematic_player.stop()
+	electricity_cinematic_player.stream = electricity_cinematic_audio
+	electricity_cinematic_player.bus = electricity_cinematic_bus
+	electricity_cinematic_player.volume_db = electricity_cinematic_volume_db
+	electricity_cinematic_player.play()
+
+
+func _stop_electricity_cinematic_audio() -> void:
+	if electricity_cinematic_player == null:
+		return
+
+	if electricity_cinematic_player.playing:
+		electricity_cinematic_player.stop()
 
 
 func _start_dialogue_sequence() -> void:
