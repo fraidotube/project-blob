@@ -551,6 +551,68 @@ func _start_delayed_visual_y_animation(
 
 
 # ============================================================
+# BOSS AUDIO
+# ============================================================
+
+@export_category("Boss Audio")
+@export_range(-30.0, 6.0, 0.5) var boss_voice_volume_db: float = -2.0
+@export_range(-30.0, 6.0, 0.5) var boss_attack_sfx_volume_db: float = 0.0
+@export_range(5.0, 80.0, 1.0) var boss_audio_max_distance: float = 35.0
+@export var boss_audio_debug: bool = true
+
+@export_group("Voice - Damage")
+@export var damage_voice_streams: Array[AudioStream] = [
+	preload("res://assets/models/enemies/bruno_buozzi/dolore1_mostro.mp3"),
+	preload("res://assets/models/enemies/bruno_buozzi/dolore2_mostro.mp3"),
+	preload("res://assets/models/enemies/bruno_buozzi/dolore3_mostro.mp3")
+]
+
+@export_group("Voice - Phase Falls")
+@export var phase_1_fall_voice: AudioStream = preload(
+	"res://assets/models/enemies/bruno_buozzi/caduta_fase1_mostro.mp3"
+)
+@export var phase_2_fall_voice: AudioStream = preload(
+	"res://assets/models/enemies/bruno_buozzi/caduta_fase2_mostro.mp3"
+)
+
+@export_group("Voice - Normal Ball")
+@export var normal_ball_voice_streams: Array[AudioStream] = [
+	preload("res://assets/models/enemies/bruno_buozzi/pallina1_mostro.mp3"),
+	preload("res://assets/models/enemies/bruno_buozzi/pallina2_mostro.mp3")
+]
+
+@export_group("Voice - Explosive Ball")
+@export var explosive_ball_voice_streams: Array[AudioStream] = [
+	preload("res://assets/models/enemies/bruno_buozzi/pallina_esplosiva1_mostro.mp3"),
+	preload("res://assets/models/enemies/bruno_buozzi/pallina_esplosiva2_mostro.mp3")
+]
+
+@export_group("Voice - Racket Pickup")
+@export var racket_pickup_voice: AudioStream = preload(
+	"res://assets/models/enemies/bruno_buozzi/racchetta_trovata_mostro.mp3"
+)
+
+@export_group("Voice - Forehand")
+@export var forehand_voice_streams: Array[AudioStream] = [
+	preload("res://assets/models/enemies/bruno_buozzi/dritto1_mostro.mp3"),
+	preload("res://assets/models/enemies/bruno_buozzi/dritto2_mostro.mp3")
+]
+
+@export_group("Voice - Backhand")
+@export var backhand_voice_streams: Array[AudioStream] = [
+	preload("res://assets/models/enemies/bruno_buozzi/rovescio1_monster.mp3"),
+	preload("res://assets/models/enemies/bruno_buozzi/rovescio2_monster.mp3")
+]
+
+@export_group("SFX - Racket Swoosh")
+@export var racket_swoosh_streams: Array[AudioStream] = [
+	preload("res://assets/models/enemies/bruno_buozzi/swoosh1.mp3"),
+	preload("res://assets/models/enemies/bruno_buozzi/swoosh2.mp3"),
+	preload("res://assets/models/enemies/bruno_buozzi/swoosh3.mp3")
+]
+
+
+# ============================================================
 # MELEE WAVE
 # ============================================================
 
@@ -719,15 +781,12 @@ var visual_y_tween: Tween = null
 
 
 # ============================================================
-# BOSS BAR
+# BOSS AUDIO STATE
 # ============================================================
 
-var boss_bar_layer: CanvasLayer = null
-var boss_segment_1: ProgressBar = null
-var boss_segment_2: ProgressBar = null
-var boss_segment_3: ProgressBar = null
-var boss_hp_label: Label = null
-var boss_phase_label: Label = null
+var boss_voice_player: AudioStreamPlayer3D = null
+var boss_attack_sfx_player: AudioStreamPlayer3D = null
+var last_damage_voice_index: int = -1
 
 
 # ============================================================
@@ -756,6 +815,7 @@ const ANIM_SITTING_CLAP: StringName = &"mie/sitting_clap1"
 const ANIM_SIT_TO_STAND: StringName = &"mie/sit_to_to stand"
 
 
+
 # ============================================================
 # READY
 # ============================================================
@@ -763,6 +823,7 @@ const ANIM_SIT_TO_STAND: StringName = &"mie/sit_to_to stand"
 func _ready() -> void:
 	rng.randomize()
 
+	_setup_boss_audio()
 	_open_cinematic_debug_log()
 
 	cinematic_model_base_position = model_root.position
@@ -797,7 +858,7 @@ func _ready() -> void:
 		if original_collider_shape is CapsuleShape3D:
 			var original_capsule := (
 				original_collider_shape
-				as CapsuleShape3D
+					as CapsuleShape3D
 			)
 
 			original_capsule_radius = (
@@ -852,9 +913,7 @@ func _ready() -> void:
 	cinematic_locked = not start_active
 
 	if start_active:
-		if show_boss_bar:
-			_create_boss_bar()
-			_update_boss_bar()
+		_update_boss_bar()
 
 		_set_state(State.IDLE)
 	else:
@@ -864,6 +923,284 @@ func _ready() -> void:
 
 	if test_mode and start_active:
 		_start_test_after_delay()
+
+
+# ============================================================
+# BOSS AUDIO
+# ============================================================
+
+func _setup_boss_audio() -> void:
+	boss_voice_player = AudioStreamPlayer3D.new()
+	boss_voice_player.name = "BrunoVoice"
+	boss_voice_player.bus = &"SFX"
+	boss_voice_player.volume_db = boss_voice_volume_db
+	boss_voice_player.max_distance = boss_audio_max_distance
+	add_child(boss_voice_player)
+
+	boss_attack_sfx_player = AudioStreamPlayer3D.new()
+	boss_attack_sfx_player.name = "BrunoAttackSFX"
+	boss_attack_sfx_player.bus = &"SFX"
+	boss_attack_sfx_player.volume_db = boss_attack_sfx_volume_db
+	boss_attack_sfx_player.max_distance = boss_audio_max_distance
+	add_child(boss_attack_sfx_player)
+
+	_audio_debug_player_state(
+		"SETUP VOICE",
+		boss_voice_player
+	)
+	_audio_debug_player_state(
+		"SETUP SFX",
+		boss_attack_sfx_player
+	)
+
+
+func _audio_stream_debug_name(stream: AudioStream) -> String:
+	if stream == null:
+		return "<NULL>"
+
+	if not stream.resource_path.is_empty():
+		return stream.resource_path
+
+	return str(stream)
+
+
+func _audio_debug_player_state(
+	label: String,
+	player_node: AudioStreamPlayer3D
+) -> void:
+	if not boss_audio_debug:
+		return
+
+	if player_node == null:
+		print(
+			"[BRUNO AUDIO] ",
+			label,
+			" | PLAYER=NULL"
+		)
+		return
+
+	var bus_name := String(player_node.bus)
+	var bus_index := AudioServer.get_bus_index(bus_name)
+	var bus_mute := false
+	var bus_volume_db := 0.0
+
+	if bus_index >= 0:
+		bus_mute = AudioServer.is_bus_mute(bus_index)
+		bus_volume_db = AudioServer.get_bus_volume_db(bus_index)
+
+	var player_distance := -1.0
+
+	if (
+		player != null
+		and is_instance_valid(player)
+	):
+		player_distance = global_position.distance_to(
+			player.global_position
+		)
+
+	print(
+		"[BRUNO AUDIO] ",
+		label,
+		" | node=", player_node.name,
+		" | playing=", player_node.playing,
+		" | stream=", _audio_stream_debug_name(player_node.stream),
+		" | volume_db=", player_node.volume_db,
+		" | max_distance=", player_node.max_distance,
+		" | listener_distance=", "%.2f" % player_distance,
+		" | bus=", bus_name,
+		" | bus_index=", bus_index,
+		" | bus_mute=", bus_mute,
+		" | bus_volume_db=", bus_volume_db
+	)
+
+
+func _play_boss_voice(
+	stream: AudioStream,
+	event_name: String = "VOICE"
+) -> void:
+	if stream == null:
+		if boss_audio_debug:
+			print(
+				"[BRUNO AUDIO] ",
+				event_name,
+				" | SKIP stream=NULL"
+			)
+		return
+
+	if boss_voice_player == null:
+		if boss_audio_debug:
+			print(
+				"[BRUNO AUDIO] ",
+				event_name,
+				" | SKIP voice_player=NULL",
+				" | requested=",
+				_audio_stream_debug_name(stream)
+			)
+		return
+
+	if boss_audio_debug:
+		print(
+			"[BRUNO AUDIO] ",
+			event_name,
+			" | REQUEST=",
+			_audio_stream_debug_name(stream),
+			" | was_playing=",
+			boss_voice_player.playing,
+			" | previous=",
+			_audio_stream_debug_name(boss_voice_player.stream)
+		)
+
+	boss_voice_player.stop()
+	boss_voice_player.stream = stream
+	boss_voice_player.play()
+
+	_audio_debug_player_state(
+		event_name + " PLAY",
+		boss_voice_player
+	)
+
+
+func _play_random_boss_voice(
+	streams: Array,
+	event_name: String = "VOICE_RANDOM"
+) -> void:
+	if streams.is_empty():
+		if boss_audio_debug:
+			print(
+				"[BRUNO AUDIO] ",
+				event_name,
+				" | SKIP array EMPTY"
+			)
+		return
+
+	var chosen_index := rng.randi_range(0, streams.size() - 1)
+	var chosen_stream := streams[chosen_index] as AudioStream
+
+	if boss_audio_debug:
+		print(
+			"[BRUNO AUDIO] ",
+			event_name,
+			" | CHOICE ",
+			chosen_index,
+			"/",
+			streams.size() - 1,
+			" | ",
+			_audio_stream_debug_name(chosen_stream)
+		)
+
+	_play_boss_voice(
+		chosen_stream,
+		event_name
+	)
+
+
+func _play_damage_voice() -> void:
+	if damage_voice_streams.is_empty():
+		if boss_audio_debug:
+			print(
+				"[BRUNO AUDIO] DAMAGE | SKIP array EMPTY"
+			)
+		return
+
+	var chosen_index := rng.randi_range(0, damage_voice_streams.size() - 1)
+
+	if (
+		damage_voice_streams.size() > 1
+		and chosen_index == last_damage_voice_index
+	):
+		chosen_index = (
+			chosen_index
+			+ rng.randi_range(1, damage_voice_streams.size() - 1)
+		) % damage_voice_streams.size()
+
+	last_damage_voice_index = chosen_index
+
+	if boss_audio_debug:
+		print(
+			"[BRUNO AUDIO] DAMAGE | CHOICE ",
+			chosen_index,
+			"/",
+			damage_voice_streams.size() - 1
+		)
+
+	_play_boss_voice(
+		damage_voice_streams[chosen_index] as AudioStream,
+		"DAMAGE"
+	)
+
+
+func _play_phase_fall_voice(new_phase: int) -> void:
+	match new_phase:
+		2:
+			_play_boss_voice(
+				phase_1_fall_voice,
+				"PHASE_1_TO_2_FALL"
+			)
+		3:
+			_play_boss_voice(
+				phase_2_fall_voice,
+				"PHASE_2_TO_3_FALL"
+			)
+
+
+func _play_random_attack_sfx(
+	streams: Array,
+	event_name: String = "ATTACK_SFX"
+) -> void:
+	if streams.is_empty():
+		if boss_audio_debug:
+			print(
+				"[BRUNO AUDIO] ",
+				event_name,
+				" | SKIP array EMPTY"
+			)
+		return
+
+	if boss_attack_sfx_player == null:
+		if boss_audio_debug:
+			print(
+				"[BRUNO AUDIO] ",
+				event_name,
+				" | SKIP sfx_player=NULL"
+			)
+		return
+
+	var chosen_index := rng.randi_range(0, streams.size() - 1)
+	var chosen_stream := streams[chosen_index] as AudioStream
+
+	if chosen_stream == null:
+		if boss_audio_debug:
+			print(
+				"[BRUNO AUDIO] ",
+				event_name,
+				" | SKIP chosen stream=NULL",
+				" | index=",
+				chosen_index
+			)
+		return
+
+	if boss_audio_debug:
+		print(
+			"[BRUNO AUDIO] ",
+			event_name,
+			" | REQUEST=",
+			_audio_stream_debug_name(chosen_stream),
+			" | index=",
+			chosen_index,
+			" | was_playing=",
+			boss_attack_sfx_player.playing,
+			" | previous=",
+			_audio_stream_debug_name(boss_attack_sfx_player.stream)
+		)
+
+	boss_attack_sfx_player.stop()
+	boss_attack_sfx_player.stream = chosen_stream
+	boss_attack_sfx_player.play()
+
+	_audio_debug_player_state(
+		event_name + " PLAY",
+		boss_attack_sfx_player
+	)
 
 
 # ============================================================
@@ -1528,11 +1865,11 @@ func start_boss_fight() -> void:
 	if not phase_transition_active:
 		invulnerable = false
 
-	if (
-		show_boss_bar
-		and boss_bar_layer == null
-	):
-		_create_boss_bar()
+	if show_boss_bar:
+		get_tree().call_group(
+			"hud",
+			"show_boss_hud"
+		)
 
 	_update_boss_bar()
 
@@ -2199,7 +2536,6 @@ func _force_combat_repath() -> void:
 	last_navigation_target = target
 	navigation_target_initialized = true
 
-
 func _direct_direction_to(target_position: Vector3) -> Vector3:
 	var direction := target_position - global_position
 	direction.y = 0.0
@@ -2393,6 +2729,8 @@ func _apply_damage(amount: int) -> void:
 		_start_phase_transition(3)
 		return
 
+	_play_damage_voice()
+
 	if not has_racket:
 		_start_unarmed_hit_reaction()
 
@@ -2463,6 +2801,8 @@ func _start_phase_transition(new_phase: int) -> void:
 	hit_reaction_cooldown = 0.0
 	pending_combat_phase = clampi(new_phase, 1, 3)
 	_set_action_shield(true)
+
+	_play_phase_fall_voice(pending_combat_phase)
 
 	state = State.DOWN
 
@@ -2887,6 +3227,7 @@ func _complete_racket_pickup() -> void:
 	racket_target = null
 	racket_pickup_position = null
 
+	_play_boss_voice(racket_pickup_voice, "RACKET_PICKUP")
 	set_has_racket(true)
 
 
@@ -3166,6 +3507,11 @@ func _release_tennis_ball() -> void:
 		flight_time = _get_explosive_ball_flight_time()
 		gravity_override = explosive_ball_gravity
 
+	if has_racket:
+		_play_random_boss_voice(explosive_ball_voice_streams, "EXPLOSIVE_BALL")
+	else:
+		_play_random_boss_voice(normal_ball_voice_streams, "NORMAL_BALL")
+
 	if projectile.has_method("launch"):
 		projectile.launch(
 			start_position,
@@ -3284,8 +3630,10 @@ func _start_melee_attack() -> void:
 
 	if rng.randf() <= charged_chance:
 		current_melee_animation = ANIM_CHARGED_SLASH
+		_play_random_boss_voice(backhand_voice_streams, "BACKHAND")
 	else:
 		current_melee_animation = ANIM_LEFT_SLASH
+		_play_random_boss_voice(forehand_voice_streams, "FOREHAND")
 
 	_play_animation(
 		current_melee_animation,
@@ -3327,6 +3675,7 @@ func _process_melee_attack(delta: float) -> void:
 	# anche se l'animazione della racchetta deve ancora terminare.
 	_set_action_shield(false)
 
+	_play_random_attack_sfx(racket_swoosh_streams, "RACKET_SWOOSH")
 	_apply_melee_wind_attack()
 
 
@@ -4074,144 +4423,45 @@ func _on_animation_finished(animation_name: StringName) -> void:
 
 
 # ============================================================
-# BOSS BAR
+# BOSS HUD
 # ============================================================
 
-func _create_boss_bar() -> void:
-	boss_bar_layer = CanvasLayer.new()
-	boss_bar_layer.name = "BrunoBossBar"
-	boss_bar_layer.layer = 100
-	add_child(boss_bar_layer)
-
-	var root := Control.new()
-	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	boss_bar_layer.add_child(root)
-
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	center.offset_top = 8.0
-	center.offset_bottom = 82.0
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(center)
-
-	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(560.0, 64.0)
-	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	center.add_child(panel)
-
-	var panel_style := StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.025, 0.015, 0.015, 0.92)
-	panel_style.border_color = Color(0.65, 0.05, 0.03, 1.0)
-	panel_style.set_border_width_all(2)
-	panel_style.corner_radius_top_left = 7
-	panel_style.corner_radius_top_right = 7
-	panel_style.corner_radius_bottom_left = 7
-	panel_style.corner_radius_bottom_right = 7
-	panel.add_theme_stylebox_override("panel", panel_style)
-
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 12)
-	margin.add_theme_constant_override("margin_right", 12)
-	margin.add_theme_constant_override("margin_top", 5)
-	margin.add_theme_constant_override("margin_bottom", 5)
-	panel.add_child(margin)
-
-	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 3)
-	margin.add_child(column)
-
-	var title := Label.new()
-	title.text = boss_name
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 18)
-	column.add_child(title)
-
-	var segments := HBoxContainer.new()
-	segments.add_theme_constant_override("separation", 5)
-	column.add_child(segments)
-
-	boss_segment_1 = _create_boss_segment()
-	boss_segment_2 = _create_boss_segment()
-	boss_segment_3 = _create_boss_segment()
-
-	segments.add_child(boss_segment_1)
-	segments.add_child(boss_segment_2)
-	segments.add_child(boss_segment_3)
-
-	boss_hp_label = Label.new()
-	boss_hp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	boss_hp_label.add_theme_font_size_override("font_size", 11)
-	column.add_child(boss_hp_label)
-
-	boss_phase_label = Label.new()
-	boss_phase_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	boss_phase_label.add_theme_font_size_override("font_size", 10)
-	column.add_child(boss_phase_label)
-
-
-func _create_boss_segment() -> ProgressBar:
-	var bar := ProgressBar.new()
-	bar.show_percentage = false
-	bar.custom_minimum_size = Vector2(170.0, 12.0)
-
-	var background := StyleBoxFlat.new()
-	background.bg_color = Color(0.10, 0.03, 0.03, 1.0)
-	background.corner_radius_top_left = 3
-	background.corner_radius_top_right = 3
-	background.corner_radius_bottom_left = 3
-	background.corner_radius_bottom_right = 3
-	bar.add_theme_stylebox_override("background", background)
-
-	var fill := StyleBoxFlat.new()
-	fill.bg_color = Color(0.82, 0.04, 0.025, 1.0)
-	fill.corner_radius_top_left = 3
-	fill.corner_radius_top_right = 3
-	fill.corner_radius_bottom_left = 3
-	fill.corner_radius_bottom_right = 3
-	bar.add_theme_stylebox_override("fill", fill)
-
-	return bar
-
-
 func _update_boss_bar() -> void:
-	if boss_bar_layer == null:
+	if not show_boss_bar:
 		return
 
-	var segment := _get_segment_health()
+	var segment_health := _get_segment_health()
+	var phase_max_health := segment_health
+	var phase_health := 0
 
-	var segment_1_value := clampi(
-		health,
-		0,
-		segment
+	match combat_phase:
+		1:
+			phase_max_health = maxi(
+				1,
+				max_health - segment_health * 2
+			)
+			phase_health = clampi(
+				health - segment_health * 2,
+				0,
+				phase_max_health
+			)
+		2:
+			phase_health = clampi(
+				health - segment_health,
+				0,
+				phase_max_health
+			)
+		3:
+			phase_health = clampi(
+				health,
+				0,
+				phase_max_health
+			)
+
+	get_tree().call_group(
+		"hud",
+		"update_boss_hud",
+		phase_health,
+		phase_max_health,
+		combat_phase
 	)
-
-	var segment_2_value := clampi(
-		health - segment,
-		0,
-		segment
-	)
-
-	var segment_3_value := clampi(
-		health - segment * 2,
-		0,
-		segment
-	)
-
-	if boss_segment_1 != null:
-		boss_segment_1.max_value = segment
-		boss_segment_1.value = segment_1_value
-
-	if boss_segment_2 != null:
-		boss_segment_2.max_value = segment
-		boss_segment_2.value = segment_2_value
-
-	if boss_segment_3 != null:
-		boss_segment_3.max_value = segment
-		boss_segment_3.value = segment_3_value
-
-	if boss_hp_label != null:
-		boss_hp_label.text = "%d / %d" % [health, max_health]
-
-	if boss_phase_label != null:
-		boss_phase_label.text = "FASE %d" % combat_phase

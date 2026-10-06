@@ -38,6 +38,17 @@ extends Node3D
 @export_range(0.1, 1.0, 0.05) var obstacle_width_factor: float = 0.85
 @export var obstacle_debug_print: bool = false
 
+@export_category("Wave Audio")
+@export var flight_sound: AudioStream = preload(
+	"res://assets/models/enemies/bruno_buozzi/onda_energetica.mp3"
+)
+@export var player_hit_sound: AudioStream = preload(
+	"res://assets/models/enemies/bruno_buozzi/onda_colpito.mp3"
+)
+@export_range(-24.0, 12.0, 0.5) var flight_sound_volume_db: float = 0.0
+@export_range(-24.0, 12.0, 0.5) var player_hit_sound_volume_db: float = 0.0
+@export_range(1.0, 100.0, 1.0) var wave_audio_max_distance: float = 35.0
+
 @onready var core: MeshInstance3D = $Core
 @onready var shell: MeshInstance3D = $Shell
 
@@ -60,6 +71,7 @@ var obstacle_stop_elapsed: float = 0.0
 var obstacle_stop_position_world: Vector3 = Vector3.ZERO
 var base_core_emission_boost: float = 1.0
 var base_shell_emission_boost: float = 1.0
+var flight_audio_player: AudioStreamPlayer3D = null
 
 
 func _ready() -> void:
@@ -117,6 +129,8 @@ func start_wave(
 		).get_rid()
 
 	started = true
+
+	_start_flight_audio()
 
 	set_process(true)
 
@@ -564,9 +578,62 @@ func _check_player_damage() -> void:
 				effective_damage
 			)
 
+			_play_player_hit_audio(
+				target.global_position
+			)
+
 			damaged_targets[
 				target_id
 			] = true
+
+
+func _start_flight_audio() -> void:
+	if flight_sound == null:
+		return
+
+	if flight_audio_player == null:
+		flight_audio_player = AudioStreamPlayer3D.new()
+		flight_audio_player.name = "BrunoWaveFlightAudio"
+		flight_audio_player.bus = &"SFX"
+		add_child(
+			flight_audio_player
+		)
+
+	flight_audio_player.stream = flight_sound
+	flight_audio_player.volume_db = flight_sound_volume_db
+	flight_audio_player.max_distance = wave_audio_max_distance
+	flight_audio_player.play()
+
+
+func _play_player_hit_audio(
+	world_position: Vector3
+) -> void:
+	if player_hit_sound == null:
+		return
+
+	var world := get_tree().current_scene
+
+	if world == null:
+		return
+
+	var audio_player := AudioStreamPlayer3D.new()
+	audio_player.name = "BrunoWavePlayerHitAudio"
+	audio_player.stream = player_hit_sound
+	audio_player.bus = &"SFX"
+	audio_player.volume_db = player_hit_sound_volume_db
+	audio_player.max_distance = wave_audio_max_distance
+
+	world.add_child(
+		audio_player
+	)
+
+	audio_player.global_position = world_position
+
+	audio_player.finished.connect(
+		audio_player.queue_free
+	)
+
+	audio_player.play()
 
 
 func _build_banana_meshes() -> void:

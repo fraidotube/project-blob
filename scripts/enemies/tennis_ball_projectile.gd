@@ -32,6 +32,18 @@ const EXPLOSION_VFX_SCENE: PackedScene = preload(
 @export var explosion_vfx_cleanup_time: float = 3.0
 
 
+@export_category("Impact Audio")
+@export var normal_impact_sound: AudioStream = preload(
+	"res://assets/models/enemies/bruno_buozzi/pallina_colpito.mp3"
+)
+@export var explosive_impact_sound: AudioStream = preload(
+	"res://assets/models/enemies/bruno_buozzi/pallina_explosion.mp3"
+)
+@export_range(-24.0, 12.0, 0.5) var normal_impact_volume_db: float = 0.0
+@export_range(-24.0, 12.0, 0.5) var explosive_impact_volume_db: float = 0.0
+@export_range(1.0, 100.0, 1.0) var impact_audio_max_distance: float = 35.0
+
+
 @onready var ball_visual: Node3D = $tennis_ball
 
 
@@ -239,12 +251,60 @@ func _impact(
 			world_position
 		)
 
+	_play_impact_audio(
+		world_position
+	)
+
 	impacted.emit(
 		global_position,
 		explosive
 	)
 
 	queue_free()
+
+
+func _play_impact_audio(
+	world_position: Vector3
+) -> void:
+	var stream := normal_impact_sound
+	var volume_db := normal_impact_volume_db
+
+	if explosive:
+		stream = explosive_impact_sound
+		volume_db = explosive_impact_volume_db
+
+	if stream == null:
+		return
+
+	var world := get_tree().current_scene
+
+	if world == null:
+		return
+
+	var audio_player := AudioStreamPlayer3D.new()
+
+	audio_player.name = (
+		"ExplosiveBallImpactAudio"
+		if explosive
+		else "NormalBallImpactAudio"
+	)
+
+	audio_player.stream = stream
+	audio_player.bus = &"SFX"
+	audio_player.volume_db = volume_db
+	audio_player.max_distance = impact_audio_max_distance
+
+	world.add_child(
+		audio_player
+	)
+
+	audio_player.global_position = world_position
+
+	audio_player.finished.connect(
+		audio_player.queue_free
+	)
+
+	audio_player.play()
 
 
 func _apply_area_damage() -> void:
