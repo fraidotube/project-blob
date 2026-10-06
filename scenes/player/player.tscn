@@ -81,6 +81,7 @@ target_position = Vector3(0, 0, -100)
 [node name="WeaponHolder" type="Node3D" parent="Head/Camera3D" unique_id=213853436]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.25, -0.55)
 script = ExtResource("2_dovo2")
+pistol_damage = 10
 starting_spare_batteries = 2
 
 [node name="LowWorldViewModel" parent="Head/Camera3D/WeaponHolder" unique_id=514129486 instance=ExtResource("3_gmlin")]
