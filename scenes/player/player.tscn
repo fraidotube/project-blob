@@ -40,6 +40,7 @@
 [ext_resource type="AudioStream" uid="uid://22fhlfy8tpdt" path="res://assets/audio/player/voice/morte3.wav" id="26_2t3bg"]
 [ext_resource type="AudioStream" uid="uid://1o70n03fcc1v" path="res://assets/audio/player/voice/morte.wav" id="27_jrbya"]
 [ext_resource type="Script" uid="uid://co56k1iv3mka3" path="res://scripts/player/viewmodel_depth_override.gd" id="28_viewmodel_depth_override"]
+[ext_resource type="PackedScene" uid="uid://db87eqnkeahwx" path="res://scenes/weapons/smg_model.tscn" id="31_vo27k"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
 radius = 0.4
@@ -82,72 +83,58 @@ target_position = Vector3(0, 0, -100)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, -0.25, -0.55)
 script = ExtResource("2_dovo2")
 pistol_damage = 10
+melee_damage = 2
 starting_spare_batteries = 2
 
 [node name="LowWorldViewModel" parent="Head/Camera3D/WeaponHolder" unique_id=514129486 instance=ExtResource("3_gmlin")]
 transform = Transform3D(-3, 0, -4.5298742e-07, 0, 3, 0, 4.5298742e-07, 0, -3, -0.111851215, 0.11060953, 0.16929638)
 
 [node name="Skeleton3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms" parent_id_path=PackedInt32Array(514129486, 394924321, 1201424799) index="0" unique_id=949106662]
-bones/0/position = Vector3(0, -0.083063886, 0.13776238)
-bones/1/position = Vector3(0.28722095, -0.068871416, 0.15084192)
-bones/2/rotation = Quaternion(-0.9461358, 0.047631793, -0.32009244, 0.009952227)
-bones/3/rotation = Quaternion(-0.14675435, -0.00015665055, 0.27708298, 0.9495726)
-bones/4/rotation = Quaternion(-0.11436721, -0.23997876, -0.15336534, 0.9517402)
-bones/5/position = Vector3(-0.018953675, 0.024930572, 0.003084464)
-bones/5/rotation = Quaternion(0.28403223, 0.117027916, 0.2957023, 0.9045388)
-bones/6/rotation = Quaternion(0.0051975767, 0.12347773, 0.091615334, 0.9880956)
-bones/7/rotation = Quaternion(4.802012e-06, 7.805203e-07, 0.16085018, 0.9869788)
-bones/8/rotation = Quaternion(0.5987316, -0.033105318, -0.037147395, 0.79940265)
-bones/9/rotation = Quaternion(0.40205213, 3.2972895e-07, 5.4714967e-08, 0.9156168)
-bones/10/rotation = Quaternion(0.27260485, -8.8465825e-08, -9.922761e-08, 0.9621261)
-bones/11/rotation = Quaternion(0.6353744, -0.09987294, -0.09112541, 0.7602769)
-bones/12/rotation = Quaternion(0.41695473, -4.6118092e-08, 3.2803424e-08, 0.90892726)
-bones/13/rotation = Quaternion(0.2726048, 1.402081e-07, -8.363611e-08, 0.9621261)
-bones/14/rotation = Quaternion(0.6759315, -0.16331504, -0.128127, 0.7071268)
-bones/15/rotation = Quaternion(0.37794742, 0.0004500262, 0.001100293, 0.9258263)
-bones/16/rotation = Quaternion(0.2726049, 4.3673015e-05, 0.00015507164, 0.9621261)
-bones/17/rotation = Quaternion(0.71033, -0.21743624, -0.1208926, 0.6584359)
-bones/18/rotation = Quaternion(0.32727656, -0.0004965201, -0.0014329748, 0.9449274)
-bones/19/rotation = Quaternion(0.09494771, 3.0540232e-06, 3.0495585e-05, 0.99548227)
-bones/20/position = Vector3(-0.09409627, 0.11120625, -0.16890818)
-bones/21/rotation = Quaternion(0.49904945, -0.10721254, -0.56934625, 0.6444378)
-bones/22/rotation = Quaternion(-0.28756687, 0.00013017237, -0.5429474, 0.7889952)
-bones/23/rotation = Quaternion(-0.06139303, 0.29938608, 0.2137687, 0.927848)
-bones/24/position = Vector3(0.020377342, 0.02328114, 0.0025461752)
-bones/24/rotation = Quaternion(0.36766958, -0.14242838, -0.31085336, 0.8648141)
-bones/25/rotation = Quaternion(-0.00226478, -0.15649243, 0.329503, 0.93109226)
-bones/26/rotation = Quaternion(4.136551e-06, -2.6437308e-06, 0.2315823, 0.97281533)
-bones/27/position = Vector3(0.025572859, 0.08610702, 0.0020132677)
-bones/27/rotation = Quaternion(0.036909368, -0.019180521, 0.16121149, 0.98604304)
-bones/28/rotation = Quaternion(0.5982446, -4.031814e-07, 1.031907e-07, 0.8013136)
-bones/29/rotation = Quaternion(0.57763433, 6.139109e-08, 1.8560542e-07, 0.8162956)
-bones/30/position = Vector3(0.0039881095, 0.08499106, -0.010203708)
-bones/30/rotation = Quaternion(0.5335902, 0.035254467, 0.11893267, 0.83659655)
-bones/31/rotation = Quaternion(0.655426, 0.024701145, 0.005063987, 0.75483835)
-bones/32/rotation = Quaternion(0.18496084, 1.4810613e-08, 4.7192787e-09, 0.98274595)
-bones/33/position = Vector3(-0.016533611, 0.07997562, -0.010074741)
-bones/33/rotation = Quaternion(0.61361355, 0.12505387, 0.07273603, 0.7762405)
-bones/34/rotation = Quaternion(0.57983744, -0.0007378598, -0.0010353505, 0.81473124)
-bones/35/rotation = Quaternion(0.28970525, -2.5023415e-05, -8.421506e-05, 0.95711595)
-bones/36/position = Vector3(-0.031468704, 0.06778373, -0.005561656)
-bones/36/rotation = Quaternion(0.57297957, 0.20462747, 0.14590894, 0.7800851)
-bones/37/rotation = Quaternion(0.62016267, 0.0010469351, 0.0013238479, 0.7844714)
-bones/38/rotation = Quaternion(0.16458274, -3.375463e-05, -0.0002008404, 0.98636323)
-bones/39/position = Vector3(0.00878793, -0.047764204, 0.3862855)
-bones/39/rotation = Quaternion(0.31592223, -0.5479094, -0.7218082, -0.28103647)
-bones/40/position = Vector3(0.015311331, -0.14342548, 0.17070314)
-bones/41/position = Vector3(-0.091591835, -0.03353981, 0.14117068)
-bones/41/rotation = Quaternion(0.5435815, 0.507768, 0.49984854, 0.4436692)
-bones/42/position = Vector3(-0.28703704, -0.18421502, 0.0024917424)
+bones/21/rotation = Quaternion(0.45875326, -0.010826384, -0.3677028, 0.80884045)
+bones/22/rotation = Quaternion(-0.14159088, 0.00015728433, -0.267334, 0.9531446)
+bones/23/rotation = Quaternion(0.08900218, 0.23753156, -0.036678676, 0.96659815)
+bones/24/position = Vector3(0.020377392, 0.023281157, 0.0025461325)
+bones/24/rotation = Quaternion(0.26866463, -0.10677711, -0.32482973, 0.9005019)
+bones/25/rotation = Quaternion(-3.610684e-06, 8.4730584e-07, 0.16212383, 0.98677045)
+bones/26/rotation = Quaternion(3.979481e-06, -2.8986196e-06, 0.29618955, 0.9551292)
+bones/27/position = Vector3(0.025654573, 0.08635588, -0.0011273312)
+bones/27/rotation = Quaternion(0.30905887, -0.0034230433, 0.041182607, 0.95014465)
+bones/28/rotation = Quaternion(0.75826645, -3.754801e-07, 2.090833e-07, 0.65194476)
+bones/29/rotation = Quaternion(0.5776343, 6.353029e-08, 1.9986683e-07, 0.8162957)
+bones/30/position = Vector3(0.003290371, 0.08673035, -0.0063072722)
+bones/30/rotation = Quaternion(0.35061997, 0.05428442, 0.008389035, 0.93490565)
+bones/31/rotation = Quaternion(0.76139694, 0.025181575, 0.0012952744, 0.6477954)
+bones/32/rotation = Quaternion(0.44075596, 1.10438885e-08, -3.327659e-09, 0.897627)
+bones/33/position = Vector3(-0.016358258, 0.080997646, -0.005877241)
+bones/33/rotation = Quaternion(0.35693768, 0.14483787, -0.009036602, 0.92278695)
+bones/34/rotation = Quaternion(0.71372074, -0.00090798514, -0.00088990916, 0.70042926)
+bones/35/rotation = Quaternion(0.57556593, -5.0205403e-05, -7.2081035e-05, 0.81775534)
+bones/36/position = Vector3(-0.03143903, 0.06908433, -0.001438339)
+bones/36/rotation = Quaternion(0.15452684, 0.11292651, -0.028693967, 0.9810942)
+bones/37/rotation = Quaternion(0.6209411, 0.0010482658, 0.0013227916, 0.7838555)
+bones/38/rotation = Quaternion(0.4998519, -0.00010204665, -0.00017626795, 0.8661109)
+bones/41/position = Vector3(-0.29552945, -0.21968186, 0.28759938)
+bones/41/rotation = Quaternion(0.6518242, 0.27133587, 0.5594845, 0.43414196)
 
 [node name="PistolSocket" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="1" unique_id=2144907275]
-transform = Transform3D(-0.015353411, 0.10849203, 0.9939784, -0.05844502, 0.9922988, -0.109211445, -0.9981724, -0.0597698, -0.0088941455, -0.09158684, 0.061569348, 0.14961636)
+transform = Transform3D(0.22670785, -0.13206436, 0.9649674, 0.3614314, 0.9314268, 0.042559884, -0.90441716, 0.33912104, 0.25889435, -0.29553133, 0.24871215, 0.35886478)
 
 [node name="FlashlightSocket" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="2" unique_id=1078999935]
-transform = Transform3D(-0.015353411, 0.10849203, 0.9939784, -0.05844502, 0.9922988, -0.109211445, -0.9981724, -0.0597698, -0.0088941455, -0.09158684, 0.061569348, 0.14961636)
+transform = Transform3D(0.22670785, -0.13206436, 0.9649674, 0.3614314, 0.9314268, 0.042559884, -0.90441716, 0.33912104, 0.25889435, -0.29553133, 0.24871215, 0.35886478)
 
-[node name="FlashlightLight" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/FlashlightSocket/Flashlight" parent_id_path=PackedInt32Array(514129486, 873452566) index="1" unique_id=184043557]
+[node name="Flashlight" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/FlashlightSocket" index="0" unique_id=873452566]
 visible = false
+
+[node name="FlashlightLight" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/FlashlightSocket/Flashlight" index="1" unique_id=184043557]
+visible = false
+
+[node name="SMGSocket" type="BoneAttachment3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="3" unique_id=452291507]
+transform = Transform3D(0.22670785, -0.13206436, 0.9649674, 0.3614314, 0.9314268, 0.042559884, -0.90441716, 0.33912104, 0.25889435, -0.29553133, 0.24871215, 0.35886478)
+bone_name = "Hand.R"
+bone_idx = 23
+
+[node name="SMG_Test" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/SMGSocket" unique_id=562274000 instance=ExtResource("31_vo27k")]
+transform = Transform3D(0.00029163435, 0.9974451, -0.07143989, 0.9987645, 0.0032598637, 0.04959149, 0.049697578, -0.07136607, -0.9962118, -0.09030321, 0.092392445, 0.02971889)
 
 [node name="MuzzleFlash" type="OmniLight3D" parent="Head/Camera3D/WeaponHolder" unique_id=785843134]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.34999996)

@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://bjx5n250qwqtn"]
+
+[ext_resource type="PackedScene" uid="uid://cjkxfvebvr8qt" path="res://assets/models/weapons/RetroWeaponsPack/Guns/SMG_01/Fbx_Files/SMG_01_AdditionalMeshes.fbx" id="1_4exg3"]
+
+[node name="SMG_01_AdditionalMeshes" unique_id=162865266 instance=ExtResource("1_4exg3")]
+
+[node name="SMG_01_MagazineEmpty_Mesh" parent="." index="0" unique_id=1065197873]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)
+
+[node name="SMG_01_MagazineOneBullet_Mesh" parent="." index="1" unique_id=281408519]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)
+
+[node name="SMG_01_Magazine2+Bullets_Mesh" parent="." index="2" unique_id=815526005]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0)

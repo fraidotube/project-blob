@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://ckjt7uv6uduyt"]
+
+[ext_resource type="PackedScene" uid="uid://6o4k54e8dmik" path="res://assets/models/weapons/Guns/SMG_01/Fbx_Files/SMG_01.fbx" id="1_uskap"]
+[ext_resource type="Animation" uid="uid://c0288gd4dlwaq" path="res://assets/models/weapons/Guns/SMG_01/Fbx_Files/reload.res" id="2_51lbo"]
+[ext_resource type="Animation" uid="uid://dqds3ehm275uu" path="res://assets/models/weapons/Guns/SMG_01/Fbx_Files/shoot.res" id="3_wppsk"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_pl42s"]
+_data = {
+&"reload": ExtResource("2_51lbo"),
+&"shoot": ExtResource("3_wppsk")
+}
+
+[node name="SMG_Test" type="Node3D" unique_id=562274000]
+
+[node name="SMG_01" parent="." unique_id=1397191709 instance=ExtResource("1_uskap")]
+
+[node name="Skeleton3D" parent="SMG_01/SMG_01_Armature" parent_id_path=PackedInt32Array(1397191709, 1430104406) index="0" unique_id=772562104]
+bones/1/position = Vector3(3.779162e-09, -0.045578003, 5.248569e-10)
+bones/1/rotation = Quaternion(-1.1545476e-08, 0.7071067, 1.1545476e-08, 0.7071068)
+bones/1/scale = Vector3(1, 1, 1)
+bones/2/position = Vector3(0.040974103, 0.09849608, -5.8834304e-10)
+bones/2/rotation = Quaternion(1, 1.1018635e-09, -4.3711392e-08, 1.09394186e-16)
+bones/3/position = Vector3(0.06115159, 0.15343365, 1.2316062e-08)
+bones/5/position = Vector3(0.18957703, 0.12050494, -2.8235172e-09)
+bones/6/position = Vector3(-0.020365577, 0.13612817, 0.017377146)
+bones/6/rotation = Quaternion(-2.6692542e-08, -2.6692542e-08, -0.70710677, 0.70710677)
+bones/6/scale = Vector3(1, 1, 1)
+
+[node name="BoneAttachment3D" type="BoneAttachment3D" parent="SMG_01/SMG_01_Armature/Skeleton3D" index="6" unique_id=1206818690]
+transform = Transform3D(1.7881393e-07, -3.2655535e-08, 0.99999994, 0.9999998, -1.1920928e-07, -1.788139e-07, 1.19209275e-07, 0.9999999, 3.265551e-08, 3.779162e-09, 4.908464e-09, 1.3411045e-07)
+bone_name = "Magazine"
+bone_idx = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="SMG_01" unique_id=1102226591]
+libraries/Animazioni = SubResource("AnimationLibrary_pl42s")
+
+[editable path="SMG_01"]
