@@ -2907,6 +2907,11 @@ func _die() -> void:
 
 	_update_boss_bar()
 
+	get_tree().call_group(
+		"hud",
+		"hide_boss_hud"
+	)
+
 	_play_animation(
 		ANIM_DEATH_FRONT,
 		0.08,
