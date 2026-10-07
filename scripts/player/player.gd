@@ -175,6 +175,17 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("weapon_slot_3"):
 		weapon.select_weapon_slot(3)
 
+	if (
+		event is InputEventKey
+		and event.pressed
+		and not event.echo
+		and (
+			event.keycode == KEY_4
+			or event.physical_keycode == KEY_4
+		)
+	):
+		weapon.select_weapon_slot(4)
+
 	if event.is_action_pressed("flashlight_toggle"):
 		weapon.toggle_flashlight()
 
@@ -485,12 +496,12 @@ func _update_crouch(delta: float) -> void:
 	elif is_crouched and _can_stand_up():
 		is_crouched = false
 
-	var target_height := STAND_HEIGHT
-	var target_head_y := STAND_HEAD_Y
+	var new_height_target := STAND_HEIGHT
+	var new_head_target := STAND_HEAD_Y
 
 	if is_crouched:
-		target_height = CROUCH_HEIGHT
-		target_head_y = CROUCH_HEAD_Y
+		new_height_target = CROUCH_HEIGHT
+		new_head_target = CROUCH_HEAD_Y
 
 	var capsule := collision_shape.shape as CapsuleShape3D
 
@@ -499,7 +510,7 @@ func _update_crouch(delta: float) -> void:
 
 	var new_height := move_toward(
 		capsule.height,
-		target_height,
+		new_height_target,
 		CROUCH_TRANSITION_SPEED * delta
 	)
 
@@ -511,7 +522,7 @@ func _update_crouch(delta: float) -> void:
 
 	head.position.y = move_toward(
 		head.position.y,
-		target_head_y,
+		new_head_target,
 		CROUCH_TRANSITION_SPEED * delta
 	)
 
@@ -541,8 +552,16 @@ func equip_flashlight() -> void:
 	weapon.equip_flashlight()
 
 
+func equip_smg() -> void:
+	weapon.equip_smg()
+
+
 func add_ammo(amount: int) -> void:
 	weapon.add_ammo(amount)
+
+
+func add_smg_ammo(amount: int) -> void:
+	weapon.add_smg_ammo(amount)
 
 
 func add_flashlight_battery(amount: int = 1) -> bool:

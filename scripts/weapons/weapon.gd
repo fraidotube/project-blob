@@ -13,6 +13,7 @@ extends Node3D
 const WEAPON_UNARMED := 0
 const WEAPON_PISTOL := 1
 const WEAPON_FLASHLIGHT := 2
+const WEAPON_SMG := 3
 
 
 # ------------------------------------------------------------
@@ -21,6 +22,12 @@ const WEAPON_FLASHLIGHT := 2
 
 @export var pistol_damage := 1
 @export var melee_damage := 1
+
+@export_group("SMG")
+@export var smg_damage := 4
+@export_range(1.0, 30.0, 0.5) var smg_fire_rate := 10.0
+@export var smg_magazine_size := 30
+@export var smg_starting_reserve_ammo := 120
 
 @export var melee_range := 1.6
 @export var melee_attack_cooldown := 0.45
@@ -37,6 +44,9 @@ const WEAPON_FLASHLIGHT := 2
 
 var magazine_ammo: int = 9
 var reserve_ammo: int = 36
+
+var smg_magazine_ammo: int = 30
+var smg_reserve_ammo: int = 120
 
 
 # ------------------------------------------------------------
@@ -171,6 +181,26 @@ var viewmodel_base_position: Vector3
 	/AnimationPlayer
 )
 
+@onready var smg_model: Node3D = (
+	$LowWorldViewModel
+	/smesh_arms_male
+	/rig_arms
+	/Skeleton3D
+	/SMGSocket
+	/SMG_Test
+)
+
+@onready var smg_animation_player: AnimationPlayer = (
+	$LowWorldViewModel
+	/smesh_arms_male
+	/rig_arms
+	/Skeleton3D
+	/SMGSocket
+	/SMG_Test
+	/SMG_01
+	/AnimationPlayer
+)
+
 @onready var flashlight_model: Node3D = (
 	$LowWorldViewModel
 	/smesh_arms_male
@@ -191,6 +221,7 @@ var viewmodel_base_position: Vector3
 
 var owns_pistol := false
 var owns_flashlight := false
+var owns_smg := false
 
 var equipped_weapon := WEAPON_UNARMED
 
@@ -223,22 +254,28 @@ func _ready() -> void:
 
 	# Il raycast non deve mai colpire il CharacterBody3D che lo possiede.
 	var player_body := get_node("../../..") as CollisionObject3D
+
 	if player_body == null:
-		push_error("WeaponRay: Player non trovato; verificare gerarchia WeaponHolder")
+		push_error(
+			"WeaponRay: Player non trovato; verificare gerarchia WeaponHolder"
+		)
 	else:
 		weapon_ray.add_exception(player_body)
 
 	owns_pistol = false
 	owns_flashlight = false
+	owns_smg = false
 
 	equipped_weapon = WEAPON_UNARMED
 
 	pistol_model.visible = false
+	smg_model.visible = false
 	flashlight_model.visible = false
 	flashlight_light.visible = false
 
 	flashlight_on = false
 	flashlight_charge = 100.0
+
 	spare_batteries = clampi(
 		starting_spare_batteries,
 		0,
@@ -247,6 +284,9 @@ func _ready() -> void:
 
 	magazine_ammo = pistol_magazine_size
 	reserve_ammo = starting_reserve_ammo
+
+	smg_magazine_ammo = smg_magazine_size
+	smg_reserve_ammo = smg_starting_reserve_ammo
 
 	viewmodel_base_position = position
 
@@ -297,6 +337,27 @@ func _process(delta: float) -> void:
 			muzzle_flash.visible = false
 
 	_update_flashlight_battery(delta)
+	_update_smg_automatic_fire()
+
+
+func _update_smg_automatic_fire() -> void:
+	if not is_smg_equipped():
+		return
+
+	if is_reloading:
+		return
+
+	if is_performing_action:
+		return
+
+	if not Input.is_action_pressed("fire"):
+		if current_locomotion_animation == "":
+			play_current_locomotion(true)
+
+		return
+
+	if can_attack:
+		fire_smg()
 
 
 func _physics_process(delta: float) -> void:
@@ -316,7 +377,8 @@ func _update_flashlight_battery(delta: float) -> void:
 		return
 
 	flashlight_charge -= (
-		flashlight_drain_per_second * delta
+		flashlight_drain_per_second
+		* delta
 	)
 
 	flashlight_charge = clampf(
@@ -446,6 +508,10 @@ func is_flashlight_equipped() -> bool:
 	return equipped_weapon == WEAPON_FLASHLIGHT
 
 
+func is_smg_equipped() -> bool:
+	return equipped_weapon == WEAPON_SMG
+
+
 # ============================================================
 # SELEZIONE SLOT
 # ============================================================
@@ -461,6 +527,10 @@ func select_weapon_slot(slot: int) -> void:
 
 	if slot == 3:
 		equip_owned_flashlight()
+		return
+
+	if slot == 4:
+		equip_owned_smg()
 		return
 
 
@@ -484,6 +554,7 @@ func equip_unarmed() -> void:
 	equipped_weapon = WEAPON_UNARMED
 
 	pistol_model.visible = false
+	smg_model.visible = false
 	flashlight_model.visible = false
 
 	flashlight_on = false
@@ -553,6 +624,7 @@ func equip_owned_pistol() -> void:
 	equipped_weapon = WEAPON_PISTOL
 
 	pistol_model.visible = true
+	smg_model.visible = false
 	flashlight_model.visible = false
 
 	flashlight_on = false
@@ -570,6 +642,76 @@ func equip_owned_pistol() -> void:
 	)
 
 	update_ammo_hud()
+
+	if ready_audio.stream != null:
+		ready_audio.play()
+
+	if arms_animation_player.has_animation(
+		"a_arms_pistol_start"
+	):
+		arms_animation_player.play(
+			"a_arms_pistol_start",
+			0.08
+		)
+
+		await arms_animation_player.animation_finished
+
+	is_performing_action = false
+
+	play_current_locomotion(true)
+
+
+# ============================================================
+# SMG - PICKUP
+# ============================================================
+
+func equip_smg() -> void:
+	owns_smg = true
+
+	await equip_owned_smg()
+
+
+# ============================================================
+# SMG - EQUIP
+# ============================================================
+
+func equip_owned_smg() -> void:
+	if not owns_smg:
+		return
+
+	if equipped_weapon == WEAPON_SMG:
+		return
+
+	if is_reloading:
+		return
+
+	if is_performing_action:
+		return
+
+	is_performing_action = true
+	current_locomotion_animation = ""
+
+	equipped_weapon = WEAPON_SMG
+
+	pistol_model.visible = false
+	smg_model.visible = true
+	flashlight_model.visible = false
+
+	flashlight_on = false
+	flashlight_light.visible = false
+
+	get_tree().call_group(
+		"hud",
+		"update_weapon",
+		"SMG"
+	)
+
+	get_tree().call_group(
+		"hud",
+		"hide_flashlight_battery"
+	)
+
+	update_smg_ammo_hud()
 
 	if ready_audio.stream != null:
 		ready_audio.play()
@@ -622,6 +764,7 @@ func equip_owned_flashlight() -> void:
 	equipped_weapon = WEAPON_FLASHLIGHT
 
 	pistol_model.visible = false
+	smg_model.visible = false
 	flashlight_model.visible = true
 
 	flashlight_on = false
@@ -733,7 +876,10 @@ func play_current_locomotion(
 				"a_arms_hold_walk"
 			)
 
-	elif is_pistol_equipped():
+	elif (
+		is_pistol_equipped()
+		or is_smg_equipped()
+	):
 		if not player_is_moving:
 			animation_name = (
 				"a_arms_pistol_idle"
@@ -777,7 +923,8 @@ func play_current_locomotion(
 
 	if (
 		not force
-		and current_locomotion_animation == animation_name
+		and current_locomotion_animation
+			== animation_name
 		and arms_animation_player.is_playing()
 	):
 		return
@@ -826,8 +973,13 @@ func fire() -> void:
 
 	if is_pistol_equipped():
 		fire_pistol()
-	else:
-		attack_unarmed()
+		return
+
+	if is_smg_equipped():
+		fire_smg()
+		return
+
+	attack_unarmed()
 
 
 # ============================================================
@@ -1029,12 +1181,14 @@ func _apply_pistol_hit(
 			pistol_damage,
 			hit_point
 		)
+
 	elif collider.has_method(
 		"take_damage"
 	):
 		collider.take_damage(
 			pistol_damage
 		)
+
 	else:
 		return
 
@@ -1058,6 +1212,7 @@ func _show_damage_feedback(
 	)
 
 	var applied_damage := fallback_damage
+
 	var health_after := _get_target_health(
 		target
 	)
@@ -1118,6 +1273,194 @@ func _get_target_health(
 
 
 # ============================================================
+# SMG - SPARO AUTOMATICO
+# ============================================================
+
+func fire_smg() -> void:
+	if not is_smg_equipped():
+		return
+
+	if not can_attack:
+		return
+
+	if is_reloading:
+		return
+
+	if is_performing_action:
+		return
+
+	if smg_magazine_ammo <= 0:
+		if (
+			empty_audio.stream != null
+			and not empty_audio.playing
+		):
+			empty_audio.play()
+
+		return
+
+	smg_magazine_ammo -= 1
+
+	update_smg_ammo_hud()
+
+	can_attack = false
+
+	attack_cooldown_left = (
+		1.0
+		/ maxf(
+			smg_fire_rate,
+			0.1
+		)
+	)
+
+	current_locomotion_animation = ""
+
+	if shot_audio.stream != null:
+		shot_audio.play()
+
+	var shot_duration := (
+		1.0
+		/ maxf(
+			smg_fire_rate,
+			0.1
+		)
+	)
+
+	if arms_animation_player.has_animation(
+		"a_arms_pistol_attack1"
+	):
+		var arms_animation := (
+			arms_animation_player.get_animation(
+				"a_arms_pistol_attack1"
+			)
+		)
+
+		var arms_speed := 1.0
+
+		if arms_animation != null:
+			arms_speed = (
+				arms_animation.length
+				/ shot_duration
+			)
+
+		arms_animation_player.play(
+			"a_arms_pistol_attack1",
+			0.02,
+			arms_speed
+		)
+
+	if smg_animation_player.has_animation(
+		"Animazioni/shoot"
+	):
+		var smg_animation := (
+			smg_animation_player.get_animation(
+				"Animazioni/shoot"
+			)
+		)
+
+		var smg_speed := 1.0
+
+		if smg_animation != null:
+			smg_speed = (
+				smg_animation.length
+				/ shot_duration
+			)
+
+		smg_animation_player.play(
+			"Animazioni/shoot",
+			0.0,
+			smg_speed
+		)
+
+	show_muzzle_flash()
+
+	shell_casing_timer.start()
+
+	weapon_ray.force_raycast_update()
+
+	if not weapon_ray.is_colliding():
+		return
+
+	var collider := weapon_ray.get_collider()
+	var hit_point := weapon_ray.get_collision_point()
+	var hit_normal := weapon_ray.get_collision_normal()
+
+	if collider == null:
+		spawn_bullet_impact(
+			hit_point,
+			hit_normal
+		)
+
+		return
+
+	var dodged := false
+
+	if collider.has_method(
+		"try_dodge_shot"
+	):
+		dodged = bool(
+			collider.try_dodge_shot(
+				hit_point
+			)
+		)
+
+	if dodged:
+		return
+
+	if (
+		collider.has_method(
+			"take_bullet_hit"
+		)
+		or collider.has_method(
+			"take_damage"
+		)
+	):
+		_apply_smg_hit(
+			collider,
+			hit_point
+		)
+
+	else:
+		spawn_bullet_impact(
+			hit_point,
+			hit_normal
+		)
+
+
+func _apply_smg_hit(
+	collider: Object,
+	hit_point: Vector3
+) -> void:
+	var health_before := _get_target_health(
+		collider
+	)
+
+	if collider.has_method(
+		"take_bullet_hit"
+	):
+		collider.take_bullet_hit(
+			smg_damage,
+			hit_point
+		)
+
+	elif collider.has_method(
+		"take_damage"
+	):
+		collider.take_damage(
+			smg_damage
+		)
+
+	else:
+		return
+
+	_show_damage_feedback(
+		collider,
+		hit_point,
+		smg_damage,
+		health_before
+	)
+
+
+# ============================================================
 # AUDIO BOSSOLI
 # ============================================================
 
@@ -1142,17 +1485,36 @@ func spawn_bullet_impact(
 		return
 
 	var game_scene := get_tree().current_scene
+
 	if game_scene == null:
 		return
 
-	var manager := game_scene.get_node_or_null("ImpactManager_Runtime")
-	if manager == null:
-		manager = preload("res://scripts/effects/impact_manager.gd").new()
-		manager.name = "ImpactManager_Runtime"
-		game_scene.add_child(manager)
+	var manager := game_scene.get_node_or_null(
+		"ImpactManager_Runtime"
+	)
 
-	var collider: Object = weapon_ray.get_collider() if weapon_ray.is_colliding() else null
-	manager.spawn_impact(collider, hit_point, hit_normal)
+	if manager == null:
+		manager = preload(
+			"res://scripts/effects/impact_manager.gd"
+		).new()
+
+		manager.name = "ImpactManager_Runtime"
+
+		game_scene.add_child(
+			manager
+		)
+
+	var collider: Object = (
+		weapon_ray.get_collider()
+		if weapon_ray.is_colliding()
+		else null
+	)
+
+	manager.spawn_impact(
+		collider,
+		hit_point,
+		hit_normal
+	)
 
 
 # ============================================================
@@ -1162,6 +1524,10 @@ func spawn_bullet_impact(
 func reload() -> void:
 	if is_flashlight_equipped():
 		reload_flashlight_battery()
+		return
+
+	if is_smg_equipped():
+		reload_smg()
 		return
 
 	if not is_pistol_equipped():
@@ -1209,7 +1575,8 @@ func reload() -> void:
 	await arms_animation_player.animation_finished
 
 	var ammo_needed: int = (
-		pistol_magazine_size - magazine_ammo
+		pistol_magazine_size
+		- magazine_ammo
 	)
 
 	var ammo_to_load: int = mini(
@@ -1221,6 +1588,116 @@ func reload() -> void:
 	reserve_ammo -= ammo_to_load
 
 	update_ammo_hud()
+
+	is_reloading = false
+	is_performing_action = false
+	can_attack = true
+
+	play_current_locomotion(true)
+
+
+# ============================================================
+# SMG - RELOAD
+# ============================================================
+
+func reload_smg() -> void:
+	if not is_smg_equipped():
+		return
+
+	if is_reloading:
+		return
+
+	if is_performing_action:
+		return
+
+	if (
+		smg_magazine_ammo
+		>= smg_magazine_size
+	):
+		return
+
+	if smg_reserve_ammo <= 0:
+		return
+
+	is_reloading = true
+	is_performing_action = true
+	can_attack = false
+
+	current_locomotion_animation = ""
+
+	if reload_audio.stream != null:
+		reload_audio.play()
+
+	var arms_reload_speed := (
+		reload_animation_speed
+	)
+
+	if arms_animation_player.has_animation(
+		"a_arms_pistol_reload"
+	):
+		arms_animation_player.play(
+			"a_arms_pistol_reload",
+			0.08,
+			arms_reload_speed
+		)
+
+	if smg_animation_player.has_animation(
+		"Animazioni/reload"
+	):
+		var arms_animation := (
+			arms_animation_player.get_animation(
+				"a_arms_pistol_reload"
+			)
+		)
+
+		var smg_animation := (
+			smg_animation_player.get_animation(
+				"Animazioni/reload"
+			)
+		)
+
+		var smg_reload_speed := 1.0
+
+		if (
+			arms_animation != null
+			and smg_animation != null
+		):
+			var target_duration := (
+				arms_animation.length
+				/ maxf(
+					arms_reload_speed,
+					0.01
+				)
+			)
+
+			if target_duration > 0.0:
+				smg_reload_speed = (
+					smg_animation.length
+					/ target_duration
+				)
+
+		smg_animation_player.play(
+			"Animazioni/reload",
+			0.0,
+			smg_reload_speed
+		)
+
+	await arms_animation_player.animation_finished
+
+	var ammo_needed := (
+		smg_magazine_size
+		- smg_magazine_ammo
+	)
+
+	var ammo_to_load := mini(
+		ammo_needed,
+		smg_reserve_ammo
+	)
+
+	smg_magazine_ammo += ammo_to_load
+	smg_reserve_ammo -= ammo_to_load
+
+	update_smg_ammo_hud()
 
 	is_reloading = false
 	is_performing_action = false
@@ -1243,6 +1720,25 @@ func add_ammo(amount: int) -> void:
 		update_ammo_hud()
 
 
+func add_smg_ammo(amount: int) -> void:
+	if amount <= 0:
+		return
+
+	smg_reserve_ammo += amount
+
+	if is_smg_equipped():
+		update_smg_ammo_hud()
+
+
+func update_smg_ammo_hud() -> void:
+	get_tree().call_group(
+		"hud",
+		"update_ammo",
+		smg_magazine_ammo,
+		smg_reserve_ammo
+	)
+
+
 func update_ammo_hud() -> void:
 	get_tree().call_group(
 		"hud",
@@ -1258,6 +1754,7 @@ func update_ammo_hud() -> void:
 
 func show_muzzle_flash() -> void:
 	muzzle_flash.visible = true
+
 	muzzle_flash_time_left = (
 		muzzle_flash_duration
 	)

@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" uid="uid://d1wmu30w13y06" path="res://assets/ui/hud/hud_hands.png" id="4_8qguk"]
 [ext_resource type="Texture2D" uid="uid://b3yceaeat5t0u" path="res://assets/ui/hud/hud_hitmarker_v1.png" id="4_kicr4"]
 [ext_resource type="Texture2D" uid="uid://bo7oxgk8rl4t1" path="res://assets/ui/hud/hud_bullet.png" id="5_136eg"]
+[ext_resource type="Texture2D" uid="uid://dm0rltsrgtahx" path="res://assets/ui/hud/bullet_smg1.png" id="7_mj13f"]
+[ext_resource type="Texture2D" uid="uid://b7e1rsgt13rps" path="res://assets/ui/hud/SMG_single.png" id="9_0h1do"]
 [ext_resource type="Texture2D" uid="uid://0l7s0djyw1ch" path="res://assets/ui/bruno_fase1.png" id="9_4jqwt"]
 [ext_resource type="Shader" uid="uid://bg8du3r0m0odl" path="res://assets/shaders/boss_health_blob.gdshader" id="10_kicr4"]
 
@@ -42,6 +44,7 @@ shader_parameter/contrast = 1.3
 
 [sub_resource type="SystemFont" id="SystemFont_el81d"]
 font_names = PackedStringArray("Bebas Neue")
+subpixel_positioning = 0
 
 [node name="HUD" type="CanvasLayer" unique_id=160974520]
 script = ExtResource("1_0mwgc")
@@ -183,6 +186,23 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_hyfr5")
 value = 100.0
 show_percentage = false
 
+[node name="SMG_bullet" type="TextureRect" parent="Interface/HudBar" unique_id=2079907878]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 229.0
+offset_top = -51.0
+offset_right = 390.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("7_mj13f")
+expand_mode = 1
+
 [node name="HealthValue" type="Label" parent="Interface/HudBar" unique_id=2021412218]
 layout_mode = 1
 anchors_preset = 7
@@ -217,7 +237,293 @@ mouse_filter = 2
 texture = ExtResource("4_8qguk")
 expand_mode = 1
 
+[node name="SMG_Bullets" type="Control" parent="Interface/HudBar" unique_id=445440325]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 227.0
+offset_top = -52.0
+offset_right = 385.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="SMG_Bullet1" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=781091475]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 3.0
+offset_right = 11.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet2" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1128041801]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 3.0
+offset_right = 16.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet3" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=156730658]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 3.0
+offset_right = 21.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet4" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1387677009]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 3.0
+offset_right = 26.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet5" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=2026062317]
+layout_mode = 0
+offset_left = 21.0
+offset_top = 3.0
+offset_right = 31.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet6" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=556817275]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 3.0
+offset_right = 38.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet7" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=773891850]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 3.0
+offset_right = 43.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet8" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=859446867]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 3.0
+offset_right = 48.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet9" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1605896837]
+layout_mode = 0
+offset_left = 42.0
+offset_top = 3.0
+offset_right = 52.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet10" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1432725181]
+layout_mode = 0
+offset_left = 47.0
+offset_top = 3.0
+offset_right = 57.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet11" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=661670728]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 3.0
+offset_right = 64.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet12" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1275658447]
+layout_mode = 0
+offset_left = 59.0
+offset_top = 3.0
+offset_right = 69.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet13" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1275688570]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 3.0
+offset_right = 74.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet14" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1013744723]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 3.0
+offset_right = 78.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet15" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1289284624]
+layout_mode = 0
+offset_left = 73.0
+offset_top = 3.0
+offset_right = 83.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet16" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1721381660]
+layout_mode = 0
+offset_left = 80.0
+offset_top = 3.0
+offset_right = 90.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet17" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1115770963]
+layout_mode = 0
+offset_left = 85.0
+offset_top = 3.0
+offset_right = 95.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet18" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1852305742]
+layout_mode = 0
+offset_left = 90.0
+offset_top = 3.0
+offset_right = 100.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet19" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1729004208]
+layout_mode = 0
+offset_left = 95.0
+offset_top = 3.0
+offset_right = 105.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet20" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=759069816]
+layout_mode = 0
+offset_left = 100.0
+offset_top = 3.0
+offset_right = 110.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet21" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1917683890]
+layout_mode = 0
+offset_left = 107.0
+offset_top = 3.0
+offset_right = 117.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet22" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1752515865]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 3.0
+offset_right = 122.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet23" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1782909946]
+layout_mode = 0
+offset_left = 116.0
+offset_top = 3.0
+offset_right = 126.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet24" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=119604412]
+layout_mode = 0
+offset_left = 121.0
+offset_top = 3.0
+offset_right = 131.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet25" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1626042944]
+layout_mode = 0
+offset_left = 126.0
+offset_top = 3.0
+offset_right = 136.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet26" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=2131413171]
+layout_mode = 0
+offset_left = 133.0
+offset_top = 3.0
+offset_right = 143.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet27" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1803204657]
+layout_mode = 0
+offset_left = 138.0
+offset_top = 3.0
+offset_right = 148.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet28" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1896776498]
+layout_mode = 0
+offset_left = 143.0
+offset_top = 3.0
+offset_right = 153.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet29" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=1682073598]
+layout_mode = 0
+offset_left = 148.0
+offset_top = 3.0
+offset_right = 158.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
+[node name="SMG_Bullet30" type="TextureRect" parent="Interface/HudBar/SMG_Bullets" unique_id=51513485]
+layout_mode = 0
+offset_left = 152.0
+offset_top = 3.0
+offset_right = 162.0
+offset_bottom = 22.0
+texture = ExtResource("9_0h1do")
+expand_mode = 1
+
 [node name="BulletRow" type="Control" parent="Interface/HudBar" unique_id=1102472100]
+visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -349,12 +655,13 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 2
 theme_override_fonts/font = SubResource("SystemFont_hyfr5")
 theme_override_font_sizes/font_size = 18
-text = "TROVA UNA VIA D'USCITA"
+text = "cosa sta succedendo?"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
 [node name="BatteryBar" type="ProgressBar" parent="Interface/HudBar" unique_id=1978523524]
+visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5

@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://dreap3pttfwdr"]
+
+[ext_resource type="Script" uid="uid://b3i2hxpyx8gum" path="res://scripts/pickups/smg_pickup.gd" id="1_gowbx"]
+[ext_resource type="PackedScene" uid="uid://db87eqnkeahwx" path="res://scenes/weapons/smg_model.tscn" id="1_mm78b"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hbjui"]
+size = Vector3(0.8, 0.8, 0.8)
+
+[node name="SMGPickup" type="Area3D" unique_id=916815553]
+collision_layer = 3
+script = ExtResource("1_gowbx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=613483377]
+shape = SubResource("BoxShape3D_hbjui")
+
+[node name="SMG_Test" parent="." unique_id=562274000 instance=ExtResource("1_mm78b")]
+transform = Transform3D(-1, 8.742278e-08, 0, 3.821371e-15, 4.371139e-08, -1, -8.742278e-08, -1, -4.371139e-08, 0, 0, 0.0808696)
+
+[node name="Skeleton3D" parent="SMG_Test/SMG_01/SMG_01_Armature" parent_id_path=PackedInt32Array(562274000, 1397191709, 1430104406) index="0" unique_id=772562104]
+bones/1/position = Vector3(3.7802144e-09, -0.045578003, 5.2485555e-10)
+bones/1/rotation = Quaternion(-1.1547231e-08, 0.7071067, 1.1547256e-08, 0.7071068)
+
+[node name="BoneAttachment3D" parent="SMG_Test/SMG_01/SMG_01_Armature/Skeleton3D" index="6" unique_id=1206818690]
+transform = Transform3D(1.7881393e-07, -3.2660537e-08, 0.99999994, 0.9999998, -1.1920932e-07, -1.788139e-07, 1.1920932e-07, 0.9999999, 3.2660513e-08, 3.7802144e-09, 4.9084656e-09, 1.3411045e-07)
+
+[node name="SMG_01_MagazineEmpty_Mesh2" parent="SMG_Test/SMG_01/SMG_01_Armature/Skeleton3D/BoneAttachment3D" index="0" unique_id=1567366481]
+visible = false
+
+[editable path="SMG_Test"]
+[editable path="SMG_Test/SMG_01"]
