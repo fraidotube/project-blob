@@ -17,6 +17,23 @@ const WEAPON_SMG := 3
 
 
 # ------------------------------------------------------------
+# AUDIO SMG
+# ------------------------------------------------------------
+
+const SMG_SHOOT_AUDIO: AudioStream = preload(
+	"res://assets/audio/weapons/smg/shoot.mp3"
+)
+
+const SMG_RELOAD_AUDIO: AudioStream = preload(
+	"res://assets/audio/weapons/smg/reload.mp3"
+)
+
+const SMG_EMPTY_AUDIO: AudioStream = preload(
+	"res://assets/audio/weapons/smg/empty.mp3"
+)
+
+
+# ------------------------------------------------------------
 # COMBATTIMENTO
 # ------------------------------------------------------------
 
@@ -140,6 +157,13 @@ var viewmodel_base_position: Vector3
 
 
 # ------------------------------------------------------------
+# AUDIO SMG
+# ------------------------------------------------------------
+
+var smg_empty_audio_player: AudioStreamPlayer
+
+
+# ------------------------------------------------------------
 # AUDIO TORCIA
 # ------------------------------------------------------------
 
@@ -252,7 +276,8 @@ var current_locomotion_animation := ""
 func _ready() -> void:
 	muzzle_flash.visible = false
 
-	# Il raycast non deve mai colpire il CharacterBody3D che lo possiede.
+	_setup_smg_empty_audio()
+
 	var player_body := get_node("../../..") as CollisionObject3D
 
 	if player_body == null:
@@ -315,6 +340,41 @@ func _ready() -> void:
 	)
 
 	play_current_locomotion(true)
+
+
+func _setup_smg_empty_audio() -> void:
+	smg_empty_audio_player = AudioStreamPlayer.new()
+	smg_empty_audio_player.name = "SMGEmptyAudio"
+	smg_empty_audio_player.stream = SMG_EMPTY_AUDIO
+	smg_empty_audio_player.bus = &"Weapons"
+	add_child(smg_empty_audio_player)
+
+
+# ============================================================
+# AUDIO SMG
+# ============================================================
+
+func _play_smg_one_shot(
+	stream: AudioStream
+) -> void:
+	if stream == null:
+		return
+
+	var player := AudioStreamPlayer.new()
+
+	player.name = "SMGOneShotAudio"
+	player.stream = stream
+	player.bus = &"Weapons"
+
+	add_child(player)
+
+	player.finished.connect(
+		func() -> void:
+			if is_instance_valid(player):
+				player.queue_free()
+	)
+
+	player.play()
 
 
 # ============================================================
@@ -713,6 +773,7 @@ func equip_owned_smg() -> void:
 
 	update_smg_ammo_hud()
 
+	# Il suono di equip rimane volutamente quello già usato.
 	if ready_audio.stream != null:
 		ready_audio.play()
 
@@ -1291,10 +1352,10 @@ func fire_smg() -> void:
 
 	if smg_magazine_ammo <= 0:
 		if (
-			empty_audio.stream != null
-			and not empty_audio.playing
+			smg_empty_audio_player != null
+			and not smg_empty_audio_player.playing
 		):
-			empty_audio.play()
+			smg_empty_audio_player.play()
 
 		return
 
@@ -1314,8 +1375,10 @@ func fire_smg() -> void:
 
 	current_locomotion_animation = ""
 
-	if shot_audio.stream != null:
-		shot_audio.play()
+	# Solo audio SMG. Non viene più chiamato ShotAudio della pistola.
+	_play_smg_one_shot(
+		SMG_SHOOT_AUDIO
+	)
 
 	var shot_duration := (
 		1.0
@@ -1575,8 +1638,7 @@ func reload() -> void:
 	await arms_animation_player.animation_finished
 
 	var ammo_needed: int = (
-		pistol_magazine_size
-		- magazine_ammo
+		pistol_magazine_size - magazine_ammo
 	)
 
 	var ammo_to_load: int = mini(
@@ -1625,8 +1687,10 @@ func reload_smg() -> void:
 
 	current_locomotion_animation = ""
 
-	if reload_audio.stream != null:
-		reload_audio.play()
+	# Solo audio SMG. Non viene più chiamato ReloadAudio della pistola.
+	_play_smg_one_shot(
+		SMG_RELOAD_AUDIO
+	)
 
 	var arms_reload_speed := (
 		reload_animation_speed
@@ -1725,6 +1789,11 @@ func add_smg_ammo(amount: int) -> void:
 		return
 
 	smg_reserve_ammo += amount
+
+	# Feedback sonoro quando vengono raccolte munizioni SMG.
+	_play_smg_one_shot(
+		SMG_RELOAD_AUDIO
+	)
 
 	if is_smg_equipped():
 		update_smg_ammo_hud()
