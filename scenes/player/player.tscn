@@ -87,6 +87,8 @@ script = ExtResource("2_dovo2")
 transform = Transform3D(-3, 0, -4.5298742e-07, 0, 3, 0, 4.5298742e-07, 0, -3, -0.111851215, 0.11060953, 0.16929638)
 
 [node name="Skeleton3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms" parent_id_path=PackedInt32Array(514129486, 394924321, 1201424799) index="0" unique_id=949106662]
+bones/13/rotation = Quaternion(0.2726048, 1.3325075e-07, -7.177831e-08, 0.9621262)
+bones/19/rotation = Quaternion(0.31230488, 9.7211905e-06, 2.9094494e-05, 0.94998205)
 bones/20/position = Vector3(-0.09409628, 0.111206256, -0.1689082)
 bones/21/rotation = Quaternion(0.6771517, 0.2100358, -0.5153174, 0.48145467)
 bones/22/rotation = Quaternion(-0.15108107, 0.0001561544, -0.28525212, 0.9464702)
@@ -117,6 +119,9 @@ bones/42/position = Vector3(-0.13650946, -0.18357943, 0.0025887787)
 [node name="PistolSocket" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="1" unique_id=2144907275]
 transform = Transform3D(0.007123789, -0.061979204, 0.99805164, -0.03368456, 0.99749583, 0.06218508, -0.9994069, -0.03406186, 0.005018428, -0.104059, 0.15969306, 0.1755833)
 
+[node name="PistolMuzzleMarker" type="Marker3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/PistolSocket" index="1" unique_id=739303885]
+transform = Transform3D(1.0000001, 0, -2.561137e-09, 0, 1.0000001, 0, -2.3283064e-10, -2.9802322e-08, 1.0000001, 0.06506455, 0.25754312, 0.03240473)
+
 [node name="FlashlightSocket" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="2" unique_id=1078999935]
 transform = Transform3D(0.007123789, -0.061979204, 0.99805164, -0.03368456, 0.99749583, 0.06218508, -0.9994069, -0.03406186, 0.005018428, -0.104059, 0.15969306, 0.1755833)
 
@@ -140,6 +145,9 @@ bones/1/rotation = Quaternion(-1.1547231e-08, 0.7071067, 1.1547256e-08, 0.707106
 
 [node name="BoneAttachment3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/SMGSocket/SMG_Test/SMG_01/SMG_01_Armature/Skeleton3D" index="6" unique_id=1206818690]
 transform = Transform3D(1.7881393e-07, -3.2660537e-08, 0.99999994, 0.9999998, -1.1920932e-07, -1.788139e-07, 1.1920932e-07, 0.9999999, 3.2660513e-08, 3.7802144e-09, 4.9084656e-09, 1.3411045e-07)
+
+[node name="SMGMuzzleMarker" type="Marker3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/SMGSocket" unique_id=625272670]
+transform = Transform3D(1.0000001, 0, -2.561137e-09, 0, 1.0000001, 0, -2.3283064e-10, -2.9802322e-08, 1.0000001, 0.076027244, 0.34574482, 0.030081987)
 
 [node name="MuzzleFlash" type="OmniLight3D" parent="Head/Camera3D/WeaponHolder" unique_id=785843134]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.34999996)

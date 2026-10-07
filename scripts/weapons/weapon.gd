@@ -247,6 +247,15 @@ var weapon_empty_audio_player: AudioStreamPlayer
 	/AnimationPlayer
 )
 
+@onready var pistol_muzzle_marker: Marker3D = (
+	$LowWorldViewModel
+	/smesh_arms_male
+	/rig_arms
+	/Skeleton3D
+	/PistolSocket
+	/PistolMuzzleMarker
+)
+
 @onready var smg_model: Node3D = (
 	$LowWorldViewModel
 	/smesh_arms_male
@@ -265,6 +274,15 @@ var weapon_empty_audio_player: AudioStreamPlayer
 	/SMG_Test
 	/SMG_01
 	/AnimationPlayer
+)
+
+@onready var smg_muzzle_marker: Marker3D = (
+	$LowWorldViewModel
+	/smesh_arms_male
+	/rig_arms
+	/Skeleton3D
+	/SMGSocket
+	/SMGMuzzleMarker
 )
 
 @onready var flashlight_model: Node3D = (
@@ -430,8 +448,6 @@ func _play_weapon_audio(
 		)
 	)
 
-	# EMPTY usa un player persistente per evitare una raffica
-	# di click quando il mouse rimane premuto.
 	if event_name == "empty":
 		if (
 			weapon_empty_audio_player
@@ -452,9 +468,6 @@ func _play_weapon_audio(
 
 		return
 
-	# Shoot / reload / ready / ammo pickup usano player
-	# indipendenti. Questo permette la sovrapposizione dei
-	# colpi automatici dell'SMG.
 	var player := AudioStreamPlayer.new()
 
 	player.name = (
@@ -1789,8 +1802,6 @@ func spawn_bullet_impact(
 	hit_point: Vector3,
 	hit_normal: Vector3
 ) -> void:
-	# Nel poligono questa risorsa viene disattivata
-	# dalla diagnostica per evitare impatti duplicati.
 	if bullet_impact_scene == null:
 		return
 
@@ -2088,6 +2099,19 @@ func update_ammo_hud() -> void:
 # ============================================================
 
 func show_muzzle_flash() -> void:
+	if is_pistol_equipped():
+		muzzle_flash.global_position = (
+			pistol_muzzle_marker.global_position
+		)
+
+	elif is_smg_equipped():
+		muzzle_flash.global_position = (
+			smg_muzzle_marker.global_position
+		)
+
+	else:
+		return
+
 	muzzle_flash.visible = true
 
 	muzzle_flash_time_left = (
