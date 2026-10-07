@@ -4,10 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://cok70ek8qb4b3" path="res://assets/ui/hud/hud_damage_overlay_v1.png" id="2_h022r"]
 [ext_resource type="Texture2D" uid="uid://opus0mcfthid" path="res://assets/ui/hud/hud_empty.png" id="2_hqnrr"]
 [ext_resource type="Texture2D" uid="uid://cs0usm5so84yf" path="res://assets/ui/hud/hud_crosshair_default_v1.png" id="3_4jqwt"]
-[ext_resource type="Texture2D" uid="uid://dd5dd1d8ichsi" path="res://assets/ui/hud/hud_face_100_v1.png" id="3_bo48s"]
 [ext_resource type="Texture2D" uid="uid://d1wmu30w13y06" path="res://assets/ui/hud/hud_hands.png" id="4_8qguk"]
 [ext_resource type="Texture2D" uid="uid://b3yceaeat5t0u" path="res://assets/ui/hud/hud_hitmarker_v1.png" id="4_kicr4"]
+[ext_resource type="Texture2D" uid="uid://c7d61ft0183do" path="res://assets/ui/face/stato1_1.png" id="5_0h1do"]
 [ext_resource type="Texture2D" uid="uid://bo7oxgk8rl4t1" path="res://assets/ui/hud/hud_bullet.png" id="5_136eg"]
+[ext_resource type="Script" uid="uid://c3hadt0mshpyk" path="res://scripts/systems/hud_face_controller.gd" id="6_4d46k"]
 [ext_resource type="Texture2D" uid="uid://dm0rltsrgtahx" path="res://assets/ui/hud/bullet_smg1.png" id="7_mj13f"]
 [ext_resource type="Texture2D" uid="uid://b7e1rsgt13rps" path="res://assets/ui/hud/SMG_single.png" id="9_0h1do"]
 [ext_resource type="Texture2D" uid="uid://0l7s0djyw1ch" path="res://assets/ui/bruno_fase1.png" id="9_4jqwt"]
@@ -136,6 +137,21 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="Faceback" type="ColorRect" parent="Interface/HudBar" unique_id=1407164603]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -30.0
+offset_top = -106.0
+offset_right = 53.0
+offset_bottom = -17.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0, 0, 0, 1)
+
 [node name="FacePortrait" type="TextureRect" parent="Interface/HudBar" unique_id=1186017525]
 layout_mode = 1
 anchors_preset = 7
@@ -143,15 +159,16 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -33.5
-offset_top = -110.0
-offset_right = 53.5
+offset_left = -31.0
+offset_top = -105.0
+offset_right = 51.0
 offset_bottom = -23.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
-texture = ExtResource("3_bo48s")
+texture = ExtResource("5_0h1do")
 expand_mode = 1
+script = ExtResource("6_4d46k")
 
 [node name="HudBackground" type="TextureRect" parent="Interface/HudBar" unique_id=1006998617]
 layout_mode = 1

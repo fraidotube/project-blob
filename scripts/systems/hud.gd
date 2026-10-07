@@ -5,26 +5,6 @@ const HITMARKER_DURATION := 0.10
 const BATTERY_SEGMENTS := 8
 const BATTERY_SEGMENT_SIZE := 100.0 / BATTERY_SEGMENTS
 
-const FACE_0 = preload(
-	"res://assets/ui/hud/hud_face_0_v1.png"
-)
-
-const FACE_25 = preload(
-	"res://assets/ui/hud/hud_face_25_v1.png"
-)
-
-const FACE_50 = preload(
-	"res://assets/ui/hud/hud_face_50_v1.png"
-)
-
-const FACE_75 = preload(
-	"res://assets/ui/hud/hud_face_75_v1.png"
-)
-
-const FACE_100 = preload(
-	"res://assets/ui/hud/hud_face_100_v1.png"
-)
-
 const WEAPON_HANDS = preload(
 	"res://assets/ui/hud/hud_hands.png"
 )
@@ -65,8 +45,6 @@ const WEAPON_SMG = preload(
 	"res://assets/ui/bruno_fase3.png"
 )
 
-# Colori dark dello shader blob della barra boss.
-# Fase 1: verde organico scuro
 @export var boss_phase_1_blob_color := Color(
 	0.078431,
 	0.168627,
@@ -81,7 +59,6 @@ const WEAPON_SMG = preload(
 	1.0
 )
 
-# Fase 2: ambra/marrone scuro
 @export var boss_phase_2_blob_color := Color(
 	0.227451,
 	0.164706,
@@ -96,7 +73,6 @@ const WEAPON_SMG = preload(
 	1.0
 )
 
-# Fase 3: rosso cupo
 @export var boss_phase_3_blob_color := Color(
 	0.168627,
 	0.039216,
@@ -192,7 +168,7 @@ const WEAPON_SMG = preload(
 	$Interface/HudBar/HealthValue
 )
 
-@onready var face_portrait: TextureRect = (
+@onready var face_portrait: Node = (
 	$Interface/HudBar/FacePortrait
 )
 
@@ -294,8 +270,6 @@ func _ready() -> void:
 
 	_setup_smg_bullet_icons()
 
-	face_portrait.texture = FACE_100
-
 	update_weapon("MANI NUDE")
 	hide_ammo()
 	hide_flashlight_battery()
@@ -333,8 +307,6 @@ func _setup_smg_bullet_icons() -> void:
 
 
 func _setup_damage_vignette() -> void:
-	# The overlay lives inside Interface, behind the existing HUD and texture.
-	# Nothing in hud.tscn or its original PNG is replaced.
 	damage_vignette = ColorRect.new()
 	damage_vignette.name = "DamageVignette"
 	damage_vignette.mouse_filter = (
@@ -397,7 +369,6 @@ void fragment() {
 
 
 func _setup_boss_bar_style() -> void:
-	# Manteniamo una copia locale del fill come fallback.
 	var existing_fill := (
 		boss_health_bar.get_theme_stylebox(
 			"fill"
@@ -420,9 +391,6 @@ func _setup_boss_bar_style() -> void:
 		_boss_fill_style
 	)
 
-	# Se alla BossHealthBar è assegnato il nostro ShaderMaterial,
-	# ne duplichiamo una copia locale così le modifiche di fase
-	# riguardano solo questa barra.
 	if (
 		boss_health_bar.material
 		is ShaderMaterial
@@ -725,6 +693,14 @@ func show_damage_flash() -> void:
 		1.0
 	)
 
+	if face_portrait.has_method(
+		"react"
+	):
+		face_portrait.call(
+			"react",
+			"hit_random"
+		)
+
 
 func _set_damage_intensity(
 	intensity: float
@@ -783,41 +759,14 @@ func update_health(
 		str(current_health)
 	)
 
-	_update_face_from_health(
-		current_health,
-		max_health
-	)
-
-
-func _update_face_from_health(
-	current_health: int,
-	max_health: int
-) -> void:
-	if current_health <= 0:
-		face_portrait.texture = FACE_0
-		return
-
-	if max_health <= 0:
-		face_portrait.texture = FACE_0
-		return
-
-	var health_percent: float = (
-		float(current_health)
-		/ float(max_health)
-		* 100.0
-	)
-
-	if health_percent <= 25.0:
-		face_portrait.texture = FACE_25
-
-	elif health_percent <= 50.0:
-		face_portrait.texture = FACE_50
-
-	elif health_percent <= 75.0:
-		face_portrait.texture = FACE_75
-
-	else:
-		face_portrait.texture = FACE_100
+	if face_portrait.has_method(
+		"set_health"
+	):
+		face_portrait.call(
+			"set_health",
+			current_health,
+			max_health
+		)
 
 
 # ============================================================
@@ -1101,7 +1050,6 @@ func _update_smg_bullet_icons(
 
 func hide_ammo() -> void:
 	ammo_value.visible = false
-
 	bullet_row.visible = false
 
 	smg_bullet_background.visible = false
@@ -1241,4 +1189,10 @@ func show_death_screen() -> void:
 
 	death_label.visible = true
 
-	face_portrait.texture = FACE_0
+	if face_portrait.has_method(
+		"react"
+	):
+		face_portrait.call(
+			"react",
+			"pain"
+		)
