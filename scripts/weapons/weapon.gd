@@ -17,20 +17,61 @@ const WEAPON_SMG := 3
 
 
 # ------------------------------------------------------------
-# AUDIO SMG
+# AUDIO ARMI - CONFIGURABILE DA INSPECTOR
 # ------------------------------------------------------------
 
-const SMG_SHOOT_AUDIO: AudioStream = preload(
+@export_group("Audio Pistola")
+
+@export var pistol_shoot_audio: AudioStream = preload(
+	"res://assets/audio/player/footsteps/pistol_shots.tres"
+)
+
+@export var pistol_reload_audio: AudioStream = preload(
+	"res://assets/audio/weapons/pistol/reload.ogg"
+)
+
+@export var pistol_empty_audio: AudioStream = preload(
+	"res://assets/audio/weapons/pistol/gunempty.ogg"
+)
+
+@export var pistol_ready_audio: AudioStream = preload(
+	"res://assets/audio/weapons/pistol/gunready.ogg"
+)
+
+@export_range(
+	-40.0,
+	12.0,
+	0.5
+) var pistol_audio_volume_db := 0.0
+
+
+@export_group("Audio SMG")
+
+@export var smg_shoot_audio: AudioStream = preload(
 	"res://assets/audio/weapons/smg/shoot.mp3"
 )
 
-const SMG_RELOAD_AUDIO: AudioStream = preload(
+@export var smg_reload_audio: AudioStream = preload(
 	"res://assets/audio/weapons/smg/reload.mp3"
 )
 
-const SMG_EMPTY_AUDIO: AudioStream = preload(
+@export var smg_empty_audio: AudioStream = preload(
 	"res://assets/audio/weapons/smg/empty.mp3"
 )
+
+@export var smg_ready_audio: AudioStream = preload(
+	"res://assets/audio/weapons/pistol/gunready.ogg"
+)
+
+@export var smg_ammo_pickup_audio: AudioStream = preload(
+	"res://assets/audio/weapons/smg/reload.mp3"
+)
+
+@export_range(
+	-40.0,
+	12.0,
+	0.5
+) var smg_audio_volume_db := 0.0
 
 
 # ------------------------------------------------------------
@@ -41,20 +82,30 @@ const SMG_EMPTY_AUDIO: AudioStream = preload(
 @export var melee_damage := 1
 
 @export_group("SMG")
+
 @export var smg_damage := 4
-@export_range(1.0, 30.0, 0.5) var smg_fire_rate := 10.0
+
+@export_range(
+	1.0,
+	30.0,
+	0.5
+) var smg_fire_rate := 10.0
+
 @export var smg_magazine_size := 30
 @export var smg_starting_reserve_ammo := 120
 
+@export_group("Combat")
+
 @export var melee_range := 1.6
 @export var melee_attack_cooldown := 0.45
-
 @export var fire_rate := 4.0
 
 
 # ------------------------------------------------------------
 # MUNIZIONI PISTOLA
 # ------------------------------------------------------------
+
+@export_group("Pistola")
 
 @export var pistol_magazine_size := 9
 @export var starting_reserve_ammo := 36
@@ -70,6 +121,8 @@ var smg_reserve_ammo: int = 120
 # TORCIA / BATTERIE
 # ------------------------------------------------------------
 
+@export_group("Torcia")
+
 @export var flashlight_drain_per_second := 2.0
 @export var starting_spare_batteries := 0
 @export var max_spare_batteries := 5
@@ -83,12 +136,16 @@ var spare_batteries := 0
 # ANIMAZIONI
 # ------------------------------------------------------------
 
+@export_group("Animazioni")
+
 @export var reload_animation_speed := 1.25
 
 
 # ------------------------------------------------------------
 # EFFETTI
 # ------------------------------------------------------------
+
+@export_group("Effetti")
 
 @export var muzzle_flash_duration := 0.05
 
@@ -102,6 +159,8 @@ var spare_batteries := 0
 # ------------------------------------------------------------
 # ANTI-CLIPPING VIEWMODEL
 # ------------------------------------------------------------
+
+@export_group("Viewmodel")
 
 @export var wall_pushback := 0.55
 @export var wall_drop := 0.20
@@ -128,24 +187,12 @@ var viewmodel_base_position: Vector3
 
 
 # ------------------------------------------------------------
-# AUDIO PISTOLA
+# AUDIO ESISTENTE
+#
+# I vecchi nodi ShotAudio / EmptyAudio / ReloadAudio / ReadyAudio
+# rimangono nella scena per ora, ma il gameplay delle armi usa
+# il nuovo sistema comune configurabile dall'Inspector.
 # ------------------------------------------------------------
-
-@onready var shot_audio: AudioStreamPlayer = (
-	$ShotAudio
-)
-
-@onready var empty_audio: AudioStreamPlayer = (
-	$EmptyAudio
-)
-
-@onready var reload_audio: AudioStreamPlayer = (
-	$ReloadAudio
-)
-
-@onready var ready_audio: AudioStreamPlayer = (
-	$ReadyAudio
-)
 
 @onready var shell_casing_audio: AudioStreamPlayer = (
 	$ShellCasingAudio
@@ -155,21 +202,16 @@ var viewmodel_base_position: Vector3
 	$ShellCasingTimer
 )
 
-
-# ------------------------------------------------------------
-# AUDIO SMG
-# ------------------------------------------------------------
-
-var smg_empty_audio_player: AudioStreamPlayer
-
-
-# ------------------------------------------------------------
-# AUDIO TORCIA
-# ------------------------------------------------------------
-
 @onready var flashlight_click_audio: AudioStreamPlayer = (
 	$FlashlightClickAudio
 )
+
+
+# ------------------------------------------------------------
+# AUDIO RUNTIME COMUNE
+# ------------------------------------------------------------
+
+var weapon_empty_audio_player: AudioStreamPlayer
 
 
 # ------------------------------------------------------------
@@ -276,16 +318,22 @@ var current_locomotion_animation := ""
 func _ready() -> void:
 	muzzle_flash.visible = false
 
-	_setup_smg_empty_audio()
+	_setup_weapon_audio()
 
-	var player_body := get_node("../../..") as CollisionObject3D
+	var player_body := (
+		get_node("../../..")
+		as CollisionObject3D
+	)
 
 	if player_body == null:
 		push_error(
 			"WeaponRay: Player non trovato; verificare gerarchia WeaponHolder"
 		)
+
 	else:
-		weapon_ray.add_exception(player_body)
+		weapon_ray.add_exception(
+			player_body
+		)
 
 	owns_pistol = false
 	owns_flashlight = false
@@ -342,39 +390,147 @@ func _ready() -> void:
 	play_current_locomotion(true)
 
 
-func _setup_smg_empty_audio() -> void:
-	smg_empty_audio_player = AudioStreamPlayer.new()
-	smg_empty_audio_player.name = "SMGEmptyAudio"
-	smg_empty_audio_player.stream = SMG_EMPTY_AUDIO
-	smg_empty_audio_player.bus = &"Weapons"
-	add_child(smg_empty_audio_player)
-
-
 # ============================================================
-# AUDIO SMG
+# AUDIO ARMI - SISTEMA COMUNE
 # ============================================================
 
-func _play_smg_one_shot(
-	stream: AudioStream
+func _setup_weapon_audio() -> void:
+	weapon_empty_audio_player = (
+		AudioStreamPlayer.new()
+	)
+
+	weapon_empty_audio_player.name = (
+		"WeaponEmptyAudio"
+	)
+
+	weapon_empty_audio_player.bus = (
+		&"Weapons"
+	)
+
+	add_child(
+		weapon_empty_audio_player
+	)
+
+
+func _play_weapon_audio(
+	weapon_type: int,
+	event_name: String
 ) -> void:
+	var stream := _get_weapon_audio_stream(
+		weapon_type,
+		event_name
+	)
+
 	if stream == null:
 		return
 
+	var volume_db := (
+		_get_weapon_audio_volume(
+			weapon_type
+		)
+	)
+
+	# EMPTY usa un player persistente per evitare una raffica
+	# di click quando il mouse rimane premuto.
+	if event_name == "empty":
+		if (
+			weapon_empty_audio_player
+			== null
+		):
+			return
+
+		if weapon_empty_audio_player.playing:
+			return
+
+		weapon_empty_audio_player.stream = stream
+
+		weapon_empty_audio_player.volume_db = (
+			volume_db
+		)
+
+		weapon_empty_audio_player.play()
+
+		return
+
+	# Shoot / reload / ready / ammo pickup usano player
+	# indipendenti. Questo permette la sovrapposizione dei
+	# colpi automatici dell'SMG.
 	var player := AudioStreamPlayer.new()
 
-	player.name = "SMGOneShotAudio"
+	player.name = (
+		"WeaponAudio_"
+		+ event_name
+	)
+
 	player.stream = stream
 	player.bus = &"Weapons"
+	player.volume_db = volume_db
 
-	add_child(player)
+	add_child(
+		player
+	)
 
 	player.finished.connect(
 		func() -> void:
-			if is_instance_valid(player):
+			if is_instance_valid(
+				player
+			):
 				player.queue_free()
 	)
 
 	player.play()
+
+
+func _get_weapon_audio_stream(
+	weapon_type: int,
+	event_name: String
+) -> AudioStream:
+	match weapon_type:
+		WEAPON_PISTOL:
+			match event_name:
+				"shoot":
+					return pistol_shoot_audio
+
+				"reload":
+					return pistol_reload_audio
+
+				"empty":
+					return pistol_empty_audio
+
+				"ready":
+					return pistol_ready_audio
+
+		WEAPON_SMG:
+			match event_name:
+				"shoot":
+					return smg_shoot_audio
+
+				"reload":
+					return smg_reload_audio
+
+				"empty":
+					return smg_empty_audio
+
+				"ready":
+					return smg_ready_audio
+
+				"ammo_pickup":
+					return smg_ammo_pickup_audio
+
+	return null
+
+
+func _get_weapon_audio_volume(
+	weapon_type: int
+) -> float:
+	match weapon_type:
+		WEAPON_PISTOL:
+			return pistol_audio_volume_db
+
+		WEAPON_SMG:
+			return smg_audio_volume_db
+
+	return 0.0
 
 
 # ============================================================
@@ -410,7 +566,9 @@ func _update_smg_automatic_fire() -> void:
 	if is_performing_action:
 		return
 
-	if not Input.is_action_pressed("fire"):
+	if not Input.is_action_pressed(
+		"fire"
+	):
 		if current_locomotion_animation == "":
 			play_current_locomotion(true)
 
@@ -420,15 +578,21 @@ func _update_smg_automatic_fire() -> void:
 		fire_smg()
 
 
-func _physics_process(delta: float) -> void:
-	update_viewmodel_wall_push(delta)
+func _physics_process(
+	delta: float
+) -> void:
+	update_viewmodel_wall_push(
+		delta
+	)
 
 
 # ============================================================
 # BATTERIA TORCIA
 # ============================================================
 
-func _update_flashlight_battery(delta: float) -> void:
+func _update_flashlight_battery(
+	delta: float
+) -> void:
 	if not flashlight_on:
 		return
 
@@ -480,14 +644,19 @@ func add_flashlight_battery(
 	if spare_batteries >= max_spare_batteries:
 		return false
 
-	var previous_amount := spare_batteries
+	var previous_amount := (
+		spare_batteries
+	)
 
 	spare_batteries = mini(
 		spare_batteries + amount,
 		max_spare_batteries
 	)
 
-	return spare_batteries > previous_amount
+	return (
+		spare_batteries
+		> previous_amount
+	)
 
 
 func reload_flashlight_battery() -> void:
@@ -561,22 +730,33 @@ func update_viewmodel_wall_push(
 # ============================================================
 
 func is_pistol_equipped() -> bool:
-	return equipped_weapon == WEAPON_PISTOL
+	return (
+		equipped_weapon
+		== WEAPON_PISTOL
+	)
 
 
 func is_flashlight_equipped() -> bool:
-	return equipped_weapon == WEAPON_FLASHLIGHT
+	return (
+		equipped_weapon
+		== WEAPON_FLASHLIGHT
+	)
 
 
 func is_smg_equipped() -> bool:
-	return equipped_weapon == WEAPON_SMG
+	return (
+		equipped_weapon
+		== WEAPON_SMG
+	)
 
 
 # ============================================================
 # SELEZIONE SLOT
 # ============================================================
 
-func select_weapon_slot(slot: int) -> void:
+func select_weapon_slot(
+	slot: int
+) -> void:
 	if slot == 1:
 		equip_unarmed()
 		return
@@ -644,7 +824,10 @@ func equip_unarmed() -> void:
 			0.08
 		)
 
-		await arms_animation_player.animation_finished
+		await (
+			arms_animation_player
+			.animation_finished
+		)
 
 	is_performing_action = false
 
@@ -703,8 +886,10 @@ func equip_owned_pistol() -> void:
 
 	update_ammo_hud()
 
-	if ready_audio.stream != null:
-		ready_audio.play()
+	_play_weapon_audio(
+		WEAPON_PISTOL,
+		"ready"
+	)
 
 	if arms_animation_player.has_animation(
 		"a_arms_pistol_start"
@@ -714,7 +899,10 @@ func equip_owned_pistol() -> void:
 			0.08
 		)
 
-		await arms_animation_player.animation_finished
+		await (
+			arms_animation_player
+			.animation_finished
+		)
 
 	is_performing_action = false
 
@@ -773,9 +961,10 @@ func equip_owned_smg() -> void:
 
 	update_smg_ammo_hud()
 
-	# Il suono di equip rimane volutamente quello già usato.
-	if ready_audio.stream != null:
-		ready_audio.play()
+	_play_weapon_audio(
+		WEAPON_SMG,
+		"ready"
+	)
 
 	if arms_animation_player.has_animation(
 		"a_arms_pistol_start"
@@ -785,7 +974,10 @@ func equip_owned_smg() -> void:
 			0.08
 		)
 
-		await arms_animation_player.animation_finished
+		await (
+			arms_animation_player
+			.animation_finished
+		)
 
 	is_performing_action = false
 
@@ -875,7 +1067,9 @@ func toggle_flashlight() -> void:
 	if flashlight_charge <= 0.0:
 		flashlight_on = false
 		flashlight_light.visible = false
+
 		update_flashlight_battery_hud()
+
 		return
 
 	flashlight_on = not flashlight_on
@@ -898,7 +1092,8 @@ func set_movement_state(
 ) -> void:
 	var changed := (
 		player_is_moving != is_moving
-		or player_is_sprinting != is_sprinting
+		or player_is_sprinting
+			!= is_sprinting
 	)
 
 	player_is_moving = is_moving
@@ -990,7 +1185,9 @@ func play_current_locomotion(
 	):
 		return
 
-	current_locomotion_animation = animation_name
+	current_locomotion_animation = (
+		animation_name
+	)
 
 	arms_animation_player.play(
 		animation_name,
@@ -1051,7 +1248,9 @@ func attack_unarmed() -> void:
 	can_attack = false
 	is_performing_action = true
 
-	attack_cooldown_left = melee_attack_cooldown
+	attack_cooldown_left = (
+		melee_attack_cooldown
+	)
 
 	var animation_name := (
 		"a_arms_unarmed_attack%d"
@@ -1083,7 +1282,10 @@ func attack_unarmed() -> void:
 
 	perform_melee_hit()
 
-	await arms_animation_player.animation_finished
+	await (
+		arms_animation_player
+		.animation_finished
+	)
 
 	is_performing_action = false
 
@@ -1096,11 +1298,18 @@ func perform_melee_hit() -> void:
 	if not weapon_ray.is_colliding():
 		return
 
-	var collider := weapon_ray.get_collider()
-	var hit_point := weapon_ray.get_collision_point()
+	var collider := (
+		weapon_ray.get_collider()
+	)
+
+	var hit_point := (
+		weapon_ray.get_collision_point()
+	)
 
 	var distance_to_hit: float = (
-		weapon_ray.global_position.distance_to(
+		weapon_ray
+		.global_position
+		.distance_to(
 			hit_point
 		)
 	)
@@ -1111,9 +1320,13 @@ func perform_melee_hit() -> void:
 	if collider == null:
 		return
 
-	if collider.has_method("take_damage"):
-		var health_before := _get_target_health(
-			collider
+	if collider.has_method(
+		"take_damage"
+	):
+		var health_before := (
+			_get_target_health(
+				collider
+			)
 		)
 
 		collider.take_damage(
@@ -1137,12 +1350,15 @@ func fire_pistol() -> void:
 		return
 
 	if magazine_ammo <= 0:
-		if empty_audio.stream != null:
-			empty_audio.play()
+		_play_weapon_audio(
+			WEAPON_PISTOL,
+			"empty"
+		)
 
 		return
 
 	magazine_ammo -= 1
+
 	update_ammo_hud()
 
 	can_attack = false
@@ -1154,8 +1370,10 @@ func fire_pistol() -> void:
 
 	current_locomotion_animation = ""
 
-	if shot_audio.stream != null:
-		shot_audio.play()
+	_play_weapon_audio(
+		WEAPON_PISTOL,
+		"shoot"
+	)
 
 	if arms_animation_player.has_animation(
 		"a_arms_pistol_attack1"
@@ -1179,9 +1397,17 @@ func fire_pistol() -> void:
 	weapon_ray.force_raycast_update()
 
 	if weapon_ray.is_colliding():
-		var collider := weapon_ray.get_collider()
-		var hit_point := weapon_ray.get_collision_point()
-		var hit_normal := weapon_ray.get_collision_normal()
+		var collider := (
+			weapon_ray.get_collider()
+		)
+
+		var hit_point := (
+			weapon_ray.get_collision_point()
+		)
+
+		var hit_normal := (
+			weapon_ray.get_collision_normal()
+		)
 
 		if collider != null:
 			var dodged := false
@@ -1208,6 +1434,7 @@ func fire_pistol() -> void:
 						collider,
 						hit_point
 					)
+
 				else:
 					spawn_bullet_impact(
 						hit_point,
@@ -1220,7 +1447,10 @@ func fire_pistol() -> void:
 				hit_normal
 			)
 
-	await arms_animation_player.animation_finished
+	await (
+		arms_animation_player
+		.animation_finished
+	)
 
 	is_performing_action = false
 
@@ -1231,8 +1461,10 @@ func _apply_pistol_hit(
 	collider: Object,
 	hit_point: Vector3
 ) -> void:
-	var health_before := _get_target_health(
-		collider
+	var health_before := (
+		_get_target_health(
+			collider
+		)
 	)
 
 	if collider.has_method(
@@ -1272,10 +1504,14 @@ func _show_damage_feedback(
 		"show_hitmarker"
 	)
 
-	var applied_damage := fallback_damage
+	var applied_damage := (
+		fallback_damage
+	)
 
-	var health_after := _get_target_health(
-		target
+	var health_after := (
+		_get_target_health(
+			target
+		)
 	)
 
 	if (
@@ -1283,7 +1519,8 @@ func _show_damage_feedback(
 		and health_after >= 0
 	):
 		applied_damage = maxi(
-			health_before - health_after,
+			health_before
+			- health_after,
 			0
 		)
 
@@ -1291,7 +1528,8 @@ func _show_damage_feedback(
 		return
 
 	var critical := (
-		applied_damage > fallback_damage
+		applied_damage
+		> fallback_damage
 	)
 
 	get_tree().call_group(
@@ -1351,11 +1589,10 @@ func fire_smg() -> void:
 		return
 
 	if smg_magazine_ammo <= 0:
-		if (
-			smg_empty_audio_player != null
-			and not smg_empty_audio_player.playing
-		):
-			smg_empty_audio_player.play()
+		_play_weapon_audio(
+			WEAPON_SMG,
+			"empty"
+		)
 
 		return
 
@@ -1375,9 +1612,9 @@ func fire_smg() -> void:
 
 	current_locomotion_animation = ""
 
-	# Solo audio SMG. Non viene più chiamato ShotAudio della pistola.
-	_play_smg_one_shot(
-		SMG_SHOOT_AUDIO
+	_play_weapon_audio(
+		WEAPON_SMG,
+		"shoot"
 	)
 
 	var shot_duration := (
@@ -1443,9 +1680,17 @@ func fire_smg() -> void:
 	if not weapon_ray.is_colliding():
 		return
 
-	var collider := weapon_ray.get_collider()
-	var hit_point := weapon_ray.get_collision_point()
-	var hit_normal := weapon_ray.get_collision_normal()
+	var collider := (
+		weapon_ray.get_collider()
+	)
+
+	var hit_point := (
+		weapon_ray.get_collision_point()
+	)
+
+	var hit_normal := (
+		weapon_ray.get_collision_normal()
+	)
 
 	if collider == null:
 		spawn_bullet_impact(
@@ -1493,8 +1738,10 @@ func _apply_smg_hit(
 	collider: Object,
 	hit_point: Vector3
 ) -> void:
-	var health_before := _get_target_health(
-		collider
+	var health_before := (
+		_get_target_health(
+			collider
+		)
 	)
 
 	if collider.has_method(
@@ -1535,25 +1782,29 @@ func _on_shell_casing_timer_timeout() -> void:
 
 
 # ============================================================
-# BULLET IMPACT - Project Blob, materiali e suoni condivisi
+# BULLET IMPACT
 # ============================================================
 
 func spawn_bullet_impact(
 	hit_point: Vector3,
 	hit_normal: Vector3
 ) -> void:
-	# Nel poligono questa risorsa e' disattivata per lasciare attiva
-	# soltanto la diagnostica locale e non duplicare gli impatti.
+	# Nel poligono questa risorsa viene disattivata
+	# dalla diagnostica per evitare impatti duplicati.
 	if bullet_impact_scene == null:
 		return
 
-	var game_scene := get_tree().current_scene
+	var game_scene := (
+		get_tree().current_scene
+	)
 
 	if game_scene == null:
 		return
 
-	var manager := game_scene.get_node_or_null(
-		"ImpactManager_Runtime"
+	var manager := (
+		game_scene.get_node_or_null(
+			"ImpactManager_Runtime"
+		)
 	)
 
 	if manager == null:
@@ -1561,7 +1812,9 @@ func spawn_bullet_impact(
 			"res://scripts/effects/impact_manager.gd"
 		).new()
 
-		manager.name = "ImpactManager_Runtime"
+		manager.name = (
+			"ImpactManager_Runtime"
+		)
 
 		game_scene.add_child(
 			manager
@@ -1614,8 +1867,10 @@ func reload() -> void:
 
 	current_locomotion_animation = ""
 
-	if reload_audio.stream != null:
-		reload_audio.play()
+	_play_weapon_audio(
+		WEAPON_PISTOL,
+		"reload"
+	)
 
 	if arms_animation_player.has_animation(
 		"a_arms_pistol_reload"
@@ -1635,10 +1890,14 @@ func reload() -> void:
 			reload_animation_speed
 		)
 
-	await arms_animation_player.animation_finished
+	await (
+		arms_animation_player
+		.animation_finished
+	)
 
 	var ammo_needed: int = (
-		pistol_magazine_size - magazine_ammo
+		pistol_magazine_size
+		- magazine_ammo
 	)
 
 	var ammo_to_load: int = mini(
@@ -1687,9 +1946,9 @@ func reload_smg() -> void:
 
 	current_locomotion_animation = ""
 
-	# Solo audio SMG. Non viene più chiamato ReloadAudio della pistola.
-	_play_smg_one_shot(
-		SMG_RELOAD_AUDIO
+	_play_weapon_audio(
+		WEAPON_SMG,
+		"reload"
 	)
 
 	var arms_reload_speed := (
@@ -1746,7 +2005,10 @@ func reload_smg() -> void:
 			smg_reload_speed
 		)
 
-	await arms_animation_player.animation_finished
+	await (
+		arms_animation_player
+		.animation_finished
+	)
 
 	var ammo_needed := (
 		smg_magazine_size
@@ -1774,7 +2036,9 @@ func reload_smg() -> void:
 # PICKUP MUNIZIONI
 # ============================================================
 
-func add_ammo(amount: int) -> void:
+func add_ammo(
+	amount: int
+) -> void:
 	if amount <= 0:
 		return
 
@@ -1784,15 +2048,17 @@ func add_ammo(amount: int) -> void:
 		update_ammo_hud()
 
 
-func add_smg_ammo(amount: int) -> void:
+func add_smg_ammo(
+	amount: int
+) -> void:
 	if amount <= 0:
 		return
 
 	smg_reserve_ammo += amount
 
-	# Feedback sonoro quando vengono raccolte munizioni SMG.
-	_play_smg_one_shot(
-		SMG_RELOAD_AUDIO
+	_play_weapon_audio(
+		WEAPON_SMG,
+		"ammo_pickup"
 	)
 
 	if is_smg_equipped():
