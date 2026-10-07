@@ -72,6 +72,15 @@ const WEAPON_FLASHLIGHT = preload(
 @export var boss_phase_3_glow_color := Color(0.478431, 0.117647, 0.117647, 1.0) # #7A1E1E
 @export_range(0.05, 3.0, 0.05) var boss_phase_refill_duration: float = 0.75
 
+@export_group("Damage Numbers")
+@export_range(0.20, 2.0, 0.05) var damage_number_duration: float = 0.75
+@export_range(10.0, 140.0, 1.0) var damage_number_rise: float = 52.0
+@export_range(0.0, 60.0, 1.0) var damage_number_spread: float = 18.0
+@export_range(12, 72, 1) var damage_number_font_size: int = 28
+@export_range(12, 84, 1) var critical_damage_number_font_size: int = 36
+@export var damage_number_color := Color(0.90, 0.86, 0.72, 1.0)
+@export var critical_damage_number_color := Color(0.92, 0.42, 0.14, 1.0)
+
 @onready var crosshair_image: TextureRect = (
 	$Interface/CrosshairImage
 )
@@ -148,6 +157,7 @@ var _boss_shader_material: ShaderMaterial
 var _boss_refill_tween: Tween
 var _boss_last_phase: int = 0
 var _boss_display_phase_max: int = 1
+var _damage_number_font: SystemFont
 
 
 # ============================================================
@@ -164,6 +174,7 @@ func _ready() -> void:
 
 	_setup_damage_vignette()
 	_setup_boss_bar_style()
+	_setup_damage_number_font()
 
 	bullet_icons = [
 		$Interface/HudBar/BulletRow/Bullet01,
@@ -287,6 +298,155 @@ func _process(delta: float) -> void:
 func show_hitmarker() -> void:
 	hit_marker_image.visible = true
 	hitmarker_time_left = HITMARKER_DURATION
+
+
+# ============================================================
+# DAMAGE NUMBERS
+# ============================================================
+
+func _setup_damage_number_font() -> void:
+	_damage_number_font = SystemFont.new()
+	_damage_number_font.font_names = PackedStringArray([
+		"Bebas Neue"
+	])
+
+
+func show_damage_number(
+	damage_amount: int,
+	world_position: Vector3,
+	critical: bool = false
+) -> void:
+	if damage_amount <= 0:
+		return
+
+	var camera := get_viewport().get_camera_3d()
+
+	if camera == null:
+		return
+
+	if camera.is_position_behind(
+		world_position
+	):
+		return
+
+	var screen_position := camera.unproject_position(
+		world_position
+	)
+
+	var label := Label.new()
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.z_index = 200
+	label.text = str(damage_amount)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.custom_minimum_size = Vector2(96.0, 54.0)
+	label.size = Vector2(96.0, 54.0)
+
+	if _damage_number_font != null:
+		label.add_theme_font_override(
+			"font",
+			_damage_number_font
+		)
+
+	var font_size := damage_number_font_size
+	var font_color := damage_number_color
+	var start_scale := Vector2(0.82, 0.82)
+
+	if critical:
+		font_size = critical_damage_number_font_size
+		font_color = critical_damage_number_color
+		start_scale = Vector2(1.05, 1.05)
+
+	label.add_theme_font_size_override(
+		"font_size",
+		font_size
+	)
+	label.add_theme_color_override(
+		"font_color",
+		font_color
+	)
+	label.add_theme_color_override(
+		"font_outline_color",
+		Color(0.0, 0.0, 0.0, 0.95)
+	)
+	label.add_theme_constant_override(
+		"outline_size",
+		3
+	)
+
+	$Interface.add_child(label)
+
+	var random_offset := Vector2(
+		randf_range(
+			-damage_number_spread,
+			damage_number_spread
+		),
+		randf_range(
+			-damage_number_spread * 0.45,
+			damage_number_spread * 0.20
+		)
+	)
+
+	var start_position := (
+		screen_position
+		- label.size * 0.5
+		+ random_offset
+	)
+
+	label.position = start_position
+	label.pivot_offset = label.size * 0.5
+	label.scale = start_scale
+
+	var target_position := (
+		start_position
+		+ Vector2(
+			randf_range(-8.0, 8.0),
+			-damage_number_rise
+		)
+	)
+
+	var tween := create_tween()
+	tween.set_parallel(true)
+
+	tween.tween_property(
+		label,
+		"position",
+		target_position,
+		damage_number_duration
+	).set_trans(
+		Tween.TRANS_QUAD
+	).set_ease(
+		Tween.EASE_OUT
+	)
+
+	tween.tween_property(
+		label,
+		"modulate:a",
+		0.0,
+		damage_number_duration
+	).set_trans(
+		Tween.TRANS_QUAD
+	).set_ease(
+		Tween.EASE_IN
+	)
+
+	tween.tween_property(
+		label,
+		"scale",
+		Vector2.ONE,
+		minf(
+			damage_number_duration * 0.30,
+			0.22
+		)
+	).set_trans(
+		Tween.TRANS_BACK
+	).set_ease(
+		Tween.EASE_OUT
+	)
+
+	tween.finished.connect(
+		label.queue_free
+	)
 
 
 # ============================================================

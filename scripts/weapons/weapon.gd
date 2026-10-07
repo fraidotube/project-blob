@@ -899,13 +899,19 @@ func perform_melee_hit() -> void:
 		return
 
 	if collider.has_method("take_damage"):
+		var health_before := _get_target_health(
+			collider
+		)
+
 		collider.take_damage(
 			melee_damage
 		)
 
-		get_tree().call_group(
-			"hud",
-			"show_hitmarker"
+		_show_damage_feedback(
+			collider,
+			hit_point,
+			melee_damage,
+			health_before
 		)
 
 
@@ -965,77 +971,35 @@ func fire_pistol() -> void:
 		var hit_normal := weapon_ray.get_collision_normal()
 
 		if collider != null:
-			if collider.has_method("try_dodge_shot"):
-				var dodged: bool = (
+			var dodged := false
+
+			if collider.has_method(
+				"try_dodge_shot"
+			):
+				dodged = bool(
 					collider.try_dodge_shot(
 						hit_point
 					)
 				)
 
-				if dodged:
-					pass
-
-				elif collider.has_method(
-					"take_bullet_hit"
+			if not dodged:
+				if (
+					collider.has_method(
+						"take_bullet_hit"
+					)
+					or collider.has_method(
+						"take_damage"
+					)
 				):
-					collider.take_bullet_hit(
-						pistol_damage,
+					_apply_pistol_hit(
+						collider,
 						hit_point
 					)
-
-					get_tree().call_group(
-						"hud",
-						"show_hitmarker"
-					)
-
-				elif collider.has_method(
-					"take_damage"
-				):
-					collider.take_damage(
-						pistol_damage
-					)
-
-					get_tree().call_group(
-						"hud",
-						"show_hitmarker"
-					)
-
 				else:
 					spawn_bullet_impact(
 						hit_point,
 						hit_normal
 					)
-
-			elif collider.has_method(
-				"take_bullet_hit"
-			):
-				collider.take_bullet_hit(
-					pistol_damage,
-					hit_point
-				)
-
-				get_tree().call_group(
-					"hud",
-					"show_hitmarker"
-				)
-
-			elif collider.has_method(
-				"take_damage"
-			):
-				collider.take_damage(
-					pistol_damage
-				)
-
-				get_tree().call_group(
-					"hud",
-					"show_hitmarker"
-				)
-
-			else:
-				spawn_bullet_impact(
-					hit_point,
-					hit_normal
-				)
 
 		else:
 			spawn_bullet_impact(
@@ -1048,6 +1012,109 @@ func fire_pistol() -> void:
 	is_performing_action = false
 
 	play_current_locomotion(true)
+
+
+func _apply_pistol_hit(
+	collider: Object,
+	hit_point: Vector3
+) -> void:
+	var health_before := _get_target_health(
+		collider
+	)
+
+	if collider.has_method(
+		"take_bullet_hit"
+	):
+		collider.take_bullet_hit(
+			pistol_damage,
+			hit_point
+		)
+	elif collider.has_method(
+		"take_damage"
+	):
+		collider.take_damage(
+			pistol_damage
+		)
+	else:
+		return
+
+	_show_damage_feedback(
+		collider,
+		hit_point,
+		pistol_damage,
+		health_before
+	)
+
+
+func _show_damage_feedback(
+	target: Object,
+	hit_point: Vector3,
+	fallback_damage: int,
+	health_before: int
+) -> void:
+	get_tree().call_group(
+		"hud",
+		"show_hitmarker"
+	)
+
+	var applied_damage := fallback_damage
+	var health_after := _get_target_health(
+		target
+	)
+
+	if (
+		health_before >= 0
+		and health_after >= 0
+	):
+		applied_damage = maxi(
+			health_before - health_after,
+			0
+		)
+
+	if applied_damage <= 0:
+		return
+
+	var critical := (
+		applied_damage > fallback_damage
+	)
+
+	get_tree().call_group(
+		"hud",
+		"show_damage_number",
+		applied_damage,
+		hit_point,
+		critical
+	)
+
+
+func _get_target_health(
+	target: Object
+) -> int:
+	if target == null:
+		return -1
+
+	for property_info: Dictionary in (
+		target.get_property_list()
+	):
+		var property_name := StringName(
+			String(
+				property_info.get(
+					"name",
+					""
+				)
+			)
+		)
+
+		if property_name != &"health":
+			continue
+
+		return int(
+			target.get(
+				"health"
+			)
+		)
+
+	return -1
 
 
 # ============================================================
