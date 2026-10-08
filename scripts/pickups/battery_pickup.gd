@@ -1,3 +1,4 @@
+
 extends Area3D
 
 const OUTLINE_SHADER := preload(
@@ -72,4 +73,11 @@ func interact(player: Node) -> void:
 
 	collected = true
 	set_interaction_focus(false)
+
+	get_tree().call_group(
+		"player_face",
+		"react",
+		"pickup_small"
+	)
+
 	queue_free()
