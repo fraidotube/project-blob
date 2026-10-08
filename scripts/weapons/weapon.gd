@@ -316,6 +316,9 @@ var is_performing_action := false
 var attack_cooldown_left := 0.0
 var muzzle_flash_time_left := 0.0
 
+# HUD FACE: cadenza reazione durante la raffica SMG.
+var smg_face_refresh_left := 0.0
+
 var unarmed_attack_index := 1
 
 
@@ -551,6 +554,12 @@ func _get_weapon_audio_volume(
 # ============================================================
 
 func _process(delta: float) -> void:
+	if smg_face_refresh_left > 0.0:
+		smg_face_refresh_left = maxf(0.0, smg_face_refresh_left - delta)
+
+	if not Input.is_action_pressed("fire"):
+		smg_face_refresh_left = 0.0
+
 	if not can_attack:
 		attack_cooldown_left -= delta
 
@@ -1293,6 +1302,12 @@ func attack_unarmed() -> void:
 	if unarmed_attack_index > 4:
 		unarmed_attack_index = 1
 
+	get_tree().call_group(
+		"player_face",
+		"react",
+		"grunt"
+	)
+
 	perform_melee_hit()
 
 	await (
@@ -1371,6 +1386,12 @@ func fire_pistol() -> void:
 		return
 
 	magazine_ammo -= 1
+
+	get_tree().call_group(
+		"player_face",
+		"react",
+		"determined"
+	)
 
 	update_ammo_hud()
 
@@ -1610,6 +1631,16 @@ func fire_smg() -> void:
 		return
 
 	smg_magazine_ammo -= 1
+
+	# Mantiene espressione durante la raffica senza
+	# riavviarla ad ogni proiettile (10 colpi/s).
+	if smg_face_refresh_left <= 0.0:
+		get_tree().call_group(
+			"player_face",
+			"react",
+			"determined"
+		)
+		smg_face_refresh_left = 0.6
 
 	update_smg_ammo_hud()
 

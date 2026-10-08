@@ -94,4 +94,10 @@ func interact(player: Node) -> void:
 
 	player.equip_smg()
 
+	get_tree().call_group(
+		"player_face",
+		"react",
+		"pickup_major"
+	)
+
 	queue_free()

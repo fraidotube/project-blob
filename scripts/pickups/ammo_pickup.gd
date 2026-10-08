@@ -1,3 +1,4 @@
+
 extends Area3D
 
 @export var ammo_amount := 12
@@ -76,4 +77,11 @@ func interact(player: Node) -> void:
 	collected = true
 	set_interaction_focus(false)
 	player.add_ammo(ammo_amount)
+
+	get_tree().call_group(
+		"player_face",
+		"react",
+		"pickup_small"
+	)
+
 	queue_free()

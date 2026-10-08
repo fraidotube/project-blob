@@ -1,3 +1,4 @@
+
 extends Area3D
 
 const OUTLINE_SHADER := preload(
@@ -74,4 +75,12 @@ func interact(player: Node) -> void:
 	collected = true
 	set_interaction_focus(false)
 	player.equip_pistol()
+
+	# HUD FACE - reazione al pickup importante
+	get_tree().call_group(
+		"player_face",
+		"react",
+		"pickup_major"
+	)
+
 	queue_free()
