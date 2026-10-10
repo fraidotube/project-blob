@@ -4,6 +4,8 @@
 
 **Consolidamento Git richiesto:** commit locale autorizzato dall'utente per codice, scene e risorse Godot testuali, UID e Markdown. Esclusi binari, modelli, texture/audio, PDF, cache e cancellazioni SilverDelivery. Questa baseline conserva l'integrazione ma dipende dagli asset locali esclusi; non è un backup completo esportabile su un altro PC. Hash definitivo verificabile con git log e registro commit. Nessun push richiesto.
 
+**Commit creato:** 5b3267e — Consolidate inventory saves, regia integration and Bruno presentation, 107 file testuali. Baseline di sviluppo locale sul branch dev/prototype-0.1; segue registrazione documentale del risultato. Asset esclusi e cancellazioni SilverDelivery restano fuori commit; nessun push.
+
 Utente: «ok ci siamo» dopo pulizia schermata caricamento. **TESTATO UTENTE: resa finale caricamento approvata**, blob centrale conservato, nessuna striscia decorativa a sinistra/in alto. Nuova partita e Carica condividono loader; immagini Carica collegate nei menu, Nuova partita sopra Carica. Queste attività sono completate: non riproporre integrazione asset o revisione bocca/porte/caricamento.
 
 Mappa: bocca Bruno e passaggi confermati; chiave/drop, tre porte e PC ConnesiOS integrati. Suite inventario/save, restore mappa in processo nuovo e GPU loader passate. Rimane da confermare esplicitamente il playtest completo manuale del salvataggio nella mappa: Salva al PC, Carica da pausa/menu, morte C/N e riavvio applicazione. HUD inferiore rinviata a un obiettivo successivo scelto dall'utente.

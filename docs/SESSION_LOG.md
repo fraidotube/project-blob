@@ -304,6 +304,8 @@ Utente approva animazione centrale e chiede il senso della barra sinistra/superi
 
 **Baseline/limiti:** partenza dev/prototype-0.1 / e5ff3c8d95ef9953cc69229d5f90e5acf03f0f1c, index inizialmente vuoto. Scene mappa/boss mantengono riferimenti agli asset locali esclusi: commit di sviluppo, non backup completo. File fuori selezione conservati senza reset/clean. Controllare elenco e diff cached prima del commit; identificativo finale dal git log. Test funzionali della sessione precedente documentati; consolidamento Git non modifica gameplay.
 
+**Risultato:** commit 5b3267e creato con 107 file, 10922 inserimenti e 2150 rimozioni testuali. Controllati cached stat/numstat/diff dei collegamenti principali; nessun binario o cancellazione staged. diff --cached --check segnala solo blank-at-eof in tre MD; controllo con esclusione di quella regola passato. Registrazione del risultato in stato/registro con commit documentale successivo. Nessun push effettuato.
+
 ## Modello per una nuova voce
 
 ```markdown
