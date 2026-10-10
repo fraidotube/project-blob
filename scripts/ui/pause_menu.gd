@@ -74,6 +74,8 @@ var fov_slider: HSlider
 var fov_value: Label
 
 var is_open := false
+var load_button: Button
+var load_message: Label
 
 var resolutions := [
 	Vector2i(1280, 720),
@@ -110,6 +112,23 @@ func _ready() -> void:
 	pause_root.visible = false
 	menu_panel.visible = true
 	options_panel.visible = false
+	load_button = Button.new()
+	load_button.name = "LoadSave"
+	load_button.text = "CARICA SALVATAGGIO"
+	load_button.custom_minimum_size = Vector2(400, 54)
+	load_button.set_script(preload("res://scripts/ui/menu_button.gd"))
+	var column := $PauseRoot/MenuPanel/VBox
+	column.add_child(load_button)
+	column.move_child(load_button, 2)
+	load_button.pressed.connect(_on_load_pressed)
+	load_message = Label.new()
+	load_message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	load_message.custom_minimum_size.x = 350
+	load_message.add_theme_font_size_override("font_size", 16)
+	load_message.visible = false
+	column.add_child(load_message)
+	menu_panel.offset_top = -260
+	menu_panel.offset_bottom = 260
 
 
 func _create_fov_control() -> void:
@@ -132,6 +151,9 @@ func _create_fov_control() -> void:
 func _unhandled_input(
 	event: InputEvent
 ) -> void:
+	var player := get_tree().get_first_node_in_group("player")
+	if SaveManager.busy or GameplayUI.input_blocked() or player == null or bool(player.get("is_dead")):
+		return
 	if not event.is_action_pressed(
 		"ui_cancel"
 	):
@@ -155,6 +177,9 @@ func toggle_pause() -> void:
 	if is_open:
 		menu_panel.visible = true
 		options_panel.visible = false
+		load_button.disabled = not SaveManager.has_scene_save()
+		load_button.text = "CARICA SALVATAGGIO"
+		load_message.visible = false
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	else:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -163,6 +188,25 @@ func toggle_pause() -> void:
 func _on_resume_pressed() -> void:
 	if is_open:
 		toggle_pause()
+
+func close_for_scene_change() -> void:
+	is_open = false
+	pause_root.visible = false
+	menu_panel.visible = true
+	options_panel.visible = false
+	load_message.visible = false
+
+func _on_load_pressed() -> void:
+	if SaveManager.busy or not SaveManager.has_scene_save():
+		return
+	load_button.disabled = true
+	var loaded: bool = await SaveManager.continue_game()
+	if not loaded:
+		if not is_open:
+			toggle_pause()
+		load_message.text = SaveManager.last_error
+		load_message.visible = true
+		load_button.disabled = not SaveManager.has_scene_save()
 
 
 func _on_options_pressed() -> void:

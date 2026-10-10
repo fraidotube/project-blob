@@ -40,11 +40,14 @@ func _spawn_wave() -> void:
 
 	var wave := instance as Node3D
 
+	# This scene previews the material without applying gameplay damage.
+	wave.set("damage_enabled", false)
+
 	add_child(
 		wave
 	)
 
-	wave.global_position = Vector3(
+	var spawn_position := Vector3(
 		0.0,
 		1.35,
 		-8.5
@@ -52,14 +55,19 @@ func _spawn_wave() -> void:
 
 	var direction_to_camera := (
 		camera.global_position
-		- wave.global_position
+		- spawn_position
 	)
 
 	direction_to_camera.y = 0.0
 
 	if wave.has_method(
-		"set_travel_direction"
+		"start_wave"
 	):
-		wave.set_travel_direction(
+		wave.call(
+			"start_wave",
+			spawn_position,
 			direction_to_camera
 		)
+	else:
+		push_error("Bruno wave preview: start_wave() is missing.")
+		wave.queue_free()

@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://ctpeh3g7ghikw"]
+
+[ext_resource type="Texture2D" uid="uid://b70dtww6pj26i" path="res://assets/models/environment/Modelli/spotlight/textures/TEX_Lightbeam.png" id="1_y537k"]
+
+[resource]
+resource_name = "MAT_Lightbeam"
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(0, 0, 0, 1)
+albedo_texture = ExtResource("1_y537k")

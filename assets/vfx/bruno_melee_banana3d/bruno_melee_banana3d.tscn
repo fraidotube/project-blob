@@ -19,31 +19,39 @@ seamless = true
 render_priority = 0
 shader = ExtResource("2_shader")
 shader_parameter/noise_tex = SubResource("NoiseTexture_energy")
-shader_parameter/root_color = Color(0.78039217, 0.34117648, 1, 1)
-shader_parameter/tip_color = Color(0.36078432, 0.019607844, 0.72156864, 1)
-shader_parameter/specular_color = Color(0.91764706, 0.72156864, 1, 1)
-shader_parameter/fire_alpha = 1.0
-shader_parameter/fire_speed = Vector2(0, 0.95)
+shader_parameter/root_color = Color(0.84, 0.68, 1, 1)
+shader_parameter/tip_color = Color(0.58, 0.32, 0.9, 1)
+shader_parameter/specular_color = Color(0.96, 0.9, 1, 1)
+shader_parameter/fire_alpha = 0.85
+shader_parameter/fire_speed = Vector2(0.12, 0.25)
 shader_parameter/fire_aperture = 0.22
-shader_parameter/wave_noise_speed = Vector2(0.42, 0.23)
-shader_parameter/wave_noise_scale = 0.055
+shader_parameter/wave_noise_speed = Vector2(0.12, 0.08)
+shader_parameter/wave_noise_scale = 0.025
+shader_parameter/pulse_frequency = 1.2
+shader_parameter/pulse_intensity = 0.18
+shader_parameter/blob_wobble_amplitude = 0.06
+shader_parameter/blob_wobble_speed = 0.8
 shader_parameter/dissolve = 0.0
-shader_parameter/emission_boost = 1.65000002458698
+shader_parameter/emission_boost = 1.8
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_shell"]
 render_priority = 0
 shader = ExtResource("2_shader")
 shader_parameter/noise_tex = SubResource("NoiseTexture_energy")
-shader_parameter/root_color = Color(0.61960787, 0.16078432, 1, 1)
-shader_parameter/tip_color = Color(0.3019608, 0, 0.65882355, 1)
-shader_parameter/specular_color = Color(0.8509804, 0.3019608, 1, 1)
-shader_parameter/fire_alpha = 0.34
-shader_parameter/fire_speed = Vector2(0, 0.7)
+shader_parameter/root_color = Color(0.75, 0.48, 1, 1)
+shader_parameter/tip_color = Color(0.48, 0.23, 0.82, 1)
+shader_parameter/specular_color = Color(0.92, 0.8, 1, 1)
+shader_parameter/fire_alpha = 0.25
+shader_parameter/fire_speed = Vector2(0.12, 0.25)
 shader_parameter/fire_aperture = 0.22
-shader_parameter/wave_noise_speed = Vector2(0.42, 0.23)
-shader_parameter/wave_noise_scale = 0.075
+shader_parameter/wave_noise_speed = Vector2(0.12, 0.08)
+shader_parameter/wave_noise_scale = 0.035
+shader_parameter/pulse_frequency = 1.2
+shader_parameter/pulse_intensity = 0.18
+shader_parameter/blob_wobble_amplitude = 0.06
+shader_parameter/blob_wobble_speed = 0.8
 shader_parameter/dissolve = 0.0
-shader_parameter/emission_boost = 0.85000001266602
+shader_parameter/emission_boost = 0.95
 
 [node name="BrunoMeleeBanana3D" type="Node3D" unique_id=778078018]
 script = ExtResource("1_script")
@@ -51,7 +59,9 @@ script = ExtResource("1_script")
 [node name="Core" type="MeshInstance3D" parent="." unique_id=510909710]
 material_override = SubResource("ShaderMaterial_core")
 cast_shadow = 0
+extra_cull_margin = 0.25
 
 [node name="Shell" type="MeshInstance3D" parent="." unique_id=1066052402]
 material_override = SubResource("ShaderMaterial_shell")
 cast_shadow = 0
+extra_cull_margin = 0.25

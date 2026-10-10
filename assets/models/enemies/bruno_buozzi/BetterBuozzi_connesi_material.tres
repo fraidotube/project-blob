@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/models/enemies/bruno_buozzi/BetterBuozzi_Meshy_AI_Mutated_Tennis_Player_1004142620_texture_connesi.png" id="1_jukue"]
+
+[resource]
+resource_name = "Materialmat"
+cull_mode = 2
+albedo_texture = ExtResource("1_jukue")
+roughness = 0.5527864
+metadata/_gltf_primary_texture_coord = 0

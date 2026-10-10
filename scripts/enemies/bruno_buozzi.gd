@@ -1,5 +1,7 @@
 extends CharacterBody3D
 
+signal defeated
+
 
 enum State {
 	IDLE,
@@ -2927,6 +2929,31 @@ func _die() -> void:
 			_get_current_animation_real_duration()
 		)
 	)
+
+
+	defeated.emit()
+
+
+func restore_defeated_state(racket_owned: bool = false) -> void:
+	state = State.DEAD
+	health = 0
+	ai_active = false
+	cinematic_locked = false
+	cinematic_move_active = false
+	phase_transition_active = false
+	invulnerable = true
+	has_racket = racket_owned
+	visible = true
+	_stop_horizontal_motion()
+	_set_action_shield(false)
+	_sync_racket_visual()
+	if animation_player.has_animation(ANIM_DEATH_FRONT):
+		animation_player.play(ANIM_DEATH_FRONT)
+		animation_player.seek(animation_player.get_animation(ANIM_DEATH_FRONT).length, true)
+		animation_player.pause()
+	death_visual_settled = false
+	_settle_dead_visual()
+	get_tree().call_group("hud", "hide_boss_hud")
 
 
 func _player_is_behind_bruno() -> bool:

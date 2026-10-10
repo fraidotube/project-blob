@@ -101,6 +101,17 @@ func _audio_manager() -> Node:
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	SaveManager.select_scene_slot(GAME_SCENE)
+
+	var continue_button := Button.new()
+	continue_button.name = "Continue"
+	continue_button.text = "CARICA SALVATAGGIO"
+	continue_button.custom_minimum_size = Vector2(440, 58)
+	continue_button.set_script(preload("res://scripts/ui/menu_button.gd"))
+	continue_button.disabled = not SaveManager.has_disk_save()
+	$MainPanel/VBox.add_child(continue_button)
+	$MainPanel/VBox.move_child(continue_button, 1)
+	continue_button.pressed.connect(_continue_pressed)
 
 	_create_fov_control()
 	_build_options()
@@ -238,6 +249,7 @@ func _show_options() -> void:
 
 
 func _on_new_game_pressed() -> void:
+	SaveManager.start_new_game(GAME_SCENE)
 	var audio_manager := _audio_manager()
 
 	if (
@@ -265,6 +277,17 @@ func _on_new_game_pressed() -> void:
 	get_tree().change_scene_to_file(
 		GAME_SCENE
 	)
+
+
+func _continue_pressed() -> void:
+	var audio_manager := _audio_manager()
+	if audio_manager != null:
+		await audio_manager.call("fade_out_menu_music")
+	var success: bool = await SaveManager.continue_game()
+	if not success:
+		GameplayUI.notify(SaveManager.last_error)
+		if audio_manager != null:
+			audio_manager.call("ensure_menu_music")
 
 
 func _on_options_pressed() -> void:

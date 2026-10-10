@@ -15,6 +15,13 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	# Se la HUD principale è nascosta, per esempio durante
+	# una cinematic o alla morte del player, anche il sistema
+	# di interazione deve rimanere completamente nascosto.
+	if not _is_game_hud_visible():
+		_clear_focus()
+		return
+
 	_update_focus()
 
 	if not Input.is_action_just_pressed("interact"):
@@ -40,6 +47,30 @@ func _process(_delta: float) -> void:
 
 	if is_instance_valid(target):
 		target.interact(get_parent())
+
+
+func _is_game_hud_visible() -> bool:
+	var hud_nodes := get_tree().get_nodes_in_group(
+		"hud"
+	)
+
+	# Se non esiste una HUD registrata non blocchiamo
+	# il sistema di interazione.
+	if hud_nodes.is_empty():
+		return true
+
+	for hud: Node in hud_nodes:
+		if not is_instance_valid(hud):
+			continue
+
+		var interface := hud.get_node_or_null(
+			"Interface"
+		)
+
+		if interface is CanvasItem:
+			return interface.visible
+
+	return true
 
 
 func _update_focus() -> void:
@@ -79,7 +110,10 @@ func _update_focus() -> void:
 		name_label.text = ""
 
 	if focused_interactable.has_method("get_interaction_action"):
-		action_label.text = "[ E ]  " + focused_interactable.get_interaction_action()
+		action_label.text = (
+			"[ E ]  "
+			+ focused_interactable.get_interaction_action()
+		)
 	else:
 		action_label.text = "[ E ]"
 
@@ -93,25 +127,52 @@ func _update_focus() -> void:
 
 
 func _clear_focus() -> void:
-	if focused_interactable != null and is_instance_valid(focused_interactable):
-		if focused_interactable.has_method("set_interaction_focus"):
-			focused_interactable.set_interaction_focus(false)
+	if (
+		focused_interactable != null
+		and is_instance_valid(
+			focused_interactable
+		)
+	):
+		if focused_interactable.has_method(
+			"set_interaction_focus"
+		):
+			focused_interactable.set_interaction_focus(
+				false
+			)
 
 	focused_interactable = null
 	prompt.visible = false
 
 
-func _find_interactable(start_node: Node) -> Node:
-	if start_node == null or not is_instance_valid(start_node):
+func _find_interactable(
+	start_node: Node
+) -> Node:
+	if (
+		start_node == null
+		or not is_instance_valid(
+			start_node
+		)
+	):
 		return null
 
 	var current: Node = start_node
 
-	while current != null and is_instance_valid(current):
+	while (
+		current != null
+		and is_instance_valid(
+			current
+		)
+	):
 		if (
-			current.has_method("get_interaction_name")
-			and current.has_method("get_interaction_action")
-			and current.has_method("interact")
+			current.has_method(
+				"get_interaction_name"
+			)
+			and current.has_method(
+				"get_interaction_action"
+			)
+			and current.has_method(
+				"interact"
+			)
 		):
 			return current
 

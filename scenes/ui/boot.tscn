@@ -12,8 +12,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_uv6rd")
-fraidosoft_hold_time = 5.0
-project_blob_hold_time = 6.0
+fraidosoft_hold_time = 4.0
+project_blob_hold_time = 5.0
 fade_in_time = 1.2
 fade_out_time = 1.2
 

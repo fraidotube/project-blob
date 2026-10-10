@@ -8,6 +8,8 @@
 [ext_resource type="PackedScene" uid="uid://dph7ie7kygqv" path="res://scenes/enemies/bruno_buozzi.tscn" id="6_t0t43"]
 [ext_resource type="PackedScene" uid="uid://draro5b8q7xmx" path="res://assets/models/enemies/bruno_buozzi/tennis-racket-wilson-blade/source/Formats/Racket_Wilson_Blade.fbx" id="7_ccbyl"]
 [ext_resource type="PackedScene" uid="uid://goh3vkv8vodf" path="res://assets/vfx/EffettoEsplosione/BigExplosionScene.tscn" id="8_lbw23"]
+[ext_resource type="PackedScene" uid="uid://dreap3pttfwdr" path="res://scenes/pickups/smg_pickup.tscn" id="9_uad43"]
+[ext_resource type="PackedScene" uid="uid://cqqd8hfn1n017" path="res://scenes/pickups/SMG_ammo_pickup.tscn" id="10_4sloa"]
 
 [sub_resource type="Environment" id="range_environment"]
 background_mode = 1
@@ -274,3 +276,19 @@ navigation_mesh = SubResource("NavigationMesh_hbjui")
 
 [node name="Node3D" parent="." unique_id=1710758000 instance=ExtResource("8_lbw23")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.71159, 0.7565944, -0.5276444)
+
+[node name="SMGPickup" parent="." unique_id=916815553 instance=ExtResource("9_uad43")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9711516, 0.22709759, 1.164365)
+
+[node name="SMGAmmoPickup" parent="." unique_id=1847074415 instance=ExtResource("10_4sloa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8729093, 0.20138699, 0.51542497)
+
+[node name="SMGAmmoPickup2" parent="." unique_id=1628724839 instance=ExtResource("10_4sloa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.0013266, 0.20138699, 0.51542497)
+
+[node name="SMGAmmoPickup3" parent="." unique_id=2054717994 instance=ExtResource("10_4sloa")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1325502, 0.20138699, 0.51542497)
+
+[editable path="SMGPickup"]
+[editable path="SMGPickup/SMG_Test"]
+[editable path="SMGPickup/SMG_Test/SMG_01"]

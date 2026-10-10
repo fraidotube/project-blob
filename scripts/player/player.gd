@@ -26,9 +26,7 @@ const DEATH_TITLE_TEXTURE := preload(
 	"res://assets/ui/sei_morto.png"
 )
 
-const DEATH_CONTINUE_TEXTURE := preload(
-	"res://assets/ui/n_continua.png"
-)
+const DEATH_THEME := preload("res://scenes/ui/project_blob_menu_theme.tres")
 
 @export var max_health := 100
 
@@ -121,6 +119,32 @@ func _setup_voice_audio() -> void:
 	add_child(damage_voice_timer)
 
 
+func get_save_state() -> Dictionary:
+	return {
+		"transform": global_transform,
+		"head_pitch": head.rotation.x,
+		"crouched": is_crouched,
+		"health": health,
+		"weapon": weapon.get_save_state()
+	}
+
+
+func apply_save_state(state: Dictionary) -> void:
+	global_transform = state.get("transform", global_transform)
+	velocity = Vector3.ZERO
+	is_dead = false
+	health = clampi(int(state.get("health", max_health)), 1, max_health)
+	is_crouched = bool(state.get("crouched", false))
+	head.rotation.x = clampf(float(state.get("head_pitch", 0.0)), deg_to_rad(-89), deg_to_rad(89))
+	var capsule := collision_shape.shape.duplicate() as CapsuleShape3D
+	collision_shape.shape = capsule
+	capsule.height = CROUCH_HEIGHT if is_crouched else STAND_HEIGHT
+	collision_shape.position.y = -(STAND_HEIGHT - capsule.height) * 0.5
+	head.position.y = CROUCH_HEAD_Y if is_crouched else STAND_HEAD_Y
+	weapon.apply_save_state(state.get("weapon", {}))
+	get_tree().call_group("hud", "update_health", health, max_health)
+
+
 func _load_mouse_sensitivity() -> void:
 	var config := ConfigFile.new()
 
@@ -144,17 +168,16 @@ func _load_mouse_sensitivity() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_dead:
-		if (
-			event is InputEventKey
-			and event.pressed
-			and not event.echo
-			and (
-				event.keycode == KEY_N
-				or event.physical_keycode == KEY_N
-			)
-		):
-			get_tree().reload_current_scene()
+		if event is InputEventKey and event.pressed and not event.echo and not SaveManager.busy:
+			if event.keycode == KEY_N or event.physical_keycode == KEY_N:
+				get_viewport().set_input_as_handled()
+				SaveManager.restart_after_death()
+			elif (event.keycode == KEY_C or event.physical_keycode == KEY_C) and SaveManager.has_scene_save():
+				get_viewport().set_input_as_handled()
+				SaveManager.continue_after_death()
+		return
 
+	if GameplayUI.input_blocked():
 		return
 
 	if event is InputEventMouseMotion:
@@ -696,13 +719,15 @@ func _show_death_overlay() -> void:
 	death_title.offset_right = 600.0
 	death_title.offset_bottom = 110.0
 
-	var continue_prompt := TextureRect.new()
+	var continue_prompt := Label.new()
 	continue_prompt.name = "ContinuePrompt"
-	continue_prompt.texture = DEATH_CONTINUE_TEXTURE
-	continue_prompt.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	continue_prompt.stretch_mode = (
-		TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	)
+	continue_prompt.theme = DEATH_THEME
+	continue_prompt.text = "PREMI C PER CONTINUARE\nPREMI N PER RICOMINCIARE" if SaveManager.has_scene_save() else "PREMI N PER RICOMINCIARE"
+	continue_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	continue_prompt.add_theme_font_size_override("font_size", 34)
+	continue_prompt.add_theme_color_override("font_color", Color("dfb4f6"))
+	continue_prompt.add_theme_color_override("font_outline_color", Color.BLACK)
+	continue_prompt.add_theme_constant_override("outline_size", 3)
 	continue_prompt.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	continue_prompt.modulate = Color(
 		1.0,
@@ -716,10 +741,10 @@ func _show_death_overlay() -> void:
 	continue_prompt.anchor_top = 0.5
 	continue_prompt.anchor_right = 0.5
 	continue_prompt.anchor_bottom = 0.5
-	continue_prompt.offset_left = -420.0
-	continue_prompt.offset_top = 70.0
-	continue_prompt.offset_right = 420.0
-	continue_prompt.offset_bottom = 350.0
+	continue_prompt.offset_left = -460.0
+	continue_prompt.offset_top = 130.0
+	continue_prompt.offset_right = 460.0
+	continue_prompt.offset_bottom = 260.0
 
 	var fade_tween := create_tween()
 	fade_tween.set_parallel(true)

@@ -165,6 +165,11 @@ func _setup_image_label() -> void:
 
 func _get_texture_paths(label: String) -> Dictionary:
 	match label:
+		"CARICA SALVATAGGIO":
+			return {
+				"normal": "res://assets/ui/caricasalvataggio.png",
+				"selected": "res://assets/ui/caricasalvataggio_blob.png"
+			}
 		"NUOVA PARTITA":
 			return {
 				"normal":

@@ -1,0 +1,23 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://d08b4nr31wsat"]
+
+[ext_resource type="Texture2D" uid="uid://chg4e5fnd4ac3" path="res://assets/models/environment/connesi_building_test2_TEX_SceneProps_AL.png" id="1_76ism"]
+[ext_resource type="Texture2D" uid="uid://c4tllavp4e67e" path="res://assets/models/environment/connesi_building_test2_TEX_Spotlight_EM.png" id="2_w3thl"]
+[ext_resource type="Texture2D" uid="uid://bdaurq1rpsprc" path="res://assets/models/environment/connesi_building_test2_TEX_SceneProps_MS.png" id="3_vuug2"]
+[ext_resource type="Texture2D" uid="uid://bxqfwcamx7yeg" path="res://assets/models/environment/connesi_building_test2_TEX_SceneProps_NR.png" id="4_8u0un"]
+
+[resource]
+resource_name = "MAT_SceneProps"
+cull_mode = 2
+albedo_texture = ExtResource("1_76ism")
+metallic_texture = ExtResource("3_vuug2")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("3_vuug2")
+roughness_texture_channel = 1
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 5.0
+emission_operator = 1
+emission_texture = ExtResource("2_w3thl")
+normal_enabled = true
+normal_texture = ExtResource("4_8u0un")
+metadata/_gltf_primary_texture_coord = 0

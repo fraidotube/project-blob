@@ -579,6 +579,8 @@ func _process(delta: float) -> void:
 
 
 func _update_smg_automatic_fire() -> void:
+	if GameplayUI.input_blocked():
+		return
 	if not is_smg_equipped():
 		return
 
@@ -1239,6 +1241,8 @@ func _on_arms_animation_finished(
 # ============================================================
 
 func fire() -> void:
+	if GameplayUI.input_blocked():
+		return
 	if not can_attack:
 		return
 
@@ -2114,6 +2118,63 @@ func update_smg_ammo_hud() -> void:
 		smg_magazine_ammo,
 		smg_reserve_ammo
 	)
+
+
+func get_save_state() -> Dictionary:
+	return {
+		"owns_pistol": owns_pistol, "owns_smg": owns_smg, "owns_flashlight": owns_flashlight,
+		"equipped": equipped_weapon,
+		"pistol_magazine": magazine_ammo, "pistol_reserve": reserve_ammo,
+		"smg_magazine": smg_magazine_ammo, "smg_reserve": smg_reserve_ammo,
+		"batteries": spare_batteries, "charge": flashlight_charge, "flashlight_on": flashlight_on
+	}
+
+
+func apply_save_state(state: Dictionary) -> void:
+	owns_pistol = bool(state.get("owns_pistol", false))
+	owns_smg = bool(state.get("owns_smg", false))
+	owns_flashlight = bool(state.get("owns_flashlight", false))
+	magazine_ammo = clampi(int(state.get("pistol_magazine", 0)), 0, pistol_magazine_size)
+	reserve_ammo = maxi(int(state.get("pistol_reserve", 0)), 0)
+	smg_magazine_ammo = clampi(int(state.get("smg_magazine", 0)), 0, smg_magazine_size)
+	smg_reserve_ammo = maxi(int(state.get("smg_reserve", 0)), 0)
+	spare_batteries = clampi(int(state.get("batteries", 0)), 0, max_spare_batteries)
+	flashlight_charge = clampf(float(state.get("charge", 100.0)), 0.0, 100.0)
+	equipped_weapon = clampi(int(state.get("equipped", 0)), WEAPON_UNARMED, WEAPON_SMG)
+	if (equipped_weapon == WEAPON_PISTOL and not owns_pistol) or (equipped_weapon == WEAPON_SMG and not owns_smg) or (equipped_weapon == WEAPON_FLASHLIGHT and not owns_flashlight):
+		equipped_weapon = WEAPON_UNARMED
+	is_reloading = false
+	is_performing_action = false
+	can_attack = true
+	player_is_moving = false
+	player_is_sprinting = false
+	attack_cooldown_left = 0.0
+	muzzle_flash_time_left = 0.0
+	muzzle_flash.visible = false
+	shell_casing_timer.stop()
+	pistol_model.visible = is_pistol_equipped()
+	smg_model.visible = is_smg_equipped()
+	flashlight_model.visible = is_flashlight_equipped()
+	flashlight_on = bool(state.get("flashlight_on", false)) and is_flashlight_equipped() and flashlight_charge > 0
+	flashlight_light.visible = flashlight_on
+	var title := "MANI NUDE"
+	if is_pistol_equipped():
+		title = "PISTOLA"
+	elif is_smg_equipped():
+		title = "SMG"
+	elif is_flashlight_equipped():
+		title = "TORCIA"
+	get_tree().call_group("hud", "update_weapon", title)
+	get_tree().call_group("hud", "hide_ammo")
+	get_tree().call_group("hud", "hide_flashlight_battery")
+	if is_pistol_equipped():
+		update_ammo_hud()
+	elif is_smg_equipped():
+		update_smg_ammo_hud()
+	elif is_flashlight_equipped():
+		update_flashlight_battery_hud()
+	current_locomotion_animation = ""
+	play_current_locomotion(true)
 
 
 func update_ammo_hud() -> void:
