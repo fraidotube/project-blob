@@ -1,5 +1,7 @@
 # Project Blob — stato locale
 
+**Riferimento Git di chiusura:** gameplay/documentazione consolidati in `674bcf4` e pubblicati su `origin/dev/prototype-0.1` il 11/10/2026. Vedere ultima voce di SESSION_LOG per verifiche, file locali esclusi e limiti del backup.
+
 **Chiusura confermata dall'utente — 11/10/2026:** «ok ci siamo» dopo correzione finale del sangue e prova in game. Conservare la resa attuale di dialoghi, arco 3D, sangue piccolo bordeaux/direzionale, suoni, alone, mirino e combat. F7 passeggiata/F11 combattimento diretto; racchetta I Usa/Riponi, 5 dopo primo uso. Prossima sessione: leggere ultima SESSION_LOG e ANGELASTRI_COMBAT, scegliere il prossimo intervento senza rifare i pezzi approvati. Barra boss grafica finale ancora provvisoria. Commit/push ora esplicitamente richiesti; asset pesanti/commerciali/locali non costituiscono backup Git e restano sul PC finché licenza/dipendenze non sono inventariate.
 
 **Sangue approvato:** rimossa la forzatura verso destra della preview e ridotta l'amplificazione di piccoli movimenti laterali nel getto condiviso. Direzione dal colpo reale + componente verso l'esterno della ferita, gocce/colore conservati; F11 per prova diretta in game.
