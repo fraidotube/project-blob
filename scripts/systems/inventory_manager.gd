@@ -3,14 +3,19 @@ extends Node
 signal inventory_changed
 
 const KEY := preload("res://resources/items/bruno_key.tres")
+const ICONS := preload("res://scripts/ui/regia_item_icons.gd")
 var definitions: Dictionary = {}
 var items: Dictionary = {}
 
 func _ready() -> void:
 	register_item(KEY)
+	for path: String in ["regia_laptop", "network_cable", "bruno_racket", "regia_charger"]:
+		register_item(load("res://resources/items/" + path + ".tres"))
 
 func register_item(definition: Resource) -> void:
 	if definition != null and not String(definition.item_id).is_empty():
+		if definition.icon == null:
+			definition.icon = ICONS.texture(String(definition.item_id))
 		definitions[String(definition.item_id)] = definition
 
 func add_item(item_id: StringName, quantity: int = 1) -> bool:

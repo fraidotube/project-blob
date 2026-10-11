@@ -33,7 +33,6 @@ func _ready() -> void:
 		settings.apply_audio()
 
 	_create_music_player()
-	play_menu_music()
 
 	get_tree().node_added.connect(
 		_on_node_added
@@ -41,7 +40,7 @@ func _ready() -> void:
 
 	# La scena iniziale può essere già presente prima del connect.
 	call_deferred(
-		"route_current_scene_audio"
+		"_sync_current_scene_music"
 	)
 
 
@@ -173,6 +172,33 @@ func ensure_menu_music() -> void:
 	play_menu_music()
 
 
+func stop_menu_music() -> void:
+	if music_player == null:
+		return
+	music_player.stop()
+	music_player.stream_paused = false
+
+
+func _sync_current_scene_music() -> void:
+	var current := get_tree().current_scene
+
+	if current == null:
+		return
+
+	var map_music := current.get_node_or_null("BackgroundMusic") as AudioStreamPlayer
+	if map_music != null:
+		# F6 and save restoration start directly in the map, bypassing MainMenu.
+		# The map ambience is therefore authoritative as soon as it is available.
+		stop_menu_music()
+		map_music.stream_paused = false
+		if map_music.stream != null and not map_music.playing:
+			map_music.play()
+	else:
+		play_menu_music()
+
+	route_current_scene_audio()
+
+
 func route_current_scene_audio() -> void:
 	var current := get_tree().current_scene
 
@@ -185,6 +211,9 @@ func route_current_scene_audio() -> void:
 func _on_node_added(
 	node: Node
 ) -> void:
+	if node.name == &"BackgroundMusic":
+		call_deferred("_sync_current_scene_music")
+
 	if (
 		node is AudioStreamPlayer
 		or node is AudioStreamPlayer2D

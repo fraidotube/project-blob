@@ -1,8 +1,70 @@
 # Project Blob — decisioni e attività aperte
 
+**Chiusura 11/10:** conferma utente «ok ci siamo» sul risultato finale in game. Archiviare le precedenti richieste di gradimento VFX/sangue come superate; preservare effetti e audio approvati. F7/F11 restano strumenti di prova autorizzati. Aperta immagine definitiva barra Angelastri e prossima scelta gameplay dell'utente; nessun nuovo obiettivo inferito. Commit/push richiesti dall'utente per chiudere la sessione.
+
+**11/10 — combat Angelastri:** autorizzazione esplicita IA/bilanciamento affidati all'assistente; tassativo proiettili innocui/schivate, due melee e morso. Implementati 40 HP, danni 10/16, morso24/cooldown12s, racchetta5/2.5m dall'avvio fight, barra provvisoria in alto. F7 autorizzato per saltare alla passeggiata. Test isolati passati, playtest/bilanciamento mappa aperti. [Dettagli](ANGELASTRI_COMBAT.md).
+
+**Priorità Angelastri evento:** preview mappa approvata. Implementato il ciclo Fritz → tre blackout → terza uscita/performance → FPS/passeggiata → vista reale/secondo discorso → handoff; da confermare nel playtest completo post-Bruno. Prima scena TikTok rivolta a camera immaginaria, non player. Faro esistente temporaneamente assegnato. Parametri iniziali 14–22 s, riarmo 12 s, vista 4 m. Il blackout deve restare udibile anche lontano dal contatore: click presso player, notifica e risata forte. Prossima fase AI zombie/attacchi/melee e racchetta utilizzabile soltanto dopo inizio fight; non anticipare sblocco al balletto. [Guida](ANGELASTRI_ENCOUNTER.md).
+
+**Priorità corrente Angelastri:** dialogo studio approvato; valutare entrambe le sequenze nella mappa mediante F10/F11, con balletto che si sposta nel piazzale davanti ai contatori. F12 pulisce; F9 resta Bruno. Integrazione solo debug, senza dinamica blackout o AI. [Guida](ANGELASTRI_MAP_PREVIEW.md). Prossimo lavoro subordinato al riscontro sulla resa in mappa.
+
+**Vincolo nuovo dialogo:** evitare tagli a metà e scatti/cambi posizione. Completare gesti e sfumare mixer, stabilizzare bacino nel parlato soltanto. Secret 44 s (−3), a fine dialogo idle_new e poi talk_to_combat; dopo questo avverrà avvio combattimento nell'integrazione futura. Preview termina al segnale combat_ready. Priorità sempre valutare dialogo, poi mappa con balletto mobile, infine AI/combattimento.
+
+**Nuovo vincolo dialogo:** usare nuove talking ad hoc; talking_secret esclusivamente quando abbassa voce nel finale, non prima/intro/balletto. Implementata finestra preview 47–54 s regolabile, timing BOZZA; talking spiegazioni a due mani, talking2 gesto contenuto una mano, talking3 narrazione/enfasi. Aperto ascolto F6 e correzione cue del whisper; mappa successiva.
+
+**Priorità utente:** canto approvato; prima provare dialogo principale completo, poi entrambe le sequenze nella mappa. Preview autoplay del discorso preparata in angelastri_dialogue_test.tscn, cue provvisori da affinire. Requisito mappa: Angelastri si muove nello spazio durante danza, continuità root motion/piedi/posizione finale da verificare, non sola camera che segue. Rinviata integrazione fino al riscontro dialogo.
+
+**Riscontro canto:** utente vuole bocca mobile, non apertura sostenuta. Implementata articolazione stilizzata sulla misura RMS del mix, senza riconoscimento sillabe/fonemi; garantisce aperture/chiusure dopo 73.5 s. Test misura escursione/chiusure e lifecycle; nuova resa F6 da ricevere.
+
+**Gesti intro:** utente richiede secondo gesto con pointing2: implementato dopo primo pointing completo, default 15.6 s, senza ripetizione pointing. Canto 73.5 s preservato, nuova prova F6 aperta.
+
+**Conferma e canto:** utente «PERFETTO» sul balletto ritardo 1 s/looking; vuole bocca al canto. Cue esplicito 1:13.5 della musica, implementato singing_start_seconds=73.5. RMS sul mix completo, nessuna separazione vocale; limite dichiarato prima dell'implementazione. Aperto gradimento canto in F6; preservare sequenza approvata.
+
+**Scelta prevalente:** ritardo balletto ridotto a 1 s; idle è animazione combattimento, esclusa dalla preview automatica. Per questa prova attesa con looking, in loop dopo danza e ingresso sfumato 0.6 s; precedente alternanza idle-looking superata. Riscontro F6 aperto.
+
+**Riscontro «bellissima», timing e blend:** corpo e sequenza approvati dall'utente; richiesta ritardo danza/pointing e transizioni idle-looking dolci. Implementati valori preview 2.0 s lead-in, primo pointing 12.0 s, crossfade rest 0.6 s. Continuano autoplay/quattro danze/musica unica/fade. Aperto riscontro sulla precisione di questi tempi e morbidezza, senza avviare fase gameplay successiva.
+
+**Riscontro utente corpo fermo:** riprodotto e corretto blend congelato sotto seek/pausa; verifica aggiunta sul movimento reale delle ossa, non soltanto nome/tempo clip. Richiesto pointing su «questo è un muro»: assegnato al tratto intro 11–18 s, timing ancora provvisorio. Aperto nuova prova audiovisiva F6 e affinamento preciso dei cue.
+
+**Traccia Thriller sostituita dall'utente:** ora 125.41 s, copre tutte quattro danze (111.3 s); loop precedente non utilizzato. Fade ultimo secondo del quarto, poi idle/looking. Confermare effetto completo con nuova musica in F6.
+
+**Estensione utente:** aggiunte Thriller 3/4, richieste consecutive senza interrompere musica. Implementate quattro clip con durate reali, 111.3 s. Per coprire durata maggiore del file (91.05 s) preview usa loop MP3 privato; da valutare raccordo nel playtest. Preservata velocità originale. Fade solo al quarto, poi idle/looking.
+
+**Chiarimento utente fase 1:** osservare automaticamente soltanto intro → danze 1/2 con musica continua e fade → idle/looking; poi proseguire dopo riscontro. Implementato autoplay F6 con UI minima. Intervallo looking preview 10 s, gesto looking completo poi idle. Aperto riscontro audiovisivo e rifinitura cue intro; non avviare automaticamente discorso principale o gameplay.
+
+**Fase 1 Angelastri, nuova richiesta 11/10:** includere già prove discorso/gesti e balletto/musica. Preview implementata e testata tecnicamente; TXT privi di tempi, cue iniziali esplicitamente provvisori. Danze originali 48.6667 s totali, clock musicale comune, fade ultimo secondo. Aperto: ascoltare e affinare cue, valutare ritmo musicale e root motion/transizione in riproduzione continua, confermare tutte le clip; soltanto dopo passare alla fase 2. Cue UI temporanei da annotare prima della chiusura.
+
+**Decisione attiva Angelastri — 11/10/2026:** V2 approvata «ok perfetta». Obiettivo successivo esplicitamente richiesto, in tre fasi: modello/animazioni → cinematiche sincronizzate → combattimento/racchetta. Prima connessione Fritz a PC oppure switch; due blackout con solo quadro aperto, terza uscita con nemico. Riarmo dopo ripristino e rientro nel lab. [Specifica, risorse e istruzioni di ripresa](ANGELASTRI_IMPLEMENTATION_PLAN.md). Nessuna delle nuove fasi implementata; iniziare soltanto dalla fase 1. Le richieste di nuovo obiettivo/conferma Angelastri nelle note storiche sotto sono superate.
+
+**Rifinitura Angelastri:** rialzo superiore V2 +1.2 mm confermato; preservare bocca e denti.
+
+**Angelastri — obiettivo autorizzato:** prima bocca apribile e denti come Bruno, sul GLB ufficiale sgt_Angelastri e scena reale angelastri. Implementata variante localizzata e collegamento runtime, tre shape/arcate continue texturizzate, animazioni preservate. Prova estetica aperta; voce ufficiale/AI/combattimento/cinematica/mappa richiedono successivo obiettivo. Scorrevoli/audio regia precedenti confermati «ok ci siamo».
+
+**Audio regia approvato:** utente «perfetto» sulla revisione precedente. Richiesti sliding_door per scorrevoli e «allo switch» nel menu cavi: implementati su laboratorio/bagno e testo collegamento/scollegamento. Prova della nuova rifinitura ancora aperta.
+
+**Audio regia autorizzato:** collegare e sincronizzare gli otto effetti utente. Implementati bip/sblocco/battente/cavi/mouse/tastiera/sfoglio; originali preservati, estratti per rimuovere silenzi e regolare livelli. Timbro e bilanciamento da confermare manualmente; analisi segnale e test motore distinti dall'ascolto.
+
+**Denti Bruno conclusi — 11/10/2026:** «perfetto» approva V6 con texture e bordo destro corretto. Preservare arcate continue, separazione e materiale; conferma artistica chiusa.
+
+**V6 richiesta e realizzata:** eliminare bianco destro a bocca chiusa e aggiungere texture. Bordo accorciato/arretrato, separazioni leggere dipinte su fasce continue; gradimento finale aperto, test GPU passato.
+
+**Rifinitura V5:** «ci siamo quasi» sulla fascia continua; richiesto coprire il vuoto destro e distanziare leggermente le arcate. Estensione laterale e lieve riduzione altezza implementate senza cambiare apertura/audio. Conferma finale aperta.
+
+**Correzione richiesta denti:** utente respinge V3 (separati/storti), preferisce mesh bianca unica e possibile differenziazione tramite texture successiva. Implementate due fasce continue V4, nessuna suddivisione visiva; UV predisposte, texture rimandata. Gradimento da ricevere.
+
+**11/10/2026 — richiesta denti Bruno:** denti semplici e solo accennati. Implementata variante V3 con sei corone per arcata, avorio opaco e movimento inferiore collegato alla mandibola; V2 preservata. Test grafico passato, conferma estetica in mappa aperta. Nessuna nuova modifica gameplay.
+
 Aggiornamento 08/10/2026. Riferimenti: [baseline](BASELINE_SAFE_2026-10-08.md), [stato locale](CURRENT_STATE.md), [registro](SESSION_LOG.md).
 
 ## Decisioni da preservare
+
+**Conferma utente 11/10/2026:** «ok funziona tutto» dopo playtest delle rifiniture Fritz/porta aliena/PC/notifica chiave. Resa e comportamento di questa revisione passano a confermati dall'utente; non attribuire a questa frase la prova specifica del ciclo completo Carica/C/N/riavvio, che resta aperta. Prossima sessione: leggere il punto di ripresa e lavorare al nuovo obiettivo indicato dall'utente.
+
+**11/10/2026 — rifiniture B20 autorizzate:** «tutto perfetto» conferma generale della revisione kit/documenti, senza attribuire prove manuali specifiche C/N/riavvio. Alimentatore Fritz puramente scenico già inserito nella ciabatta, cavo bianco/grigio; nessuna raccolta o dipendenza gameplay aggiunta. PC ridotto del 16%, orientamento/innesti conservati. Uscita aliena: cardine destro dalla faccia della chiusura e apertura interna; arretramento del player vicino soltanto da quel lato, con collisioni reali e apertura negata se percorso occupato. Messaggio della scorrevole generico «Serve una chiave.». Scala uniforme del nodo chiusura segue figli/clic e zoom; modifiche alla geometria importata richiedono verifica dei montaggi. Nuova resa da confermare dopo F8/F6; preservare sblocco permanente e kit riutilizzabile.
+
+**Nuova estensione B20:** utente approva miglioramento generale e cavi, chiede dimensioni del monitor PC e orientamento sedia rossa, rete SX/corrente DX; caricatore prima in inventario poi installato con E sul portatile. Arresto solo dopo soluzione, chiusura/uscita automatica e raccolta congiunta PC/caricatore, ri-deposito rifiutato. Icone ed esame anche key/cavi; descrizioni neutre, nessuna storia del cerchio nel libro. Documenti aperti 3D; nel libro pagine di glifi e solo WiFi dopo sfogliatura, nel notebook appunti realistici con annotazioni. Nuovo ciclo implementato; conferma utente della resa e ciclo manuale salvataggi ancora aperti.
+
+**Revisione B20 dopo playtest:** utente conferma la logica e richiede portatile sulla scrivania sinistra vicino al Fritz, LED nelle sedi originali senza nuove scritte, E sul Fritz collegato per zoom, niente suggerimenti sul manico o sulla posizione del caricatore, desktop nitido, alfabeto distinguibile condiviso anche nei messaggi alieni, cavi con curve e gioco, chiave key_with_tag più visibile. Dodici lettere armene Sylfaen selezionate; codice a indici conservato. La nuova resa resta da confermare.
 
 | Decisione / vincolo | Provenienza |
 |---|---|
@@ -50,8 +112,11 @@ Gli ID sono riferimenti documentali, non issue GitHub. L'ordine non autorizza es
 | B16 | Salvataggio manuale PC ConnesiOS | PC e adattatori mondo collegati nella mappa; clic GPU e restore anche in processo nuovo passati | Conferma utente nella regia: salvataggio, C/N, Carica e riavvio |
 | B17 | Grafica inventario, raccolta e ConnesiOS | Versione blob confermata dall'utente: «funziona tutto»; ConnesiOS già approvato | Revisione nella prova confermata; HUD inferiore da rifare separatamente |
 | B18 | C/N, caricamento pausa e slot prova | TESTATO UTENTE demo; integrazione mappa completata, test restore separato passato | Playtest C/N e Carica nella mappa; slot demo/principale distinti |
+| B20 | Puzzle rete regia e chiusura aliena | Logica confermata dall'utente; revisione visiva portatile/Fritz/desktop/glifi/cavi/chiave implementata | Conferma nuova resa e ciclo manuale salvataggi; conservare chiusura agganciata e sblocco definitivo |
 
 ## Osservazioni e nuove decisioni
+
+**10/10/2026 — B20:** piano autorizzato e implementato. Decisioni utente: porta richiede PPPoE valido/Online, switch alimentato/cablato e WiFi aperto; login admin/admin2026 obbligatorio, PPPoE narcisolo/ottavonano; due cavi totali recuperabili; Windows 10 simulato; alimentazione Connesi per router/switch/caricatore, chiusura aliena autonoma; libro lasciato in regia; sblocco definitivo. Correzione esplicita successiva: chiusura **rimane sulla porta** e segue il battente, nessuna dissolvenza/scomparsa, riapertura senza password. Utente conferma versione precedente funzionante e blocco Bruno non ricorrente. [Implementazione e verifiche](REGIA_NETWORK_PUZZLE.md). Nessun commit/push; nuova conferma estetica/gameplay aperta.
 
 **Chiusura 10/10/2026 — caricamento approvato:** «ok ci siamo» sulla versione finale. Preservare animazione blob centrale, cornice scura/viola e avanzamento; nessuna striscia decorativa superiore o laterale nel caricamento. Decorazioni inventario conservate. Collegamento immagini Carica e ordine menu completati e confermati; vecchi obiettivi UI sotto superati. B07 risolto e testato; B16/B18 mantengono aperta solo conferma completa manuale del salvataggio nella mappa. HUD inferiore rimane rinviata; nessuna nuova attività di gameplay autorizzata dalla chiusura documentale.
 

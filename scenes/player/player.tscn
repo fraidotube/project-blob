@@ -41,6 +41,7 @@
 [ext_resource type="AudioStream" uid="uid://1o70n03fcc1v" path="res://assets/audio/player/voice/morte.wav" id="27_jrbya"]
 [ext_resource type="Script" uid="uid://co56k1iv3mka3" path="res://scripts/player/viewmodel_depth_override.gd" id="28_viewmodel_depth_override"]
 [ext_resource type="PackedScene" uid="uid://db87eqnkeahwx" path="res://scenes/weapons/smg_model.tscn" id="31_vo27k"]
+[ext_resource type="PackedScene" uid="uid://draro5b8q7xmx" path="res://assets/models/enemies/bruno_buozzi/tennis-racket-wilson-blade/source/Formats/Racket_Wilson_Blade.fbx" id="32_genst"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
 radius = 0.4
@@ -86,44 +87,17 @@ script = ExtResource("2_dovo2")
 [node name="LowWorldViewModel" parent="Head/Camera3D/WeaponHolder" unique_id=514129486 instance=ExtResource("3_gmlin")]
 transform = Transform3D(-3, 0, -4.5298742e-07, 0, 3, 0, 4.5298742e-07, 0, -3, -0.111851215, 0.11060953, 0.16929638)
 
-[node name="Skeleton3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms" parent_id_path=PackedInt32Array(514129486, 394924321, 1201424799) index="0" unique_id=949106662]
-bones/13/rotation = Quaternion(0.2726048, 1.3325075e-07, -7.177831e-08, 0.9621262)
-bones/19/rotation = Quaternion(0.31230488, 9.7211905e-06, 2.9094494e-05, 0.94998205)
-bones/20/position = Vector3(-0.09409628, 0.111206256, -0.1689082)
-bones/21/rotation = Quaternion(0.6771517, 0.2100358, -0.5153174, 0.48145467)
-bones/22/rotation = Quaternion(-0.15108107, 0.0001561544, -0.28525212, 0.9464702)
-bones/23/rotation = Quaternion(-0.036097966, -0.00962068, 0.053266775, 0.99788135)
-bones/24/position = Vector3(0.020377317, 0.023281148, 0.002546152)
-bones/24/rotation = Quaternion(0.30665648, -0.120472655, -0.3200031, 0.8882828)
-bones/25/rotation = Quaternion(0.0031998279, -0.15647614, 0.2967978, 0.9420276)
-bones/26/rotation = Quaternion(4.1432527e-06, -2.6186453e-06, 0.2315823, 0.97281533)
-bones/27/position = Vector3(0.025654566, 0.08635587, -0.0011273045)
-bones/27/rotation = Quaternion(0.03976005, -0.012220179, -0.018994292, 0.99895406)
-bones/28/rotation = Quaternion(0.5030219, -4.1126302e-07, 6.017224e-08, 0.86427367)
-bones/29/rotation = Quaternion(0.57763433, 5.982234e-08, 1.8389406e-07, 0.8162956)
-bones/30/position = Vector3(0.0032903645, 0.086730376, -0.0063072653)
-bones/31/rotation = Quaternion(0.76139694, 0.025181582, 0.0012952775, 0.6477954)
-bones/32/rotation = Quaternion(0.44075587, 1.9603586e-08, -2.290118e-09, 0.897627)
-bones/33/position = Vector3(-0.016358284, 0.0809976, -0.005877237)
-bones/33/rotation = Quaternion(0.35693774, 0.14483792, -0.009036626, 0.922787)
-bones/34/rotation = Quaternion(0.71372074, -0.0009080177, -0.0008898922, 0.70042926)
-bones/35/rotation = Quaternion(0.575566, -5.019971e-05, -7.209413e-05, 0.81775534)
-bones/36/position = Vector3(-0.03143908, 0.069084354, -0.0014383276)
-bones/36/rotation = Quaternion(0.22699647, 0.11048234, -0.037005264, 0.9669007)
-bones/37/rotation = Quaternion(0.6433179, 0.0010860286, 0.0012919818, 0.7655973)
-bones/38/rotation = Quaternion(0.51388615, -0.00010491354, -0.00017459871, 0.8578585)
-bones/41/position = Vector3(-0.10406166, -0.025064938, 0.22724482)
-bones/41/rotation = Quaternion(0.5155741, 0.4514717, 0.5409357, 0.48759124)
-bones/42/position = Vector3(-0.13650946, -0.18357943, 0.0025887787)
+[node name="Skeleton3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms" parent_id_path=PackedInt32Array(514129486, 394924321, 1317490353) index="0" unique_id=398749174]
+bones/23/rotation = Quaternion(0.07910609, 0.40386114, 0.08586624, 0.90733975)
 
 [node name="PistolSocket" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="1" unique_id=2144907275]
-transform = Transform3D(0.007123789, -0.061979204, 0.99805164, -0.03368456, 0.99749583, 0.06218508, -0.9994069, -0.03406186, 0.005018428, -0.104059, 0.15969306, 0.1755833)
+transform = Transform3D(0.0071238875, -0.046741873, 0.9988813, -0.03368461, 0.9983288, 0.04695621, -0.99940705, -0.03398119, 0.005537808, -0.24842438, 0.21544914, 0.25731575)
 
 [node name="PistolMuzzleMarker" type="Marker3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/PistolSocket" index="1" unique_id=739303885]
 transform = Transform3D(1.0000001, 0, -2.561137e-09, 0, 1.0000001, 0, -2.3283064e-10, -2.9802322e-08, 1.0000001, 0.06506455, 0.25754312, 0.03240473)
 
 [node name="FlashlightSocket" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="2" unique_id=1078999935]
-transform = Transform3D(0.007123789, -0.061979204, 0.99805164, -0.03368456, 0.99749583, 0.06218508, -0.9994069, -0.03406186, 0.005018428, -0.104059, 0.15969306, 0.1755833)
+transform = Transform3D(0.0071238875, -0.046741873, 0.9988813, -0.03368461, 0.9983288, 0.04695621, -0.99940705, -0.03398119, 0.005537808, -0.24842438, 0.21544914, 0.25731575)
 
 [node name="Flashlight" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/FlashlightSocket" index="0" unique_id=873452566]
 visible = false
@@ -132,12 +106,13 @@ visible = false
 visible = false
 
 [node name="SMGSocket" type="BoneAttachment3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="3" unique_id=452291507]
-transform = Transform3D(0.007123789, -0.061979204, 0.99805164, -0.03368456, 0.99749583, 0.06218508, -0.9994069, -0.03406186, 0.005018428, -0.104059, 0.15969306, 0.1755833)
+transform = Transform3D(0.0071238875, -0.046741873, 0.9988813, -0.03368461, 0.9983288, 0.04695621, -0.99940705, -0.03398119, 0.005537808, -0.24842438, 0.21544914, 0.25731575)
 bone_name = "Hand.R"
 bone_idx = 23
 
 [node name="SMG_Test" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/SMGSocket" unique_id=562274000 instance=ExtResource("31_vo27k")]
 transform = Transform3D(0.00029163435, 0.9974451, -0.07143989, 0.9987645, 0.0032598637, 0.04959149, 0.049697578, -0.07136607, -0.9962118, -0.09030321, 0.092392445, 0.02971889)
+visible = false
 
 [node name="Skeleton3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/SMGSocket/SMG_Test/SMG_01/SMG_01_Armature" parent_id_path=PackedInt32Array(562274000, 1397191709, 1430104406) index="0" unique_id=772562104]
 bones/1/position = Vector3(3.7802144e-09, -0.045578003, 5.2485555e-10)
@@ -148,6 +123,15 @@ transform = Transform3D(1.7881393e-07, -3.2660537e-08, 0.99999994, 0.9999998, -1
 
 [node name="SMGMuzzleMarker" type="Marker3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/SMGSocket" unique_id=625272670]
 transform = Transform3D(1.0000001, 0, -2.561137e-09, 0, 1.0000001, 0, -2.3283064e-10, -2.9802322e-08, 1.0000001, 0.076027244, 0.34574482, 0.030081987)
+
+[node name="RacketSocket" type="BoneAttachment3D" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="4" unique_id=384644294]
+transform = Transform3D(0.0071238875, -0.046741873, 0.9988813, -0.03368461, 0.9983288, 0.04695621, -0.99940705, -0.03398119, 0.005537808, -0.24842438, 0.21544914, 0.25731575)
+bone_name = "Hand.R"
+bone_idx = 23
+
+[node name="Racket_Wilson_Blade" parent="Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/RacketSocket" unique_id=711081019 instance=ExtResource("32_genst")]
+transform = Transform3D(0.059919506, 0.0026343637, 0.001645618, 0.0019755687, -0.007792523, -0.05945898, -0.0023968844, 0.05943343, -0.0078688115, 0.22036552, 0.09818825, 0.013288528)
+visible = false
 
 [node name="MuzzleFlash" type="OmniLight3D" parent="Head/Camera3D/WeaponHolder" unique_id=785843134]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.34999996)

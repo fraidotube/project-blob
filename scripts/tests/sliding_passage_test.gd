@@ -23,7 +23,13 @@ func run() -> void:
 			failures += 1
 			push_error("Closed sliding door did not block the player: " + String(door.name))
 		door.interact(player)
+		if not door._audio.playing or door._audio.stream != door.open_sound:
+			failures += 1
+			push_error("Sliding opening sound missing: " + String(door.name))
 		await create_timer(1.0).timeout
+		if door.moving or door._audio.playing:
+			failures += 1
+			push_error("Sliding sound outlasts motion: " + String(door.name))
 		var zone: CollisionShape3D = door.passage.get_child(0)
 		var center := zone.global_position
 		for side in [1.0, -1.0]:
@@ -43,6 +49,18 @@ func run() -> void:
 					print("SLIDING_PASSAGE_BLOCK ", door.name, " side=", side, " collider=", collider.get_path() if collider is Node else collider, " normal=", result.get_collision_normal(index), " point=", result.get_collision_point(index))
 			else:
 				print("SLIDING_PASSAGE_CLEAR ", door.name, " side=", side)
+		door.interact(player)
+		if not door._audio.playing or door._audio.stream != door.close_sound:
+			failures += 1
+			push_error("Sliding closing sound missing: " + String(door.name))
+		await create_timer(1.0).timeout
+		if door.moving or door._audio.playing:
+			failures += 1
+			push_error("Sliding closing sound outlasts motion: " + String(door.name))
+		door.apply_persistent_state({"unlocked": true, "open": true})
+		if door._audio.playing:
+			failures += 1
+			push_error("Sliding restore played audio: " + String(door.name))
 	print("SLIDING_PASSAGE_TEST failures=", failures)
 	current_scene.queue_free()
 	await process_frame

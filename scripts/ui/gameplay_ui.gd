@@ -2,6 +2,7 @@ extends CanvasLayer
 
 const SKIN := preload("res://scripts/ui/inventory_skin.gd")
 const BLOB_PANEL := preload("res://scripts/ui/blob_inventory_panel.gd")
+const INSPECTION := preload("res://scripts/ui/regia_racket_inspection.gd")
 
 var modal := ""
 var terminal: Node3D
@@ -30,6 +31,11 @@ var _item_title: Label
 var _item_icon: TextureRect
 var _count: Label
 var _key_icon: Texture2D = SKIN.key_icon()
+var _puzzle_panel: Control
+var _return_inventory := false
+var _examine_button: Button
+var _selected_item := ""
+var _use_weapon_button: Button
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -130,6 +136,17 @@ func _ready() -> void:
 	_description.add_theme_font_size_override("font_size", 20)
 	_description.add_theme_color_override("font_color", Color("b9a7c7"))
 	details.add_child(_description)
+	_examine_button = Button.new()
+	_examine_button.text = "ESAMINA"
+	SKIN.button(_examine_button)
+	_examine_button.visible = false
+	_examine_button.pressed.connect(_examine_selected)
+	details.add_child(_examine_button)
+	_use_weapon_button = Button.new()
+	SKIN.button(_use_weapon_button)
+	_use_weapon_button.hide()
+	_use_weapon_button.pressed.connect(_toggle_racket)
+	details.add_child(_use_weapon_button)
 	var close := Button.new()
 	close.text = "CHIUDI  [I / ESC]"
 	SKIN.button(close)
@@ -197,6 +214,9 @@ func _layout() -> void:
 	_inventory_frame.size = _inventory.size
 	_inventory_frame.scale = _inventory.scale
 	_position_notice()
+	if is_instance_valid(_puzzle_panel):
+		_puzzle_panel.scale = Vector2.ONE * minf(1.0, minf((_canvas.size.x - 40) / _puzzle_panel.size.x, (_canvas.size.y - 40) / _puzzle_panel.size.y))
+		_puzzle_panel.position = (_canvas.size - _puzzle_panel.size * _puzzle_panel.scale) * 0.5
 
 func _position_notice() -> void:
 	var anchor := Vector2(_canvas.size.x * 0.5, _canvas.size.y - 140)
@@ -274,6 +294,9 @@ func _refresh_inventory() -> void:
 		_list.add_item(definition.display_name + "  ×" + str(InventoryManager.items[id]), icon)
 	_count.text = "01 OGGETTO" if _item_ids.size() == 1 else "%02d OGGETTI" % _item_ids.size()
 	if _item_ids.is_empty():
+		_selected_item = ""
+		_examine_button.hide()
+		_use_weapon_button.hide()
 		_item_icon.texture = null
 		_item_title.text = "NESSUN OGGETTO"
 		_description.text = "Non hai ancora raccolto oggetti."
@@ -282,14 +305,58 @@ func _refresh_inventory() -> void:
 		_select_item(0)
 
 func _select_item(index: int) -> void:
+	_examine_button.visible = false
+	_use_weapon_button.hide()
 	if index >= 0 and index < _item_ids.size():
+		_selected_item = _item_ids[index]
 		var definition: Resource = InventoryManager.definitions[_item_ids[index]]
 		_description.text = definition.description
 		_item_title.text = definition.display_name
 		_item_icon.texture = _list.get_item_icon(index)
+		_examine_button.visible = _selected_item in ["bruno_key", "network_cable", "regia_charger"] or (_selected_item in ["bruno_racket", "regia_laptop"] and get_tree().get_first_node_in_group("regia_network") != null)
+		var player := get_tree().get_first_node_in_group("player")
+		var weapon := player.get_node_or_null("Head/Camera3D/WeaponHolder") if player != null else null
+		if _selected_item == "bruno_racket" and weapon != null and bool(weapon.get("racket_combat_unlocked")):
+			_use_weapon_button.show()
+			_use_weapon_button.text = "RIPONI" if weapon.equipped_weapon == weapon.WEAPON_RACKET else "USA COME ARMA"
+
+func _toggle_racket() -> void:
+	var player := get_tree().get_first_node_in_group("player")
+	if player == null or not InventoryManager.has_item(&"bruno_racket"): return
+	var weapon := player.get_node("Head/Camera3D/WeaponHolder")
+	if weapon.equipped_weapon == weapon.WEAPON_RACKET: weapon.stow_racket()
+	else: weapon.equip_racket()
+	close_modal()
+
+func _examine_selected() -> void:
+	var puzzle := get_tree().get_first_node_in_group("regia_network")
+	if not InventoryManager.has_item(StringName(_selected_item)): return
+	var panel := INSPECTION.new()
+	panel.puzzle = puzzle
+	panel.item_id = _selected_item
+	if not open_puzzle_panel(panel, true): panel.free()
+
+func open_puzzle_panel(panel: Control, from_inventory: bool = false) -> bool:
+	if from_inventory:
+		if modal != "inventory":
+			return false
+		_inventory.visible = false
+		_inventory_frame.visible = false
+		modal = "puzzle"
+	else:
+		if not _begin("puzzle"):
+			return false
+	_return_inventory = from_inventory
+	_puzzle_panel = panel
+	_canvas.add_child(panel)
+	_backdrop.visible = true
+	panel.size = panel.get_combined_minimum_size().max(Vector2(820, 570))
+	_layout()
+	return true
 
 func open_terminal(station: Node3D) -> bool:
-	if not SaveManager.can_save():
+	var requires_save_eligibility := not station.has_method("requires_save_eligibility") or bool(station.call("requires_save_eligibility"))
+	if requires_save_eligibility and not SaveManager.can_save():
 		notify(SaveManager.last_error)
 		return false
 	if not _begin("terminal"):
@@ -327,6 +394,16 @@ func open_terminal(station: Node3D) -> bool:
 func close_modal() -> void:
 	if modal.is_empty() or _transitioning:
 		return
+	if modal == "puzzle" and _return_inventory:
+		if is_instance_valid(_puzzle_panel):
+			_puzzle_panel.queue_free()
+		_puzzle_panel = null
+		_return_inventory = false
+		modal = "inventory"
+		_inventory.visible = true
+		_inventory_frame.visible = true
+		_refresh_inventory()
+		return
 	if modal == "terminal" and is_instance_valid(_camera) and is_instance_valid(_player_camera):
 		_transitioning = true
 		terminal.call("set_terminal_active", true, false)
@@ -340,6 +417,10 @@ func close_modal() -> void:
 func close_immediately() -> void:
 	if modal.is_empty():
 		return
+	if is_instance_valid(_puzzle_panel):
+		_puzzle_panel.queue_free()
+	_puzzle_panel = null
+	_return_inventory = false
 	if _tween != null and _tween.is_running():
 		_tween.kill()
 	if is_instance_valid(terminal):
@@ -375,7 +456,7 @@ func notify(message: String, item_id: StringName = &"") -> void:
 	_notice_title.text = "OGGETTO RACCOLTO" if not item_id.is_empty() else "AVVISO"
 	_notice_text.text = message
 	_notice_hint.visible = not item_id.is_empty()
-	_notice_icon.texture = _key_icon if item_id == &"bruno_key" else null
+	_notice_icon.texture = InventoryManager.definitions[String(item_id)].icon if InventoryManager.definitions.has(String(item_id)) else null
 	_notice_icon.visible = _notice_icon.texture != null
 	_notice_active = true
 	_notice.modulate.a = 0.0

@@ -57,6 +57,7 @@ func _ready() -> void:
 	_closed = panel.position
 	_audio = AudioStreamPlayer3D.new()
 	_audio.bus = &"SFX"
+	_audio.max_distance = 12.0
 	add_child(_audio)
 	super._ready()
 
@@ -72,7 +73,7 @@ func interact(_player: Node) -> void:
 		return
 	if not unlocked:
 		if not InventoryManager.has_item(required_key):
-			GameplayUI.notify("Serve la chiave di Bruno.")
+			GameplayUI.notify("Serve una chiave.")
 			return
 		unlocked = true
 	if is_open and _occupied():
@@ -93,6 +94,7 @@ func _physics_process(delta: float) -> void:
 	panel.position = panel.position.move_toward(target_position, slide_speed * delta)
 	if panel.position.is_equal_approx(target_position):
 		moving = false
+		_audio.stop()
 
 func _occupied() -> bool:
 	for body: Node3D in passage.get_overlapping_bodies():
@@ -107,6 +109,7 @@ func get_persistent_state() -> Dictionary:
 	return {"unlocked": unlocked, "open": is_open}
 
 func apply_persistent_state(state: Dictionary) -> void:
+	if _audio != null: _audio.stop()
 	unlocked = required_key.is_empty() or bool(state.get("unlocked", false))
 	is_open = unlocked and bool(state.get("open", false))
 	moving = false

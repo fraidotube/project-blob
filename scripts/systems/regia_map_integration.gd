@@ -5,6 +5,8 @@ const SWING := preload("res://scripts/interactables/door.gd")
 const PC := preload("res://scripts/interactables/save_pc_station.gd")
 const PERSIST := preload("res://scripts/systems/persistent_object.gd")
 const LOOT := preload("res://scripts/systems/boss_loot_drop.gd")
+const NETWORK_PUZZLE := preload("res://scripts/systems/regia_network_puzzle.gd")
+const AUDIO := preload("res://scripts/systems/regia_audio.gd")
 @export_range(0.25, 0.4, 0.01) var player_passage_radius := 0.35
 var lab_door: Node3D
 var bathroom_door: Node3D
@@ -48,6 +50,10 @@ func _setup() -> void:
 	for node in scene.get_children():
 		if node.has_method("interact") and _has_property(node, &"collected"):
 			_persistent(node, StringName("main.pickup." + String(node.name)), 1)
+	if scene.has_node("connesi_building_test2_addon_1"):
+		var network_puzzle := NETWORK_PUZZLE.new()
+		network_puzzle.name = "NetworkPuzzle"
+		add_child(network_puzzle)
 	print("REGIA_MAP_INTEGRATED doors=3 pc=1 loot=1 participants=", SaveManager.participants.size())
 
 func _has_property(node: Node, property: StringName) -> bool:
@@ -122,6 +128,8 @@ func _sliding(source: Node3D, id: StringName, keyed: bool) -> Node3D:
 	door.persistent_id = id
 	door.required_key = &"bruno_key" if keyed else &""
 	door.generate_test_geometry = false
+	door.open_sound = AUDIO.stream(&"sliding")
+	door.close_sound = door.open_sound
 	# Both verified panels lie across world X. Left from their +Z front.
 	door.open_offset = Vector3(-bounds.size.x - 0.08, 0, 0)
 	door.transform = scene.global_transform.affine_inverse() * frame

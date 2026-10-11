@@ -1,6 +1,8 @@
 extends CanvasLayer
 
 const HITMARKER_DURATION := 0.10
+const RETICLE := preload("res://scripts/ui/project_blob_reticle.gd")
+var game_reticle: Control
 
 const BATTERY_SEGMENTS := 8
 const BATTERY_SEGMENT_SIZE := 100.0 / BATTERY_SEGMENTS
@@ -243,6 +245,10 @@ var _damage_number_font: SystemFont
 
 func _ready() -> void:
 	add_to_group("hud")
+	crosshair_image.hide()
+	game_reticle = RETICLE.new()
+	game_reticle.name = "ProjectBlobReticle"
+	$Interface.add_child(game_reticle)
 
 	hit_marker_image.visible = false
 	damage_overlay_image.visible = false
@@ -1178,6 +1184,7 @@ func update_mission(
 # ============================================================
 
 func show_death_screen() -> void:
+	if game_reticle != null: game_reticle.hide()
 	crosshair_image.visible = false
 	hit_marker_image.visible = false
 	damage_overlay_image.visible = false

@@ -1,5 +1,7 @@
 # Bruno — blocco nel passaggio dopo la cinematica
 
+**Nuova segnalazione 10/10/2026, dopo checkpoint 2ac4a5f:** Bruno incastrato nel muro della porta durante combattimento. Mappa e controller locali coincidono con HEAD; hash mappa `B18A6DDD4A7F222C431C04F257403BE6309C85183F7B37DB4E0A90E0E9D7D1C4`, controller ancora `F9D08B4A...`. Due tracce headless dal marker finale intro superano la porta esterna a Z=14.41341 mantenuta aperta dal vero ambiente boss; Z finale 19.16057 con player spawn / 18.25315 con player (6.8, 0.9, 26). Le soste sono accompagnate da attacchi pallina, collisioni registrate con normale +Y su pavimento/VetrinaArmatura, non muro porta. Non riprodotto il nuovo blocco, nessuna correzione consolidata. Diagnostica completa `scripts/tests/bruno_lab_exit_diagnostic.gd`, opzione `--far-player`; log `.godot/bruno_lab_exit.log` e `.godot/bruno_lab_exit_far.log`. Non esegue tutta la cinematica né tutte le fasi/posizioni: serve precisazione utente della porta e dello scenario, senza negare il riscontro.
+
 **Conferma successiva:** l'utente risponde «ok ci siamo» e passa all'integrazione chiave/porte/PC: correzione del passaggio **TESTATO UTENTE**, conferma generale senza elenco degli scenari. Le note sotto conservano diagnosi e limiti dei test automatici.
 
 ## Segnalazione e diagnosi, 10/10/2026

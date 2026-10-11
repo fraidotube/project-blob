@@ -1,7 +1,7 @@
 extends Node
 
 const MOTION := preload("res://scripts/characters/bruno_mouth_motion.gd")
-const HEAD_FILE := "res://assets/models/enemies/bruno_buozzi/mouth_preview_v2/bruno_head_mouth_preview.glb"
+const HEAD_FILE := "res://assets/models/enemies/bruno_buozzi/mouth_preview_v6/bruno_head_mouth_preview.glb"
 const INTRO_SCRIPT := "res://scripts/cinematics/bruno_intro_controller.gd"
 var boss: Node
 var head: MeshInstance3D

@@ -1,5 +1,19 @@
 # Bruno — prova bocca
 
+## Denti accennati — 11/10/2026
+
+**Conferma finale:** utente «perfetto» dopo V6 con bordo destro corretto e texture. Resa approvata, attività conclusa; indicazioni sottostanti sulla conferma finale aperta sono superate.
+
+**Versione attiva V6 con texture:** utente segnala bianco visibile a destra anche a bocca chiusa in V5. Estremità X 0.245→0.225 e arretramento graduale fino a 0.012 unità locali da X 0.17; altezze/separazione V5 conservate. Nuova texture nativa Blender `mouth_preview_v6/bruno_teeth_soft_divisions.png`, 512×64, sei separazioni grigie sottili sfumate su fondo avorio, nessuna trasparenza; incorporata nel GLB/materiale. Preview/integrazione usano V6, precedenti conservate. Test grafico bocca zero fallimenti e render Godot chiuso frontale/tre quarti controllato: nessun bianco sporgente nelle due viste. Conferma nella mappa da ricevere.
+
+**Rifinitura attiva V5:** dopo «ci siamo quasi», utente richiede copertura dell'angolo destro e maggiore separazione fra arcate. Fasce estese da X [-0.106, 0.171] a [-0.135, 0.245], profilo continuo conservato; altezza visibile superiore 0.022→0.017, inferiore 0.015→0.011 unità locali. Maggiore spazio durante apertura senza cambiare escursione della bocca. Preview/integrazione caricano V5; V4 conservata. Render chiuso/aperto controllato, conferma finale utente aperta.
+
+**Revisione prevalente V4:** utente respinge i denti V3 separati e storti. Variante attiva ora `mouth_preview_v4`, due fasce continue bianco avorio chiaro con profilo curvo regolare, nessuna fuga geometrica. UV continue 0–1 predisposte per eventuale texture futura, non ancora applicata. Movimento inferiore e tre shape conservati; V3 conservata come variante superata. Render Blender aperto/chiuso e test grafico Godot rieseguiti; vedere ultima SESSION_LOG. La descrizione delle corone sotto è cronologia V3.
+
+Variante attiva `mouth_preview_v3/bruno_head_mouth_preview.glb`: sei piccole corone per arcata, avorio opaco, arretrate di 0.018 unità locali rispetto al taglio labiale. Geometria essenziale senza gengive; arcata inferiore segue `mouth_open`, entrambe seguono round/smile. Tre shape e controller audio invariati. V1/V2 conservate. Generatore Blender aggiornato: produce la nuova variante tramite API di modellazione/export, senza patch Python ai file esistenti. Preview e integrazione puntano entrambe a V3.
+
+Render Blender frontale/tre quarti chiuso/aperto e screenshot Godot round/smile ispezionati: denti nascosti a riposo e visibili con apertura. `BRUNO_MOUTH_TEST failures=0` GPU Forward+ D3D12; test audio e bus privato passati. Conferma artistica utente ancora aperta. F8 → `scenes/maps/map_test.tscn` → F6, osservare dialogo e risata; confronto isolato in `scenes/levels/bruno_mouth_test.tscn`, M/3/4 e 1/2. Il nuovo `.blend` è ignorato e il GLB non tracciato; nessun commit/push.
+
 **Riscontro più recente:** l'utente conferma bocca funzionante nella mappa. Il blocco successivo del cammino è stato riprodotto anche senza bocca e corretto sul collider obsoleto della parete: [diagnosi passaggio](BRUNO_PASSAGE_COLLISION.md). Ora verificare l'intro completa con quel collider corretto, poi riprendere PC/porta/chiave.
 
 ## Integrazione reale del 10/10/2026

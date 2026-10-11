@@ -209,6 +209,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	):
 		weapon.select_weapon_slot(4)
 
+	if event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_5 or event.physical_keycode == KEY_5):
+		weapon.select_weapon_slot(5)
+
 	if event.is_action_pressed("flashlight_toggle"):
 		weapon.toggle_flashlight()
 

@@ -4,7 +4,7 @@ const BRUNO := preload("res://scenes/enemies/bruno_buozzi.tscn")
 const VOICE := preload("res://assets/models/enemies/bruno_buozzi/dialogoBruno2_p1_mostro.mp3")
 const MOTION := preload("res://scripts/characters/bruno_mouth_motion.gd")
 const THEME := preload("res://scenes/ui/project_blob_menu_theme.tres")
-const HEAD_FILE := "res://assets/models/enemies/bruno_buozzi/mouth_preview_v2/bruno_head_mouth_preview.glb"
+const HEAD_FILE := "res://assets/models/enemies/bruno_buozzi/mouth_preview_v6/bruno_head_mouth_preview.glb"
 
 @export_range(1.0, 30.0, 0.5) var excerpt_seconds := 16.0
 var bruno: Node3D

@@ -4,13 +4,23 @@ class_name InventoryItemPickup
 @export var item_id: StringName = &"bruno_key"
 @export var quantity := 1
 var collected := false
+const KEY_MODEL := preload("res://assets/models/edificio/key_with_tag/scene.gltf")
 
 func _ready() -> void:
 	interaction_name = "CHIAVE DI BRUNO"
 	interaction_color = Color(1.0, 0.8, 0.3)
-	_box(self, Vector3(0.06, 0.025, 0.24), Vector3(0, 0.05, 0), Color(0.9, 0.7, 0.15))
-	_box(self, Vector3(0.15, 0.025, 0.1), Vector3(0, 0.05, -0.15), Color(0.9, 0.7, 0.15))
-	_box(self, Vector3(0.1, 0.025, 0.025), Vector3(0.025, 0.05, 0.07), Color(0.9, 0.7, 0.15))
+	var model := KEY_MODEL.instantiate() as Node3D
+	model.name = "KeyWithTag"
+	add_child(model)
+	var box := AABB()
+	var first := true
+	for mesh: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
+		var local_box := global_transform.affine_inverse() * mesh.global_transform * mesh.get_aabb()
+		box = local_box if first else box.merge(local_box)
+		first = false
+	var factor := 0.34 / maxf(box.size.x, maxf(box.size.y, box.size.z))
+	model.scale *= factor
+	model.position = Vector3(-box.get_center().x, -box.position.y, -box.get_center().z) * factor + Vector3.UP * 0.025
 	_interaction_box(Vector3(0.35, 0.25, 0.45), Vector3(0, 0.1, 0))
 	super._ready()
 

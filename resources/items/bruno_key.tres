@@ -1,10 +1,9 @@
-[gd_resource type="Resource" script_class="InventoryItemDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="InventoryItemDefinition" format=3 uid="uid://dq4n2mdoa2e68"]
 
-[ext_resource type="Script" path="res://scripts/inventory/item_definition.gd" id="1"]
+[ext_resource type="Script" uid="uid://cwn4aso6qrmdd" path="res://scripts/inventory/item_definition.gd" id="1"]
 
 [resource]
 script = ExtResource("1")
 item_id = &"bruno_key"
 display_name = "CHIAVE DI BRUNO"
-description = "La chiave lasciata da Bruno. Sblocca la porta della nuova stanza."
-max_quantity = 1
+description = "Una chiave con una targhetta."

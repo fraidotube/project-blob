@@ -1,0 +1,158 @@
+[gd_scene format=3 uid="uid://cbv4ymuhfug54"]
+
+[ext_resource type="PackedScene" uid="uid://bvhteoiga4nea" path="res://assets/models/enemies/Angelastri/sgt_Angelastri.glb" id="1_qw25r"]
+[ext_resource type="Animation" uid="uid://cs0suqlak321c" path="res://assets/models/enemies/Angelastri/Animation/angry_point.res" id="2_twl05"]
+[ext_resource type="Animation" uid="uid://c2id353c1ieu1" path="res://assets/models/enemies/Angelastri/Animation/bite_neck.res" id="3_h0kcc"]
+[ext_resource type="Animation" uid="uid://b0r4coqh3ptaj" path="res://assets/models/enemies/Angelastri/Animation/button.res" id="4_3wxwj"]
+[ext_resource type="Animation" uid="uid://bfawimhrals2s" path="res://assets/models/enemies/Angelastri/Animation/caduta.res" id="5_8awi5"]
+[ext_resource type="Animation" uid="uid://by2w57tq63pqr" path="res://assets/models/enemies/Angelastri/Animation/death.res" id="6_fdufr"]
+[ext_resource type="Animation" uid="uid://b1tnxa7uhgu6r" path="res://assets/models/enemies/Angelastri/Animation/dodging.res" id="7_8awi5"]
+[ext_resource type="Animation" uid="uid://8wdsowvp0x2q" path="res://assets/models/enemies/Angelastri/Animation/head_nod.res" id="7_ti3m3"]
+[ext_resource type="Animation" uid="uid://bv86r8xrkyhwe" path="res://assets/models/enemies/Angelastri/Animation/dodging_right.res" id="8_fdufr"]
+[ext_resource type="Animation" uid="uid://1tomt0w867f2" path="res://assets/models/enemies/Angelastri/Animation/hit_reaction1.res" id="8_ovgli"]
+[ext_resource type="Animation" uid="uid://di8nchf17tpxs" path="res://assets/models/enemies/Angelastri/Animation/hit_reaction2.res" id="9_ecvjt"]
+[ext_resource type="Animation" uid="uid://bcal4cwkjj8t1" path="res://assets/models/enemies/Angelastri/Animation/ducking.res" id="9_ti3m3"]
+[ext_resource type="Animation" uid="uid://bnymlpi0pej0e" path="res://assets/models/enemies/Angelastri/Animation/idle.res" id="10_uxi6f"]
+[ext_resource type="Animation" uid="uid://oogmve4tcdx6" path="res://assets/models/enemies/Angelastri/Animation/looking.res" id="11_5f353"]
+[ext_resource type="Animation" uid="uid://cv0ya5g653d83" path="res://assets/models/enemies/Angelastri/Animation/opening.res" id="12_uhg8g"]
+[ext_resource type="Animation" uid="uid://de5cddkkludd8" path="res://assets/models/enemies/Angelastri/Animation/quick_bow.res" id="13_8gbeg"]
+[ext_resource type="Animation" uid="uid://dxdbc8pbvecrv" path="res://assets/models/enemies/Angelastri/Animation/idle_new.res" id="14_4akud"]
+[ext_resource type="Animation" uid="uid://bifkfqq4q8afi" path="res://assets/models/enemies/Angelastri/Animation/running.res" id="14_lyj3f"]
+[ext_resource type="Animation" uid="uid://m8ic3smlixtt" path="res://assets/models/enemies/Angelastri/Animation/idle_new_breathing.res" id="15_obrdt"]
+[ext_resource type="Animation" uid="uid://cy38u6fbg6vor" path="res://assets/models/enemies/Angelastri/Animation/salute.res" id="15_uy3ja"]
+[ext_resource type="Animation" uid="uid://d4h24y7l1fr4m" path="res://assets/models/enemies/Angelastri/Animation/pointing.res" id="16_ecvjt"]
+[ext_resource type="Animation" uid="uid://jubpr2m1fhls" path="res://assets/models/enemies/Angelastri/Animation/scream.res" id="16_rsad7"]
+[ext_resource type="Animation" uid="uid://caol0khsy2qa6" path="res://assets/models/enemies/Angelastri/Animation/talk_to_combat.res" id="17_4akud"]
+[ext_resource type="Animation" uid="uid://bka28ol6877nb" path="res://assets/models/enemies/Angelastri/Animation/pointing2.res" id="17_uxi6f"]
+[ext_resource type="Animation" uid="uid://ddwxoos2axyi1" path="res://assets/models/enemies/Angelastri/Animation/thrller_1.res" id="18_obrdt"]
+[ext_resource type="Animation" uid="uid://c6oxl5poyyav5" path="res://assets/models/enemies/Angelastri/Animation/risata.res" id="19_5f353"]
+[ext_resource type="Animation" uid="uid://djpaq4kxhio1g" path="res://assets/models/enemies/Angelastri/Animation/thrller_2.res" id="19_rjqw3"]
+[ext_resource type="Animation" uid="uid://dnitjpnmehi0y" path="res://assets/models/enemies/Angelastri/Animation/walking.res" id="20_5parx"]
+[ext_resource type="Animation" uid="uid://rb0ymqqydlth" path="res://assets/models/enemies/Angelastri/Animation/zombie_attack1.res" id="21_xsucm"]
+[ext_resource type="Animation" uid="uid://cno2cmr4n5fpj" path="res://assets/models/enemies/Angelastri/Animation/zombie_attack2.res" id="22_uanov"]
+[ext_resource type="Animation" uid="uid://civ6idsyvh6ep" path="res://assets/models/enemies/Angelastri/Animation/talking.res" id="24_uy3ja"]
+[ext_resource type="Script" uid="uid://clpjau2ha5m7h" path="res://scripts/characters/angelastri_mouth.gd" id="25_mouth"]
+[ext_resource type="Animation" uid="uid://bmvcn4ga2hgvi" path="res://assets/models/enemies/Angelastri/Animation/talking2.res" id="25_rsad7"]
+[ext_resource type="Animation" uid="uid://b8q7322xbugue" path="res://assets/models/enemies/Angelastri/Animation/talking3.res" id="26_4akud"]
+[ext_resource type="Animation" uid="uid://dmur5ypvyo2tg" path="res://assets/models/enemies/Angelastri/Animation/thrller_3.res" id="26_5f353"]
+[ext_resource type="Animation" uid="uid://c10yuacjp4ygm" path="res://assets/models/enemies/Angelastri/Animation/talking_secret.res" id="27_obrdt"]
+[ext_resource type="Animation" uid="uid://2moteejb550a" path="res://assets/models/enemies/Angelastri/Animation/thrller_4.res" id="27_uhg8g"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ae4ba"]
+_data = {
+&"angry_point": ExtResource("2_twl05"),
+&"bite_neck": ExtResource("3_h0kcc"),
+&"button": ExtResource("4_3wxwj"),
+&"caduta": ExtResource("5_8awi5"),
+&"death": ExtResource("6_fdufr"),
+&"dodging": ExtResource("7_8awi5"),
+&"dodging_right": ExtResource("8_fdufr"),
+&"ducking": ExtResource("9_ti3m3"),
+&"head_nod": ExtResource("7_ti3m3"),
+&"hit_reaction1": ExtResource("8_ovgli"),
+&"hit_reaction2": ExtResource("9_ecvjt"),
+&"idle": ExtResource("10_uxi6f"),
+&"idle_new": ExtResource("14_4akud"),
+&"idle_new_breathing": ExtResource("15_obrdt"),
+&"looking": ExtResource("11_5f353"),
+&"opening": ExtResource("12_uhg8g"),
+&"pointing": ExtResource("16_ecvjt"),
+&"pointing2": ExtResource("17_uxi6f"),
+&"quick_bow": ExtResource("13_8gbeg"),
+&"risata": ExtResource("19_5f353"),
+&"running": ExtResource("14_lyj3f"),
+&"salute": ExtResource("15_uy3ja"),
+&"scream": ExtResource("16_rsad7"),
+&"talk_to_combat": ExtResource("17_4akud"),
+&"talking": ExtResource("24_uy3ja"),
+&"talking2": ExtResource("25_rsad7"),
+&"talking3": ExtResource("26_4akud"),
+&"talking_secret": ExtResource("27_obrdt"),
+&"thrller_1": ExtResource("18_obrdt"),
+&"thrller_2": ExtResource("19_rjqw3"),
+&"thrller_3": ExtResource("26_5f353"),
+&"thrller_4": ExtResource("27_uhg8g"),
+&"walking": ExtResource("20_5parx"),
+&"zombie_attack1": ExtResource("21_xsucm"),
+&"zombie_attack2": ExtResource("22_uanov")
+}
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hbjui"]
+
+[node name="CharacterBody3D" type="CharacterBody3D" unique_id=1406787768]
+
+[node name="sgt_Angelastri" parent="." unique_id=865724390 instance=ExtResource("1_qw25r")]
+
+[node name="GeneralSkeleton" parent="sgt_Angelastri/Armature" parent_id_path=PackedInt32Array(865724390, 1482976012) index="0" unique_id=117443403]
+bones/0/position = Vector3(-0.0019272539, 1.0136178, -0.009255032)
+bones/0/rotation = Quaternion(-0.032897986, 0.025664281, -0.016851863, 0.99898714)
+bones/1/rotation = Quaternion(0.10492413, 0.06945276, 0.99134886, -0.037345394)
+bones/2/rotation = Quaternion(-0.22949004, -0.080629624, 0.06883124, 0.9675203)
+bones/3/rotation = Quaternion(0.4533494, -0.19878495, -0.022282787, 0.868598)
+bones/4/rotation = Quaternion(0.4358804, -0.03449695, 0.05768872, 0.89749116)
+bones/6/rotation = Quaternion(-0.036783304, 0.06165319, 0.99740326, 0.0057159574)
+bones/7/rotation = Quaternion(-0.18023202, 0.08505576, -0.06102393, 0.97803795)
+bones/8/rotation = Quaternion(0.41310233, 0.19110036, 0.017575772, 0.89023495)
+bones/9/rotation = Quaternion(0.43274233, 0.034225076, -0.05779864, 0.89901173)
+bones/11/rotation = Quaternion(0.026919955, 0.01685405, -0.014760949, 0.99938655)
+bones/12/rotation = Quaternion(-0.01469321, 0.0016449856, 0.009014506, 0.99985015)
+bones/13/rotation = Quaternion(0.07024099, 0.0017811013, 0.009098418, 0.99748707)
+bones/14/position = Vector3(-0.19003434, 0.1101754, -0.21992126)
+bones/14/rotation = Quaternion(-7.801134e-08, 0.060684238, 0.998157, -4.8212343e-08)
+bones/17/position = Vector3(-0.013000016, 0.06591617, 0.16769019)
+bones/17/rotation = Quaternion(1, -1.846603e-15, -7.54979e-08, -1.7234733e-07)
+bones/19/rotation = Quaternion(-0.5966147, -0.38201365, 0.62836087, -0.32137054)
+bones/20/rotation = Quaternion(0.40465584, 0.1469091, 0.18049362, 0.8843605)
+bones/21/rotation = Quaternion(-7.63151e-08, 7.851233e-08, 0.09495715, 0.99548143)
+bones/22/rotation = Quaternion(0.032367665, -0.08126449, -0.013836602, 0.99607086)
+bones/23/rotation = Quaternion(0.20162103, 0.00020957988, -0.02292901, 0.9791952)
+bones/24/rotation = Quaternion(0.17916001, -3.733798e-08, -0.02129894, 0.9835895)
+bones/25/rotation = Quaternion(0.17004675, 5.142389e-08, -0.020215578, 0.9852286)
+bones/27/rotation = Quaternion(0.23344922, 0.00024347959, -0.026720164, 0.9720018)
+bones/28/rotation = Quaternion(0.22541884, -1.2611598e-07, -0.026798738, 0.9738933)
+bones/29/rotation = Quaternion(0.21261516, 2.903513e-08, -0.025276328, 0.97680914)
+bones/31/rotation = Quaternion(0.22196576, 0.008359277, -0.060311697, 0.9731515)
+bones/32/rotation = Quaternion(0.31279296, 0.0110872425, -0.00306375, 0.9497517)
+bones/33/rotation = Quaternion(0.30000705, 1.9700823e-07, -0.035665672, 0.95327014)
+bones/35/rotation = Quaternion(0.24901529, 0.00025985495, -0.028574852, 0.9680779)
+bones/36/rotation = Quaternion(0.27619407, 1.1481079e-07, -0.032834742, 0.96054083)
+bones/37/rotation = Quaternion(0.26307616, 2.254049e-08, -0.03127527, 0.964268)
+bones/39/rotation = Quaternion(0.16836558, 0.05982017, 0.16948554, 0.9692003)
+bones/40/rotation = Quaternion(0.010595599, -0.01758297, -0.12962368, 0.9913508)
+bones/41/rotation = Quaternion(-0.020716896, -0.01716187, -0.069308594, 0.9972325)
+bones/43/rotation = Quaternion(-0.045431584, -0.0076238597, -0.006553761, 0.99891686)
+bones/44/rotation = Quaternion(0.0076424787, -0.07210596, 0.036076184, 0.996715)
+bones/48/rotation = Quaternion(0.57955766, -0.41680884, 0.5928678, 0.37268105)
+bones/49/rotation = Quaternion(0.46178502, -0.08505976, -0.11882322, 0.8748717)
+bones/50/rotation = Quaternion(1.9063448e-08, -1.0308405e-07, -0.09300109, 0.995666)
+bones/51/rotation = Quaternion(0.054737203, 0.09101841, -0.0044147256, 0.9943339)
+bones/52/rotation = Quaternion(0.16721484, -0.00017415466, 0.019020118, 0.9857371)
+bones/53/rotation = Quaternion(0.13443896, 2.3726346e-07, 0.016139584, 0.9907904)
+bones/54/rotation = Quaternion(0.12016233, -8.656685e-08, 0.01442533, 0.99264956)
+bones/56/rotation = Quaternion(0.20994851, -0.00021963909, 0.024159402, 0.9774139)
+bones/57/rotation = Quaternion(0.23072185, 1.2361485e-07, 0.027697837, 0.97262555)
+bones/58/rotation = Quaternion(0.21247686, 3.7083514e-09, 0.025507586, 0.9768332)
+bones/60/rotation = Quaternion(0.29575473, -0.00031133133, 0.034484174, 0.9546412)
+bones/61/rotation = Quaternion(0.25290674, 2.2234488e-08, 0.030361116, 0.96701413)
+bones/62/rotation = Quaternion(0.29622796, -8.667513e-09, 0.03556181, 0.954455)
+bones/64/rotation = Quaternion(0.27136695, -0.00028526687, 0.031548776, 0.9619588)
+bones/65/rotation = Quaternion(0.24745493, -1.8139502e-08, 0.029706635, 0.9684439)
+bones/66/rotation = Quaternion(0.20669824, 6.871289e-08, 0.024813816, 0.97809005)
+bones/68/rotation = Quaternion(0.16518097, -0.057576917, -0.18269368, 0.9674829)
+bones/69/rotation = Quaternion(0.016604897, 0.013314556, 0.12393596, 0.99206203)
+bones/70/rotation = Quaternion(-0.021610089, 0.013239656, 0.040036708, 0.9988768)
+
+[node name="mixamorig_Neck" parent="sgt_Angelastri/Armature/GeneralSkeleton" index="0" unique_id=122641566]
+transform = Transform3D(0.9962262, 0.04448704, 0.07452811, -0.043812227, 0.9989829, -0.010665774, -0.07492681, 0.0073602945, 0.99716175, 0.020818906, 1.6759479, -0.058054853)
+
+[node name="AnimationPlayer" parent="sgt_Angelastri" index="1" unique_id=138527909]
+libraries/mie = SubResource("AnimationLibrary_ae4ba")
+
+[node name="MouthPresentation" type="Node" parent="." unique_id=525510211]
+script = ExtResource("25_mouth")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1236104711]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_hbjui")
+
+[editable path="sgt_Angelastri"]

@@ -14,6 +14,22 @@ const WEAPON_UNARMED := 0
 const WEAPON_PISTOL := 1
 const WEAPON_FLASHLIGHT := 2
 const WEAPON_SMG := 3
+const WEAPON_RACKET := 4
+const MELEE_FEEDBACK := preload("res://scripts/effects/melee_feedback.gd")
+var racket_combat_unlocked := false
+var racket_used := false
+var racket_attack_index := 1
+var melee_motion_start := Vector3.ZERO
+var melee_motion_ready := false
+
+func _melee_motion_point() -> Vector3:
+	if equipped_weapon == WEAPON_RACKET and racket_model != null: return racket_model.global_position
+	var rig := get_node("LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D") as Skeleton3D
+	var bone := rig.find_bone("Hand.R")
+	return rig.global_transform * rig.get_bone_global_pose(bone).origin if bone >= 0 else global_position
+@export var racket_range := 2.5
+@export var racket_damage := 5
+@onready var racket_model: Node3D = get_node_or_null("LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/RacketSocket/Racket_Wilson_Blade")
 
 
 # ------------------------------------------------------------
@@ -363,6 +379,7 @@ func _ready() -> void:
 	equipped_weapon = WEAPON_UNARMED
 
 	pistol_model.visible = false
+	if racket_model != null: racket_model.hide()
 	smg_model.visible = false
 	flashlight_model.visible = false
 	flashlight_light.visible = false
@@ -781,6 +798,13 @@ func is_smg_equipped() -> bool:
 func select_weapon_slot(
 	slot: int
 ) -> void:
+	if slot == 5:
+		if racket_used: equip_racket()
+		return
+	if slot in [1, 2, 3, 4] and equipped_weapon == WEAPON_RACKET:
+		if is_performing_action or is_reloading: return
+		if (slot == 2 and not owns_pistol) or (slot == 3 and not owns_flashlight) or (slot == 4 and not owns_smg): return
+		stow_racket()
 	if slot == 1:
 		equip_unarmed()
 		return
@@ -796,6 +820,35 @@ func select_weapon_slot(
 	if slot == 4:
 		equip_owned_smg()
 		return
+
+func enable_racket_combat() -> void:
+	racket_combat_unlocked = true
+
+func equip_racket() -> bool:
+	if not racket_combat_unlocked or not InventoryManager.has_item(&"bruno_racket") or racket_model == null: return false
+	if is_performing_action or is_reloading: return false
+	equipped_weapon = WEAPON_RACKET
+	racket_used = true
+	racket_model.show()
+	pistol_model.hide()
+	smg_model.hide()
+	flashlight_model.hide()
+	flashlight_on = false
+	flashlight_light.hide()
+	get_tree().call_group("hud", "update_weapon", "RACCHETTA")
+	get_tree().call_group("hud", "hide_ammo")
+	get_tree().call_group("hud", "hide_flashlight_battery")
+	current_locomotion_animation = ""
+	play_current_locomotion(true)
+	return true
+
+func stow_racket() -> void:
+	if equipped_weapon != WEAPON_RACKET or is_performing_action: return
+	if racket_model != null: racket_model.hide()
+	equipped_weapon = WEAPON_UNARMED
+	get_tree().call_group("hud", "update_weapon", "MANI NUDE")
+	current_locomotion_animation = ""
+	play_current_locomotion(true)
 
 
 # ============================================================
@@ -889,6 +942,7 @@ func equip_owned_pistol() -> void:
 	current_locomotion_animation = ""
 
 	equipped_weapon = WEAPON_PISTOL
+	if racket_model != null: racket_model.hide()
 
 	pistol_model.visible = true
 	smg_model.visible = false
@@ -964,6 +1018,7 @@ func equip_owned_smg() -> void:
 	current_locomotion_animation = ""
 
 	equipped_weapon = WEAPON_SMG
+	if racket_model != null: racket_model.hide()
 
 	pistol_model.visible = false
 	smg_model.visible = true
@@ -1039,6 +1094,7 @@ func equip_owned_flashlight() -> void:
 	current_locomotion_animation = ""
 
 	equipped_weapon = WEAPON_FLASHLIGHT
+	if racket_model != null: racket_model.hide()
 
 	pistol_model.visible = false
 	smg_model.visible = false
@@ -1140,7 +1196,7 @@ func play_current_locomotion(
 
 	var animation_name := ""
 
-	if is_flashlight_equipped():
+	if is_flashlight_equipped() or equipped_weapon == WEAPON_RACKET:
 		if not player_is_moving:
 			animation_name = (
 				"a_arms_hold_idle"
@@ -1262,8 +1318,30 @@ func fire() -> void:
 	if is_smg_equipped():
 		fire_smg()
 		return
+	if equipped_weapon == WEAPON_RACKET:
+		attack_racket()
+		return
 
 	attack_unarmed()
+
+func attack_racket() -> void:
+	melee_motion_start = _melee_motion_point()
+	melee_motion_ready = true
+	can_attack = false
+	is_performing_action = true
+	attack_cooldown_left = 0.7
+	var clip := "a_arms_hold_attack%d" % racket_attack_index
+	racket_attack_index = racket_attack_index % 3 + 1
+	current_locomotion_animation = ""
+	arms_animation_player.play(clip, 0.08, 1.35)
+	MELEE_FEEDBACK.play_sound(self, "res://assets/models/enemies/bruno_buozzi/swoosh%d.mp3" % racket_attack_index, &"Weapons")
+	var hit_delay := arms_animation_player.get_animation(clip).length * 0.4 / 1.35
+	await get_tree().create_timer(hit_delay, false).timeout
+	if equipped_weapon == WEAPON_RACKET: perform_melee_hit()
+	while arms_animation_player.is_playing() and arms_animation_player.assigned_animation == StringName(clip):
+		await get_tree().process_frame
+	is_performing_action = false
+	play_current_locomotion(true)
 
 
 # ============================================================
@@ -1271,6 +1349,8 @@ func fire() -> void:
 # ============================================================
 
 func attack_unarmed() -> void:
+	melee_motion_start = _melee_motion_point()
+	melee_motion_ready = true
 	can_attack = false
 	is_performing_action = true
 
@@ -1312,6 +1392,7 @@ func attack_unarmed() -> void:
 		"grunt"
 	)
 
+	await get_tree().create_timer(arms_animation_player.get_animation(animation_name).length * 0.35, false).timeout
 	perform_melee_hit()
 
 	await (
@@ -1346,7 +1427,7 @@ func perform_melee_hit() -> void:
 		)
 	)
 
-	if distance_to_hit > melee_range:
+	if distance_to_hit > (racket_range if equipped_weapon == WEAPON_RACKET else melee_range):
 		return
 
 	if collider == null:
@@ -1361,14 +1442,17 @@ func perform_melee_hit() -> void:
 			)
 		)
 
-		collider.take_damage(
-			melee_damage
-		)
+		var damage := racket_damage if equipped_weapon == WEAPON_RACKET else melee_damage
+		collider.take_damage(damage)
+		var health_after := _get_target_health(collider)
+		var strike_direction := _melee_motion_point() - melee_motion_start if melee_motion_ready else Vector3.ZERO
+		melee_motion_ready = false
+		MELEE_FEEDBACK.impact(self, collider, hit_point, health_before >= 0 and health_after < health_before, equipped_weapon == WEAPON_RACKET, strike_direction)
 
 		_show_damage_feedback(
 			collider,
 			hit_point,
-			melee_damage,
+			damage,
 			health_before
 		)
 
@@ -2124,6 +2208,7 @@ func get_save_state() -> Dictionary:
 	return {
 		"owns_pistol": owns_pistol, "owns_smg": owns_smg, "owns_flashlight": owns_flashlight,
 		"equipped": equipped_weapon,
+		"racket_used": racket_used, "racket_unlocked": racket_combat_unlocked,
 		"pistol_magazine": magazine_ammo, "pistol_reserve": reserve_ammo,
 		"smg_magazine": smg_magazine_ammo, "smg_reserve": smg_reserve_ammo,
 		"batteries": spare_batteries, "charge": flashlight_charge, "flashlight_on": flashlight_on
@@ -2141,6 +2226,11 @@ func apply_save_state(state: Dictionary) -> void:
 	spare_batteries = clampi(int(state.get("batteries", 0)), 0, max_spare_batteries)
 	flashlight_charge = clampf(float(state.get("charge", 100.0)), 0.0, 100.0)
 	equipped_weapon = clampi(int(state.get("equipped", 0)), WEAPON_UNARMED, WEAPON_SMG)
+	racket_combat_unlocked = bool(state.get("racket_unlocked", false))
+	racket_used = bool(state.get("racket_used", false))
+	if int(state.get("equipped", 0)) == WEAPON_RACKET and racket_combat_unlocked and InventoryManager.has_item(&"bruno_racket"):
+		equipped_weapon = WEAPON_RACKET
+	if racket_model != null: racket_model.visible = equipped_weapon == WEAPON_RACKET
 	if (equipped_weapon == WEAPON_PISTOL and not owns_pistol) or (equipped_weapon == WEAPON_SMG and not owns_smg) or (equipped_weapon == WEAPON_FLASHLIGHT and not owns_flashlight):
 		equipped_weapon = WEAPON_UNARMED
 	is_reloading = false
@@ -2164,6 +2254,8 @@ func apply_save_state(state: Dictionary) -> void:
 		title = "SMG"
 	elif is_flashlight_equipped():
 		title = "TORCIA"
+	elif equipped_weapon == WEAPON_RACKET:
+		title = "RACCHETTA"
 	get_tree().call_group("hud", "update_weapon", title)
 	get_tree().call_group("hud", "hide_ammo")
 	get_tree().call_group("hud", "hide_flashlight_battery")
