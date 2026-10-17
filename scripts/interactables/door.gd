@@ -1,23 +1,42 @@
 extends Node3D
+## Porta a battente con DoorBody e Area3D gia' predisposti.
+## Per i battenti importati della nuova zona usare i figli di WarehouseDoors nell'editor.
 
+@export_group("Movimento")
+## Gradi attorno a Y: cambia il segno per invertire apertura. Il cardine e' l'origine del controller.
 @export var open_angle := 90.0
+## Rapidita dell'interpolazione; piu' alto significa movimento piu' veloce.
 @export var open_speed := 4.0
+## Richiede una chiusura automatica dopo il ritardo; non chiude finche' il passaggio e' occupato.
 @export var auto_close := false
+## Attesa in secondi prima della chiusura automatica, se attiva.
 @export var auto_close_delay := 3.0
+@export_group("Interazione")
+## Nome mostrato nel prompt del giocatore.
 @export var interaction_name := "PORTA"
 
 const OUTLINE_SHADER := preload(
 	"res://assets/shaders/interactable_outline_screen.gdshader"
 )
 
+@export_group("Evidenziamento")
+## Colore del nome e del bordo di interazione.
 @export var interaction_color := Color("ffffff")
+## Spessore del bordo a schermo, senza modificare geometria o collisioni.
 @export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0015
+## Visuali da evidenziare, relative al controller; vuoto = tutte le mesh figlie.
 @export var interaction_visual_roots: Array[NodePath] = []
 
-@export_group("Door Audio")
+@export_group("Audio porta")
+## Suono riprodotto all'inizio dell'apertura, sul bus SFX.
 @export var open_sound: AudioStream
+## Suono riprodotto a battuta oppure all'inizio se Close Sound At Start e' attivo.
 @export var close_sound: AudioStream
+## Anticipa il suono di chiusura all'inizio del movimento (sportelli), anziche' a battuta.
+@export var close_sound_at_start := false
+## Volume del solo audio di questa porta, in dB.
 @export_range(-40.0, 12.0, 0.5) var door_audio_volume_db := 0.0
+## Distanza massima in metri dell'audio 3D della porta.
 @export_range(1.0, 50.0, 0.5) var door_audio_max_distance := 12.0
 
 var outline_material: ShaderMaterial
@@ -127,8 +146,8 @@ func _physics_process(delta: float) -> void:
 		open_speed * delta
 	)
 
-	# Il suono di chiusura deve partire quando la porta è realmente
-	# arrivata a battuta, non quando inizia a muoversi.
+	# Le porte con suono d'impatto lo riproducono a battuta.
+	# Gli sportelli possono invece riprodurlo all'inizio del movimento.
 	if (
 		close_sound_pending
 		and not is_open
@@ -211,9 +230,9 @@ func close_door() -> void:
 	auto_close_pending = false
 	auto_close_timer.stop()
 
-	close_sound_pending = (
-		close_sound != null
-	)
+	close_sound_pending = close_sound != null and not close_sound_at_start
+	if close_sound_at_start:
+		_play_door_sound(close_sound)
 
 
 # ============================================================

@@ -9,7 +9,7 @@ var items: Dictionary = {}
 
 func _ready() -> void:
 	register_item(KEY)
-	for path: String in ["regia_laptop", "network_cable", "bruno_racket", "regia_charger"]:
+	for path: String in ["regia_laptop", "network_cable", "bruno_racket", "regia_charger", "switch_key", "assistance_key", "production_key", "ced_fingerprint"]:
 		register_item(load("res://resources/items/" + path + ".tres"))
 
 func register_item(definition: Resource) -> void:

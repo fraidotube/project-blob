@@ -1,6 +1,9 @@
 extends Node
 
-@export var ray_path: NodePath = NodePath("../Head/Camera3D/InteractRay")
+@export_group("Collegamenti interazione")
+## RayCast3D per focus e tasto E, relativo a questo nodo. La sua Target Position
+## determina la distanza (2 m nel player); mantenere collision mask 2 e aree abilitate.
+@export_node_path("RayCast3D") var ray_path: NodePath = NodePath("../Head/Camera3D/InteractRay")
 
 @onready var interact_ray: RayCast3D = get_node(ray_path)
 @onready var prompt: Control = $InteractionHUD/Prompt

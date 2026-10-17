@@ -79,11 +79,13 @@ func _test_combat() -> void:
 	combat = COMBAT.new()
 	add_child(combat)
 	combat.configure(self, preview.presentation)
+	_take_spotlight(combat as Node3D)
 	GameplayUI.clear_notice()
 
 func _test_patrol() -> void:
 	starting = true
 	if is_instance_valid(combat):
+		_release_spotlight()
 		combat.release_player()
 		preview.clear_preview()
 		combat.queue_free()
@@ -203,7 +205,9 @@ func _process(delta: float) -> void:
 	if not configured or SaveManager.restoring: return
 	if bool(player.get("is_dead")):
 		if cinematic or starting: _abort()
+		else: _release_spotlight()
 		return
+	if event.stage == "defeated": _release_spotlight()
 	if recreate_actor and not starting:
 		recreate_actor = false
 		_restore_actor()
@@ -391,11 +395,13 @@ func _unlock_player() -> void:
 	lock_state.clear()
 
 func _take_spotlight(actor: Node3D) -> void:
-	light_state = {"target": tower.target, "active": tower.tracking_active, "automatic": tower.auto_activate_from_bruno_state,
-		"visible": tower.spotlight.visible, "transform": tower.global_transform, "process": tower.is_processing(), "speed": tower.tracking_speed}
+	if light_state.is_empty():
+		light_state = {"target": tower.target, "active": tower.tracking_active, "automatic": tower.auto_activate_from_bruno_state,
+			"visible": tower.spotlight.visible, "transform": tower.global_transform, "process": tower.is_processing(), "speed": tower.tracking_speed}
 	var target := actor.global_position + Vector3.UP * 1.1
 	var ray := PhysicsRayQueryParameters3D.create(tower.global_position, target, 1)
 	ray.exclude = [player.get_rid()]
+	if actor is CollisionObject3D: ray.exclude = [player.get_rid(), actor.get_rid()]
 	var hit := scene.get_world_3d().direct_space_state.intersect_ray(ray)
 	if not hit.is_empty():
 		# The original tower position can be shadowed by the building near the meters.
@@ -525,6 +531,7 @@ func _finish_return() -> void:
 		combat = COMBAT.new()
 		add_child(combat)
 		combat.configure(self, preview.presentation)
+		_take_spotlight(combat as Node3D)
 		fight_ready.emit()
 		print("ANGELASTRI_COMBAT_STARTED")
 	else:
@@ -692,6 +699,7 @@ func _restore_actor() -> void:
 		combat = COMBAT.new()
 		add_child(combat)
 		combat.configure(self, preview.presentation)
+		_take_spotlight(combat as Node3D)
 	preview._release_background_music()
 	patrol_origin = saved_actor_pose.origin
 	patrol_target = patrol_origin

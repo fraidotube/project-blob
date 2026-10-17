@@ -1,7 +1,9 @@
 extends Area3D
 
 @export_group("Fire Damage")
+## Salute sottratta subito all'ingresso e a ogni intervallo finche il player resta nell'area.
 @export_range(1, 100, 1) var damage_per_tick: int = 5
+## Secondi tra due danni successivi; il primo danno e immediato.
 @export_range(0.1, 10.0, 0.1) var damage_interval: float = 0.5
 
 var _player: Node = null

@@ -2,6 +2,8 @@ extends Node
 
 signal power_changed(is_on: bool)
 
+@export_group("Alimentazione aziendale")
+## Corrente presente all'avvio. Il checkpoint e gli eventi di blackout prevalgono durante il gioco.
 @export var power_on := false
 
 

@@ -5,9 +5,14 @@ const OUTLINE_SHADER := preload(
 	"res://assets/shaders/interactable_outline_screen.gdshader"
 )
 
+@export_group("Interazione")
+## Nome del pickup. La raccolta aggiunge una batteria, se la capienza del WeaponHolder lo consente.
 @export var interaction_name := "BATTERIA 9V"
+## Verbo mostrato accanto al tasto E.
 @export var interaction_action := "RACCOGLI"
+## Colore di nome ed evidenziamento.
 @export var interaction_color := Color("f2ad47")
+## Spessore del bordo di selezione.
 @export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0025
 
 var collected := false

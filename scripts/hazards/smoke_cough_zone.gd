@@ -1,10 +1,15 @@
 extends Area3D
 
 @export_group("Cough")
+## Colpi di tosse scelti casualmente mentre il player resta dentro l'area; vuoti ignorati.
 @export var cough_sounds: Array[AudioStream] = []
+## Volume tosse in dB, prima del bus Player.
 @export_range(-40.0, 12.0, 0.5) var cough_volume_db: float = 0.0
+## Attesa dopo l'ingresso prima del primo colpo di tosse (secondi).
 @export_range(0.0, 10.0, 0.1) var first_cough_delay: float = 0.8
+## Intervallo minimo tra colpi di tosse (secondi).
 @export_range(0.5, 30.0, 0.1) var cough_interval_min: float = 3.0
+## Intervallo massimo (secondi); gli estremi vengono ordinati se invertiti.
 @export_range(0.5, 30.0, 0.1) var cough_interval_max: float = 5.5
 
 var _player_inside := false

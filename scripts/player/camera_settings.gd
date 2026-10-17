@@ -1,7 +1,13 @@
 extends Camera3D
 
+@export_group("Preferenze visuale")
+## Se attivo, il FOV del menu prevale sul FOV nativo della Camera3D all'avvio.
+## Disattivare per usare il valore Fov della scena, ad esempio in una scena di prova.
+@export var use_saved_fov := true
+
 func _ready() -> void:
-	_apply_saved_fov()
+	if use_saved_fov:
+		_apply_saved_fov()
 
 
 func _apply_saved_fov() -> void:

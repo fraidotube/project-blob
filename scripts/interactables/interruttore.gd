@@ -1,21 +1,36 @@
 extends Node3D
+## Interruttore: il comando E funziona solo con alimentazione aziendale attiva.
+## Per circuiti persistenti e materiali emissivi usare la variante zone_light_switch.gd.
 
+@export_group("Collegamenti")
+## Nodo che fornisce is_power_on e il segnale power_changed (nella mappa: ConnesiPower).
 @export var power_system: Node
+## Gruppo delle Light3D da comandare. La variante Zone Light Switch accetta anche una singola luce e gruppi annidati.
 @export var lights_root: Node
+@export_group("Interazione")
+## Nome mostrato accanto al prompt E; non e' l'identificatore di salvataggio.
 @export var interaction_name := "INTERRUTTORE"
 
 const OUTLINE_SHADER := preload(
 	"res://assets/shaders/interactable_outline_screen.gdshader"
 )
 
+@export_group("Evidenziamento")
+## Colore del nome e del bordo quando il giocatore punta l'interruttore.
 @export var interaction_color := Color("ffffff")
+## Spessore del contorno a schermo. Non modifica geometria o collider.
 @export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0015
+## Mesh da evidenziare, relative a questo nodo. Vuoto = tutte le mesh discendenti.
 @export var interaction_visual_roots: Array[NodePath] = []
 
-@export_group("Switch Audio")
+@export_group("Audio interruttore")
+## Suono 3D all'accensione. Vuoto = nessun suono.
 @export var switch_on_sound: AudioStream
+## Suono 3D allo spegnimento; puo' essere lo stesso dell'accensione.
 @export var switch_off_sound: AudioStream
+## Volume del solo click in dB, sul bus SFX.
 @export_range(-40.0, 12.0, 0.5) var switch_volume_db := 0.0
+## Distanza massima in metri del click 3D.
 @export_range(1.0, 50.0, 0.5) var audio_max_distance := 8.0
 
 var outline_material: ShaderMaterial

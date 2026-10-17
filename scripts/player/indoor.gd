@@ -1,19 +1,24 @@
 extends Area3D
 
+@export_group("Ambiente interno ed esterno")
+## Player audio esterno di cui attenuare il volume quando il giocatore entra nell'area.
 @export var exterior_ambience: AudioStreamPlayer
 
+## Volume esterno in dB, prima del volume del bus Ambience.
 @export_range(
 	-80.0,
 	0.0,
 	0.5
 ) var outside_volume_db := -6.0
 
+## Volume dentro l'area in dB; -80 equivale a quasi silenzio.
 @export_range(
 	-80.0,
 	0.0,
 	0.5
 ) var inside_volume_db := -80.0
 
+## Durata della sfumatura tra interno ed esterno (secondi).
 @export_range(
 	0.1,
 	5.0,

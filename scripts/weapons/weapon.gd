@@ -27,8 +27,27 @@ func _melee_motion_point() -> Vector3:
 	var rig := get_node("LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D") as Skeleton3D
 	var bone := rig.find_bone("Hand.R")
 	return rig.global_transform * rig.get_bone_global_pose(bone).origin if bone >= 0 else global_position
-@export var racket_range := 2.5
-@export var racket_damage := 5
+@export_group("Racchetta")
+## Portata massima del colpo in metri. Possesso e sblocco restano legati all'enigma.
+@export_range(0.1, 10.0, 0.1) var racket_range := 2.5
+## Danno per colpo andato a segno.
+@export_range(0, 10000, 1, "or_greater") var racket_damage := 5
+## Secondi minimi tra attacchi con la racchetta.
+@export_range(0.05, 5.0, 0.01) var racket_attack_cooldown := 0.7
+## Moltiplicatore velocita animazione; anche l'istante di impatto segue questa velocita.
+@export_range(0.1, 5.0, 0.05) var racket_animation_speed := 1.35
+## Frazione della durata del gesto alla quale applicare il colpo (0–1).
+@export_range(0.0, 1.0, 0.01) var racket_hit_fraction := 0.4
+
+@export_group("Dotazione iniziale")
+## Possesso alla nuova partita. Un checkpoint ripristina invece il possesso salvato.
+@export var starting_owns_pistol := false
+## Possesso della torcia alla nuova partita; parte spenta.
+@export var starting_owns_flashlight := false
+## Possesso della SMG alla nuova partita.
+@export var starting_owns_smg := false
+## Arma in mano allo spawn. Se non posseduta, si parte a mani nude.
+@export_enum("Mani nude:0", "Pistola:1", "Torcia:2", "SMG:3") var starting_equipped_weapon := 0
 @onready var racket_model: Node3D = get_node_or_null("LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D/RacketSocket/Racket_Wilson_Blade")
 
 
@@ -38,22 +57,27 @@ func _melee_motion_point() -> Vector3:
 
 @export_group("Audio Pistola")
 
+## Suono dello sparo, riprodotto sul bus Weapons.
 @export var pistol_shoot_audio: AudioStream = preload(
 	"res://assets/audio/player/footsteps/pistol_shots.tres"
 )
 
+## Suono avviato all'inizio della ricarica pistola.
 @export var pistol_reload_audio: AudioStream = preload(
 	"res://assets/audio/weapons/pistol/reload.ogg"
 )
 
+## Click quando si spara col caricatore vuoto.
 @export var pistol_empty_audio: AudioStream = preload(
 	"res://assets/audio/weapons/pistol/gunempty.ogg"
 )
 
+## Suono di estrazione della pistola.
 @export var pistol_ready_audio: AudioStream = preload(
 	"res://assets/audio/weapons/pistol/gunready.ogg"
 )
 
+## Volume degli eventi pistola in dB, prima del volume del bus Weapons.
 @export_range(
 	-40.0,
 	12.0,
@@ -63,26 +87,32 @@ func _melee_motion_point() -> Vector3:
 
 @export_group("Audio SMG")
 
+## Suono di ogni colpo SMG sul bus Weapons.
 @export var smg_shoot_audio: AudioStream = preload(
 	"res://assets/audio/weapons/smg/shoot.mp3"
 )
 
+## Suono avviato all'inizio della ricarica SMG.
 @export var smg_reload_audio: AudioStream = preload(
 	"res://assets/audio/weapons/smg/reload.mp3"
 )
 
+## Click della SMG quando il caricatore e vuoto.
 @export var smg_empty_audio: AudioStream = preload(
 	"res://assets/audio/weapons/smg/empty.mp3"
 )
 
+## Suono di estrazione della SMG.
 @export var smg_ready_audio: AudioStream = preload(
 	"res://assets/audio/weapons/pistol/gunready.ogg"
 )
 
+## Suono alla raccolta delle munizioni SMG.
 @export var smg_ammo_pickup_audio: AudioStream = preload(
 	"res://assets/audio/weapons/smg/reload.mp3"
 )
 
+## Volume degli eventi SMG in dB, prima del volume del bus Weapons.
 @export_range(
 	-40.0,
 	12.0,
@@ -94,27 +124,41 @@ func _melee_motion_point() -> Vector3:
 # COMBATTIMENTO
 # ------------------------------------------------------------
 
-@export var pistol_damage := 1
-@export var melee_damage := 1
+@export_group("Danni")
+## Danno base pistola per proiettile; eventuali zone critiche sono gestite dal bersaglio.
+@export_range(0, 10000, 1, "or_greater") var pistol_damage := 1
+## Danno dei pugni per impatto.
+@export_range(0, 10000, 1, "or_greater") var melee_damage := 1
 
 @export_group("SMG")
 
-@export var smg_damage := 4
+## Danno base SMG per proiettile.
+@export_range(0, 10000, 1, "or_greater") var smg_damage := 4
 
+## Cadenza automatica SMG in colpi al secondo.
 @export_range(
 	1.0,
 	30.0,
 	0.5
 ) var smg_fire_rate := 10.0
 
-@export var smg_magazine_size := 30
-@export var smg_starting_reserve_ammo := 120
+## Capienza caricatore SMG (colpi).
+@export_range(1, 500, 1, "or_greater") var smg_magazine_size := 30
+## Munizioni SMG di riserva alla nuova partita, oltre al caricatore.
+@export_range(0, 10000, 1, "or_greater") var smg_starting_reserve_ammo := 120
+## Colpi SMG caricati allo spawn: -1 = caricatore pieno.
+@export_range(-1, 500, 1, "or_greater") var smg_starting_magazine_ammo := -1
 
 @export_group("Combat")
 
-@export var melee_range := 1.6
-@export var melee_attack_cooldown := 0.45
-@export var fire_rate := 4.0
+## Portata dei pugni in metri.
+@export_range(0.1, 10.0, 0.1) var melee_range := 1.6
+## Secondi minimi tra attacchi a mani nude.
+@export_range(0.05, 5.0, 0.01) var melee_attack_cooldown := 0.45
+## Frazione del gesto alla quale il pugno colpisce (0–1).
+@export_range(0.0, 1.0, 0.01) var melee_hit_fraction := 0.35
+## Cadenza massima pistola in colpi/secondo; resta vincolata al completamento del gesto.
+@export_range(0.1, 30.0, 0.1) var fire_rate := 4.0
 
 
 # ------------------------------------------------------------
@@ -123,8 +167,12 @@ func _melee_motion_point() -> Vector3:
 
 @export_group("Pistola")
 
-@export var pistol_magazine_size := 9
-@export var starting_reserve_ammo := 36
+## Capienza caricatore pistola (colpi).
+@export_range(1, 500, 1, "or_greater") var pistol_magazine_size := 9
+## Munizioni pistola di riserva allo spawn, oltre al caricatore.
+@export_range(0, 10000, 1, "or_greater") var starting_reserve_ammo := 36
+## Colpi pistola caricati allo spawn: -1 = caricatore pieno.
+@export_range(-1, 500, 1, "or_greater") var pistol_starting_magazine_ammo := -1
 
 var magazine_ammo: int = 9
 var reserve_ammo: int = 36
@@ -139,9 +187,14 @@ var smg_reserve_ammo: int = 120
 
 @export_group("Torcia")
 
-@export var flashlight_drain_per_second := 2.0
-@export var starting_spare_batteries := 0
-@export var max_spare_batteries := 5
+## Punti percentuali consumati ogni secondo di accensione. 0 = nessun consumo.
+@export_range(0.0, 100.0, 0.1) var flashlight_drain_per_second := 2.0
+## Carica della batteria inserita alla nuova partita, in percentuale.
+@export_range(0.0, 100.0, 0.1) var starting_flashlight_charge := 100.0
+## Batterie di ricambio alla nuova partita, limitate dalla capienza.
+@export_range(0, 100, 1, "or_greater") var starting_spare_batteries := 0
+## Capienza massima per batterie di ricambio, non include quella inserita.
+@export_range(0, 100, 1, "or_greater") var max_spare_batteries := 5
 
 var flashlight_charge := 100.0
 var flashlight_on := false
@@ -154,7 +207,8 @@ var spare_batteries := 0
 
 @export_group("Animazioni")
 
-@export var reload_animation_speed := 1.25
+## Moltiplicatore velocita ricarica di braccia, pistola e SMG.
+@export_range(0.1, 5.0, 0.05) var reload_animation_speed := 1.25
 
 
 # ------------------------------------------------------------
@@ -163,13 +217,15 @@ var spare_batteries := 0
 
 @export_group("Effetti")
 
-@export var muzzle_flash_duration := 0.05
+## Durata del lampo allo sparo in secondi; energia e colore sul nodo MuzzleFlash.
+@export_range(0.001, 1.0, 0.001) var muzzle_flash_duration := 0.05
 
-@export var bullet_impact_scene: PackedScene = preload(
+# Compatibilita scene storiche: l'ImpactManager gestisce la scena effettiva.
+@export_storage var bullet_impact_scene: PackedScene = preload(
 	"res://scenes/effects/bullet_impact.tscn"
 )
 
-@export var bullet_impact_offset := 0.01
+@export_storage var bullet_impact_offset := 0.01
 
 
 # ------------------------------------------------------------
@@ -178,9 +234,12 @@ var spare_batteries := 0
 
 @export_group("Viewmodel")
 
-@export var wall_pushback := 0.55
-@export var wall_drop := 0.20
-@export var wall_move_speed := 14.0
+## Arretramento massimo dell'arma vicino ai muri, in metri locali.
+@export_range(0.0, 2.0, 0.01) var wall_pushback := 0.55
+## Abbassamento massimo dell'arma vicino ai muri, in metri locali.
+@export_range(0.0, 2.0, 0.01) var wall_drop := 0.20
+## Rapidita di interpolazione verso la posa anti-clipping (1/secondi).
+@export_range(0.1, 50.0, 0.1) var wall_move_speed := 14.0
 
 var viewmodel_base_position: Vector3
 
@@ -372,9 +431,9 @@ func _ready() -> void:
 			player_body
 		)
 
-	owns_pistol = false
-	owns_flashlight = false
-	owns_smg = false
+	owns_pistol = starting_owns_pistol
+	owns_flashlight = starting_owns_flashlight
+	owns_smg = starting_owns_smg
 
 	equipped_weapon = WEAPON_UNARMED
 
@@ -385,7 +444,7 @@ func _ready() -> void:
 	flashlight_light.visible = false
 
 	flashlight_on = false
-	flashlight_charge = 100.0
+	flashlight_charge = clampf(starting_flashlight_charge, 0.0, 100.0)
 
 	spare_batteries = clampi(
 		starting_spare_batteries,
@@ -393,10 +452,10 @@ func _ready() -> void:
 		max_spare_batteries
 	)
 
-	magazine_ammo = pistol_magazine_size
+	magazine_ammo = pistol_magazine_size if pistol_starting_magazine_ammo < 0 else clampi(pistol_starting_magazine_ammo, 0, pistol_magazine_size)
 	reserve_ammo = starting_reserve_ammo
 
-	smg_magazine_ammo = smg_magazine_size
+	smg_magazine_ammo = smg_magazine_size if smg_starting_magazine_ammo < 0 else clampi(smg_starting_magazine_ammo, 0, smg_magazine_size)
 	smg_reserve_ammo = smg_starting_reserve_ammo
 
 	viewmodel_base_position = position
@@ -426,6 +485,10 @@ func _ready() -> void:
 	)
 
 	play_current_locomotion(true)
+	if starting_equipped_weapon != WEAPON_UNARMED:
+		var initial_state := get_save_state()
+		initial_state["equipped"] = starting_equipped_weapon
+		apply_save_state(initial_state)
 
 
 # ============================================================
@@ -1329,13 +1392,13 @@ func attack_racket() -> void:
 	melee_motion_ready = true
 	can_attack = false
 	is_performing_action = true
-	attack_cooldown_left = 0.7
+	attack_cooldown_left = racket_attack_cooldown
 	var clip := "a_arms_hold_attack%d" % racket_attack_index
 	racket_attack_index = racket_attack_index % 3 + 1
 	current_locomotion_animation = ""
-	arms_animation_player.play(clip, 0.08, 1.35)
+	arms_animation_player.play(clip, 0.08, racket_animation_speed)
 	MELEE_FEEDBACK.play_sound(self, "res://assets/models/enemies/bruno_buozzi/swoosh%d.mp3" % racket_attack_index, &"Weapons")
-	var hit_delay := arms_animation_player.get_animation(clip).length * 0.4 / 1.35
+	var hit_delay := arms_animation_player.get_animation(clip).length * racket_hit_fraction / maxf(racket_animation_speed, 0.1)
 	await get_tree().create_timer(hit_delay, false).timeout
 	if equipped_weapon == WEAPON_RACKET: perform_melee_hit()
 	while arms_animation_player.is_playing() and arms_animation_player.assigned_animation == StringName(clip):
@@ -1392,7 +1455,7 @@ func attack_unarmed() -> void:
 		"grunt"
 	)
 
-	await get_tree().create_timer(arms_animation_player.get_animation(animation_name).length * 0.35, false).timeout
+	await get_tree().create_timer(maxf(0.001, arms_animation_player.get_animation(animation_name).length * melee_hit_fraction), false).timeout
 	perform_melee_hit()
 
 	await (

@@ -1,8 +1,12 @@
 extends Node3D
 class_name PersistentInteractable
 
+@export_group("Identita e interazione")
+## ID di salvataggio unico nella scena. Non modificarlo per rinominare il prompt.
 @export var persistent_id: StringName
+## Nome mostrato durante il focus con il tasto E.
 @export var interaction_name := "OGGETTO"
+## Colore del nome e del contorno durante il focus.
 @export var interaction_color := Color(0.8, 0.9, 1.0)
 const OUTLINE := preload("res://assets/shaders/interactable_outline_screen.gdshader")
 var _outline: ShaderMaterial

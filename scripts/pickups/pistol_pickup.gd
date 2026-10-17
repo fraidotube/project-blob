@@ -5,8 +5,12 @@ const OUTLINE_SHADER := preload(
 	"res://assets/shaders/interactable_outline_screen.gdshader"
 )
 
+@export_group("Interazione")
+## Nome mostrato nel prompt. Il pickup abilita la pistola e non cambia le munizioni iniziali.
 @export var interaction_name := "PISTOLA"
+## Colore di nome ed evidenziamento.
 @export var interaction_color := Color("e06a3d")
+## Spessore del bordo di selezione.
 @export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0015
 
 var outline_material: ShaderMaterial

@@ -86,7 +86,7 @@ func run() -> void:
 	check(not current_scene.get_node("HUD").visible, "HUD not hidden")
 	check(tower.target == debug.presentation.model and tower.spotlight.visible, "Spotlight did not acquire actor")
 	var lamp_ray := PhysicsRayQueryParameters3D.create(tower.global_position, debug.presentation.model.global_position + Vector3.UP * 1.1, 1)
-	lamp_ray.exclude = [player.get_rid()]
+	lamp_ray.exclude = [player.get_rid(), debug.presentation.model.get_rid()]
 	check(current_scene.get_world_3d().direct_space_state.intersect_ray(lamp_ray).is_empty(), "Building blocks spotlight")
 	check(not root.get_node("SaveManager").can_save(), "Saving allowed during cinematic")
 	var menu_music: AudioStreamPlayer = root.get_node("AudioManager").music_player
@@ -109,7 +109,7 @@ func run() -> void:
 		camera_range = camera_range.expand(encounter.camera.global_position)
 		var target: Vector3 = debug.presentation.model.global_position + Vector3.UP * 1.1
 		var ray := PhysicsRayQueryParameters3D.create(encounter.camera.global_position, target, 1)
-		ray.exclude = [player.get_rid()]
+		ray.exclude = [player.get_rid(), debug.presentation.model.get_rid()]
 		if not current_scene.get_world_3d().direct_space_state.intersect_ray(ray).is_empty(): blocked += 1
 		var shape := CapsuleShape3D.new()
 		shape.radius = 0.4
@@ -117,7 +117,7 @@ func run() -> void:
 		var query := PhysicsShapeQueryParameters3D.new()
 		query.shape = shape
 		query.collision_mask = 1
-		query.exclude = [player.get_rid()]
+		query.exclude = [player.get_rid(), debug.presentation.model.get_rid()]
 		query.transform.origin = debug.presentation.model.global_position + Vector3.UP
 		var contacts: Array = current_scene.get_world_3d().direct_space_state.intersect_shape(query)
 		if not contacts.is_empty():
@@ -176,7 +176,31 @@ func run() -> void:
 	encounter._begin_return()
 	for i in range(50): encounter._director(1.0 / 30.0)
 	check(encounter.event.stage == "combat" and player.is_physics_processing() and is_instance_valid(encounter.combat), "Fight handoff failed")
+	check(tower.target == encounter.combat and tower.tracking_active and tower.spotlight.visible and tower.is_processing(), "Combat spotlight did not acquire moving boss")
+	check(not tower.auto_activate_from_bruno_state, "Bruno automatic tracking remained enabled during Angelastri combat")
+	encounter.combat.set_physics_process(false)
+	var combat_pose: Transform3D = encounter.combat.global_transform
+	var rig_position: Vector3 = tower.global_position
+	for offset in [Vector3(2, 0, 0), Vector3(-2, 0, 2)]:
+		encounter.combat.global_position = combat_pose.origin + offset
+		for i in range(60): tower._process(1.0 / 60.0)
+		var direction: Vector3 = (encounter.combat.global_position + Vector3.UP * tower.target_height - tower.global_position).normalized()
+		check((-tower.global_basis.z).dot(direction) > 0.999, "Spotlight failed to follow moving combat body")
+		check(tower.global_position.is_equal_approx(rig_position), "Tracking moved spotlight rig instead of aiming")
+	encounter.combat.global_transform = combat_pose
+	encounter.combat.state = "chase"
+	encounter.combat.take_damage(100)
+	encounter.configured = true
+	encounter._process(0.0)
+	check(tower.target == old_target and tower.global_transform.is_equal_approx(old_light_pose), "Defeat did not restore Bruno spotlight")
+	await encounter._test_combat()
+	check(tower.target == encounter.combat and tower.spotlight.visible, "F11 shortcut did not acquire spotlight")
+	player.is_dead = true
+	encounter._process(0.0)
+	check(tower.target == old_target and encounter.light_state.is_empty(), "Player death did not release combat spotlight")
+	player.is_dead = false
 	encounter._abort()
+	check(tower.target == old_target and tower.global_transform.is_equal_approx(old_light_pose), "Combat cleanup did not restore spotlight")
 	await process_frame
 	print("ANGELASTRI_ENCOUNTER_MAP_TEST failures=", failures, " camera_travel=", camera_range.size, " occluded=", blocked, " dance_collisions=", colliding)
 	quit(0 if failures == 0 else 1)

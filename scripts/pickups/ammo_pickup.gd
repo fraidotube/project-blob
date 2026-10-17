@@ -1,14 +1,20 @@
 
 extends Area3D
 
-@export var ammo_amount := 12
+@export_group("Contenuto pickup")
+## Colpi aggiunti alla riserva pistola quando si raccoglie l'oggetto.
+@export_range(1, 1000, 1, "or_greater") var ammo_amount := 12
 
 const OUTLINE_SHADER := preload(
 	"res://assets/shaders/interactable_outline_screen.gdshader"
 )
 
+@export_group("Interazione")
+## Nome mostrato nel prompt del tasto E.
 @export var interaction_name := "MUNIZIONI"
+## Colore del nome e del bordo di selezione.
 @export var interaction_color := Color("f2ad47")
+## Spessore dell'evidenziamento.
 @export_range(0.0001, 0.02, 0.0001) var outline_width := 0.0015
 
 var outline_material: ShaderMaterial

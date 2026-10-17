@@ -1,26 +1,44 @@
 extends CharacterBody3D
 
-const WALK_SPEED := 5.0
-const SPRINT_SPEED := 8.0
-const CROUCH_SPEED := 2.8
-const JUMP_VELOCITY := 4.5
+@export_group("Movimento")
+## Velocita di camminata in metri al secondo.
+@export_range(0.1, 30.0, 0.1, "or_greater") var WALK_SPEED := 5.0
+## Velocita di corsa in metri al secondo. Non esiste una barra stamina.
+@export_range(0.1, 30.0, 0.1, "or_greater") var SPRINT_SPEED := 8.0
+## Velocita accovacciato in metri al secondo.
+@export_range(0.1, 15.0, 0.1, "or_greater") var CROUCH_SPEED := 2.8
+## Velocita verticale iniziale del salto in m/s; la gravita resta quella del progetto.
+@export_range(0.1, 20.0, 0.1, "or_greater") var JUMP_VELOCITY := 4.5
 
-const BASE_MOUSE_SENSITIVITY := 0.004
+@export_group("Visuale")
+## Sensibilita base, moltiplicata per la preferenza mouse salvata nel menu (0.25–2.5).
+@export_range(0.0001, 0.02, 0.0001) var BASE_MOUSE_SENSITIVITY := 0.004
 const SETTINGS_PATH := "user://settings.cfg"
 
-const STAND_HEIGHT := 1.6
-const CROUCH_HEIGHT := 1
+@export_group("Postura avanzata")
+## Altezza capsula in piedi (m). Deve essere almeno due volte il raggio della capsula.
+@export_range(0.8, 3.0, 0.01) var STAND_HEIGHT := 1.6
+## Altezza capsula accovacciata (m), minore dell'altezza in piedi e >= due volte il raggio.
+@export_range(0.8, 3.0, 0.01) var CROUCH_HEIGHT := 1.0
 
-const STAND_HEAD_Y := 0.80
-const CROUCH_HEAD_Y := 0.35
+## Quota locale della testa in piedi (m), rispetto al corpo Player.
+@export_range(-1.0, 2.0, 0.01) var STAND_HEAD_Y := 0.80
+## Quota locale della testa accovacciata (m).
+@export_range(-1.0, 2.0, 0.01) var CROUCH_HEAD_Y := 0.35
 
-const CROUCH_TRANSITION_SPEED := 8.0
+## Rapidita di transizione di capsula e testa in metri al secondo.
+@export_range(0.1, 30.0, 0.1) var CROUCH_TRANSITION_SPEED := 8.0
 
-const FOOTSTEP_WALK_INTERVAL := 0.45
-const FOOTSTEP_SPRINT_INTERVAL := 0.30
-const FOOTSTEP_CROUCH_INTERVAL := 0.60
+@export_group("Ritmo passi")
+## Intervallo tra passi camminando (secondi).
+@export_range(0.05, 3.0, 0.01) var FOOTSTEP_WALK_INTERVAL := 0.45
+## Intervallo tra passi correndo (secondi).
+@export_range(0.05, 3.0, 0.01) var FOOTSTEP_SPRINT_INTERVAL := 0.30
+## Intervallo tra passi accovacciato (secondi).
+@export_range(0.05, 3.0, 0.01) var FOOTSTEP_CROUCH_INTERVAL := 0.60
 
-const LAND_MIN_SPEED := -2.0
+## Velocita verticale minima per il suono di atterraggio (m/s, negativa).
+@export_range(-30.0, -0.1, 0.1) var LAND_MIN_SPEED := -2.0
 
 const DEATH_TITLE_TEXTURE := preload(
 	"res://assets/ui/sei_morto.png"
@@ -28,32 +46,59 @@ const DEATH_TITLE_TEXTURE := preload(
 
 const DEATH_THEME := preload("res://scenes/ui/project_blob_menu_theme.tres")
 
-@export var max_health := 100
+@export_group("Salute e dotazione iniziale")
+## Salute massima; il checkpoint viene limitato a questo valore al caricamento.
+@export_range(1, 10000, 1, "or_greater") var max_health := 100
+## Salute alla nuova partita: 0 = salute massima. Non sostituisce la salute di un checkpoint.
+@export_range(0, 10000, 1, "or_greater") var starting_health := 0
+## Oggetti inventario alla nuova partita: ID registrato -> quantita. Vuoto conserva lo spawn attuale.
+## Non assegna automaticamente armi: usare la dotazione sul nodo WeaponHolder.
+@export var starting_inventory: Dictionary[StringName, int] = {}
 
+@export_group("Audio passi e salti")
+
+## Passi sul parquet; usati anche correndo se non esiste una variante dedicata.
 @export var footsteps_parquet: AudioStream
 
+## Passi su piastrelle camminando.
 @export var footsteps_tile: AudioStream
+## Passi su piastrelle correndo; se vuoto usa la camminata.
 @export var footsteps_tile_run: AudioStream
 
+## Passi su terreno roccioso camminando.
 @export var footsteps_rock: AudioStream
+## Passi su terreno roccioso correndo; se vuoto usa la camminata.
 @export var footsteps_rock_run: AudioStream
 
+## Suono di stacco del salto sulle piastrelle.
 @export var jump_tile_start: AudioStream
+## Suono di atterraggio sulle piastrelle.
 @export var jump_tile_land: AudioStream
 
+## Suono di stacco del salto sulla roccia.
 @export var jump_rock_start: AudioStream
+## Suono di atterraggio sulla roccia.
 @export var jump_rock_land: AudioStream
 
 @export_group("Player Voice")
+## Voci casuali quando si riceve danno; elementi vuoti ignorati.
 @export var damage_voice_sounds: Array[AudioStream] = []
+## Voci casuali al salto.
 @export var jump_voice_sounds: Array[AudioStream] = []
+## Voci casuali agli atterraggi oltre Land Min Speed.
 @export var landing_voice_sounds: Array[AudioStream] = []
+## Respiri casuali durante corsa in movimento.
 @export var sprint_breath_sounds: Array[AudioStream] = []
+## Voci casuali alla morte.
 @export var death_voice_sounds: Array[AudioStream] = []
 
+## Volume delle voci in dB, prima del volume del bus Player.
 @export_range(-40.0, 12.0, 0.5) var voice_volume_db: float = 0.0
+## Intervallo minimo tra voci di dolore (secondi).
 @export_range(0.0, 5.0, 0.1) var damage_voice_cooldown: float = 0.8
+## Attesa minima tra respiri di corsa (secondi).
 @export_range(0.5, 20.0, 0.1) var sprint_breath_interval_min: float = 2.5
+## Attesa massima tra respiri di corsa (secondi); estremi invertiti vengono ordinati.
 @export_range(0.5, 20.0, 0.1) var sprint_breath_interval_max: float = 4.5
 
 @onready var head: Node3D = $Head
@@ -77,13 +122,15 @@ var voice_audio: AudioStreamPlayer
 var sprint_breath_audio: AudioStreamPlayer
 var sprint_breath_timer: Timer
 var damage_voice_timer: Timer
+var _initial_inventory_applied := false
 
 
 func _ready() -> void:
 	_load_mouse_sensitivity()
 	_setup_voice_audio()
 
-	health = max_health
+	health = clampi(starting_health, 1, max_health) if starting_health > 0 else max_health
+	_initialize_spawn_inventory()
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 	get_tree().call_group(
@@ -119,6 +166,25 @@ func _setup_voice_audio() -> void:
 	add_child(damage_voice_timer)
 
 
+func _initialize_spawn_inventory() -> void:
+	# L'integrazione della mappa pulisce l'inventario nel proprio setup differito.
+	await get_tree().process_frame
+	if SaveManager.restoring:
+		await SaveManager.restore_completed
+		if not SaveManager.checkpoint.is_empty():
+			return
+	apply_starting_inventory()
+
+
+func apply_starting_inventory() -> void:
+	if _initial_inventory_applied:
+		return
+	_initial_inventory_applied = true
+	for item_id: StringName in starting_inventory:
+		if not InventoryManager.add_item(item_id, starting_inventory[item_id]):
+			push_warning("Dotazione iniziale: ID sconosciuto, quantita non valida o capienza superata: " + String(item_id))
+
+
 func get_save_state() -> Dictionary:
 	return {
 		"transform": global_transform,
@@ -130,6 +196,7 @@ func get_save_state() -> Dictionary:
 
 
 func apply_save_state(state: Dictionary) -> void:
+	_initial_inventory_applied = true
 	global_transform = state.get("transform", global_transform)
 	velocity = Vector3.ZERO
 	is_dead = false

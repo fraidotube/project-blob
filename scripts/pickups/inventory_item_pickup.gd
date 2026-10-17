@@ -1,14 +1,20 @@
 extends "res://scripts/interactables/persistent_interactable.gd"
 class_name InventoryItemPickup
 
+@export_group("Oggetto raccolto")
+## ID gia registrato nell'InventoryManager; non crea automaticamente una nuova definizione.
 @export var item_id: StringName = &"bruno_key"
-@export var quantity := 1
+## Quantita assegnata se l'inventario ha capienza sufficiente.
+@export_range(1, 999, 1) var quantity := 1
 var collected := false
 const KEY_MODEL := preload("res://assets/models/edificio/key_with_tag/scene.gltf")
 
-func _ready() -> void:
+func _init() -> void:
+	# Default prima della deserializzazione: i valori scelti nella scena devono prevalere.
 	interaction_name = "CHIAVE DI BRUNO"
 	interaction_color = Color(1.0, 0.8, 0.3)
+
+func _ready() -> void:
 	var model := KEY_MODEL.instantiate() as Node3D
 	model.name = "KeyWithTag"
 	add_child(model)
