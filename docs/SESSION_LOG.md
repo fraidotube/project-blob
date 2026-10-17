@@ -4,7 +4,7 @@
 
 Documentazione di continuità riallineata alla prova attuale: sfera energetica con aura/scia e bruciatura del player restano nel laboratorio; la mappa non riceve ancora questi effetti. La prossima sessione parte dal playtest F6, valutando lancio, impatto, danno nel tempo e leggibilità delle fiamme, poi si decide se trasferire il pacchetto identico in mappa. Audio dedicati a carica/lancio/esplosione ancora da procurare.
 
-Checkpoint Git richiesto dall'utente: commit `6c490a41367386c4e9bce2bd67464e295064f7f1` su `dev/prototype-0.1`, limitato a 138 file `scripts/` e `scenes/maps/`, senza modelli. Il completamento del checkpoint include ora le scene non-modello, le risorse serializzate e i documenti aggiornati che servono a consegnare il progetto; `.gitignore` continua a escludere cache, import generati e archivio locale. Modelli e sorgenti commerciali restano esclusi.
+Checkpoint Git richiesto dall'utente completato su `dev/prototype-0.1`: `6c490a4` salva script e `scenes/maps/`; `ebaaa36` aggiunge documenti, scene di supporto, risorse serializzate e UI. Entrambi sono commit locali, senza push. Esclusi i modelli 3D e le directory sorgente commerciali; le normali regole `.gitignore` escludono cache, import generati e archivio locale. Restano nel working tree i file esterni/non-modello non inclusi in questo perimetro.
 
 ## 2026-10-18 — sfera con aura e bruciatura del player, solo laboratorio
 

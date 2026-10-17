@@ -1,6 +1,6 @@
 # Project Blob — stato locale
 
-**Checkpoint Git 18/10:** `6c490a41367386c4e9bce2bd67464e295064f7f1` salva gli script e `scenes/maps/`; completamento in corso per scene di supporto, documenti e risorse non-modello. Modelli e archivio locale esclusi.
+**Checkpoint Git 18/10:** completato in due commit locali: `6c490a4` (script e `scenes/maps/`) e `ebaaa36` (documenti, scene di supporto, risorse serializzate e UI). Modelli 3D e archivi locali esclusi; nessun push. Altri asset esterni non inclusi restano locali.
 
 **18/10 — nuova prova sfera/incendio:** utente approva lampo arancione e chiede proiettile con aura e bruciatura sul player. Laboratorio ora ha nucleo azzurro, anello/aura infuocata/scia; impatto diretto incendia3s,3HP ogni0,75s (12extra), rinnovo senza stacking. Fiamme corpo da fuori, bordi animati in FPS; danno/voce/HUD/morte reali. Tab offre Prova bruciatura in FPS. Nuovi link effetti/stato presenti solo nel test, mappa invariata. Suite incendio headless/GPU e regressione ruoli passate, guida [sfera e bruciatura](BROCCOLO_COMBAT_LAB.md#sfera-energetica-e-bruciatura--prova1810). Prossimo valutazione utente; trasferimento identico in mappa ancora successivo.
 
