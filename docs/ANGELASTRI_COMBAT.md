@@ -1,5 +1,9 @@
 # Angelastri — combattimento e prova rapida
 
+**Faro — 12/10:** utente prova tutto il gioco dopo reimport KONA V2 e segnala che l'occhio di bue non segue Angelastri nella fight. Causa: rilascio del faro alla fine del dialogo senza acquisizione nel combattimento. L'encounter ora acquisisce il corpo mobile del combat dopo configure, sia nel percorso naturale sia F11 e restore fight_ready. Faro ripristinato alla sconfitta, morte player, nuovo test/cleanup. Durante tracking il rig resta fisso e ruota come quello di Bruno; nessuna modifica a parametri della luce o AI. Test specifici nel registro; conferma utente della correzione ancora aperta.
+
+Verifiche nuove headless: reuse/patrol passato e suite mappa failures=0, occluded=0, dance_collisions=0; include inseguimento del corpo su due spostamenti, rig immobile, ripristino dopo sconfitta/morte player e acquisizione F11. Le query del test escludono il collider dell'attore stesso. Nessun export GLB richiesto: cambiato solo lo script encounter.
+
 **Stato finale 11/10:** utente conferma «ok ci siamo» nella mappa dopo revisione sangue direzionale. F7 patrol, **F11 fight diretta**. Arco attacco 3D sospeso a quota busto integrato; sangue finale38 sfere piccole bordeaux, senza quad verticali, direzione dal colpo con componente outward. Suoni approvati, alone sottile, niente info box fight. Le descrizioni/versioni precedenti sotto sono cronologia; barra definitiva ancora da creare con immagine utente.
 
 Prima performance senza freeze/sparizione confermata dall'utente. Combattimento autorizzato: IA, walking/running, due attacchi melee, morso con immobilizzazione, danni reciproci, barra provvisoria e racchetta.

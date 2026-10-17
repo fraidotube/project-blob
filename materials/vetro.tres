@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cbi8ssl3w1g06"]
+
+[resource]
+resource_name = "MAT_Vetro"
+transparency = 4
+cull_mode = 2
+albedo_color = Color(1, 1, 1, 0.2)
+roughness = 0.05

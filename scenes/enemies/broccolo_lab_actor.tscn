@@ -1,0 +1,113 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/enemies/broccolo.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/enemies/broccolo_lab_actor.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/enemies/broccolo_lab_move.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/audio/broccolo_lab_audio.gd" id="4_audio"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/esclamazione1_mostro.mp3" id="9"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/esclamazione2_mostro.mp3" id="10"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/esclamazione3_mostro.mp3" id="11"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/esclamazione4_mostro.mp3" id="12"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/footsteps/footsteps_tile_run.tres" id="13"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/footsteps/jump_tile_start.tres" id="14"]
+[ext_resource type="AudioStream" path="res://assets/audio/player/footsteps/jump_tile_land.tres" id="15"]
+[ext_resource type="AudioStream" path="res://assets/audio/enemy/punch2.mp3" id="16"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/colpito1_mostro.mp3" id="17_hurt"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/colpito2_mostro.mp3" id="18_hurt"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/colpito3_mostro.mp3" id="19_hurt"]
+
+[sub_resource type="CapsuleShape3D" id="Capsule"]
+radius = 0.065
+height = 0.23
+
+[node name="BroccoloLabActor" instance=ExtResource("1")]
+script = ExtResource("2")
+collision_layer = 1
+collision_mask = 1
+
+[node name="BodyShape" type="CollisionShape3D" parent="."]
+position = Vector3(0, 0.12, 0)
+shape = SubResource("Capsule")
+
+[node name="Moves" type="Node" parent="."]
+
+[node name="LabAudio" type="Node3D" parent="."]
+script = ExtResource("4_audio")
+exclamations = Array[AudioStream]([ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12")])
+copy_exclamations = Array[AudioStream]([ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12")])
+footstep_stream = ExtResource("13")
+jump_stream = ExtResource("14")
+landing_stream = ExtResource("15")
+hit_stream = ExtResource("16")
+hurt_streams = Array[AudioStream]([ExtResource("17_hurt"), ExtResource("18_hurt"), ExtResource("19_hurt")])
+hurt_start_offsets = PackedFloat32Array(0.045, 0.08, 0.105)
+
+[node name="FlyingKick" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/FlyingKick"
+jump_speed = 1.8
+advance_speed = 0.7
+
+[node name="JumpSlam" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/jump"
+impact_fraction = 0.8
+damage = 7
+reach = 0.85
+jump_speed = 2.4
+
+[node name="Salsa" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/dancing_salsa"
+kind = 1
+
+[node name="Waving" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/waving"
+kind = 1
+
+[node name="LeftWallSneak" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/left_cover_sneak"
+kind = 1
+
+[node name="Dance" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/dancing3"
+kind = 1
+
+[node name="FullDance" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/dancing"
+kind = 1
+
+[node name="Dance2" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/dancing2"
+kind = 1
+
+[node name="Throw" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/throw"
+kind = 2
+impact_fraction = 0.55
+damage = 7
+
+[node name="Throw2" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/trow2"
+kind = 2
+impact_fraction = 0.5
+damage = 7
+
+[node name="ThrowGrenade" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/trow_grenade"
+kind = 2
+impact_fraction = 0.55
+damage = 9
+
+[node name="RightWallSneak" type="Node" parent="Moves"]
+script = ExtResource("3")
+clip = &"mie/risht_cover_sneak"
+kind = 1

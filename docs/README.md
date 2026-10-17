@@ -1,5 +1,77 @@
 # Project Blob — documentazione di continuità
 
+**18/10 — sfera con aura e player incendiato:** [nuova prova laboratorio](BROCCOLO_COMBAT_LAB.md#sfera-energetica-e-bruciatura--prova1810), proiettile con scia e impatto diretto che brucia3s; Tab / Prova bruciatura in FPS. Mappa conservata fino ad approvazione del pacchetto.
+
+**18/10 — prova effetti Broccolo:** [F6 laboratorio e pulsante Ripeti trasformazione](BROCCOLO_COMBAT_LAB.md#prova-effetti-1810--prima-approvazione-nel-laboratorio). Nascita fisica dal corpo con particelle, bordo arancione leggibile e aura dorata. Solo test fino ad approvazione, poi stessa risorsa IDENTICA nella mappa.
+
+**18/10 — Broccolo nella mappa reale:** [integrazione, pool e tre porte](BROCCOLO_COMBAT_LAB.md#integrazione-mappa-e-copie-preparate-1810). Combattimento del laboratorio collegato dopo la seconda presentazione, copie preparate e riusate, salto/apertura solo013/014/015. Cinematiche preservate. Prossimo playtest magazzino/scale e fluidita.
+
+**17/10 — Broccolo, ruoli e audio:** [laboratorio F6 aggiornato](BROCCOLO_COMBAT_LAB.md): più grandi, assaltatore/lanciatore/aggiratore, sfere prototipo, esclamazioni e passi acuti, danze e principale più aggressivo a bassa salute. Copie protette durante hit secondo l'ultima richiesta. Prossimo playtest FPS/mix audio.
+
+**17/10 — prova Broccolo giocabile:** [F6 apre direttamente FPS e lotta](BROCCOLO_COMBAT_LAB.md), Tab apre studio. Integrate sei nuove animazioni, copie disperse in direzioni casuali con alone arancione tenue, dimensioni circa30cm. Test ciclo/transizioni e movimento/spari reali passati; pronto per playtest utente.
+
+**17/10 — laboratorio boss Broccolo:** [scena F6, controlli, Inspector e limiti](BROCCOLO_COMBAT_LAB.md). Prototipo isolato con shrink/aura blu, finestre danno, copie da due colpi, rigenerazione, ostacoli e VFX; mappa/cinematic congelate. Lanci di sfere esplosive richiesti come fase futura.
+
+**Ripresa corrente 18/10 — Broccolo:** l'utente ha confermato la prima cinematic fluida e uniforme; prima e seconda cinematic sono congelate. Prossimo obiettivo: scena isolata per provare animazioni, corpo boss/aura blu, cloni melee, VFX e ciclo di rigenerazione prima dell'integrazione nel magazzino. Handoff completo in [BROCCOLO_MAP_INTRO](BROCCOLO_MAP_INTRO.md), stato in [CURRENT_STATE](CURRENT_STATE.md), specifiche e decisioni aperte in [DECISIONS_AND_BACKLOG](DECISIONS_AND_BACKLOG.md).
+
+**17/10 — Broccolo, regia seconda fase:** prima camera avanzata a2,8m per liberare l'angolo; durante la danza camera e player arretrano insieme (nel test mappa percorso diagonale sicuro0,63m su1m richiesto), poi la visuale FPS rientra nello stesso punto. Riduzione e avvio del flusso minion restano in coda. Test fixture/mappa passati. [Dettagli](BROCCOLO_MAP_INTRO.md).
+
+**17/10 — Broccolo, avanzamento danza controllato:** fermo durante dialogo e prime due clip; avanza di0,35m solo nella finestra di salto di `mie/dancing`. Fixture e mappa passate, capsule senza contatti. [Dettagli](BROCCOLO_MAP_INTRO.md).
+
+**18/10 — facing della seconda cinematic Broccolo:** compensato il fronte del modello (+Z locale) rispetto al `look_at` standard (-Z); l'allineamento viene applicato dopo il reset della sequenza. Fixture e mappa reale passate con `--cinematic-only`, includendo controllo prima e durante il dialogo. [Dettagli](BROCCOLO_MAP_INTRO.md).
+
+**18/10 — Broccolo, fase due:** prima intro avviata verso la fine del dolly (3,25s); tragitto dell’attore ripianificato dal lato magazzino fino al marker, che resta invariato. Telefono lanciato con rimbalzo fisico fino all’assestamento. Avvicinarsi entro 2,4m avvia il secondo discorso/danza; il segnale finale avvia ondate di 2–3 minion melee da circa20cm. Fixture e mappa passate (`failures=0`, actor/camera contacts=0); playtest visivo necessario. [Dettagli e limiti](BROCCOLO_MAP_INTRO.md).
+
+**18/10 — correzione cinematica Broccolo:** il lancio usa il vettore del gesto della mano. Il secondo incontro conserva la visuale FPS attuale e ruota direttamente verso Broccolo; lui guarda il giocatore e la danza resta sul posto nella corsia stretta. Test headless fixture e mappa, solo fino al discorso, passati; playtest visivo ancora necessario. [Dettagli e limiti](BROCCOLO_MAP_INTRO.md).
+
+**17/10 — ultima correzione telefono Broccolo:** [guida](BROCCOLO_MAP_INTRO.md). L'originale resta immutato e agganciato alla mano; al lancio sparisce e compare una copia separata con traiettoria visiva breve, poi rimossa. Test fixture e mappa completa passati (`failures=0`). La verifica visiva utente resta aperta.
+
+**17/10 — Broccolo, camera e luci corridoio:** alla partenza del filmato si accende il circuito Luci Corridoio Magazzino; la camera percorre l'asse del corridoio in 4s con traiettoria smussata e sweep sferico contro gli ostacoli. Il telefono lanciato viene rimosso 0,8s dopo essersi assestato. Playtest utente da ripetere.
+
+**17/10 — correzione telefono Broccolo (superata):** la copia fisica/atterraggio e' stata sostituita dalla traiettoria breve visiva richiesta dall'utente; vedere l'ultima voce del registro.
+
+**17/10 — Inspector generale, player e armi:** [guida pratica](INSPECTOR_CONFIGURATION.md) estesa a salute, movimento, dotazione iniziale, inventario, munizioni, torcia, audio, interazioni e parametri nativi dei nodi. Defaults conservati e checkpoint prioritari. Standard generale anche in AGENTS; configurazioni nuove e valori personalizzati testati con player reale.
+
+**17/10 — standard Inspector:** porte WarehouseDoors migrate a12configurazioni figlie modificabili nell'editor; gruppi/descrizioni per porte e interruttori, fingerprint configurabile. ID e valori approvati conservati, test mappa/configurazione/editor passati. Regola futura in AGENTS e standard tecnici. [Guida pratica](INSPECTOR_CONFIGURATION.md).
+
+**17/10 — ingresso magazzino e lampadari:** Luce Tonda_006 collegata al nuovo interruttore indipendente; lampadine dei2lampadari accese con il loro circuito grazie alla maschera emissiva originale recuperata dal GLB. Test12luci/6switch/18materiali e renderGPU passati. [Guida](WAREHOUSE_ZONE_2026-10-15.md).
+
+**17/10 — lati Luce Tonda:** controllo emissione esteso dai soli centri ai sei gruppi interi, includendo i corpi laterali.12materiali corridoio +2specchi, originali conservati. [Guida](WAREHOUSE_ZONE_2026-10-15.md).
+
+**17/10 — rifinitura approvata come obiettivo dopo playtest:**038 invertita verso giocatore/scale, emissione delle6superfici corridoio e2specchi bagno sincronizzata agli interruttori. Materiali originali conservati, test mappa e regressione luci passati. [Dettagli](WAREHOUSE_ZONE_2026-10-15.md).
+
+**17/10 — magazzino:** collegate anche le grigliate013/014/015 e038 sopra le scale;12porte totali,11luci nei5circuiti esistenti. Test runtime passati, scena/materiali/luci utente conservati. [Guida aggiornata](WAREHOUSE_ZONE_2026-10-15.md). Prossimo playtest dopo riavvio scena.
+
+**15/10 — porte nuova zona:** otto battenti collegati con outline/E, quattro liberi, tre chiavi distinte, CED fingerprint blu/rosso/verde e sblocco10s. Luci/F4 confermati dall'utente. [Guida, nodi e limiti](WAREHOUSE_ZONE_2026-10-15.md). Chiavi non ancora collocate; enigma impronta e boss futuri.
+
+**15/10 — nuova zona magazzino/bagni:** [cinque interruttori collegati, prove e fasi successive](WAREHOUSE_ZONE_2026-10-15.md). Primo passo luci completato; prossime porte, CED fingerprint futuro e boss con indizio, uno alla volta. Reimport GLB confermato dall'utente.
+
+**15/10 — errore export connesi14:** [causa Material.013 dei CamionShell e normal UDIM packed, PNG identico pronto](CONNESI14_EXPORT_MATERIAL_ERROR_2026-10-15.md). Correzione testata in RAM sul materiale isolato; sorgente non modificato.
+
+**Chiusura13/10 — Broccolo approvato:** utente «perfetto salva tutto»; bocca e due presentazioni salvate localmente,28clip. Ripartire dalla [guida](BROCCOLO_MOUTH_AND_PREVIEW.md) per le future fasi mappa/minion. Nessun commit/push.
+
+**Broccolo — 13/10:** [bocca/denti, studio delle23clip, discorso e danza con miniatura](BROCCOLO_MOUTH_AND_PREVIEW.md). Prima fase isolata, prova utente aperta.
+
+**Aggiornamento presentazioni:**28clip, talking reimportate adattate e collegate; due scene F6 per telefonata22s→lancio→camminata e discorso21s→danza3/2/1→20cm, con musica in sottofondo. [Guida](BROCCOLO_MOUTH_AND_PREVIEW.md).
+
+**Broccolo animazioni — 12/10:** [correzione scala del bacino e clip compatibili](BROCCOLO_ANIMATIONS.md), versioni in_place e con_spostamento verificate sul GLB innestato.
+
+**Broccolo revisione — 12/10 sera:** [Diffuse e NORMAL, anteprime e collegamenti Blender](BROCCOLO_TEXTURE.md): sangue approvato, loghi rivisti, PARKSIDE sul gilet e casco bianco; nuova normal dalla texture modificata. Originali e innesto testa preservati; nessuna nuova AI/gameplay.
+
+**Ripresa 12/10 sera:** utente conferma [KONA V2](KONA_CONNESI_LIVERY.md) reimportata e gioco provato integralmente. Nuova correzione [faro Angelastri durante combat](ANGELASTRI_COMBAT.md); conferma manuale di quest'ultima ancora aperta.
+
+**Pulizia asset — 12/10/2026:** [archivio reversibile e controlli](ASSET_ARCHIVE_2026-10-12.md),6.047file/13,89GiB; nemici conservati integralmente. Consultare i registri prima di ripristinare o modificare i file archiviati.
+
+**Texture14 attive — 12/10/2026:** [verifica del GLB e benchmark memoria/tempi](CONNESI14_TEXTURE_BENCHMARK.md). Risparmio231MiB confermato; caricamento e picchi iniziali restano da diagnosticare.
+
+**Texture applicate a connesi14 — 12/10/2026 sera:** [sorgente aggiornato, verifiche e backup](CONNESI14_TEXTURES_APPLIED.md). 26 riduzioni sul salvataggio delle 16:55, tutte le 536 immagini conservate; prossimo export/import Godot prima di misurare il beneficio.
+
+**Reimport14 — 12/10/2026 pomeriggio:** [benchmark nuova mappa e riparazione collider rack](CONNESI14_REIMPORT_BENCHMARK.md). Fluidità sintetica migliorata, caricamento ancora lungo; GLBancora con risoluzioni originali delle texture controllate, sorgente14più recente della copia notturna.
+
+**Connesi14 — 12/10/2026:** [mesh ridotte e copia con26 texture ottimizzate](CONNESI14_TEXTURE_OPTIMIZATION.md). Sorgente intatto, copia locale pronta da confrontare in Blender; asset attivi Godot ancora precedenti.
+
+**Priorità performance 11/10/2026:** [audit Blender e benchmark della mappa](PERFORMANCE_AUDIT.md). Richiesta ottimizzazione prima del gameplay; `connesi13.blend` analizzato senza modificarlo. Consultare questo punto prima delle priorità storiche sotto.
+
 **Chiusura 11/10/2026:** utente conferma «ok ci siamo» dopo prova in game del sangue corretto. Evento Angelastri, combattimento/racchetta, mirino condiviso e VFX sono il punto di ripresa approvato. Leggere la chiusura in SESSION_LOG e [ANGELASTRI_COMBAT](ANGELASTRI_COMBAT.md); F7 patrol/F11 fight diretta. L'utente richiede ora commit/push di codice, scene e documenti; asset locali e limiti di riproducibilità annotati nel registro.
 
 **Ripresa combattimento Angelastri:** [F7 passeggiata, secondo incontro, IA/racchetta e prove](ANGELASTRI_COMBAT.md). L'utente conferma prima performance senza freeze/sparizione; fase combat implementata e testata in fixture isolata, prossimo playtest mappa.
@@ -82,3 +154,4 @@ Il locale descrive i file attuali; il PDF conserva storia e intenzioni; Git cons
 ## Limiti
 
 Questi file conservano il PDF, gli standard e le osservazioni verificabili della sessione. Conversazioni precedenti non incluse nel PDF, sorgenti Blender esterni e asset locali non vengono ricostruiti o copiati dai Markdown. La documentazione non sostituisce il backup dei file.
+# **17/10 — Broccolo, regia aggiornata:** rotazione della camera anticipata lungo il primo dolly; nella seconda cinematic un percorso sicuro di4,8m riporta camera e player vicino alla svolta iniziale (distanza residua0,39m per gli ostacoli). Il salto della danza avanza fino a1m. Idle ruota quando il personaggio esce dall'inquadratura. Test mappa `--cinematic-only` passato; playtest visivo richiesto. [Guida](BROCCOLO_MAP_INTRO.md).

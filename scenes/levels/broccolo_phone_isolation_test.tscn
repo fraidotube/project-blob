@@ -1,0 +1,50 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/enemies/broccolo.tscn" id="1_broccolo"]
+[ext_resource type="Script" path="res://scripts/debug/broccolo_phone_isolation_test.gd" id="2_test"]
+
+[sub_resource type="Environment" id="Environment_phone_test"]
+background_mode = 1
+background_color = Color(0.11, 0.12, 0.15, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.72, 0.76, 0.84, 1)
+ambient_light_energy = 0.8
+
+[sub_resource type="PlaneMesh" id="Plane_phone_test"]
+size = Vector2(12, 12)
+
+[node name="BroccoloPhoneIsolationTest" type="Node3D"]
+script = ExtResource("2_test")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_phone_test")
+
+[node name="Floor" type="MeshInstance3D" parent="."]
+position = Vector3(0, -0.015, 0)
+mesh = SubResource("Plane_phone_test")
+
+[node name="KeyLight" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-38, -28, 0)
+light_energy = 1.25
+shadow_enabled = true
+
+[node name="Broccolo" parent="." instance=ExtResource("1_broccolo")]
+
+[node name="FrontCamera" type="Camera3D" parent="."]
+current = true
+position = Vector3(2.35, 1.65, 3.35)
+fov = 42.0
+
+[node name="BackCamera" type="Camera3D" parent="."]
+position = Vector3(-2.35, 1.65, -3.35)
+fov = 42.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Instructions" type="Label" parent="CanvasLayer"]
+offset_left = 18.0
+offset_top = 18.0
+offset_right = 560.0
+offset_bottom = 74.0
+theme_override_font_sizes/font_size = 18
+text = "Broccolo isolato: Spazio pausa/riprendi · R ricomincia · F vista davanti/dietro · ←/→ fotogramma"

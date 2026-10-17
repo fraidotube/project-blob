@@ -12,6 +12,7 @@ Motore: Godot 4.7.2
 - Per il contratto completo e la distinzione tra prove storiche e stato locale, leggere [la baseline SAFE](BASELINE_SAFE_2026-10-08.md) e [l'indice](README.md).
 
 ## Impatti balistici
+
 - Gestore condiviso: scripts/effects/impact_manager.gd
 - Gli effetti sono collegati alla pistola e non alla singola mappa.
 - Il raycast deve escludere il Player per evitare autodanno.
@@ -60,3 +61,13 @@ Nota verificata localmente: i passi del player usano invece i gruppi `surface_ro
 - Nebbia esterna approvata come impostazione sperimentale.
 - Nella scena definitiva, evitare la nebbia globale intensa negli interni.
 - Qualsiasi prova atmosferica deve partire da una baseline funzionante.
+
+## Componenti configurabili dall'Inspector — standard approvato17/10/2026
+
+- L'utente ha esteso esplicitamente lo standard a tutti gli script di gameplay, con priorita a player, armi, salute/energia e oggetti allo spawn. La configurazione iniziale deve essere distinta dal ripristino: il checkpoint prevale e non deve rigenerare oggetti consumati. Documentare anche i parametri nativi dei nodi, evitando due fonti per la stessa impostazione.
+- Esporre parametri di tuning e riferimenti utili con `@export`, gruppi leggibili e descrizioni `##` che spieghino effetto, unita, valori predefiniti e dipendenze. Preferire riferimenti tipizzati, enum e intervalli dove riducono errori.
+- Separare configurazione serializzata e stato runtime. Nodi o risorse nella scena sono la fonte dei valori; evitare tabelle rigide o assegnazioni che sovrascrivano silenziosamente l'Inspector.
+- Usare valori iniziali sicuri, ID di salvataggio unici/stabili e avvisi per riferimenti o configurazioni incompatibili. La duplicazione richiede nuovi ID, non solo un nuovo nome del nodo.
+- Un `@tool` non deve costruire collider, riparentare mesh o modificare asset nell'editor. I controller generati all'avvio devono leggere la configurazione senza alterare la posa approvata o i checkpoint esistenti.
+- Accompagnare il componente con una breve guida pratica: nodo da selezionare, parametri principali, procedura per aggiungere un'istanza e verifica pertinente. Testare il salvataggio della configurazione e almeno un valore non predefinito applicato al runtime.
+- Migrare i componenti gia' esistenti quando vengono toccati dall'obiettivo scelto, senza riscritture generali automatiche. [Guida e configurazioni attuali](INSPECTOR_CONFIGURATION.md).

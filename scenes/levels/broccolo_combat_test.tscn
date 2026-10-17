@@ -1,0 +1,229 @@
+[gd_scene load_steps=21 format=3]
+
+[ext_resource type="Script" path="res://scripts/debug/broccolo_combat_lab.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/enemies/broccolo_lab_actor.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4"]
+[ext_resource type="Texture2D" path="res://assets/ui/broccolo.png" id="5"]
+[ext_resource type="Script" path="res://scripts/enemies/broccolo_lab_role.gd" id="6_roles"]
+[ext_resource type="PackedScene" path="res://scenes/effects/broccolo_power_vfx.tscn" id="7_power"]
+[ext_resource type="PackedScene" path="res://scenes/effects/broccolo_energy_visual.tscn" id="8_energy"]
+[ext_resource type="PackedScene" path="res://scenes/effects/broccolo_burn_status.tscn" id="9_burn"]
+
+[sub_resource type="Environment" id="Environment"]
+background_mode = 1
+background_color = Color(0.035, 0.05, 0.08, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.75, 0.85, 1, 1)
+ambient_light_energy = 0.7
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="FloorMaterial"]
+albedo_color = Color(0.16, 0.2, 0.25, 1)
+roughness = 0.9
+
+[sub_resource type="StandardMaterial3D" id="WallMaterial"]
+albedo_color = Color(0.3, 0.4, 0.48, 1)
+
+[sub_resource type="BoxMesh" id="FloorMesh"]
+material = SubResource("FloorMaterial")
+size = Vector3(18, 0.2, 18)
+
+[sub_resource type="BoxShape3D" id="FloorShape"]
+size = Vector3(18, 0.2, 18)
+
+[sub_resource type="BoxMesh" id="WallMesh"]
+material = SubResource("WallMaterial")
+size = Vector3(0.4, 2, 4)
+
+[sub_resource type="BoxShape3D" id="WallShape"]
+size = Vector3(0.4, 2, 4)
+
+[sub_resource type="BoxMesh" id="StepMesh"]
+material = SubResource("WallMaterial")
+size = Vector3(2, 0.2, 0.5)
+
+[sub_resource type="BoxShape3D" id="StepShape"]
+size = Vector3(2, 0.2, 0.5)
+
+[sub_resource type="BoxMesh" id="BoundaryMesh"]
+material = SubResource("WallMaterial")
+size = Vector3(18, 2, 0.3)
+
+[sub_resource type="BoxShape3D" id="BoundaryShape"]
+size = Vector3(18, 2, 0.3)
+
+[node name="BroccoloCombatTest" type="Node3D" node_paths=PackedStringArray("boss", "player", "hud", "burn_status")]
+script = ExtResource("1")
+boss = NodePath("MainBroccolo")
+player = NodePath("Player")
+hud = NodePath("HUD")
+energy_visual_scene = ExtResource("8_energy")
+burn_status = NodePath("Player/BroccoloBurnStatus")
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment")
+
+[node name="Light" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-50, -25, 0)
+light_energy = 1.4
+shadow_enabled = true
+
+[node name="HUD" parent="." instance=ExtResource("4")]
+boss_phase_1_texture = ExtResource("5")
+boss_phase_1_blob_color = Color(0.03, 0.2, 0.5, 1)
+boss_phase_1_glow_color = Color(0.15, 0.65, 1, 1)
+
+[node name="Player" parent="." instance=ExtResource("3")]
+position = Vector3(0, 0.9, 4)
+max_health = 500
+
+[node name="WeaponHolder" parent="Player/Head/Camera3D" index="2"]
+starting_owns_pistol = true
+starting_owns_flashlight = true
+starting_owns_smg = true
+starting_equipped_weapon = 1
+starting_reserve_ammo = 500
+smg_starting_reserve_ammo = 500
+
+[node name="MainBroccolo" parent="." instance=ExtResource("2")]
+position = Vector3(0, 0.02, 0)
+preview_vfx_scene = ExtResource("7_power")
+
+[node name="BroccoloBurnStatus" parent="Player" node_paths=PackedStringArray("target", "camera") instance=ExtResource("9_burn")]
+position = Vector3(0, -0.9, 0)
+target = NodePath("..")
+camera = NodePath("../Head/Camera3D")
+
+[node name="Arena" type="Node3D" parent="."]
+
+[node name="Roles" type="Node" parent="."]
+
+[node name="Assaltatore" type="Node" parent="Roles"]
+script = ExtResource("6_roles")
+role_id = &"assaltatore"
+strategy = 0
+run_speed = 3.8
+attack_cooldown = 0.35
+
+[node name="Lanciatore" type="Node" parent="Roles"]
+script = ExtResource("6_roles")
+role_id = &"lanciatore"
+strategy = 1
+run_speed = 2.2
+attack_cooldown = 1.8
+ranged_distance = 4.0
+
+[node name="Aggiratore" type="Node" parent="Roles"]
+script = ExtResource("6_roles")
+role_id = &"aggiratore"
+strategy = 2
+run_speed = 2.8
+attack_cooldown = 0.8
+show_interval = 8.0
+flank_radius = 2.6
+flank_seconds = 2.2
+
+[node name="Floor" type="StaticBody3D" parent="Arena" groups=["surface_tile"]]
+position = Vector3(0, -0.1, 0)
+metadata/surface_type = "concrete"
+
+[node name="Mesh" type="MeshInstance3D" parent="Arena/Floor"]
+mesh = SubResource("FloorMesh")
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/Floor"]
+shape = SubResource("FloorShape")
+
+[node name="Wall" type="StaticBody3D" parent="Arena"]
+position = Vector3(2.0, 1, 0)
+metadata/surface_type = "concrete"
+
+[node name="Mesh" type="MeshInstance3D" parent="Arena/Wall"]
+mesh = SubResource("WallMesh")
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/Wall"]
+shape = SubResource("WallShape")
+
+[node name="Wall2" type="StaticBody3D" parent="Arena"]
+position = Vector3(-3, 1, -2)
+rotation_degrees = Vector3(0, 90, 0)
+metadata/surface_type = "concrete"
+
+[node name="Mesh" type="MeshInstance3D" parent="Arena/Wall2"]
+mesh = SubResource("WallMesh")
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/Wall2"]
+shape = SubResource("WallShape")
+
+[node name="JumpObstacle" type="StaticBody3D" parent="Arena"]
+position = Vector3(0, 0.1, 2)
+metadata/surface_type = "wood"
+
+[node name="Mesh" type="MeshInstance3D" parent="Arena/JumpObstacle"]
+mesh = SubResource("StepMesh")
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/JumpObstacle"]
+shape = SubResource("StepShape")
+
+[node name="Step2" type="StaticBody3D" parent="Arena"]
+position = Vector3(-4, 0.1, 3)
+metadata/surface_type = "concrete"
+
+[node name="Mesh" type="MeshInstance3D" parent="Arena/Step2"]
+mesh = SubResource("StepMesh")
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/Step2"]
+shape = SubResource("StepShape")
+
+[node name="Step3" type="StaticBody3D" parent="Arena"]
+position = Vector3(-4, 0.3, 2.5)
+metadata/surface_type = "concrete"
+
+[node name="Mesh" type="MeshInstance3D" parent="Arena/Step3"]
+mesh = SubResource("StepMesh")
+scale = Vector3(1, 3, 1)
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/Step3"]
+shape = SubResource("StepShape")
+scale = Vector3(1, 3, 1)
+
+[node name="North" type="StaticBody3D" parent="Arena"]
+position = Vector3(0, 1, -8.5)
+
+[node name="Mesh" type="MeshInstance3D" parent="Arena/North"]
+mesh = SubResource("BoundaryMesh")
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/North"]
+shape = SubResource("BoundaryShape")
+
+[node name="South" type="StaticBody3D" parent="Arena"]
+position = Vector3(0, 1, 8.5)
+
+[node name="Mesh" type="MeshInstance3D" parent="Arena/South"]
+mesh = SubResource("BoundaryMesh")
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/South"]
+shape = SubResource("BoundaryShape")
+
+[node name="East" type="StaticBody3D" parent="Arena"]
+position = Vector3(8.5, 1, 0)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Arena/East"]
+mesh = SubResource("BoundaryMesh")
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/East"]
+shape = SubResource("BoundaryShape")
+
+[node name="West" type="StaticBody3D" parent="Arena"]
+position = Vector3(-8.5, 1, 0)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="Mesh" type="MeshInstance3D" parent="Arena/West"]
+mesh = SubResource("BoundaryMesh")
+
+[node name="Shape" type="CollisionShape3D" parent="Arena/West"]
+shape = SubResource("BoundaryShape")
+
+[editable path="Player"]

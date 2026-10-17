@@ -19,6 +19,15 @@ I documenti conservano il contesto e non autorizzano nuove attività di gameplay
 - Non includere asset commerciali nel repository senza verifica della licenza. Git non salva automaticamente asset locali non tracciati o ignorati.
 - Un controllo statico non equivale a un playtest. Le conferme storiche non dimostrano il funzionamento di nuove modifiche.
 
+## Configurazione e manutenzione dall'Inspector
+
+- Regola approvata dall'utente il17/10/2026: i nuovi componenti configurabili devono esporre nell'Inspector i parametri di tuning e i collegamenti necessari al lavoro sulla scena, con gruppi chiari, descrizioni `##`, unita e intervalli sensati. Non esporre indiscriminatamente lo stato interno runtime.
+- Estensione esplicita dello stesso giorno: la regola vale in generale per tutti gli script di gameplay, in particolare player, armi, salute/energia, dotazione allo spawn e altri valori importanti. Conservare i valori attuali e distinguere le impostazioni iniziali dallo stato dei checkpoint; nessuna dotazione iniziale va riassegnata durante un caricamento. I valori nativi gia' disponibili sui nodi (luci, raggi, camera, audio) vanno documentati senza duplicarli inutilmente negli script.
+- Evitare configurazioni di gameplay nascoste in tabelle rigide nello script quando devono essere modificate dal designer: usare nodi/componenti o risorse serializzate nella scena. Documentare quale nodo selezionare e come duplicarlo.
+- Gli ID di salvataggio devono essere unici e stabili; segnalare riferimenti mancanti o duplicati. Preservare ID e valori approvati durante le migrazioni.
+- Gli strumenti `@tool` devono essere innocui nell'editor: nessuna riparentazione, costruzione fisica o modifica distruttiva degli asset durante l'editing. Verificare almeno serializzazione e applicazione runtime dei parametri modificabili.
+- Applicare la regola ai prossimi sviluppi e ai componenti toccati; non usarla come autorizzazione a riscrivere i sistemi storici fuori dall'obiettivo richiesto. Vedere [la guida Inspector](docs/INSPECTOR_CONFIGURATION.md).
+
 ## Fine sessione
 
 Aggiornare `docs/SESSION_LOG.md` con attività, file, verifiche, limiti e prossimo passo. Aggiornare stato, backlog e architettura dove cambiano. Non alterare retroattivamente la baseline storica. Seguire [la procedura](docs/WORKFLOW_AND_TESTING.md).

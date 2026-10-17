@@ -1,5 +1,7 @@
 # Regia — effetti audio e sincronizzazione
 
+**Sportelli contatore — 12/10:** su richiesta utente, apertura e chiusura di Contatori_Sx_SportelloDx/Sx usano il medesimo `contatore_door_open.wav` all'inizio dell'azione. Opzione esportata `door.gd.close_sound_at_start` false di default, true solo sui due nodi nella mappa; nessuna seconda riproduzione a battuta. Le altre porte, inclusa uscita aliena, mantengono timing a battuta. `door_audio_timing_test.gd` passa con audio reale e confronto col comportamento default; ascolto della correzione ancora da confermare.
+
 Implementazione locale 11/10/2026, richiesta esplicita dell'utente di collegare gli effetti inseriti in `assets/audio/edificio`. Originali conservati; estratti in `assets/audio/edificio/gameplay`. Verificati decodifica, durata, silenzi e livello mediante FFmpeg/ffprobe, e riproduzione PCM nel motore. **Non effettuato ascolto diretto dall'agente:** timbro e bilanciamento finale richiedono prova utente.
 
 ## Associazioni

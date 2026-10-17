@@ -1,0 +1,177 @@
+[gd_scene format=3 uid="uid://csu5iurhb7kd2"]
+
+[ext_resource type="PackedScene" uid="uid://ddplk33dinid6" path="res://assets/models/enemies/broccolo/Broccolo.glb" id="1_7saeo"]
+[ext_resource type="Animation" uid="uid://cgg54vpallfl1" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/dancing.res" id="2_kgrmg"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/FlyingKick.res" id="2_p6a5j"]
+[ext_resource type="PackedScene" uid="uid://biceqdn06asg3" path="res://assets/models/edificio/smartphone.glb" id="2_tg8e7"]
+[ext_resource type="Animation" uid="uid://c5rv4ogf6av7b" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/dancing2.res" id="3_8jylh"]
+[ext_resource type="Animation" uid="uid://da0015cjcbee" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/dancing3.res" id="4_nkltl"]
+[ext_resource type="Animation" uid="uid://bl5eatwtnx1vw" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/dancing_salsa.res" id="5_shtey"]
+[ext_resource type="Animation" uid="uid://dq4qimtmq7sg8" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/drinking.res" id="6_ybgrg"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/dancing_test.res" id="7_2y1ut"]
+[ext_resource type="Animation" uid="uid://dobrmayiru5f4" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/idle.res" id="7_ruc8s"]
+[ext_resource type="Animation" uid="uid://bonqs1pubox71" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/jump.res" id="8_kci3a"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/dying.res" id="9_nxc14"]
+[ext_resource type="Animation" uid="uid://bhtltwc14xcic" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/left_cover_sneak.res" id="9_t1rmj"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/hit_fromstand.res" id="10_ggx44"]
+[ext_resource type="Animation" uid="uid://cyib24wgoo2o" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/risht_cover_sneak.res" id="10_p6a5j"]
+[ext_resource type="Animation" uid="uid://dmmoe8qshnueh" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/running_jump.res" id="11_2y1ut"]
+[ext_resource type="Animation" uid="uid://bye73t8v7lbee" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/surprised.res" id="12_nxc14"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/idle_to_run.res" id="13_cijak"]
+[ext_resource type="Animation" uid="uid://jer42l4v823l" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/walking.res" id="13_ggx44"]
+[ext_resource type="Animation" uid="uid://2ikoo2sxmk8b" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/walking_happy.res" id="14_myelw"]
+[ext_resource type="Animation" uid="uid://nxecct5twgjb" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/walking_sneaky.res" id="15_3ojy2"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/running_hit.res" id="15_myelw"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/running_hit_short.res" id="16_3ojy2"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/running.res" id="18_45n8u"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/running_change_direction.res" id="19_jt0fa"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/throw.res" id="19_xwlp8"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/trow2.res" id="20_tg8e7"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/trow_grenade.res" id="21_dadag"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/running_jump_to_run.res" id="23_p4qqj"]
+[ext_resource type="Script" uid="uid://51ak68ox6hus" path="res://scripts/characters/broccolo_mouth.gd" id="24_mouth"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/running_to_stop.res" id="24_vep6c"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/phone_answer_talk.res" id="25_phone"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/in_place/talk1.res" id="26_talk1"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/in_place/talk2.res" id="27_talk2"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/in_place/talk3.res" id="28_talk3"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/in_place/talk4.res" id="29_talk4"]
+[ext_resource type="Script" uid="uid://dt6vflqbwryk4" path="res://scripts/characters/broccolo_phone.gd" id="30_phone_controller"]
+[ext_resource type="Animation" path="res://assets/models/enemies/broccolo/animation_compatibili/con_spostamento/waving.res" id="36_6oxvx"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_xwlp8"]
+_data = {
+&"FlyingKick": ExtResource("2_p6a5j"),
+&"dancing": ExtResource("2_kgrmg"),
+&"dancing2": ExtResource("3_8jylh"),
+&"dancing3": ExtResource("4_nkltl"),
+&"dancing_salsa": ExtResource("5_shtey"),
+&"dancing_test": ExtResource("7_2y1ut"),
+&"drinking": ExtResource("6_ybgrg"),
+&"dying": ExtResource("9_nxc14"),
+&"hit_fromstand": ExtResource("10_ggx44"),
+&"idle": ExtResource("7_ruc8s"),
+&"idle_to_run": ExtResource("13_cijak"),
+&"jump": ExtResource("8_kci3a"),
+&"left_cover_sneak": ExtResource("9_t1rmj"),
+&"phone_answer_talk": ExtResource("25_phone"),
+&"risht_cover_sneak": ExtResource("10_p6a5j"),
+&"running": ExtResource("18_45n8u"),
+&"running_change_direction": ExtResource("19_jt0fa"),
+&"running_hit": ExtResource("15_myelw"),
+&"running_hit_short": ExtResource("16_3ojy2"),
+&"running_jump": ExtResource("11_2y1ut"),
+&"running_jump_to_run": ExtResource("23_p4qqj"),
+&"running_to_stop": ExtResource("24_vep6c"),
+&"surprised": ExtResource("12_nxc14"),
+&"talk1": ExtResource("26_talk1"),
+&"talk2": ExtResource("27_talk2"),
+&"talk3": ExtResource("28_talk3"),
+&"talk4": ExtResource("29_talk4"),
+&"throw": ExtResource("19_xwlp8"),
+&"trow2": ExtResource("20_tg8e7"),
+&"trow_grenade": ExtResource("21_dadag"),
+&"walking": ExtResource("13_ggx44"),
+&"walking_happy": ExtResource("14_myelw"),
+&"walking_sneaky": ExtResource("15_3ojy2"),
+&"waving": ExtResource("36_6oxvx")
+}
+
+[node name="Broccolo" type="CharacterBody3D" unique_id=590692646]
+
+[node name="Broccolo" parent="." unique_id=364949060 instance=ExtResource("1_7saeo")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2655626, 0)
+
+[node name="Armature" parent="Broccolo" index="0" unique_id=114039063]
+transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, -0.2655626, 0)
+
+[node name="GeneralSkeleton" parent="Broccolo/Armature" index="0" unique_id=1359791714]
+bones/0/position = Vector3(-2.546332e-08, 87.66627, 1.119742)
+bones/0/rotation = Quaternion(0.01054438, 0.042232312, 0.06488853, 0.9969427)
+bones/1/rotation = Quaternion(0.09739578, 0.12766457, 0.9730381, 0.16556822)
+bones/2/rotation = Quaternion(-0.3397367, -0.05965994, 0.11658138, 0.9313584)
+bones/3/rotation = Quaternion(0.6462223, -0.23466218, 0.092318386, 0.7202831)
+bones/4/rotation = Quaternion(0.3349781, -0.07839397, 0.023566922, 0.9386633)
+bones/6/rotation = Quaternion(-0.17729424, 0.05940337, 0.9725866, 0.13825145)
+bones/7/rotation = Quaternion(-0.5227662, 0.04369769, -0.05039576, 0.84986264)
+bones/8/rotation = Quaternion(0.30323285, 0.10258144, -0.036798127, 0.94666404)
+bones/9/rotation = Quaternion(0.6164484, 0.21895581, 0.017115282, 0.75614613)
+bones/11/rotation = Quaternion(-0.03186707, -0.045565985, -0.0959487, 0.99383205)
+bones/12/rotation = Quaternion(0.03460529, -0.009322561, 0.011578792, 0.9992906)
+bones/13/rotation = Quaternion(0.03484128, -0.00860025, 0.011536532, 0.9992893)
+bones/14/rotation = Quaternion(-0.54809624, -0.45471865, 0.5213671, -0.47010422)
+bones/15/rotation = Quaternion(0.42955604, 0.31796286, 0.16476446, 0.82899576)
+bones/16/rotation = Quaternion(0.051738, -0.0012641811, 0.7152946, 0.6969041)
+bones/17/rotation = Quaternion(-0.025511729, -0.020535331, -0.062091004, 0.99753314)
+bones/18/rotation = Quaternion(-0.028039485, -0.0012687504, 0.057915036, 0.99792695)
+bones/19/rotation = Quaternion(0.04934606, 5.680201e-05, -0.011825877, 0.9987118)
+bones/20/rotation = Quaternion(0.08082378, 0.0002386318, -0.012955013, 0.99664426)
+bones/22/rotation = Quaternion(-0.015181443, -0.001245822, 0.05471705, 0.99838567)
+bones/23/rotation = Quaternion(0.00013919164, 4.9450937e-05, -0.0038932425, 0.99999243)
+bones/24/rotation = Quaternion(0.30114487, 0.00080416206, -0.035868403, 0.9529033)
+bones/25/position = Vector3(-0.0058817267, 2.8962023, 2.014637e-05)
+bones/26/rotation = Quaternion(0.06931127, 0.0039848774, 0.0071185236, 0.9975618)
+bones/27/rotation = Quaternion(0.15274203, 0.005306537, 0.009039385, 0.98821056)
+bones/28/rotation = Quaternion(0.17014328, 0.0006517779, -0.022713546, 0.9851573)
+bones/30/rotation = Quaternion(0.45524666, 0.04094622, -0.09000595, 0.8848576)
+bones/31/rotation = Quaternion(0.47158152, 0.00058059907, -0.06183325, 0.87965184)
+bones/32/rotation = Quaternion(0.4879873, -0.00017977366, -0.06080822, 0.87073)
+bones/33/position = Vector3(0.007145524, 2.400908, 2.2560362e-05)
+bones/34/rotation = Quaternion(0.14454749, 0.054732334, 0.06710844, 0.98570126)
+bones/35/rotation = Quaternion(0.0006078088, -0.03792161, -0.07923627, 0.99613416)
+bones/36/rotation = Quaternion(-0.023393033, -0.006996285, 0.11110922, 0.9935082)
+bones/38/rotation = Quaternion(0.0095533505, -0.0026115505, -0.0043871216, 0.9999414)
+bones/39/rotation = Quaternion(-0.029200457, -0.0027795783, -0.004282618, 0.99956053)
+bones/41/rotation = Quaternion(0.61288965, -0.38675573, 0.5451638, 0.42140564)
+bones/42/rotation = Quaternion(0.41809934, -0.235253, -0.14528878, 0.8652977)
+bones/43/rotation = Quaternion(0.056352742, 0.0010718444, -0.77200526, 0.6331124)
+bones/44/rotation = Quaternion(-0.041308828, -0.22535537, 0.035803873, 0.9727418)
+bones/45/rotation = Quaternion(-0.013444832, 0.0006029333, -0.055932887, 0.9983438)
+bones/46/rotation = Quaternion(0.081962, 9.005168e-05, 0.013362417, 0.996546)
+bones/47/rotation = Quaternion(0.08143859, -5.98061e-05, 0.014041825, 0.99657947)
+bones/48/position = Vector3(0.018035412, 2.6318371, 8.493662e-06)
+bones/49/rotation = Quaternion(0.34585282, -0.0096815545, -0.00010242242, 0.9382389)
+bones/50/rotation = Quaternion(0.46548176, -2.0422971e-05, 0.04500089, 0.8839127)
+bones/51/rotation = Quaternion(0.30207333, -0.0004633899, 0.026394796, 0.9529192)
+bones/53/rotation = Quaternion(0.08630726, -0.00346965, -0.043398123, 0.99531686)
+bones/54/rotation = Quaternion(0.13745694, 5.808402e-05, 0.022580145, 0.99025035)
+bones/55/rotation = Quaternion(0.111741275, -0.00031996865, 0.01696636, 0.99359244)
+bones/56/position = Vector3(0.01371634, 2.0183005, 5.2452087e-06)
+bones/57/rotation = Quaternion(0.4524295, -0.041895792, 0.07498418, 0.8876541)
+bones/58/rotation = Quaternion(0.47318226, -0.0015844136, 0.047705494, 0.8796706)
+bones/59/rotation = Quaternion(0.48962593, 0.001350902, 0.04308787, 0.8708663)
+bones/61/rotation = Quaternion(0.13723841, -0.049312625, -0.052242454, 0.98792946)
+bones/62/rotation = Quaternion(0.0063583055, 0.043647055, 0.09566786, 0.99443567)
+bones/63/rotation = Quaternion(-0.022400284, 0.0072600786, -0.11014204, 0.99363697)
+
+[node name="mixamorig1_Head" parent="Broccolo/Armature/GeneralSkeleton" index="0" unique_id=1900103203]
+transform = Transform3D(0.99785477, 0.030153872, -0.05810517, -0.033238202, 0.9980482, -0.052867442, 0.056397595, 0.05468532, 0.9969095, 0.006824717, 147.40575, 5.0071573)
+
+[node name="Testa" parent="Broccolo/Armature/GeneralSkeleton/mixamorig1_Head" index="0" unique_id=1935254628]
+transform = Transform3D(99.99998, -4.7683716e-07, -1.4305115e-06, 9.536743e-07, 100.00001, 0, 4.7683716e-07, 3.8146973e-06, 100, 4.7683716e-07, -10.633987, 4.1903915)
+
+[node name="BoneAttachment3D" type="BoneAttachment3D" parent="Broccolo/Armature/GeneralSkeleton" index="6" unique_id=727834629]
+transform = Transform3D(0.48718423, 0.5861372, 0.64737463, 0.82503814, -0.065898865, -0.56122065, -0.2862912, 0.8075267, -0.5156908, -13.032276, 109.34555, 18.051926)
+bone_name = "mixamorig1_RightHand"
+bone_idx = 44
+
+[node name="Smartphone" parent="Broccolo/Armature/GeneralSkeleton/BoneAttachment3D" unique_id=1061567874 instance=ExtResource("2_tg8e7")]
+visible = false
+
+[node name="Object_2" parent="Broccolo/Armature/GeneralSkeleton/BoneAttachment3D/Smartphone" index="0" unique_id=1869707560]
+transform = Transform3D(0.22474988, 0.37438798, -0.10872497, -0.38935807, 0.2218964, -0.040771134, 0.019692125, 0.11443611, 0.43476036, -3.0863342, 9.804375, 1.1444397)
+
+[node name="AnimationPlayer" parent="Broccolo" index="1" unique_id=1690352197]
+libraries/mie = SubResource("AnimationLibrary_xwlp8")
+
+[node name="MouthPresentation" type="Node" parent="." unique_id=1128518531]
+script = ExtResource("24_mouth")
+
+[node name="PhonePresentation" type="Node" parent="." unique_id=1604395395 node_paths=PackedStringArray("phone_visual", "animation_player")]
+script = ExtResource("30_phone_controller")
+phone_visual = NodePath("../Broccolo/Armature/GeneralSkeleton/BoneAttachment3D/Smartphone")
+phone_scene = ExtResource("2_tg8e7")
+animation_player = NodePath("../Broccolo/AnimationPlayer")
+
+[editable path="Broccolo"]
+[editable path="Broccolo/Armature/GeneralSkeleton/BoneAttachment3D/Smartphone"]

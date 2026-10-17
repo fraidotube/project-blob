@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://3eewnjeljmx6"]
+
+[ext_resource type="Script" uid="uid://bwfcc3tp7u063" path="res://scripts/debug/broccolo_animation_preview.gd" id="1"]
+
+[node name="BroccoloAnimationTest" type="Node3D" unique_id=1209312509]
+script = ExtResource("1")
