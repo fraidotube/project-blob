@@ -6,6 +6,8 @@ signal introduction_finished(actor_pose: Transform3D)
 @export_group("Collegamenti")
 ## Marker dell'utente vicino a Porta Produzione; non viene spostato dallo script.
 @export var spawn: Marker3D
+## Punto X/Z di arresto camera nel corridoio; l'altezza viene presa dalla camera FPS.
+@export var camera_stop_marker: Marker3D
 ## Interruttore di avvio: nella mappa e il Lampadario Magazzino, non il corridoio.
 @export var trigger_switch: Node3D
 ## La luce ingresso deve essere accesa prima del comando del lampadario.
@@ -44,6 +46,8 @@ signal introduction_finished(actor_pose: Transform3D)
 @export_range(0.1, 1.0, 0.05) var dance_motion_scale := 0.5
 ## Sposta tutta la coreografia verso sinistra nell'inquadratura, lontano dalla parete destra.
 @export_range(0.0, 0.75, 0.05) var dance_screen_left_offset := 0.05
+## Sposta Broccolo a destra nell'inquadratura prima del secondo discorso, se la posa e' libera.
+@export_range(0.0, 0.8, 0.05) var second_presentation_screen_right_offset := 0.45
 ## Collider del mobile da disattivare solo durante la seconda cinematic e ripristinare al ritorno FPS.
 @export var dance_obstacle_collision_path := NodePath("../connesi_building_test2_addon_1/ScaffaleMagazzino/StaticBody3D")
 ## Numero di cicli walking dopo il lancio; default approvato nello studio: tre.
@@ -59,36 +63,48 @@ signal introduction_finished(actor_pose: Transform3D)
 ## Volume della voce in dB sul bus SFX.
 @export_range(-30.0, 12.0, 0.5) var voice_volume_db := 0.0
 
+@export_group("Suoneria telefono")
+## Audio della chiamata avviato quando il giocatore accende il lampadario.
+@export var ringtone_stream: AudioStream = preload("res://assets/models/enemies/broccolo/zenghera_suoneria.mp3")
+## Secondo della suoneria in cui Broccolo interrompe lo squillo e risponde.
+@export_range(0.0, 22.9, 0.1) var answer_at_ringtone_seconds := 13.5
+## Volume della suoneria sul bus SFX.
+@export_range(-30.0, 12.0, 0.5) var ringtone_volume_db := 0.0
+## Sincronizza l'inizio della risposta e l'arrivo del dolly ai cue della suoneria.
+@export var synchronize_camera_to_ringtone_answer := true
+
+@export_group("Invito interruttore")
+## Distanza alla quale il comando del lampadario emette il bagliore viola pulsante (m).
+@export_range(1.0, 8.0, 0.1) var switch_glow_distance := 4.0
+## Portata della luce viola sul corpo dell'interruttore (m).
+@export_range(0.5, 5.0, 0.1) var switch_glow_range := 2.6
+## Energia massima del bagliore, modulata dal battito.
+@export_range(0.1, 4.0, 0.1) var switch_glow_energy := 1.8
+## Velocita del battito della luce (cicli al secondo).
+@export_range(0.1, 3.0, 0.1) var switch_glow_pulse_hz := 1.1
+
 @export_group("Regia e fine introduzione")
-## Distanza preferita camera lungo il corridoio, con controllo ostacoli (m).
+## Distanza orizzontale finale tra la camera e il punto osservato su Broccolo (m).
 @export_range(1.5, 8.0, 0.1) var camera_distance := 3.8
 ## Quota del punto osservato sopra i piedi (m).
 @export_range(0.5, 2.0, 0.05) var camera_target_height := 1.1
 ## Altezza camera sopra il punto osservato (m).
 @export_range(-0.5, 1.0, 0.05) var camera_height := 0.35
+## Punto di riferimento della seconda regia, mantenuto al valore storico (m).
+@export_range(0.5, 6.0, 0.1) var second_camera_retreat_anchor_distance := 2.8
 ## Campo visivo della camera cinematica (gradi).
 @export_range(35.0, 85.0, 1.0) var cinematic_fov := 60.0
 ## Durata ingresso/ritorno della camera (secondi).
 @export_range(0.1, 3.0, 0.1) var camera_blend_seconds := 1.0
-## Durata del movimento dolce lungo il corridoio verso Broccolo (secondi).
-@export_range(1.0, 10.0, 0.25) var camera_path_seconds := 3.25
-## Inizia la telefonata quando la camera e' vicina all'inquadratura finale.
-@export_range(0.5, 1.0, 0.01) var intro_camera_cue := 0.88
+## Durata del dolly quando la sincronizzazione con la suoneria e' disattivata (secondi).
+@export_range(2.0, 22.0, 0.25) var camera_path_seconds := 9.0
 ## Distanza dal Broccolo fermo che avvia il secondo discorso (m).
 @export_range(1.0, 6.0, 0.1) var approach_trigger_distance := 2.4
-## Distanza percorsa dritta lungo il corridoio prima della svolta (m).
-@export_range(0.5, 6.0, 0.1) var camera_straight_distance := 2.8
-## Quanto la camera curva lateralmente, fermandosi all'imbocco del corridoio.
-@export_range(0.2, 2.0, 0.05) var camera_left_turn_distance := 0.8
-## Frazione del dolly dedicata al tratto dritto prima della svolta.
-@export_range(0.25, 0.85, 0.01) var camera_turn_start_ratio := 0.62
-## Lunghezza delle tangenti che raccordano il tratto dritto alla svolta (m).
-@export_range(0.1, 2.0, 0.05) var camera_turn_lead := 0.8
 ## Raggio della sfera usata per tenere la camera fuori da muri e oggetti (m).
 @export_range(0.05, 0.6, 0.01) var camera_collision_radius := 0.32
-## Velocita' con cui l'inquadratura ruota verso Broccolo (1/s).
+## Velocita' di rotazione della camera nella seconda cinematic (1/s).
 @export_range(0.5, 8.0, 0.1) var camera_rotation_smoothing := 1.8
-## Velocita' di inseguimento della camera durante animazione e lancio (1/s).
+## Velocita' di inseguimento durante danza e animazioni della seconda cinematic (1/s).
 @export_range(0.5, 8.0, 0.1) var camera_position_smoothing := 3.0
 ## Arretramento della camera durante la danza; il player segue lo stesso spostamento in sicurezza.
 @export_range(0.5, 12.0, 0.1) var dance_camera_retreat_distance := 6.0
@@ -108,6 +124,7 @@ var returning := false
 var intro_completed := false
 var second_presentation_started := false
 var presentation_cue_started := false
+var presentation_reveal_started := false
 var second_presentation := false
 var combat_pending := false
 var final_pose := Transform3D.IDENTITY
@@ -116,11 +133,9 @@ var camera_time := 0.0
 var camera_from := Transform3D.IDENTITY
 var camera_path_start := Vector3.ZERO
 var camera_path_turn := Vector3.ZERO
+var camera_intro_turn_progress := 0.5
 var intro_camera_turn_position := Vector3.ZERO
 var camera_path_end := Vector3.ZERO
-var intro_camera_path_points: Array[Vector3] = []
-var intro_camera_path_lengths: Array[float] = []
-var intro_camera_path_total_length := 0.0
 var camera_collision_shape := SphereShape3D.new()
 var camera_corridor_axis := Vector3.RIGHT
 var camera_travel_axis := Vector3.BACK
@@ -140,6 +155,10 @@ var bars: CanvasLayer
 var route_ready := false
 var resolved_yaw_degrees := 90.0
 var saved_phone: Dictionary = {}
+var ringtone_player: AudioStreamPlayer
+var ring_answer_position := -1.0
+var switch_approach_light: OmniLight3D
+var switch_glow_elapsed := 0.0
 
 func _ready() -> void:
 	process_priority = 35
@@ -158,6 +177,7 @@ func _setup() -> void:
 		return
 	camera_collision_shape.radius = camera_collision_radius
 	trigger_switch.player_toggled.connect(_trigger_toggled)
+	_setup_switch_approach_glow()
 	SaveManager.register_object(persistent_id, self)
 	configured = true
 	# Preparato prima del comando, cosi la pressione E non deve importare il modello.
@@ -176,6 +196,15 @@ func _setup() -> void:
 		await get_tree().process_frame
 	if not is_inside_tree():return
 	presentation.voice.volume_db = voice_volume_db
+	if ringtone_stream != null:
+		ringtone_player = AudioStreamPlayer.new()
+		ringtone_player.name = "BroccoloPhoneRingtone"
+		ringtone_player.bus = &"SFX"
+		ringtone_player.stream = ringtone_stream
+		ringtone_player.volume_db = ringtone_volume_db
+		add_child(ringtone_player)
+	else:
+		push_warning("BroccoloEncounter: assegna ringtone_stream per sincronizzare la risposta al telefono.")
 	# La pausa globale di AudioStreamPlayer non deve annullare la pausa speciale del lancio.
 	presentation.voice.process_mode = Node.PROCESS_MODE_ALWAYS
 	presentation.music.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -186,6 +215,33 @@ func _setup() -> void:
 	_cache_camera_corridor_axis()
 	if intro_completed:_restore_idle()
 	print("BROCCOLO_ENCOUNTER_READY spawn=", presentation.global_position)
+
+func _setup_switch_approach_glow() -> void:
+	if not is_instance_valid(trigger_switch):return
+	switch_approach_light = OmniLight3D.new()
+	switch_approach_light.name = "BroccoloSwitchInvitationGlow"
+	switch_approach_light.light_color = Color(0.58, 0.2, 1.0)
+	switch_approach_light.light_energy = 0.0
+	switch_approach_light.omni_range = switch_glow_range
+	switch_approach_light.shadow_enabled = false
+	switch_approach_light.position = Vector3(0.0, 0.04, 0.0)
+	switch_approach_light.visible = false
+	trigger_switch.add_child(switch_approach_light)
+
+func _update_switch_approach_glow(delta: float) -> void:
+	if not is_instance_valid(switch_approach_light) or not is_instance_valid(player) or not is_instance_valid(trigger_switch):return
+	switch_glow_elapsed += delta
+	if intro_completed or bool(trigger_switch.get("lights_on")):
+		switch_approach_light.visible = false
+		return
+	var distance := player.global_position.distance_to(trigger_switch.global_position)
+	if distance > switch_glow_distance:
+		switch_approach_light.visible = false
+		return
+	var proximity := 1.0 - smoothstep(switch_glow_distance * 0.65, switch_glow_distance, distance)
+	var pulse := 0.58 + 0.42 * (0.5 + 0.5 * sin(switch_glow_elapsed * TAU * switch_glow_pulse_hz))
+	switch_approach_light.visible = true
+	switch_approach_light.light_energy = switch_glow_energy * pulse * proximity
 
 func _notification(what: int) -> void:
 	if not is_instance_valid(presentation) or not presentation.ready_for_preview:return
@@ -227,6 +283,10 @@ func start_introduction() -> void:
 		_release_camera()
 		GameplayUI.notify("Il passaggio e occupato.")
 		return
+	if is_instance_valid(ringtone_player):
+		ringtone_player.play()
+		print("BROCCOLO_RINGTONE_STARTED target_answer=", answer_at_ringtone_seconds)
+	_start_intro_idle_loop()
 	presentation.show()
 	camera = Camera3D.new()
 	camera.name = "BroccoloCinematicCamera"
@@ -234,21 +294,35 @@ func start_introduction() -> void:
 	camera.fov = player_camera.fov
 	add_child(camera)
 	camera.global_transform = player_camera.global_transform
-	camera.global_position = _find_clear_camera_start(camera.global_position)
-	# Mantiene la posa corrente e si orienta gradualmente lungo il corridoio.
+	# Parte dalla posa FPS esatta per evitare scatti e cambi di posizione iniziali.
 	camera_from = camera.global_transform
 	camera_time = 0.0
 	camera_path_start = camera.global_position
-	camera_path_turn = camera_path_start + camera_travel_axis * camera_straight_distance
-	intro_camera_turn_position = camera_path_turn
-	# Fermati all'imbocco: una posa calcolata vicino al corpo porta la camera
-	# troppo dentro la corsia e puo' compenetrare Broccolo.
-	camera_path_end = camera_path_turn + camera_left_axis * camera_left_turn_distance
-	_build_intro_camera_path()
+	if not _plan_intro_camera_path():
+		push_error("Broccolo: nessun percorso camera libero con visuale diretta sul personaggio.")
+		_abort()
+		return
+	# La seconda cinematic riusa il riferimento lungo la corsia, non il marker di ripresa.
+	intro_camera_turn_position = camera_path_start + camera_travel_axis * second_camera_retreat_anchor_distance
+	intro_camera_turn_position.y = camera_path_start.y
 	camera.make_current()
 	_make_bars()
 	presentation_cue_started = false
+	presentation_reveal_started = false
 	print("BROCCOLO_CINEMATIC_STARTED")
+
+func _start_intro_idle_loop() -> void:
+	if not is_instance_valid(presentation) or not presentation.ready_for_preview:return
+	presentation.reset_preview()
+	var idle_clip: Animation = presentation.animation.get_animation(&"mie/idle")
+	if idle_clip == null:
+		push_error("BroccoloEncounter: animazione mie/idle non disponibile durante l'avvicinamento.")
+		return
+	idle_clip.loop_mode = Animation.LOOP_LINEAR
+	presentation.animation.stop()
+	presentation.animation.play(&"mie/idle", 0.0)
+	presentation.animation.seek(0.0, true)
+	presentation.animation.advance(0.0)
 
 func _plan_route() -> bool:
 	if not avoid_route_obstacles:
@@ -343,27 +417,6 @@ func _make_bars() -> void:
 		if top:bar.offset_bottom = 65
 		else:bar.offset_top = -65
 
-func _shot() -> Transform3D:
-	var target := _shot_target()
-	var shot_distance := camera_distance
-	var shot_height := camera_height
-	var corridor_axis := camera_corridor_axis
-	var best := target + corridor_axis * 0.3 + Vector3.UP * camera_height
-	var best_clearance := 0.0
-	# Asse lungo il corridoio derivato dal marker/attore, mai dalla rotazione del player.
-	for side in [1.0, -1.0]:
-		var point: Vector3 = target + corridor_axis * shot_distance * side + Vector3.UP * shot_height
-		var ray := PhysicsRayQueryParameters3D.create(target, point, 1)
-		ray.exclude = _camera_exclusions()
-		var hit := player.get_world_3d().direct_space_state.intersect_ray(ray)
-		if not hit.is_empty():point = hit.position - (point - target).normalized() * 0.25
-		var clearance := target.distance_to(point)
-		if clearance > best_clearance:
-			best_clearance = clearance
-			best = point
-		if clearance >= shot_distance * 0.9:break
-	return Transform3D(Basis.looking_at(target - best, Vector3.UP), best)
-
 func _cache_camera_corridor_axis() -> void:
 	camera_corridor_axis = presentation.global_basis.z
 	camera_corridor_axis.y = 0.0
@@ -381,66 +434,104 @@ func _cache_camera_corridor_axis() -> void:
 
 func _camera_path_position(progress: float) -> Vector3:
 	if second_presentation:return camera_path_start
-	if intro_camera_path_points.size() < 2 or intro_camera_path_total_length <= 0.0001:
-		return _camera_path_position_raw(progress)
-	var distance := clampf(progress, 0.0, 1.0) * intro_camera_path_total_length
-	for i in range(1, intro_camera_path_lengths.size()):
-		if distance <= intro_camera_path_lengths[i]:
-			var segment_length := intro_camera_path_lengths[i] - intro_camera_path_lengths[i - 1]
-			var segment_progress := (distance - intro_camera_path_lengths[i - 1]) / maxf(segment_length, 0.0001)
-			return intro_camera_path_points[i - 1].lerp(intro_camera_path_points[i], segment_progress)
-	return intro_camera_path_points.back()
+	return camera_path_start.lerp(camera_path_end, clampf(progress, 0.0, 1.0))
 
-func _build_intro_camera_path() -> void:
-	intro_camera_path_points.clear()
-	intro_camera_path_lengths.clear()
-	intro_camera_path_total_length = 0.0
-	var sample_count := 128
-	for i in range(sample_count + 1):
-		var point := _camera_path_position_raw(float(i) / float(sample_count))
-		intro_camera_path_points.append(point)
-		if i == 0:
-			intro_camera_path_lengths.append(0.0)
-		else:
-			intro_camera_path_total_length += intro_camera_path_points[i - 1].distance_to(point)
-			intro_camera_path_lengths.append(intro_camera_path_total_length)
+func _plan_intro_camera_path() -> bool:
+	var focus := _shot_target()
+	if is_instance_valid(camera_stop_marker):
+		camera_path_end = camera_stop_marker.global_position
+		camera_path_end.y = camera_path_start.y
+		camera_path_turn = camera_path_start.lerp(camera_path_end, 0.68)
+		camera_path_turn.y = camera_path_start.y
+		camera_intro_turn_progress = 0.68
+		var line_clear := _intro_camera_route_is_clear(camera_path_end, focus)
+		if line_clear:
+			print("BROCCOLO_CAMERA_ROUTE marker_start=", camera_path_start, " turn_start=", camera_path_turn, " stop=", camera_path_end)
+		return line_clear
+	var offsets := [0.0, 0.35, -0.35, 0.7, -0.7, 1.0, -1.0]
+	var distances: Array[float] = []
+	var distance := camera_distance
+	while distance >= 1.4:
+		distances.append(distance)
+		distance -= 0.3
+	if distances.is_empty():distances.append(camera_distance)
+	var best_position := Vector3.ZERO
+	var best_score := INF
+	var found := false
+	var advance_distance := 2.8
+	while advance_distance >= 1.0 and not found:
+		camera_path_turn = camera_path_start + camera_travel_axis * advance_distance
+		camera_path_turn.y = camera_path_start.y
+		for candidate_distance: float in distances:
+			for corridor_offset: float in offsets:
+				var candidate := focus - camera_left_axis * candidate_distance + camera_travel_axis * corridor_offset
+				candidate.y = focus.y + camera_height
+				var turn_to_candidate := candidate - camera_path_turn
+				turn_to_candidate.y = 0.0
+				if turn_to_candidate.dot(camera_left_axis) <= 0.1:continue
+				if not _intro_camera_route_is_clear(candidate, focus):continue
+				var score := absf(candidate_distance - camera_distance) + absf(corridor_offset) * 0.4
+				if score < best_score:
+					best_score = score
+					best_position = candidate
+					found = true
+			if found:break
+		advance_distance -= 0.2
+	if not found:return false
+	camera_path_end = best_position
+	var first_leg := camera_path_start.distance_to(camera_path_turn)
+	var second_leg := camera_path_turn.distance_to(camera_path_end)
+	camera_intro_turn_progress = first_leg / maxf(first_leg + second_leg, 0.001)
+	print("BROCCOLO_CAMERA_ROUTE start=", camera_path_start, " advance=", camera_path_turn, " left_shot=", camera_path_end, " turn_progress=", camera_intro_turn_progress)
+	return true
 
-func _camera_path_position_raw(progress: float) -> Vector3:
-	var amount := clampf(progress, 0.0, 1.0)
-	if amount <= camera_turn_start_ratio:
-		return camera_path_start.lerp(camera_path_turn, amount / camera_turn_start_ratio)
-	var turn_amount := (amount - camera_turn_start_ratio) / (1.0 - camera_turn_start_ratio)
-	var end := camera_path_end
-	var chord := end - camera_path_turn
-	var chord_direction := chord.normalized() if chord.length_squared() > 0.0001 else camera_left_axis
-	var p0 := camera_path_turn
-	var p1 := p0 + camera_travel_axis * camera_turn_lead
-	var p2 := end - chord_direction * minf(camera_turn_lead, chord.length() * 0.35)
-	var inverse := 1.0 - turn_amount
-	return (
-		p0 * inverse * inverse * inverse
-		+ p1 * 3.0 * inverse * inverse * turn_amount
-		+ p2 * 3.0 * inverse * turn_amount * turn_amount
-		+ end * turn_amount * turn_amount * turn_amount
-	)
+func _intro_camera_route_is_clear(endpoint: Vector3, focus: Vector3) -> bool:
+	var radius_shape := SphereShape3D.new()
+	radius_shape.radius = camera_collision_radius
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = radius_shape
+	query.collision_mask = _camera_collision_mask()
+	query.exclude = _camera_exclusions()
+	var space := player.get_world_3d().direct_space_state
+	var previous := camera_path_start
+	for i in range(1, 49):
+		var point := _intro_camera_path_candidate_point(endpoint, float(i) / 48.0)
+		query.transform = Transform3D(Basis.IDENTITY, previous)
+		query.motion = point - previous
+		var travel := space.cast_motion(query)
+		if not travel.is_empty() and travel[0] < 0.995:return false
+		previous = point
+	var sightline := PhysicsRayQueryParameters3D.create(endpoint, focus, _camera_collision_mask())
+	sightline.exclude = _camera_exclusions()
+	return space.intersect_ray(sightline).is_empty()
+
+func _intro_camera_path_candidate_point(endpoint: Vector3, progress: float) -> Vector3:
+	return camera_path_start.lerp(endpoint, clampf(progress, 0.0, 1.0))
+
+func _camera_sees_broccolo() -> bool:
+	if not is_instance_valid(camera) or not is_instance_valid(presentation):return false
+	var focus := _shot_target()
+	var to_focus := focus - camera.global_position
+	if to_focus.length_squared() < 0.001:return false
+	var camera_forward := -camera.global_basis.z
+	var half_fov_cos := cos(deg_to_rad(camera.fov * 0.42))
+	if camera_forward.dot(to_focus.normalized()) < half_fov_cos:return false
+	var sightline := PhysicsRayQueryParameters3D.create(camera.global_position, focus, _camera_collision_mask())
+	sightline.exclude = _camera_exclusions()
+	return player.get_world_3d().direct_space_state.intersect_ray(sightline).is_empty()
 
 func _camera_path_forward(progress: float, camera_position: Vector3) -> Vector3:
 	if second_presentation:
 		var direct_target := _shot_target() - camera_position
 		if direct_target.length_squared() > 0.0001:return direct_target.normalized()
 		return camera_travel_axis
-	var amount := clampf(progress, 0.0, 1.0)
 	var target_direction := _shot_target() - camera_position
 	if target_direction.length_squared() < 0.0001:
-		return camera_travel_axis
+		return -camera_from.basis.z
 	# La direzione del percorso evolve dal corridoio verso Broccolo; anche il
 	# raccordo dalla posa iniziale usa il progresso del dolly, evitando una
 	# rotazione percepibile mentre la camera è ancora quasi ferma.
-	var path_turn := smoothstep(0.05, 0.95, amount)
-	var path_direction := camera_travel_axis.slerp(target_direction.normalized(), path_turn).normalized()
-	var initial_direction := -camera_from.basis.z
-	if initial_direction.length_squared() < 0.0001:initial_direction = path_direction
-	return initial_direction.normalized().slerp(path_direction, smoothstep(0.0, 1.0, amount)).normalized()
+	return target_direction.normalized()
 
 func _shot_target() -> Vector3:
 	return presentation.actor.global_position + Vector3.UP * camera_target_height
@@ -497,31 +588,6 @@ func _dance_camera_retreat_position(progress: float) -> Vector3:
 		distance -= segment
 	return dance_camera_retreat_path.back()
 
-func _find_clear_camera_start(origin: Vector3) -> Vector3:
-	var offsets: Array[Vector3] = [
-		Vector3.ZERO,
-		-camera_travel_axis * 0.35,
-		-camera_travel_axis * 0.7,
-		camera_left_axis * 0.35,
-		-camera_left_axis * 0.35,
-		-camera_travel_axis * 0.35 + camera_left_axis * 0.35,
-		-camera_travel_axis * 0.35 - camera_left_axis * 0.35,
-		-camera_travel_axis * 0.7 + camera_left_axis * 0.45,
-		-camera_travel_axis * 0.7 - camera_left_axis * 0.45,
-	]
-	var query := PhysicsShapeQueryParameters3D.new()
-	query.shape = camera_collision_shape
-	query.collision_mask = 1
-	query.exclude = _camera_exclusions()
-	var space := player.get_world_3d().direct_space_state
-	for offset: Vector3 in offsets:
-		query.transform = Transform3D(Basis.IDENTITY, origin + offset)
-		if space.intersect_shape(query, 1).is_empty():
-			if not offset.is_zero_approx():print("BROCCOLO_CAMERA_START_OFFSET ", offset)
-			return origin + offset
-	push_warning("Broccolo camera: nessuna posa iniziale senza contatti entro le correzioni disponibili.")
-	return origin
-
 func _move_camera_safely(destination: Vector3) -> Vector3:
 	var origin := camera.global_position
 	var motion := destination - origin
@@ -548,6 +614,7 @@ func _move_camera_safely(destination: Vector3) -> Vector3:
 	return destination
 
 func _process(delta: float) -> void:
+	_update_switch_approach_glow(delta)
 	if pending_idle_facing and _player_no_longer_sees_broccolo():
 		_face_broccolo_to_player()
 		pending_idle_facing = false
@@ -568,7 +635,10 @@ func _process(delta: float) -> void:
 		if camera_time >= camera_blend_seconds:_release_camera()
 	else:
 		var path_progress := clampf(camera_time / camera_path_seconds, 0.0, 1.0)
-		var desired_position := _camera_path_position(path_progress)
+		if not second_presentation and synchronize_camera_to_ringtone_answer and is_instance_valid(ringtone_player) and ringtone_player.playing:
+			path_progress = clampf(ringtone_player.get_playback_position() / maxf(answer_at_ringtone_seconds, 0.1), 0.0, 1.0)
+		var eased_progress := _smooth_cinematic(path_progress)
+		var desired_position := _camera_path_position(eased_progress)
 		if second_presentation and presentation.presentation.stage == "dance":
 			if not dance_camera_retreat_started:
 				dance_camera_retreat_started = true
@@ -590,7 +660,7 @@ func _process(delta: float) -> void:
 		if second_presentation:
 			var position_weight := 1.0 - exp(-camera_position_smoothing * delta)
 			smoothed_position = camera.global_position.lerp(desired_position, position_weight)
-		var safe_position := _move_camera_safely(smoothed_position)
+		var safe_position := _move_camera_safely(smoothed_position) if second_presentation else smoothed_position
 		if second_presentation and dance_camera_retreat_started and not returning:
 			# Il player compie lo stesso passo all'indietro della camera; CharacterBody
 			# limita il movimento se lo spazio non basta e preserva la collisione reale.
@@ -602,9 +672,15 @@ func _process(delta: float) -> void:
 		var direction := _camera_path_forward(path_progress, camera.global_position)
 		if direction.length_squared() > 0.0001:
 			var desired_basis := Basis.looking_at(direction, Vector3.UP)
-			camera.global_basis = camera.global_basis.slerp(desired_basis, 1.0 - exp(-camera_rotation_smoothing * delta))
+			if second_presentation:
+				camera.global_basis = camera.global_basis.slerp(desired_basis, 1.0 - exp(-camera_rotation_smoothing * delta))
+			else:
+				camera.global_basis = camera_from.basis.slerp(desired_basis, eased_progress)
 		camera.fov = lerpf(player_camera.fov, cinematic_fov, smoothstep(0, camera_blend_seconds, camera_time))
-		if not presentation_cue_started and path_progress >= intro_camera_cue:
+		var intro_cue_reached := path_progress >= 1.0
+		if not second_presentation and synchronize_camera_to_ringtone_answer and is_instance_valid(ringtone_player):
+			intro_cue_reached = ringtone_player.get_playback_position() >= maxf(answer_at_ringtone_seconds - answer_seconds, 0.0)
+		if not presentation_cue_started and (intro_cue_reached if not second_presentation else path_progress >= 0.0):
 			presentation_cue_started = true
 			if second_presentation:
 				presentation.start_discourse(true)
@@ -614,7 +690,13 @@ func _process(delta: float) -> void:
 				# avanzamento in avanti nel salto della danza finale.
 				presentation.travel = false
 			else:
+				presentation_reveal_started = true
+				presentation.phone_answer_seconds = answer_seconds
 				presentation.start_introduction()
+
+func _smooth_cinematic(value: float) -> float:
+	var t := clampf(value, 0.0, 1.0)
+	return t * t * t * (t * (t * 6.0 - 15.0) + 10.0)
 
 func _face_broccolo_to_player() -> void:
 	if not is_instance_valid(presentation) or not is_instance_valid(player_camera):return
@@ -627,7 +709,38 @@ func _face_broccolo_to_player() -> void:
 		# allinea invece il -Z standard di Godot, quindi compensiamo di 180 gradi.
 		actor.rotate_y(deg_to_rad(actor_facing_offset_degrees))
 
+func _offset_broccolo_for_second_presentation() -> void:
+	if second_presentation_screen_right_offset <= 0.0 or not is_instance_valid(camera) or not is_instance_valid(presentation):return
+	var screen_right := camera.global_basis.x
+	screen_right.y = 0.0
+	if screen_right.length_squared() < 0.001:return
+	screen_right = screen_right.normalized()
+	var shape := CapsuleShape3D.new()
+	shape.radius = route_clearance
+	shape.height = 1.6
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = shape
+	query.collision_mask = 1
+	query.exclude = [player.get_rid()]
+	var origin := presentation.global_position
+	# Cerca dal massimo verso una correzione piu' piccola e verifica la posa
+	# finale: il personaggio puo' partire gia' a contatto col mobile.
+	var steps := int(ceil(second_presentation_screen_right_offset / 0.05))
+	for step in range(steps, 0, -1):
+		var distance := minf(step * 0.05, second_presentation_screen_right_offset)
+		var candidate := origin + screen_right * distance
+		query.transform = Transform3D(Basis.IDENTITY, candidate + Vector3.UP * 0.9)
+		if player.get_world_3d().direct_space_state.intersect_shape(query).is_empty():
+			presentation.global_position = candidate
+			print("BROCCOLO_SECOND_PRESENTATION_OFFSET right_m=", distance)
+			return
+	print("BROCCOLO_SECOND_PRESENTATION_OFFSET blocked")
+
 func _on_presentation_stage_changed(stage: String) -> void:
+	if stage == "phone" and is_instance_valid(ringtone_player):
+		ring_answer_position = ringtone_player.get_playback_position()
+		ringtone_player.stop()
+		print("BROCCOLO_RINGTONE_ANSWERED at=", "%.3f" % ring_answer_position)
 	if stage != "dance" or not second_presentation:return
 	if not is_instance_valid(camera) or not is_instance_valid(presentation):return
 	if dance_screen_left_offset <= 0.0:return
@@ -716,6 +829,7 @@ func _start_second_presentation() -> void:
 	camera_path_turn = camera_path_start
 	camera_path_end = camera_path_start
 	camera.make_current()
+	_offset_broccolo_for_second_presentation()
 	_make_bars()
 	# Broccolo ha gia' visto il player: l'azione parte insieme alla camera,
 	# senza lasciare qualche secondo di idle prima del cue del primo dolly.
@@ -775,6 +889,8 @@ func _release_camera() -> void:
 	if combat_pending:_begin_minion_fight()
 
 func _abort() -> void:
+	if is_instance_valid(ringtone_player):
+		ringtone_player.stop()
 	if is_instance_valid(presentation) and presentation.ready_for_preview:
 		presentation.presentation.stop()
 		presentation.voice.stop()

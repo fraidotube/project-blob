@@ -25,7 +25,8 @@ func run() -> void:
 	var fx = boss.power_fx
 	check(fx != null and world.reserve[0].power_fx != null, "Effetti pool mancanti")
 	var map_component = load("res://scenes/enemies/broccolo_map_combat.tscn").instantiate()
-	check(map_component.get_node("MainBroccolo").preview_vfx_scene == null, "Prova gia applicata in mappa")
+	check(map_component.get_node("MainBroccolo").preview_vfx_scene != null, "Aura approvata collegata al corpo principale in mappa")
+	check(map_component.energy_visual_scene != null, "Sfera con aura collegata anche alla mappa")
 	map_component.free()
 	world.study_camera.position = Vector3(1.4, 1.05, 2.2)
 	world.study_camera.look_at(Vector3(0, 0.65, 0))

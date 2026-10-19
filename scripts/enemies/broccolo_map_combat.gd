@@ -15,6 +15,19 @@ const BOSS_PORTRAIT := preload("res://assets/ui/broccolo.png")
 @export_range(0.1, 0.8, 0.02) var gate_open_at := 0.28
 ## Distanza massima della capsula dal centro porta per tentare il salto, metri.
 @export_range(0.6, 2.0, 0.1) var gate_approach_distance := 1.25
+@export_group("Musica combattimento")
+## Soundtrack del combattimento Broccolo, avviata all'handoff e fermata alla vittoria.
+@export var boss_music_stream: AudioStream = preload("res://assets/models/enemies/broccolo/Broccolo_soundtrack.mp3")
+## Volume della musica boss sul bus Music.
+@export_range(-30.0, 6.0, 0.5) var boss_music_volume_db := -8.0
+## Punto della traccia in cui ripartire da zero, prima della coda muta finale (secondi).
+@export_range(30.0, 293.0, 1.0) var boss_music_loop_at_seconds := 285.0
+@export_group("Illuminazione boss fight")
+## Intensita' della tinta viola applicata alle luci della mappa durante la lotta.
+@export_range(0.0, 0.4, 0.01) var boss_light_violet_strength := 0.12
+## Colore verso cui sfumano le luci ambientali; energia e stato restano invariati.
+@export var boss_light_violet_color := Color(0.55, 0.38, 0.82)
+@export_group("Salvataggio combattimento")
 ## Identificatore stabile: blocca salvataggi in battaglia e conserva la sconfitta.
 @export var persistent_id: StringName = &"main.broccolo.combat"
 
@@ -28,6 +41,8 @@ var saved_hud: Dictionary = {}
 var paths: Dictionary = {}
 var active_minions: Array[Node]:
 	get: return copies
+var boss_music_player: AudioStreamPlayer
+var saved_map_light_colors: Dictionary = {}
 
 func _ready() -> void:
 	rng.randomize()
@@ -35,6 +50,12 @@ func _ready() -> void:
 	boss = get_node("MainBroccolo")
 	boss.hide()
 	boss.process_mode = Node.PROCESS_MODE_DISABLED
+	boss_music_player = AudioStreamPlayer.new()
+	boss_music_player.name = "BroccoloBossMusic"
+	boss_music_player.bus = &"Music"
+	boss_music_player.stream = boss_music_stream
+	boss_music_player.volume_db = boss_music_volume_db
+	add_child(boss_music_player)
 	SaveManager.register_object(persistent_id, self)
 	_prepare_map.call_deferred()
 
@@ -45,6 +66,12 @@ func _prepare_map() -> void:
 	if not is_inside_tree(): return
 	player = encounter.player
 	hud = encounter.hud
+	# Il link Inspector resta serializzato; questa risoluzione copre anche
+	# l'istanza annidata della mappa, dove il Player e' fuori dal sotto-scene.
+	if burn_status == null:
+		burn_status = player.get_node_or_null("BroccoloBurnStatus")
+	if burn_status == null:
+		push_error("Broccolo: collegare BroccoloBurnStatus sotto Player nella mappa.")
 	boss.target = player
 	boss.lab = self
 	boss.pool = self
@@ -87,6 +114,11 @@ func configure(owner_encounter: Node, _center: Vector3) -> void:
 	encounter.presentation.hide()
 	boss.reset_for_spawn(pose.origin)
 	boss.global_basis = pose.basis
+	# Ripete nel mondo il ciclo approvato: corpo grande, riduzione con aura,
+	# poi combattimento in scala ridotta. Le copie restano emesse dal corpo.
+	boss.visual.scale = Vector3.ONE
+	boss.visual.position = boss.model_offset
+	boss.preview_transformation()
 	boss.pool = self
 	_save_hud()
 	started = true
@@ -111,12 +143,16 @@ func _restore_hud() -> void:
 	saved_hud.clear()
 
 func _boss_died() -> void:
+	_stop_boss_music()
+	_restore_map_lighting()
 	defeated = true
 	super._boss_died()
 	for actor in copies.duplicate(): retire_actor(actor)
 	_restore_hud()
 
 func stop_combat() -> void:
+	_stop_boss_music()
+	_restore_map_lighting()
 	combat = false
 	spawning = false
 	for projectile in get_tree().get_nodes_in_group("broccolo_lab_projectiles"): projectile.queue_free()
@@ -125,7 +161,47 @@ func stop_combat() -> void:
 	_restore_hud()
 
 func _process(delta: float) -> void:
+	if started and not defeated and is_instance_valid(boss_music_player) and boss_music_player.playing:
+		var loop_point := minf(boss_music_loop_at_seconds, boss_music_player.stream.get_length() - 0.05)
+		if boss_music_player.get_playback_position() >= loop_point:
+			boss_music_player.play()
 	if ready_for_test and started and not defeated: super._process(delta)
+
+func start_combat() -> void:
+	super.start_combat()
+	if started and not defeated and is_instance_valid(boss_music_player) and boss_music_stream != null:
+		boss_music_player.stream = boss_music_stream
+		boss_music_player.volume_db = boss_music_volume_db
+		boss_music_player.play()
+	if started and not defeated:
+		_apply_map_lighting()
+
+func _apply_map_lighting() -> void:
+	if not saved_map_light_colors.is_empty(): return
+	var scene_root := get_tree().current_scene
+	if not is_instance_valid(scene_root): return
+	for candidate in scene_root.find_children("*", "Light3D", true, false):
+		var light := candidate as Light3D
+		if light == null or not light.is_inside_tree() or _belongs_to_character(light): continue
+		saved_map_light_colors[light.get_instance_id()] = {"node": light, "color": light.light_color}
+		light.light_color = light.light_color.lerp(boss_light_violet_color, boss_light_violet_strength)
+
+func _belongs_to_character(light: Light3D) -> bool:
+	var ancestor: Node = light
+	while ancestor != null:
+		if ancestor is CharacterBody3D: return true
+		if ancestor.name.to_lower().contains("angela"): return true
+		ancestor = ancestor.get_parent()
+	return false
+
+func _restore_map_lighting() -> void:
+	for entry: Dictionary in saved_map_light_colors.values():
+		var light := entry.get("node") as Light3D
+		if is_instance_valid(light): light.light_color = entry.get("color", Color.WHITE)
+	saved_map_light_colors.clear()
+
+func _stop_boss_music() -> void:
+	if is_instance_valid(boss_music_player):boss_music_player.stop()
 
 func _unhandled_input(_event: InputEvent) -> void:
 	pass
@@ -263,5 +339,7 @@ func apply_persistent_state(data: Dictionary) -> void:
 		if defeated: encounter.presentation.hide()
 
 func _exit_tree() -> void:
+	_stop_boss_music()
+	_restore_map_lighting()
 	_restore_hud()
 	SaveManager.unregister_object(persistent_id, self)

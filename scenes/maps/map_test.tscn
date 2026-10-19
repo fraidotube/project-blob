@@ -102,6 +102,7 @@
 [ext_resource type="Script" uid="uid://c5g66wapwud1m" path="res://scripts/interactables/warehouse_door_setup.gd" id="99_door_setup"]
 [ext_resource type="Script" uid="uid://bakdwra3vdpax" path="res://scripts/cinematics/broccolo_encounter.gd" id="100_broccolo_encounter"]
 [ext_resource type="PackedScene" path="res://scenes/enemies/broccolo_map_combat.tscn" id="101_broccolo_combat"]
+[ext_resource type="PackedScene" path="res://scenes/effects/broccolo_burn_status.tscn" id="broccolo_burn"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_duq4h"]
 size = Vector3(373.07532, 116.85881, 72.86276)
@@ -2044,13 +2045,18 @@ transform = Transform3D(0, -3.265553e-08, 1, 0.9999999, -2.474974e-07, -3.892842
 [node name="RacketSocket" parent="Player/Head/Camera3D/WeaponHolder/LowWorldViewModel/smesh_arms_male/rig_arms/Skeleton3D" index="4" unique_id=384644294]
 transform = Transform3D(0.10513063, -0.9944583, -3.501773e-07, 0.99445826, 0.10513076, -2.093846e-06, 2.093846e-06, -7.636845e-08, 0.99999994, -0.5975655, -0.03275495, 0.09300997)
 
+[node name="BroccoloBurnStatus" parent="Player" unique_id=692669190 node_paths=PackedStringArray("target", "camera") instance=ExtResource("broccolo_burn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
+target = NodePath("..")
+camera = NodePath("../Head/Camera3D")
+
 [node name="HUD" parent="." unique_id=160974520 instance=ExtResource("3_yt5n2")]
 
 [node name="connesi_building_test2" parent="." unique_id=2049194514 instance=ExtResource("3_ph6jt")]
 
-[node name="trunk_low_003" parent="connesi_building_test2/Albero 1_003" parent_id_path=PackedInt32Array(2049194514, 642463616) index="1" unique_id=1134269527 groups=["navigation_source"]]
+[node name="trunk_low_003" parent="connesi_building_test2/Albero 1_003" parent_id_path=PackedInt32Array(2049194514, 678364674) index="1" unique_id=1002106676 groups=["navigation_source"]]
 
-[node name="Auto Bruciata" parent="connesi_building_test2" index="20" unique_id=524610559 groups=["navigation_source"]]
+[node name="Auto Bruciata" parent="connesi_building_test2" index="20" unique_id=1162674891 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Auto Bruciata" index="0" unique_id=1991871793]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.104766846, -0.8468857, -36.879097)
@@ -2058,7 +2064,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.104766846, -0.8468857, -36.
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Auto Bruciata/StaticBody3D" unique_id=1850315836]
 shape = SubResource("BoxShape3D_duq4h")
 
-[node name="Auto distrutta" parent="connesi_building_test2" index="21" unique_id=278799746 groups=["navigation_source"]]
+[node name="Auto distrutta" parent="connesi_building_test2" index="21" unique_id=353588531 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Auto distrutta" index="0" unique_id=1098150483]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6028595, 4.0000057, -9.750708)
@@ -2066,59 +2072,59 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6028595, 4.0000057, -9.750
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Auto distrutta/StaticBody3D" unique_id=1892700866]
 shape = SubResource("BoxShape3D_kib6x")
 
-[node name="Kiri10_body" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 760714120) index="1" unique_id=2079188936]
+[node name="Kiri10_body" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 757293178) index="1" unique_id=758463072]
 surface_material_override/0 = SubResource("StandardMaterial3D_0bqcq")
 
-[node name="Kiri10_bumper_Front" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 760714120) index="5" unique_id=1964651115]
+[node name="Kiri10_bumper_Front" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 757293178) index="5" unique_id=1057454103]
 surface_material_override/0 = SubResource("StandardMaterial3D_4v00d")
 
-[node name="Kiri10_Bumper_Rear" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 760714120) index="7" unique_id=592288534]
+[node name="Kiri10_Bumper_Rear" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 757293178) index="7" unique_id=1034202332]
 surface_material_override/0 = SubResource("StandardMaterial3D_h6oip")
 
-[node name="Kiri10_Hood" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 760714120) index="15" unique_id=1236160317]
+[node name="Kiri10_Hood" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 757293178) index="15" unique_id=1409442758]
 surface_material_override/0 = SubResource("StandardMaterial3D_6ql0b")
 
-[node name="Kiri10_Trunkdoor" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 760714120) index="23" unique_id=522278730]
+[node name="Kiri10_Trunkdoor" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 757293178) index="23" unique_id=576361602]
 surface_material_override/0 = SubResource("StandardMaterial3D_4k76f")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 760714120) index="31" unique_id=151157596]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Auto_Kiri" parent_id_path=PackedInt32Array(2049194514, 757293178) index="31" unique_id=151157596]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Auto_Kiri/StaticBody3D" unique_id=185736117]
 transform = Transform3D(1, -2.7008355e-08, -2.9802322e-08, 1.8626451e-09, 1, 8.754432e-08, 2.9802322e-08, -4.4703484e-08, 1, 0.14536285, 0.07715702, 0.009174347)
 shape = SubResource("BoxShape3D_wirlu")
 
-[node name="Urban10_body" parent="connesi_building_test2/Auto_LowPoly" parent_id_path=PackedInt32Array(2049194514, 2068377027) index="1" unique_id=1836125627]
+[node name="Urban10_body" parent="connesi_building_test2/Auto_LowPoly" parent_id_path=PackedInt32Array(2049194514, 1105297062) index="1" unique_id=560681817]
 surface_material_override/0 = SubResource("StandardMaterial3D_ru33d")
 
-[node name="Urban10_Bumper_Front" parent="connesi_building_test2/Auto_LowPoly" parent_id_path=PackedInt32Array(2049194514, 2068377027) index="6" unique_id=213313599]
+[node name="Urban10_Bumper_Front" parent="connesi_building_test2/Auto_LowPoly" parent_id_path=PackedInt32Array(2049194514, 1105297062) index="6" unique_id=1974251165]
 surface_material_override/0 = SubResource("StandardMaterial3D_fm53d")
 
-[node name="Urban10_Bumper_Rear" parent="connesi_building_test2/Auto_LowPoly" parent_id_path=PackedInt32Array(2049194514, 2068377027) index="8" unique_id=1676846564]
+[node name="Urban10_Bumper_Rear" parent="connesi_building_test2/Auto_LowPoly" parent_id_path=PackedInt32Array(2049194514, 1105297062) index="8" unique_id=1606485276]
 surface_material_override/0 = SubResource("StandardMaterial3D_ed25t")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Auto_LowPoly" parent_id_path=PackedInt32Array(2049194514, 2068377027) index="27" unique_id=741621802]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Auto_LowPoly" parent_id_path=PackedInt32Array(2049194514, 1105297062) index="27" unique_id=741621802]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Auto_LowPoly/StaticBody3D" unique_id=1504667716]
 transform = Transform3D(1, -7.357448e-08, -8.940697e-08, 6.6589564e-08, 0.99999475, -5.736947e-07, 0, -2.9802322e-08, 0.9999999, 0.09194183, 0.11181021, 0.031383514)
 shape = SubResource("BoxShape3D_boqsd")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Blocco parcheggio/Cylinder_210" parent_id_path=PackedInt32Array(2049194514, 1379600082) index="0" unique_id=2086414750]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Blocco parcheggio/Cylinder_210" parent_id_path=PackedInt32Array(2049194514, 1610941680) index="0" unique_id=2086414750]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Blocco parcheggio/Cylinder_210/StaticBody3D" unique_id=94916046]
 shape = SubResource("BoxShape3D_3wavg")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Blocco parcheggio/Cylinder_213" parent_id_path=PackedInt32Array(2049194514, 1711954873) index="0" unique_id=1002565505]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Blocco parcheggio/Cylinder_213" parent_id_path=PackedInt32Array(2049194514, 502894355) index="0" unique_id=1002565505]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Blocco parcheggio/Cylinder_213/StaticBody3D" unique_id=1898774018]
 shape = SubResource("BoxShape3D_yvt70")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Blocco parcheggio/Cylinder_214" parent_id_path=PackedInt32Array(2049194514, 681145889) index="0" unique_id=1035743326]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Blocco parcheggio/Cylinder_214" parent_id_path=PackedInt32Array(2049194514, 1501736632) index="0" unique_id=1035743326]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0946953, 0, -0.007925093)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Blocco parcheggio/Cylinder_214/StaticBody3D" unique_id=730895284]
 shape = SubResource("BoxShape3D_vwqpj")
 
-[node name="TVRemoteArea" type="Area3D" parent="connesi_building_test2/Body_002" parent_id_path=PackedInt32Array(2049194514, 414566277) index="1" unique_id=1043750937 node_paths=PackedStringArray("tv_controller", "cinematic_controller")]
+[node name="TVRemoteArea" type="Area3D" parent="connesi_building_test2/Body_002" parent_id_path=PackedInt32Array(2049194514, 18982207) index="1" unique_id=1043750937 node_paths=PackedStringArray("tv_controller", "cinematic_controller")]
 collision_layer = 2
 script = ExtResource("4_01uak")
 tv_controller = NodePath("../../Monitor Appeso")
@@ -2130,9 +2136,9 @@ remote_sound = ExtResource("5_vviwf")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.009033203, 0.0069580674, 0.0014953613)
 shape = SubResource("BoxShape3D_1uteb")
 
-[node name="Camion" parent="connesi_building_test2" index="29" unique_id=1798186931 groups=["navigation_source"]]
+[node name="Camion" parent="connesi_building_test2" index="29" unique_id=22523266 groups=["navigation_source"]]
 
-[node name="truck_body" parent="connesi_building_test2/Camion" index="1" unique_id=1732681722 groups=["navigation_source"]]
+[node name="truck_body" parent="connesi_building_test2/Camion" index="1" unique_id=611679112 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Camion/truck_body" index="0" unique_id=1823585440]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12258911, 1.4333496, -151.4104)
@@ -2148,9 +2154,9 @@ transform = Transform3D(-0.9548751, -0.2970076, -4.9905722e-08, -0.0058466257, 0
 top_level = true
 shape = SubResource("BoxShape3D_ev0ut")
 
-[node name="Camion Shell" parent="connesi_building_test2" index="30" unique_id=810903254 groups=["navigation_source"]]
+[node name="Camion Shell" parent="connesi_building_test2" index="30" unique_id=671009680 groups=["navigation_source"]]
 
-[node name="Camion Shell_017" parent="connesi_building_test2/Camion Shell" index="16" unique_id=584011023]
+[node name="Camion Shell_017" parent="connesi_building_test2/Camion Shell" index="16" unique_id=538731121]
 transform = Transform3D(-0.003015927, -0.014340056, 1.6195864e-09, 4.3671647e-10, -1.7468659e-09, -0.014653772, 0.014340056, -0.0030159273, 7.8689355e-10, -8.902412, -0.06666818, -0.81570625)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Camion Shell" index="19" unique_id=1490874556]
@@ -2159,15 +2165,15 @@ transform = Transform3D(-0.003015927, -0.014340056, 1.6195864e-09, 4.3671647e-10
 transform = Transform3D(0.9865042, 0, -0.16373603, 0, 1, 0, 0.16373603, 0, 0.9865042, -0.5107832, 1.0861816, 0.10612488)
 shape = SubResource("BoxShape3D_cnr4e")
 
-[node name="Cancelletto Assistenza" parent="connesi_building_test2" index="31" unique_id=308623371 groups=["navigation_source"]]
+[node name="Cancelletto Assistenza" parent="connesi_building_test2" index="31" unique_id=1600578095 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Casa Prima" parent_id_path=PackedInt32Array(2049194514, 2145568927) index="0" unique_id=737006962]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Casa Prima" parent_id_path=PackedInt32Array(2049194514, 101421780) index="0" unique_id=737006962]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.3969364e-05, 0.0077320337, -0.00020104647)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Casa Prima/StaticBody3D" unique_id=510688686]
 shape = SubResource("BoxShape3D_f17wm")
 
-[node name="Casa Vicina Angolo" parent="connesi_building_test2" index="38" unique_id=506819194 groups=["navigation_source"]]
+[node name="Casa Vicina Angolo" parent="connesi_building_test2" index="38" unique_id=1417290581 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Casa Vicina Angolo" index="0" unique_id=2086298804]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03241825, 0.0016851425, 1.3207649)
@@ -2175,7 +2181,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03241825, 0.0016851425, 1.
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Casa Vicina Angolo/StaticBody3D" unique_id=1108759858]
 shape = SubResource("BoxShape3D_hkde1")
 
-[node name="Casa Vicina Cancello" parent="connesi_building_test2" index="39" unique_id=1863933562 groups=["navigation_source"]]
+[node name="Casa Vicina Cancello" parent="connesi_building_test2" index="39" unique_id=1289680894 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Casa Vicina Cancello" index="0" unique_id=1008354400]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0002400279, 2.8505921e-05, 0.00046249852)
@@ -2183,7 +2189,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0002400279, 2.8505921e-05,
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Casa Vicina Cancello/StaticBody3D" unique_id=1450559870]
 shape = SubResource("BoxShape3D_tmyuj")
 
-[node name="Cassonetti" parent="connesi_building_test2" index="41" unique_id=112526248 groups=["navigation_source"]]
+[node name="Cassonetti" parent="connesi_building_test2" index="41" unique_id=1906432011 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cassonetti" index="0" unique_id=1687601620]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00014683604, 0.00050884485, -0.0008058548)
@@ -2191,13 +2197,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00014683604, 0.00050884485,
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cassonetti/StaticBody3D" unique_id=299509309]
 shape = SubResource("BoxShape3D_bt3mg")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cloner_1" parent_id_path=PackedInt32Array(2049194514, 1006104099) index="0" unique_id=275602405]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cloner_1" parent_id_path=PackedInt32Array(2049194514, 2002408350) index="0" unique_id=275602405]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9802322e-08, 0.6080982, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cloner_1/StaticBody3D" unique_id=2005371168]
 shape = SubResource("BoxShape3D_xbtxj")
 
-[node name="Colonnina Ricarica" parent="connesi_building_test2" index="53" unique_id=797945625 groups=["navigation_source"]]
+[node name="Colonnina Ricarica" parent="connesi_building_test2" index="53" unique_id=676534548 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Colonnina Ricarica" index="0" unique_id=223087480]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.710389e-05, -0.0010982752, -0.00043454766)
@@ -2205,13 +2211,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.710389e-05, -0.0010982752,
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Colonnina Ricarica/StaticBody3D" unique_id=1233189898]
 shape = SubResource("BoxShape3D_n7fgb")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Conchiglia Esterna" parent_id_path=PackedInt32Array(2049194514, 137598315) index="0" unique_id=1820051530]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Conchiglia Esterna" parent_id_path=PackedInt32Array(2049194514, 1043200012) index="0" unique_id=1820051530]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00056150556, -0.0005440116, -0.0005429983)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Conchiglia Esterna/StaticBody3D" unique_id=1016552177]
 shape = SubResource("BoxShape3D_doul5")
 
-[node name="Contatore" parent="connesi_building_test2" index="58" unique_id=39744115 node_paths=PackedStringArray("power_system", "led_red", "led_green")]
+[node name="Contatore" parent="connesi_building_test2" index="58" unique_id=304688018 node_paths=PackedStringArray("power_system", "led_red", "led_green")]
 script = ExtResource("4_hkde1")
 power_system = NodePath("../../ConnesiPower")
 led_red = NodePath("LedRosso")
@@ -2252,14 +2258,14 @@ transform = Transform3D(0.705031, 0, 0, 0, 1.0000002, 0, 0, 0, 0.28556037, -0.00
 visible = false
 mesh = SubResource("BoxMesh_hyfr5")
 
-[node name="ContatoriSx" parent="connesi_building_test2" index="60" unique_id=619964140 groups=["navigation_source"]]
+[node name="ContatoriSx" parent="connesi_building_test2" index="60" unique_id=1650027587 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ContatoriSx/Contatori_Sx" parent_id_path=PackedInt32Array(2049194514, 119030749) index="0" unique_id=24834774]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ContatoriSx/Contatori_Sx" parent_id_path=PackedInt32Array(2049194514, 567701027) index="0" unique_id=24834774]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/ContatoriSx/Contatori_Sx/StaticBody3D" unique_id=1777511661]
 shape = SubResource("ConvexPolygonShape3D_lqvdi")
 
-[node name="Contatori_Sx_SportelloDx" parent="connesi_building_test2/ContatoriSx" index="1" unique_id=1724990894]
+[node name="Contatori_Sx_SportelloDx" parent="connesi_building_test2/ContatoriSx" index="1" unique_id=717079988]
 script = ExtResource("13_bc7u3")
 open_sound = ExtResource("9_rabrk")
 close_sound = ExtResource("9_rabrk")
@@ -2279,7 +2285,7 @@ collision_layer = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.24789429, 0.00015556812, 0.36291504)
 shape = SubResource("BoxShape3D_4g8wb")
 
-[node name="Contatori_Sx_SportelloSx" parent="connesi_building_test2/ContatoriSx" index="2" unique_id=1027187778]
+[node name="Contatori_Sx_SportelloSx" parent="connesi_building_test2/ContatoriSx" index="2" unique_id=2026638651]
 script = ExtResource("13_bc7u3")
 open_angle = -90.0
 open_sound = ExtResource("9_rabrk")
@@ -2300,125 +2306,125 @@ collision_mask = 0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03286743, 0.00900352, -0.37895203)
 shape = SubResource("BoxShape3D_h6y5j")
 
-[node name="Cube_030" parent="connesi_building_test2" index="76" unique_id=1959445061 groups=["navigation_source"]]
+[node name="Cube_030" parent="connesi_building_test2" index="76" unique_id=42285967 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_030" index="0" unique_id=338773095]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_030/StaticBody3D" unique_id=1865770037]
 shape = SubResource("ConvexPolygonShape3D_hepgi")
 
-[node name="Cube_033" parent="connesi_building_test2" index="79" unique_id=150201133 groups=["navigation_source"]]
+[node name="Cube_033" parent="connesi_building_test2" index="79" unique_id=676372758 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_033" index="0" unique_id=1916469450]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_033/StaticBody3D" unique_id=283505335]
 shape = SubResource("ConcavePolygonShape3D_xbtxj")
 
-[node name="Cube_036" parent="connesi_building_test2" index="82" unique_id=1216717809 groups=["navigation_source"]]
+[node name="Cube_036" parent="connesi_building_test2" index="82" unique_id=1427019788 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_036" index="0" unique_id=236284985]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_036/StaticBody3D" unique_id=585908401]
 shape = SubResource("ConcavePolygonShape3D_a7d20")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_043" parent_id_path=PackedInt32Array(2049194514, 1840619450) index="0" unique_id=94506802]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_043" parent_id_path=PackedInt32Array(2049194514, 288699807) index="0" unique_id=94506802]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_043/StaticBody3D" unique_id=442887766]
 shape = SubResource("ConcavePolygonShape3D_fskn1")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_044" parent_id_path=PackedInt32Array(2049194514, 56303934) index="0" unique_id=2133957109]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_044" parent_id_path=PackedInt32Array(2049194514, 1230745397) index="0" unique_id=2133957109]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_044/StaticBody3D" unique_id=728210768]
 shape = SubResource("ConcavePolygonShape3D_ok301")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_045" parent_id_path=PackedInt32Array(2049194514, 2040575741) index="0" unique_id=2142821133]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_045" parent_id_path=PackedInt32Array(2049194514, 363707957) index="0" unique_id=2142821133]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_045/StaticBody3D" unique_id=285619665]
 shape = SubResource("ConcavePolygonShape3D_md7qk")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_046" parent_id_path=PackedInt32Array(2049194514, 1910502073) index="0" unique_id=1443626724]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_046" parent_id_path=PackedInt32Array(2049194514, 98613578) index="0" unique_id=1443626724]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_046/StaticBody3D" unique_id=835420814]
 shape = SubResource("ConcavePolygonShape3D_jae6m")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_047" parent_id_path=PackedInt32Array(2049194514, 557387104) index="0" unique_id=614332764]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_047" parent_id_path=PackedInt32Array(2049194514, 1948981591) index="0" unique_id=614332764]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_047/StaticBody3D" unique_id=664832132]
 shape = SubResource("ConcavePolygonShape3D_gr3tr")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_048" parent_id_path=PackedInt32Array(2049194514, 1234560833) index="0" unique_id=932337246]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_048" parent_id_path=PackedInt32Array(2049194514, 610180116) index="0" unique_id=932337246]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_048/StaticBody3D" unique_id=51022417]
 shape = SubResource("ConcavePolygonShape3D_5r01v")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_075" parent_id_path=PackedInt32Array(2049194514, 429630185) index="0" unique_id=848609822]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_075" parent_id_path=PackedInt32Array(2049194514, 587144230) index="0" unique_id=848609822]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_075/StaticBody3D" unique_id=1615741533]
 shape = SubResource("ConcavePolygonShape3D_odd4o")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_242" parent_id_path=PackedInt32Array(2049194514, 1939045210) index="0" unique_id=335593783]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_242" parent_id_path=PackedInt32Array(2049194514, 2107438874) index="0" unique_id=335593783]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_242/StaticBody3D" unique_id=1669951898]
 shape = SubResource("ConcavePolygonShape3D_iw461")
 
-[node name="Cube_434" parent="connesi_building_test2" index="374" unique_id=10832342 groups=["navigation_source"]]
+[node name="Cube_434" parent="connesi_building_test2" index="374" unique_id=1595674509 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_434" index="0" unique_id=593913507 groups=["surface_rock"]]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_434/StaticBody3D" unique_id=1095230800]
 shape = SubResource("ConcavePolygonShape3D_0bqcq")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_443" parent_id_path=PackedInt32Array(2049194514, 1467792105) index="0" unique_id=1712622200]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_443" parent_id_path=PackedInt32Array(2049194514, 1220362788) index="0" unique_id=1712622200]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_443/StaticBody3D" unique_id=603031695]
 shape = SubResource("ConcavePolygonShape3D_6ltsf")
 
-[node name="Cube_444" parent="connesi_building_test2" index="376" unique_id=946265803 groups=["navigation_source"]]
+[node name="Cube_444" parent="connesi_building_test2" index="376" unique_id=1157843739 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cube_444" index="0" unique_id=178642618]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cube_444/StaticBody3D" unique_id=199908674]
 shape = SubResource("ConcavePolygonShape3D_bc7u3")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cylinder_129" parent_id_path=PackedInt32Array(2049194514, 335385024) index="0" unique_id=546453392]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cylinder_129" parent_id_path=PackedInt32Array(2049194514, 369014891) index="0" unique_id=546453392]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2731703, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cylinder_129/StaticBody3D" unique_id=1572166220]
 shape = SubResource("BoxShape3D_lqvdi")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cylinder_130" parent_id_path=PackedInt32Array(2049194514, 1205439902) index="0" unique_id=307140141]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cylinder_130" parent_id_path=PackedInt32Array(2049194514, 115797827) index="0" unique_id=307140141]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cylinder_130/StaticBody3D" unique_id=1045119171]
 shape = SubResource("BoxShape3D_6gw5t")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cylinder_132" parent_id_path=PackedInt32Array(2049194514, 25562683) index="0" unique_id=743937618]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cylinder_132" parent_id_path=PackedInt32Array(2049194514, 1382791654) index="0" unique_id=743937618]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2731703, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cylinder_132/StaticBody3D" unique_id=320983524]
 shape = SubResource("BoxShape3D_fp58c")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cylinder_133" parent_id_path=PackedInt32Array(2049194514, 721798037) index="0" unique_id=187649157]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cylinder_133" parent_id_path=PackedInt32Array(2049194514, 780156750) index="0" unique_id=187649157]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cylinder_133/StaticBody3D" unique_id=1660440056]
 shape = SubResource("BoxShape3D_pgkgt")
 
-[node name="Cylinder_207" parent="connesi_building_test2" index="417" unique_id=613760624 groups=["navigation_source"]]
+[node name="Cylinder_207" parent="connesi_building_test2" index="419" unique_id=293835456 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cylinder_207" index="0" unique_id=1940037714]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cylinder_207/StaticBody3D" unique_id=99192539]
 shape = SubResource("BoxShape3D_d2nfi")
 
-[node name="Cylinder_208" parent="connesi_building_test2" index="418" unique_id=1699161683 groups=["navigation_source"]]
+[node name="Cylinder_208" parent="connesi_building_test2" index="420" unique_id=99536796 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Cylinder_208" index="0" unique_id=691340648]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Cylinder_208/StaticBody3D" unique_id=2011214368]
 shape = SubResource("BoxShape3D_7fdwr")
 
-[node name="Daily" parent="connesi_building_test2" index="419" unique_id=106852632 groups=["navigation_source"]]
+[node name="Daily" parent="connesi_building_test2" index="421" unique_id=492689526 groups=["navigation_source"]]
 
-[node name="Back_door_1_001" parent="connesi_building_test2/Daily" index="0" unique_id=1122384856]
+[node name="Back_door_1_001" parent="connesi_building_test2/Daily" index="0" unique_id=1521028124]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.614357, 0.53229517, -4.8309126)
 script = ExtResource("13_bc7u3")
 open_angle = -90.0
@@ -2440,7 +2446,7 @@ collision_layer = 0
 transform = Transform3D(1, 0, 5.9604645e-08, 0, 1, 0, -5.9604645e-08, 0, 1, -0.53086567, 0.22241211, 0.104774475)
 shape = SubResource("BoxShape3D_80egf")
 
-[node name="Back_door_2_001" parent="connesi_building_test2/Daily" index="1" unique_id=2092661132]
+[node name="Back_door_2_001" parent="connesi_building_test2/Daily" index="1" unique_id=1303258371]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5410042, -0.11354083, -4.7956915)
 script = ExtResource("13_bc7u3")
 open_sound = ExtResource("8_y1qbm")
@@ -2460,27 +2466,27 @@ collision_layer = 0
 transform = Transform3D(1, 0, 5.9604645e-08, 0, 1, 0, -5.9604645e-08, 0, 1, 0.28882217, 0.69003296, -0.049560547)
 shape = SubResource("BoxShape3D_f5jw5")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Body_exterior_001" parent_id_path=PackedInt32Array(2049194514, 605391402) index="0" unique_id=482523237]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Body_exterior_001" parent_id_path=PackedInt32Array(2049194514, 1518120040) index="0" unique_id=482523237]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Daily/Body_exterior_001/StaticBody3D" unique_id=894940440]
 shape = SubResource("ConcavePolygonShape3D_b0kty")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Body_exterior_2_001" parent_id_path=PackedInt32Array(2049194514, 219033069) index="0" unique_id=65540323]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Body_exterior_2_001" parent_id_path=PackedInt32Array(2049194514, 1698113847) index="0" unique_id=65540323]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Daily/Body_exterior_2_001/StaticBody3D" unique_id=314784251]
 shape = SubResource("ConcavePolygonShape3D_uxi8u")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Body_interior_001" parent_id_path=PackedInt32Array(2049194514, 1801539097) index="0" unique_id=702097392]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Body_interior_001" parent_id_path=PackedInt32Array(2049194514, 315719331) index="0" unique_id=702097392]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Daily/Body_interior_001/StaticBody3D" unique_id=1495954553]
 shape = SubResource("ConcavePolygonShape3D_w1ino")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Dashboard_001" parent_id_path=PackedInt32Array(2049194514, 1231531107) index="0" unique_id=1249834377]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Dashboard_001" parent_id_path=PackedInt32Array(2049194514, 1492885482) index="0" unique_id=1249834377]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Daily/Dashboard_001/StaticBody3D" unique_id=1850464794]
 shape = SubResource("ConcavePolygonShape3D_4llnl")
 
-[node name="Front_door_L_001" parent="connesi_building_test2/Daily" index="6" unique_id=839428289]
+[node name="Front_door_L_001" parent="connesi_building_test2/Daily" index="6" unique_id=536240344]
 script = ExtResource("13_bc7u3")
 open_angle = -90.0
 open_sound = ExtResource("10_uxi8u")
@@ -2500,7 +2506,7 @@ collision_layer = 0
 transform = Transform3D(1, 0, 5.9604645e-08, 0, 1, 0, -5.9604645e-08, 0, 1, 0.037094116, -0.07885742, -0.73840714)
 shape = SubResource("BoxShape3D_nu7uh")
 
-[node name="Front_door_R_001" parent="connesi_building_test2/Daily" index="7" unique_id=1239189949]
+[node name="Front_door_R_001" parent="connesi_building_test2/Daily" index="7" unique_id=1424031470]
 script = ExtResource("13_bc7u3")
 open_sound = ExtResource("10_uxi8u")
 close_sound = ExtResource("11_w1ino")
@@ -2519,43 +2525,43 @@ collision_layer = 0
 transform = Transform3D(1, 0, 5.9604645e-08, 0, 1, 0, -5.9604645e-08, 0, 1, -0.4979143, 0.09887695, -0.7524643)
 shape = SubResource("BoxShape3D_gq8a1")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Interior2_001" parent_id_path=PackedInt32Array(2049194514, 259891711) index="0" unique_id=799567142]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Interior2_001" parent_id_path=PackedInt32Array(2049194514, 923922909) index="0" unique_id=799567142]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Daily/Interior2_001/StaticBody3D" unique_id=1953355228]
 shape = SubResource("ConcavePolygonShape3D_rabrk")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Interior_001" parent_id_path=PackedInt32Array(2049194514, 385846987) index="0" unique_id=1747658181]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Interior_001" parent_id_path=PackedInt32Array(2049194514, 340056470) index="0" unique_id=1747658181]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Daily/Interior_001/StaticBody3D" unique_id=1005991846]
 shape = SubResource("ConcavePolygonShape3D_8atco")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Lateral_door_001" parent_id_path=PackedInt32Array(2049194514, 172248018) index="0" unique_id=1350201051]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Lateral_door_001" parent_id_path=PackedInt32Array(2049194514, 1415001545) index="0" unique_id=1350201051]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Daily/Lateral_door_001/StaticBody3D" unique_id=1239343151]
 shape = SubResource("ConcavePolygonShape3D_d7vpb")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Other_001" parent_id_path=PackedInt32Array(2049194514, 726480319) index="0" unique_id=2055801183]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Other_001" parent_id_path=PackedInt32Array(2049194514, 94521199) index="0" unique_id=2055801183]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Daily/Other_001/StaticBody3D" unique_id=106604850]
 shape = SubResource("ConcavePolygonShape3D_vviwf")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Wheel_001" parent_id_path=PackedInt32Array(2049194514, 1729724533) index="0" unique_id=290084951]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Wheel_001" parent_id_path=PackedInt32Array(2049194514, 1552920524) index="0" unique_id=290084951]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Daily/Wheel_001/StaticBody3D" unique_id=1871292920]
 shape = SubResource("ConcavePolygonShape3D_h6oip")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Window_001" parent_id_path=PackedInt32Array(2049194514, 1443429390) index="0" unique_id=289204927]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Daily/Window_001" parent_id_path=PackedInt32Array(2049194514, 582175303) index="0" unique_id=289204927]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Daily/Window_001/StaticBody3D" unique_id=425972144]
 shape = SubResource("ConcavePolygonShape3D_ytgn5")
 
-[node name="Debris_Concer_001" parent="connesi_building_test2" index="420" unique_id=863139533]
+[node name="Debris_Concer_001" parent="connesi_building_test2" index="422" unique_id=350882256]
 visible = false
 
-[node name="Debris_Concer_003" parent="connesi_building_test2" index="422" unique_id=1163510083]
+[node name="Debris_Concer_003" parent="connesi_building_test2" index="424" unique_id=2003940632]
 visible = false
 
-[node name="default001" parent="connesi_building_test2" index="423" unique_id=726515872 groups=["navigation_source"]]
+[node name="default001" parent="connesi_building_test2" index="425" unique_id=544117352 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/default001" index="0" unique_id=887260398]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.52376556, 46.3465, 0.36878967)
@@ -2563,7 +2569,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.52376556, 46.3465, 0.368789
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/default001/StaticBody3D" unique_id=2029242829]
 shape = SubResource("BoxShape3D_fdl71")
 
-[node name="default001_001" parent="connesi_building_test2" index="424" unique_id=341534145 groups=["navigation_source"]]
+[node name="default001_001" parent="connesi_building_test2" index="426" unique_id=265964425 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/default001_001" index="0" unique_id=1246249168]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.52376556, 46.3465, 0.36878967)
@@ -2571,7 +2577,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.52376556, 46.3465, 0.368789
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/default001_001/StaticBody3D" unique_id=1025642841]
 shape = SubResource("BoxShape3D_dn4js")
 
-[node name="default002" parent="connesi_building_test2" index="425" unique_id=1389187682 groups=["navigation_source"]]
+[node name="default002" parent="connesi_building_test2" index="427" unique_id=304781551 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/default002" index="0" unique_id=1180781022]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.54951096, 23.519848, 1.2232513)
@@ -2579,15 +2585,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.54951096, 23.519848, 1.223
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/default002/StaticBody3D" unique_id=868021733]
 shape = SubResource("BoxShape3D_h657m")
 
-[node name="Vetro_014" parent="connesi_building_test2/Finestra Lab 01_001/Anta Finestra_015" parent_id_path=PackedInt32Array(2049194514, 832453056) index="3" unique_id=584076262]
+[node name="Vetro_014" parent="connesi_building_test2/Finestra Lab 01_001/Anta Finestra_015" parent_id_path=PackedInt32Array(2049194514, 862089891) index="3" unique_id=804735334]
 mesh = SubResource("ArrayMesh_a7d20")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Fritzbox" parent_id_path=PackedInt32Array(2049194514, 561341173) index="0" unique_id=144220470]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Fritzbox" parent_id_path=PackedInt32Array(2049194514, 339818571) index="0" unique_id=144220470]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Fritzbox/StaticBody3D" unique_id=44997400]
 shape = SubResource("ConcavePolygonShape3D_s50yf")
 
-[node name="Furgoncino" parent="connesi_building_test2" index="450" unique_id=1925699774 groups=["navigation_source"]]
+[node name="Furgoncino" parent="connesi_building_test2" index="452" unique_id=1493177572 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Furgoncino" index="0" unique_id=125337772]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00016361475, 0.3370819, -0.5456476)
@@ -2595,7 +2601,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00016361475, 0.3370819, -0.
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Furgoncino/StaticBody3D" unique_id=982472128]
 shape = SubResource("BoxShape3D_lqwsa")
 
-[node name="Furgone 1" parent="connesi_building_test2" index="451" unique_id=701248492 groups=["navigation_source"]]
+[node name="Furgone 1" parent="connesi_building_test2" index="453" unique_id=1863833648 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Furgone 1" index="27" unique_id=1610922438]
 
@@ -2603,43 +2609,43 @@ shape = SubResource("BoxShape3D_lqwsa")
 transform = Transform3D(0.99992716, -3.3155084e-07, -2.682209e-07, -3.6507845e-07, 0.9999897, -1.899898e-07, -3.8146973e-05, 1.6018748e-07, 0.99999964, 0.38500214, 0.21108735, 0.026529312)
 shape = SubResource("BoxShape3D_xwfrh")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Griglia/Griglia_006" parent_id_path=PackedInt32Array(2049194514, 1695646401) index="0" unique_id=774354673]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Griglia/Griglia_006" parent_id_path=PackedInt32Array(2049194514, 593483421) index="0" unique_id=774354673]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.1452017)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Griglia/Griglia_006/StaticBody3D" unique_id=1124544913]
 shape = SubResource("BoxShape3D_s50yf")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Griglia_013/Griglia_011" parent_id_path=PackedInt32Array(2049194514, 1891079331) index="0" unique_id=127642369]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Griglia_013/Griglia_011" parent_id_path=PackedInt32Array(2049194514, 1024969282) index="0" unique_id=127642369]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3.8491158)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Griglia_013/Griglia_011/StaticBody3D" unique_id=358810273]
 shape = SubResource("BoxShape3D_sj0uy")
 
-[node name="Interruttore Connesi Lab" parent="connesi_building_test2" index="458" unique_id=139924543 node_paths=PackedStringArray("power_system", "lights_root")]
+[node name="Interruttore Connesi Lab" parent="connesi_building_test2" index="460" unique_id=2067185235 node_paths=PackedStringArray("power_system", "lights_root")]
 script = ExtResource("4_tgyvi")
 power_system = NodePath("../../ConnesiPower")
 lights_root = NodePath("../../LuciLab")
 switch_on_sound = ExtResource("16_d7vpb")
 switch_off_sound = ExtResource("16_d7vpb")
 
-[node name="Area3D" type="Area3D" parent="connesi_building_test2/Interruttore Connesi Lab/baase" parent_id_path=PackedInt32Array(2049194514, 1321474485) index="0" unique_id=1141685980]
+[node name="Area3D" type="Area3D" parent="connesi_building_test2/Interruttore Connesi Lab/baase" parent_id_path=PackedInt32Array(2049194514, 1965041311) index="0" unique_id=1141685980]
 collision_layer = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Interruttore Connesi Lab/baase/Area3D" unique_id=1836903835]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.099121094, 0.0024414063, -0.01928711)
 shape = SubResource("BoxShape3D_sde4t")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Lampada appesa Connesi Lab " parent_id_path=PackedInt32Array(2049194514, 835400540) index="0" unique_id=270242535]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Lampada appesa Connesi Lab " parent_id_path=PackedInt32Array(2049194514, 1973274099) index="0" unique_id=270242535]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Lampada appesa Connesi Lab /StaticBody3D" unique_id=526645177]
 shape = SubResource("BoxShape3D_d7pmh")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Lampada appesa Connesi Lab _001" parent_id_path=PackedInt32Array(2049194514, 1085669382) index="0" unique_id=923759146]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Lampada appesa Connesi Lab _001" parent_id_path=PackedInt32Array(2049194514, 501259418) index="0" unique_id=923759146]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Lampada appesa Connesi Lab _001/StaticBody3D" unique_id=1681919711]
 shape = SubResource("BoxShape3D_li8mp")
 
-[node name="LampGlassGlow7" type="MeshInstance3D" parent="connesi_building_test2/Lampione/Lampione_001" parent_id_path=PackedInt32Array(2049194514, 971861301) index="0" unique_id=975978286]
+[node name="LampGlassGlow7" type="MeshInstance3D" parent="connesi_building_test2/Lampione/Lampione_001" parent_id_path=PackedInt32Array(2049194514, 1230765612) index="0" unique_id=975978286]
 transform = Transform3D(-0.9999974, 0, 0.0022657067, 0, 1, 0, -0.0022657067, 0, -0.9999974, -0.0010852814, -0.040767193, 0.3930092)
 material_override = ExtResource("4_x7an2")
 cast_shadow = 0
@@ -2651,7 +2657,7 @@ light_energy = 0.2
 light_volumetric_fog_energy = 2.0
 omni_range = 2.5
 
-[node name="LampSpot7" type="SpotLight3D" parent="connesi_building_test2/Lampione/Lampione_001" parent_id_path=PackedInt32Array(2049194514, 971861301) index="1" unique_id=446429338]
+[node name="LampSpot7" type="SpotLight3D" parent="connesi_building_test2/Lampione/Lampione_001" parent_id_path=PackedInt32Array(2049194514, 1230765612) index="1" unique_id=446429338]
 transform = Transform3D(-0.99999744, -0.002265707, -9.903721e-11, 0, -4.3711392e-08, 1, -0.002265707, 0.99999744, 4.371128e-08, 0.16623878, -0.05131817, 0.34938812)
 light_color = Color(0.8862745, 0.827451, 0.65882355, 1)
 light_energy = 1.8
@@ -2660,9 +2666,9 @@ light_volumetric_fog_energy = 4.0
 spot_range = 20.0
 spot_angle = 55.0
 
-[node name="Lampione_004" parent="connesi_building_test2/Lampione_007" parent_id_path=PackedInt32Array(2049194514, 1873497623) index="0" unique_id=143604708 groups=["navigation_source"]]
+[node name="Lampione_004" parent="connesi_building_test2/Lampione_007" parent_id_path=PackedInt32Array(2049194514, 369362518) index="0" unique_id=61964048 groups=["navigation_source"]]
 
-[node name="LuceLampione" type="Node3D" parent="connesi_building_test2/Lampione_007/Lampione_006" parent_id_path=PackedInt32Array(2049194514, 1515868077) index="0" unique_id=1236160875]
+[node name="LuceLampione" type="Node3D" parent="connesi_building_test2/Lampione_007/Lampione_006" parent_id_path=PackedInt32Array(2049194514, 970218133) index="0" unique_id=1236160875]
 transform = Transform3D(-0.9999974, 0, 0.0022657067, 0, 1, 0, -0.0022657067, 0, -0.9999974, 0.004843712, -0.03330183, 0.38129616)
 script = ExtResource("20_2eqvw")
 broken_hum_stream = ExtResource("21_b5yj6")
@@ -2692,7 +2698,7 @@ mesh = SubResource("BoxMesh_hbjui")
 [node name="SparksElectric" parent="connesi_building_test2/Lampione_007/Lampione_006/LuceLampione" unique_id=1038706752 instance=ExtResource("79_e81ru")]
 transform = Transform3D(-0.1210526, 0.99264425, -6.2864274e-09, -0.99264586, -0.1210528, 0, 0, 3.4924597e-09, 1, -0.002084732, -0.022884846, -0.030632019)
 
-[node name="LuceLampione" type="Node3D" parent="connesi_building_test2/Lampione_011/Lampione_010" parent_id_path=PackedInt32Array(2049194514, 1691516608) index="0" unique_id=452889585]
+[node name="LuceLampione" type="Node3D" parent="connesi_building_test2/Lampione_011/Lampione_010" parent_id_path=PackedInt32Array(2049194514, 117386485) index="0" unique_id=452889585]
 script = ExtResource("20_2eqvw")
 broken_hum_stream = ExtResource("21_b5yj6")
 spark_stream = ExtResource("22_536hy")
@@ -2721,7 +2727,7 @@ shadow_enabled = true
 spot_range = 20.0
 script = ExtResource("20_ipk72")
 
-[node name="LuceLampione" type="Node3D" parent="connesi_building_test2/Lampione_015/Lampione_014" parent_id_path=PackedInt32Array(2049194514, 540842726) index="0" unique_id=1097508516]
+[node name="LuceLampione" type="Node3D" parent="connesi_building_test2/Lampione_015/Lampione_014" parent_id_path=PackedInt32Array(2049194514, 758880899) index="0" unique_id=1097508516]
 
 [node name="LampGlow" type="MeshInstance3D" parent="connesi_building_test2/Lampione_015/Lampione_014/LuceLampione" unique_id=1537383585]
 transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, -0.0001296997, -0.035047054, 0.35200882)
@@ -2745,7 +2751,7 @@ light_energy = 0.2
 light_volumetric_fog_energy = 2.0
 omni_range = 2.5
 
-[node name="LampGlassGlow4" type="MeshInstance3D" parent="connesi_building_test2/Lampione_015/Lampione_017" parent_id_path=PackedInt32Array(2049194514, 1683223897) index="0" unique_id=1606126699]
+[node name="LampGlassGlow4" type="MeshInstance3D" parent="connesi_building_test2/Lampione_015/Lampione_017" parent_id_path=PackedInt32Array(2049194514, 1965310186) index="0" unique_id=1606126699]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.011993408, -0.035047054, 0.34810257)
 material_override = ExtResource("4_x7an2")
 cast_shadow = 0
@@ -2757,7 +2763,7 @@ light_energy = 0.2
 light_volumetric_fog_energy = 2.0
 omni_range = 2.5
 
-[node name="LampSpot4" type="SpotLight3D" parent="connesi_building_test2/Lampione_015/Lampione_017" parent_id_path=PackedInt32Array(2049194514, 1683223897) index="1" unique_id=1745394661]
+[node name="LampSpot4" type="SpotLight3D" parent="connesi_building_test2/Lampione_015/Lampione_017" parent_id_path=PackedInt32Array(2049194514, 1965310186) index="1" unique_id=1745394661]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -0.15524292, -0.04559803, 0.3921013)
 light_color = Color(0.8862745, 0.827451, 0.65882355, 1)
 light_energy = 1.8
@@ -2766,7 +2772,7 @@ light_volumetric_fog_energy = 4.0
 spot_range = 20.0
 spot_angle = 55.0
 
-[node name="LampGlassGlow2" type="MeshInstance3D" parent="connesi_building_test2/Lampione_021/Lampione_020" parent_id_path=PackedInt32Array(2049194514, 1735708457) index="0" unique_id=1675801794]
+[node name="LampGlassGlow2" type="MeshInstance3D" parent="connesi_building_test2/Lampione_021/Lampione_020" parent_id_path=PackedInt32Array(2049194514, 915462861) index="0" unique_id=1675801794]
 transform = Transform3D(-1, 0, -8.940697e-08, 0, 1, 0, 8.940697e-08, 0, -1, 0.003189087, -0.035047054, 0.35219955)
 material_override = ExtResource("4_x7an2")
 cast_shadow = 0
@@ -2778,7 +2784,7 @@ light_energy = 0.2
 light_volumetric_fog_energy = 2.0
 omni_range = 2.5
 
-[node name="LampSpot2" type="SpotLight3D" parent="connesi_building_test2/Lampione_021/Lampione_020" parent_id_path=PackedInt32Array(2049194514, 1735708457) index="1" unique_id=1418443858]
+[node name="LampSpot2" type="SpotLight3D" parent="connesi_building_test2/Lampione_021/Lampione_020" parent_id_path=PackedInt32Array(2049194514, 915462861) index="1" unique_id=1418443858]
 transform = Transform3D(-1, 8.940697e-08, 3.996803e-15, 0, -4.371139e-08, 1, 8.940697e-08, 1, 4.371139e-08, 0.1704483, -0.04559803, 0.30820084)
 light_color = Color(0.8862745, 0.827451, 0.65882355, 1)
 light_energy = 1.8
@@ -2786,7 +2792,7 @@ light_indirect_energy = 0.0
 spot_range = 20.0
 spot_angle = 55.0
 
-[node name="LampSpot" type="SpotLight3D" parent="connesi_building_test2/Lampione_021/Lampione_023" parent_id_path=PackedInt32Array(2049194514, 595709991) index="0" unique_id=876193890]
+[node name="LampSpot" type="SpotLight3D" parent="connesi_building_test2/Lampione_021/Lampione_023" parent_id_path=PackedInt32Array(2049194514, 469088953) index="0" unique_id=876193890]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.054275513, -0.067539215, 0.3684597)
 light_color = Color(0.8862745, 0.827451, 0.65882355, 1)
 light_energy = 1.8
@@ -2794,7 +2800,7 @@ light_indirect_energy = 0.0
 spot_range = 20.0
 spot_angle = 55.0
 
-[node name="LampGlassGlow" type="MeshInstance3D" parent="connesi_building_test2/Lampione_021/Lampione_023" parent_id_path=PackedInt32Array(2049194514, 595709991) index="1" unique_id=130496380]
+[node name="LampGlassGlow" type="MeshInstance3D" parent="connesi_building_test2/Lampione_021/Lampione_023" parent_id_path=PackedInt32Array(2049194514, 469088953) index="1" unique_id=130496380]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00033569336, -0.035047054, 0.34194565)
 material_override = ExtResource("4_x7an2")
 cast_shadow = 0
@@ -2806,18 +2812,18 @@ light_energy = 0.2
 light_volumetric_fog_energy = 2.0
 omni_range = 2.5
 
-[node name="macBook_BottomPart" parent="connesi_building_test2" index="474" unique_id=1050974485 groups=["bruno_intro_blocker"]]
+[node name="macBook_BottomPart" parent="connesi_building_test2" index="476" unique_id=646338016 groups=["bruno_intro_blocker"]]
 
-[node name="macBook_TopPart" parent="connesi_building_test2" index="475" unique_id=639689442 groups=["bruno_intro_blocker"]]
+[node name="macBook_TopPart" parent="connesi_building_test2" index="477" unique_id=68363734 groups=["bruno_intro_blocker"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Magazzino Controporta/Cylinder_043" parent_id_path=PackedInt32Array(2049194514, 723574718) index="0" unique_id=1439841276]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Magazzino Controporta/Cylinder_043" parent_id_path=PackedInt32Array(2049194514, 2071500665) index="0" unique_id=1439841276]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.0600219, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Magazzino Controporta/Cylinder_043/StaticBody3D" unique_id=1538024036]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9212494, 0, 0)
 shape = SubResource("BoxShape3D_t870g")
 
-[node name="Cylinder_150" parent="connesi_building_test2/Magazzino Controporta_001" parent_id_path=PackedInt32Array(2049194514, 1964499055) index="2" unique_id=1044811872 groups=["navigation_source"]]
+[node name="Cylinder_150" parent="connesi_building_test2/Magazzino Controporta_001" parent_id_path=PackedInt32Array(2049194514, 695952877) index="2" unique_id=336014170 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Magazzino Controporta_001/Cylinder_150" index="0" unique_id=1051566680]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.280027, -0.023921762, 3.2875687e-07)
@@ -2826,22 +2832,22 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.280027, -0.023921762, 3.287
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.037746564, 0)
 shape = SubResource("BoxShape3D_qua40")
 
-[node name="Mangiafuoco" parent="connesi_building_test2" index="482" unique_id=2064863754]
+[node name="Mangiafuoco" parent="connesi_building_test2" index="484" unique_id=1200371343]
 transform = Transform3D(-20.33103, 0, 3.2687101, 0, 20.592117, 0, -3.2687101, 0, -20.33103, 62.284588, 4.606119, 52.739967)
 
-[node name="Marciapiede Connesi" parent="connesi_building_test2" index="483" unique_id=404252356 groups=["navigation_source"]]
+[node name="Marciapiede Connesi" parent="connesi_building_test2" index="485" unique_id=746438355 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Marciapiede Connesi" index="0" unique_id=1656391025 groups=["surface_rock"]]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Marciapiede Connesi/StaticBody3D" unique_id=664366778]
 shape = SubResource("ConcavePolygonShape3D_ph6jt")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/marciapiede lesbiche" parent_id_path=PackedInt32Array(2049194514, 511925654) index="0" unique_id=1803604321 groups=["surface_rock"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/marciapiede lesbiche" parent_id_path=PackedInt32Array(2049194514, 103893534) index="0" unique_id=1803604321 groups=["surface_rock"]]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/marciapiede lesbiche/StaticBody3D" unique_id=1127981591]
 shape = SubResource("ConcavePolygonShape3D_x7an2")
 
-[node name="Mesh0_001" parent="connesi_building_test2" index="486" unique_id=1405997562]
+[node name="Mesh0_001" parent="connesi_building_test2" index="488" unique_id=1943833054]
 transform = Transform3D(0.5300822, 0, 0.8479462, 0, 1, 0, -0.8479462, 0, 0.5300822, 2.375764, 0.9517575, 8.853089)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh0_001" index="0" unique_id=2008837040]
@@ -2850,97 +2856,97 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00029999018, -0.00033551455
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh0_001/StaticBody3D" unique_id=1023741816]
 shape = SubResource("BoxShape3D_57vxp")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_001" parent_id_path=PackedInt32Array(2049194514, 1296610993) index="0" unique_id=1523754267]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_001" parent_id_path=PackedInt32Array(2049194514, 1923560445) index="0" unique_id=1523754267]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0052199364, -0.0009770393, 0.00015091896)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_001/StaticBody3D" unique_id=505069458]
 shape = SubResource("BoxShape3D_txxu5")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_002" parent_id_path=PackedInt32Array(2049194514, 753739027) index="0" unique_id=1326286409]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_002" parent_id_path=PackedInt32Array(2049194514, 526564540) index="0" unique_id=1326286409]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0052199364, -0.0009770393, 0.00015091896)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_002/StaticBody3D" unique_id=875645714]
 shape = SubResource("BoxShape3D_l7etq")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_003" parent_id_path=PackedInt32Array(2049194514, 1693113632) index="0" unique_id=574330820]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_003" parent_id_path=PackedInt32Array(2049194514, 294577815) index="0" unique_id=574330820]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059223175, -0.002628088, 0.002086401)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_003/StaticBody3D" unique_id=1398374814]
 shape = SubResource("BoxShape3D_01uak")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_004" parent_id_path=PackedInt32Array(2049194514, 1814220134) index="0" unique_id=679355409]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_004" parent_id_path=PackedInt32Array(2049194514, 21726018) index="0" unique_id=679355409]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059223175, -0.002628088, 0.002086401)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_004/StaticBody3D" unique_id=2109646479]
 shape = SubResource("BoxShape3D_ucypp")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_005" parent_id_path=PackedInt32Array(2049194514, 1848566731) index="0" unique_id=76120118]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_005" parent_id_path=PackedInt32Array(2049194514, 738224287) index="0" unique_id=76120118]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059223175, -0.002628088, 0.002086401)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_005/StaticBody3D" unique_id=183176805]
 shape = SubResource("BoxShape3D_eh1uj")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_006" parent_id_path=PackedInt32Array(2049194514, 1713919358) index="0" unique_id=1684563822]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_006" parent_id_path=PackedInt32Array(2049194514, 1912538704) index="0" unique_id=1684563822]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059223175, -0.002628088, 0.002086401)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_006/StaticBody3D" unique_id=814776629]
 shape = SubResource("BoxShape3D_77pxf")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_007" parent_id_path=PackedInt32Array(2049194514, 890050682) index="0" unique_id=1205887598]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_007" parent_id_path=PackedInt32Array(2049194514, 1434534558) index="0" unique_id=1205887598]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059223175, -0.002628088, 0.002086401)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_007/StaticBody3D" unique_id=1863126026]
 shape = SubResource("BoxShape3D_bnlxa")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_008" parent_id_path=PackedInt32Array(2049194514, 628870673) index="0" unique_id=482535466]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_008" parent_id_path=PackedInt32Array(2049194514, 915253231) index="0" unique_id=482535466]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059223175, -0.002628088, 0.002086401)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_008/StaticBody3D" unique_id=306769708]
 shape = SubResource("BoxShape3D_tvbu8")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_009" parent_id_path=PackedInt32Array(2049194514, 2077280000) index="0" unique_id=1200753837]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_009" parent_id_path=PackedInt32Array(2049194514, 1516927051) index="0" unique_id=1200753837]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059223175, -0.002628088, 0.002086401)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_009/StaticBody3D" unique_id=1837114501]
 shape = SubResource("BoxShape3D_5apbv")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_010" parent_id_path=PackedInt32Array(2049194514, 2040822754) index="0" unique_id=1082693507]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_010" parent_id_path=PackedInt32Array(2049194514, 681879365) index="0" unique_id=1082693507]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059223175, -0.002628088, 0.002086401)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_010/StaticBody3D" unique_id=1822934958]
 shape = SubResource("BoxShape3D_5f11j")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_011" parent_id_path=PackedInt32Array(2049194514, 1461893940) index="0" unique_id=1837461916]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_011" parent_id_path=PackedInt32Array(2049194514, 1296871157) index="0" unique_id=1837461916]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059223175, -0.002628088, 0.002086401)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_011/StaticBody3D" unique_id=1034127164]
 shape = SubResource("BoxShape3D_xh60n")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_012" parent_id_path=PackedInt32Array(2049194514, 1334929058) index="0" unique_id=535352575]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_012" parent_id_path=PackedInt32Array(2049194514, 1423177250) index="0" unique_id=535352575]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0035726428, -0.0009006262, 0.00023426116)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_012/StaticBody3D" unique_id=2044240096]
 shape = SubResource("BoxShape3D_1bou7")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_013" parent_id_path=PackedInt32Array(2049194514, 2037507922) index="0" unique_id=911814097]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_013" parent_id_path=PackedInt32Array(2049194514, 1631155342) index="0" unique_id=911814097]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0035726428, -0.0009006262, 0.00023426116)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_013/StaticBody3D" unique_id=1443889052]
 shape = SubResource("BoxShape3D_5k2av")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_014" parent_id_path=PackedInt32Array(2049194514, 394889669) index="0" unique_id=617831748]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_014" parent_id_path=PackedInt32Array(2049194514, 342781453) index="0" unique_id=617831748]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0035726428, -0.0009006262, 0.00023426116)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_014/StaticBody3D" unique_id=294119929]
 shape = SubResource("BoxShape3D_lxcis")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_015" parent_id_path=PackedInt32Array(2049194514, 1587010468) index="0" unique_id=278456574]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_015" parent_id_path=PackedInt32Array(2049194514, 1109296394) index="0" unique_id=278456574]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0035726428, -0.0009006262, 0.00023426116)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_015/StaticBody3D" unique_id=1648325360]
 shape = SubResource("BoxShape3D_ua5qi")
 
-[node name="Mesh_0_017" parent="connesi_building_test2" index="503" unique_id=284218953]
+[node name="Mesh_0_017" parent="connesi_building_test2" index="505" unique_id=2016395570]
 surface_material_override/0 = SubResource("StandardMaterial3D_hxoo6")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="connesi_building_test2/Mesh_0_017" index="0" unique_id=1619107667]
@@ -2960,15 +2966,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.024750859, 0.074086905, 0.0
 transform = Transform3D(0.9460441, 0, -0.32403743, 0, 1.0000002, 0, 0.32403743, 0, 0.9460441, 0.016448021, 0, -0.06717539)
 shape = SubResource("BoxShape3D_nnnax")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_025" parent_id_path=PackedInt32Array(2049194514, 939981002) index="0" unique_id=538602333]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mesh_0_025" parent_id_path=PackedInt32Array(2049194514, 297905672) index="0" unique_id=538602333]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_025/StaticBody3D" unique_id=464154249]
 shape = SubResource("ConvexPolygonShape3D_duq4h")
 
-[node name="Mesh_0_026" parent="connesi_building_test2" index="505" unique_id=700926049]
+[node name="Mesh_0_026" parent="connesi_building_test2" index="507" unique_id=1935869076]
 transform = Transform3D(-7.4901433, 0, 1.4846104, 0, 3, 0, -1.4846104, 0, -7.4901433, 0.058552504, -0.16914305, 26.169012)
 
-[node name="Mesh_0_031" parent="connesi_building_test2" index="507" unique_id=1282092136]
+[node name="Mesh_0_031" parent="connesi_building_test2" index="509" unique_id=1523152850]
 surface_material_override/0 = SubResource("StandardMaterial3D_6ltsf")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="connesi_building_test2/Mesh_0_031" index="0" unique_id=43595800]
@@ -2980,7 +2986,7 @@ autoplay = &"glow_scia"
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mesh_0_031/StaticBody3D" unique_id=880533919]
 shape = SubResource("ConvexPolygonShape3D_dn4js")
 
-[node name="Mesh_0_033" parent="connesi_building_test2" index="508" unique_id=657166456]
+[node name="Mesh_0_033" parent="connesi_building_test2" index="510" unique_id=340775616]
 mesh = SubResource("ArrayMesh_mus8j")
 surface_material_override/0 = SubResource("StandardMaterial3D_h0t2i")
 
@@ -2988,7 +2994,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_h0t2i")
 libraries/ = SubResource("AnimationLibrary_uxi8u")
 autoplay = &"RESET"
 
-[node name="meteor_HP_Cube" parent="connesi_building_test2" index="510" unique_id=784591382]
+[node name="meteor_HP_Cube" parent="connesi_building_test2" index="512" unique_id=1045294007]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.874252, 1.8904552, 22.649475)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/meteor_HP_Cube" index="0" unique_id=1738338205]
@@ -2996,17 +3002,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.874252, 1.8904552, 22.6494
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/meteor_HP_Cube/StaticBody3D" unique_id=1771913938]
 shape = SubResource("ConcavePolygonShape3D_ipk72")
 
-[node name="Microfono Banco" parent="connesi_building_test2" index="511" unique_id=220403914 groups=["bruno_intro_blocker"]]
+[node name="Microfono Banco" parent="connesi_building_test2" index="513" unique_id=997711324 groups=["bruno_intro_blocker"]]
 
-[node name="Microfono Banco_001" parent="connesi_building_test2" index="512" unique_id=1033028059 groups=["bruno_intro_blocker"]]
+[node name="Microfono Banco_001" parent="connesi_building_test2" index="514" unique_id=977058749 groups=["bruno_intro_blocker"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/microphone" parent_id_path=PackedInt32Array(2049194514, 473281717) index="0" unique_id=1677788612]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/microphone" parent_id_path=PackedInt32Array(2049194514, 1151764669) index="0" unique_id=1677788612]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.055808082, 0.17095777, -0.02408744)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/microphone/StaticBody3D" unique_id=2074523121]
 shape = SubResource("BoxShape3D_2eqvw")
 
-[node name="Monitor Appeso" parent="connesi_building_test2" index="517" unique_id=315283435 node_paths=PackedStringArray("power_system", "video_player", "audio_player", "room_area")]
+[node name="Monitor Appeso" parent="connesi_building_test2" index="519" unique_id=1887420234 node_paths=PackedStringArray("power_system", "video_player", "audio_player", "room_area")]
 transform = Transform3D(-5.6598645e-07, 0, 3.474, 0, 4, 0, -3.474, 0, -5.6598645e-07, 2.1022007, 2.282926, 10.968824)
 script = ExtResource("4_l7etq")
 power_system = NodePath("../../ConnesiPower")
@@ -3032,28 +3038,28 @@ transform = Transform3D(0.9999761, -0.0007660841, -0.006939102, 0, 0.99396145, -
 material_override = SubResource("StandardMaterial3D_vviwf")
 mesh = SubResource("QuadMesh_hbjui")
 
-[node name="Mura Interne Alte" parent="connesi_building_test2" index="556" unique_id=1222039667 groups=["navigation_source"]]
+[node name="Mura Interne Alte" parent="connesi_building_test2" index="569" unique_id=1725976001 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mura Interne Alte/Parete_013" parent_id_path=PackedInt32Array(2049194514, 1243102496) index="0" unique_id=178992189]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Mura Interne Alte/Parete_013" parent_id_path=PackedInt32Array(2049194514, 873578955) index="0" unique_id=178992189]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Mura Interne Alte/Parete_013/StaticBody3D" unique_id=50989172]
 shape = ExtResource("88_passage_collision")
 
-[node name="Muretto Esterno Assistenza" parent="connesi_building_test2" index="558" unique_id=1705599245 groups=["navigation_source"]]
+[node name="Muretto Esterno Assistenza" parent="connesi_building_test2" index="571" unique_id=1227477079 groups=["navigation_source"]]
 
-[node name="MURI_ESTERNI_PT" parent="connesi_building_test2" index="564" unique_id=1446690964 groups=["navigation_source"]]
+[node name="MURI_ESTERNI_PT" parent="connesi_building_test2" index="577" unique_id=1228193337 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/MURI_ESTERNI_PT" index="0" unique_id=617978261]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/MURI_ESTERNI_PT/StaticBody3D" unique_id=1804342157]
 shape = SubResource("ConcavePolygonShape3D_hxoo6")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Node_0/Body_003" parent_id_path=PackedInt32Array(2049194514, 1649084585) index="0" unique_id=95030370]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Node_0/Body_003" parent_id_path=PackedInt32Array(2049194514, 896963556) index="0" unique_id=95030370]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Node_0/Body_003/StaticBody3D" unique_id=1583090174]
 shape = SubResource("BoxShape3D_1p5km")
 
-[node name="Object_2_001" parent="connesi_building_test2" index="568" unique_id=1686580130 groups=["navigation_source"]]
+[node name="Object_2_001" parent="connesi_building_test2" index="581" unique_id=1104112655 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Object_2_001" index="0" unique_id=1460220973]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48174208, 1.0134491, 0)
@@ -3061,82 +3067,82 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48174208, 1.0134491, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Object_2_001/StaticBody3D" unique_id=137264130]
 shape = SubResource("BoxShape3D_48lc1")
 
-[node name="OcchioDiBue" parent="connesi_building_test2" index="571" unique_id=1629515474]
+[node name="OcchioDiBue" parent="connesi_building_test2" index="584" unique_id=494468367]
 visible = false
 
-[node name="Cylinder_128" parent="connesi_building_test2/OcchioDiBue" index="1" unique_id=3647039]
+[node name="Cylinder_128" parent="connesi_building_test2/OcchioDiBue" index="1" unique_id=1956257801]
 transform = Transform3D(0.99999964, 0, 0, 0, 0.99999964, 0, 0, 0, 0.99999964, 0.07921517, 7.624398, -0.6090412)
 mesh = SubResource("ArrayMesh_d2nfi")
 
-[node name="OfficeChair_LP_001" parent="connesi_building_test2" index="573" unique_id=28498400 groups=["bruno_intro_blocker"]]
+[node name="OfficeChair_LP_001" parent="connesi_building_test2" index="586" unique_id=2083132967 groups=["bruno_intro_blocker"]]
 transform = Transform3D(-0.04461822, 0, 0.99900407, 0, 1, 0, -0.99900407, 0, -0.04461822, 2.0972698, 0, 10.453541)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ornamento" parent_id_path=PackedInt32Array(2049194514, 937361380) index="0" unique_id=2058937889]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ornamento" parent_id_path=PackedInt32Array(2049194514, 1859176031) index="0" unique_id=2058937889]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00013287738, 0, 0.00055736303)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/ornamento/StaticBody3D" unique_id=1817615236]
 shape = SubResource("BoxShape3D_1lpuw")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ornamento_001" parent_id_path=PackedInt32Array(2049194514, 1995965993) index="0" unique_id=39396757]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ornamento_001" parent_id_path=PackedInt32Array(2049194514, 412404073) index="0" unique_id=39396757]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00013287738, 0, 0.00055736303)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/ornamento_001/StaticBody3D" unique_id=1816150857]
 shape = SubResource("BoxShape3D_prnrn")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ornamento_002" parent_id_path=PackedInt32Array(2049194514, 1277190127) index="0" unique_id=364042346]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ornamento_002" parent_id_path=PackedInt32Array(2049194514, 1564800409) index="0" unique_id=364042346]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00013287738, 0, 0.00055736303)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/ornamento_002/StaticBody3D" unique_id=649521317]
 shape = SubResource("BoxShape3D_nblw5")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Pannello Lab" parent_id_path=PackedInt32Array(2049194514, 492335621) index="0" unique_id=1232786945]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Pannello Lab" parent_id_path=PackedInt32Array(2049194514, 481427554) index="0" unique_id=1232786945]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Pannello Lab/StaticBody3D" unique_id=1925723883]
 shape = SubResource("BoxShape3D_ok301")
 
-[node name="Parete Assistenza" parent="connesi_building_test2" index="583" unique_id=14087142 groups=["navigation_source"]]
+[node name="Parete Assistenza" parent="connesi_building_test2" index="596" unique_id=1864807659 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Assistenza" index="0" unique_id=1630261865]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete Assistenza/StaticBody3D" unique_id=1444739709]
 shape = SubResource("ConcavePolygonShape3D_6yp8p")
 
-[node name="Parete Lab" parent="connesi_building_test2" index="584" unique_id=2003874950 groups=["navigation_source"]]
+[node name="Parete Lab" parent="connesi_building_test2" index="597" unique_id=1982716530 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Lab" index="0" unique_id=883153375]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete Lab/StaticBody3D" unique_id=1163512941]
 shape = SubResource("ConcavePolygonShape3D_fj46i")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino 01/Cylinder_022" parent_id_path=PackedInt32Array(2049194514, 1831243672) index="0" unique_id=2120143253]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino 01/Cylinder_022" parent_id_path=PackedInt32Array(2049194514, 493575597) index="0" unique_id=2120143253]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.280009, 0.015172742, -8.4750354e-08)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete Magazzino 01/Cylinder_022/StaticBody3D" unique_id=551349029]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.034061432, 0.003103491, 0)
 shape = SubResource("BoxShape3D_tixhl")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino 02/Cylinder_023" parent_id_path=PackedInt32Array(2049194514, 796445529) index="0" unique_id=1522649039]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino 02/Cylinder_023" parent_id_path=PackedInt32Array(2049194514, 1017893481) index="0" unique_id=1522649039]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.12998927, 1.0350007, 9.19681e-09)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete Magazzino 02/Cylinder_023/StaticBody3D" unique_id=1486089498 groups=["navigation_source"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0016175508, 0, 0)
 shape = SubResource("BoxShape3D_d1fd1")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino 03/Cylinder_026" parent_id_path=PackedInt32Array(2049194514, 1862228673) index="0" unique_id=544823328]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino 03/Cylinder_026" parent_id_path=PackedInt32Array(2049194514, 548158987) index="0" unique_id=544823328]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.14941186, 1.0350007, 9.19681e-09)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete Magazzino 03/Cylinder_026/StaticBody3D" unique_id=548187125]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0010650158, 0, 0)
 shape = SubResource("BoxShape3D_h2vjf")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino 03_003/Cylinder_079" parent_id_path=PackedInt32Array(2049194514, 1454848320) index="0" unique_id=44802722]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino 03_003/Cylinder_079" parent_id_path=PackedInt32Array(2049194514, 254355255) index="0" unique_id=44802722]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1685033, 0.55728376, -1.7648563e-07)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete Magazzino 03_003/Cylinder_079/StaticBody3D" unique_id=1563405828]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.760283, 0, 0)
 shape = SubResource("BoxShape3D_rclvm")
 
-[node name="Cylinder_029" parent="connesi_building_test2/Parete Magazzino 05_001" parent_id_path=PackedInt32Array(2049194514, 1351125499) index="1" unique_id=1603257140 groups=["navigation_source"]]
+[node name="Cylinder_029" parent="connesi_building_test2/Parete Magazzino 05_001" parent_id_path=PackedInt32Array(2049194514, 516397762) index="1" unique_id=1947273604 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino 05_001/Cylinder_029" index="0" unique_id=442191210]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8000131, 0, 0)
@@ -3145,117 +3151,117 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8000131, 0, 0)
 transform = Transform3D(1, 0, -7.31859e-13, 0, 1, 0, 7.31859e-13, 0, 1, -0.10821533, 0.011649981, 0)
 shape = SubResource("BoxShape3D_qvrwn")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino 05_003/Cylinder_083" parent_id_path=PackedInt32Array(2049194514, 1334785531) index="0" unique_id=1975847868]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino 05_003/Cylinder_083" parent_id_path=PackedInt32Array(2049194514, 1035294875) index="0" unique_id=1975847868]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8000131, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete Magazzino 05_003/Cylinder_083/StaticBody3D" unique_id=254289501]
 transform = Transform3D(1, 0, -2.4016344e-12, 0, 1, 0, 2.4016344e-12, 0, 1, 20.970505, -0.011833072, 1.5258789e-05)
 shape = SubResource("BoxShape3D_m8lfl")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino Posteriore/Cylinder_034" parent_id_path=PackedInt32Array(2049194514, 366569837) index="0" unique_id=345401529]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete Magazzino Posteriore/Cylinder_034" parent_id_path=PackedInt32Array(2049194514, 1391077671) index="0" unique_id=345401529]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.000037, -0.00976976, 1.0617077e-07)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete Magazzino Posteriore/Cylinder_034/StaticBody3D" unique_id=622405025]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.698309, -0.13075936, -7.6293945e-06)
 shape = SubResource("BoxShape3D_ueqv6")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_001" parent_id_path=PackedInt32Array(2049194514, 1536107136) index="0" unique_id=300328366]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_001" parent_id_path=PackedInt32Array(2049194514, 1212599318) index="0" unique_id=300328366]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1140766, 0.067342125, 3.450338)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_001/StaticBody3D" unique_id=2001661362]
 shape = SubResource("BoxShape3D_4hdm5")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_009" parent_id_path=PackedInt32Array(2049194514, 1745682802) index="0" unique_id=168382223]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_009" parent_id_path=PackedInt32Array(2049194514, 1331436401) index="0" unique_id=168382223]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_009/StaticBody3D" unique_id=2067186727]
 shape = SubResource("ConcavePolygonShape3D_sj0uy")
 
-[node name="Parete_010" parent="connesi_building_test2" index="603" unique_id=1510278272 groups=["navigation_source"]]
+[node name="Parete_010" parent="connesi_building_test2" index="616" unique_id=1624292988 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_010" index="0" unique_id=1375823207]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_010/StaticBody3D" unique_id=1459084828]
 shape = SubResource("ConcavePolygonShape3D_qua40")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_012" parent_id_path=PackedInt32Array(2049194514, 341449005) index="0" unique_id=151807683]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_012" parent_id_path=PackedInt32Array(2049194514, 1761793162) index="0" unique_id=151807683]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0907819, -0.0965079, 3.56361)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_012/StaticBody3D" unique_id=604361267]
 shape = SubResource("BoxShape3D_bc5u2")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_014" parent_id_path=PackedInt32Array(2049194514, 2017546004) index="0" unique_id=1868558762]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_014" parent_id_path=PackedInt32Array(2049194514, 354957638) index="0" unique_id=1868558762]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0350688, 0.34466445, 0.41201708)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_014/StaticBody3D" unique_id=1245134320]
 shape = SubResource("BoxShape3D_ctk3m")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_015" parent_id_path=PackedInt32Array(2049194514, 562009859) index="0" unique_id=2038216134]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_015" parent_id_path=PackedInt32Array(2049194514, 1495353197) index="0" unique_id=2038216134]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_015/StaticBody3D" unique_id=400788197]
 shape = SubResource("ConcavePolygonShape3D_t870g")
 
-[node name="Parete_018" parent="connesi_building_test2" index="610" unique_id=1202606531 groups=["navigation_source"]]
+[node name="Parete_018" parent="connesi_building_test2" index="623" unique_id=1315895036 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_018" index="0" unique_id=1467094]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_018/StaticBody3D" unique_id=812639345]
 shape = SubResource("ConcavePolygonShape3D_rclvm")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_019" parent_id_path=PackedInt32Array(2049194514, 134368095) index="0" unique_id=1379771734]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_019" parent_id_path=PackedInt32Array(2049194514, 222156514) index="0" unique_id=1379771734]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_019/StaticBody3D" unique_id=1671460334]
 shape = SubResource("ConcavePolygonShape3D_4hdm5")
 
-[node name="Parete_022" parent="connesi_building_test2" index="614" unique_id=219061219 groups=["navigation_source"]]
+[node name="Parete_022" parent="connesi_building_test2" index="627" unique_id=959462017 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_022" index="0" unique_id=1154296774]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_022/StaticBody3D" unique_id=379388206]
 shape = SubResource("ConcavePolygonShape3D_0cvcg")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_023" parent_id_path=PackedInt32Array(2049194514, 174530487) index="0" unique_id=903314725]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_023" parent_id_path=PackedInt32Array(2049194514, 405284386) index="0" unique_id=903314725]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_023/StaticBody3D" unique_id=838214245]
 shape = SubResource("ConcavePolygonShape3D_bc5u2")
 
-[node name="Parete_032" parent="connesi_building_test2" index="624" unique_id=844337802 groups=["navigation_source"]]
+[node name="Parete_032" parent="connesi_building_test2" index="637" unique_id=1154859670 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_032" index="0" unique_id=89108650]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_032/StaticBody3D" unique_id=985590433]
 shape = SubResource("ConcavePolygonShape3D_lrfde")
 
-[node name="Parete_033" parent="connesi_building_test2" index="625" unique_id=1230054814 groups=["navigation_source"]]
+[node name="Parete_033" parent="connesi_building_test2" index="638" unique_id=1208236939 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_033" index="0" unique_id=21680772]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_033/StaticBody3D" unique_id=32776096]
 shape = SubResource("ConcavePolygonShape3D_hjlak")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_038" parent_id_path=PackedInt32Array(2049194514, 1168870662) index="0" unique_id=738063232]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Parete_038" parent_id_path=PackedInt32Array(2049194514, 1643814614) index="0" unique_id=738063232]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Parete_038/StaticBody3D" unique_id=119904904]
 shape = SubResource("ConcavePolygonShape3D_oi64g")
 
-[node name="Pavimento Piano Terra" parent="connesi_building_test2" index="652" unique_id=1029524945 groups=["navigation_source"]]
+[node name="Pavimento Piano Terra" parent="connesi_building_test2" index="665" unique_id=1211401271 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Pavimento Piano Terra" index="0" unique_id=903226323 groups=["surface_tile"]]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Pavimento Piano Terra/StaticBody3D" unique_id=890884476]
 shape = SubResource("ConcavePolygonShape3D_tgyvi")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/PCRegia/Collada visual scene group_003/Key_Board_Low/defaultMaterial_006" parent_id_path=PackedInt32Array(2049194514, 352381952) index="0" unique_id=1767797619]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/PCRegia/Collada visual scene group_003/Key_Board_Low/defaultMaterial_006" parent_id_path=PackedInt32Array(2049194514, 764667538) index="0" unique_id=1767797619]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.285585, -0.5762745, 0.412491)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/PCRegia/Collada visual scene group_003/Key_Board_Low/defaultMaterial_006/StaticBody3D" unique_id=660565281]
 shape = SubResource("BoxShape3D_pco2u")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/PCRegia/Collada visual scene group_003/Mouse_Low/defaultMaterial_002" parent_id_path=PackedInt32Array(2049194514, 1925693172) index="0" unique_id=526419737]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/PCRegia/Collada visual scene group_003/Mouse_Low/defaultMaterial_002" parent_id_path=PackedInt32Array(2049194514, 1256754564) index="0" unique_id=526419737]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/PCRegia/Collada visual scene group_003/Mouse_Low/defaultMaterial_002/StaticBody3D" unique_id=627671739]
 shape = SubResource("ConcavePolygonShape3D_yi3r8")
 
-[node name="Plane" parent="connesi_building_test2" index="657" unique_id=1215602166 groups=["navigation_source"]]
+[node name="Plane" parent="connesi_building_test2" index="670" unique_id=340075978 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Plane" index="0" unique_id=305037608]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3491137, 1.5059758, -0.112694144)
@@ -3263,7 +3269,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3491137, 1.5059758, -0.112
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Plane/StaticBody3D" unique_id=788383559]
 shape = SubResource("BoxShape3D_hq1gl")
 
-[node name="Plane_001" parent="connesi_building_test2" index="658" unique_id=373189328 groups=["navigation_source"]]
+[node name="Plane_001" parent="connesi_building_test2" index="671" unique_id=754692464 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Plane_001" index="0" unique_id=1214545694]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7803006, 1.5059758, 0.27567708)
@@ -3271,7 +3277,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7803006, 1.5059758, 0.2756
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Plane_001/StaticBody3D" unique_id=654587490]
 shape = SubResource("BoxShape3D_oqakr")
 
-[node name="Plane_004" parent="connesi_building_test2" index="660" unique_id=201749655]
+[node name="Plane_004" parent="connesi_building_test2" index="673" unique_id=737171602]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.3342767, 0.908268, -1.1353477)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Plane_004" index="0" unique_id=321441247]
@@ -3280,99 +3286,99 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5404088, 1.5059758, 1.5811
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Plane_004/StaticBody3D" unique_id=1308513883]
 shape = SubResource("BoxShape3D_0g0ty")
 
-[node name="Plane_005" parent="connesi_building_test2" index="661" unique_id=791628114 groups=["navigation_source"]]
+[node name="Plane_005" parent="connesi_building_test2" index="674" unique_id=1865203514 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Plane_005" index="0" unique_id=16410780 groups=["surface_rock"]]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Plane_005/StaticBody3D" unique_id=985223584]
 shape = SubResource("ConcavePolygonShape3D_ry61g")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Plane_006" parent_id_path=PackedInt32Array(2049194514, 1727841444) index="0" unique_id=1558351428]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Plane_006" parent_id_path=PackedInt32Array(2049194514, 1629766986) index="0" unique_id=1558351428]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Plane_006/StaticBody3D" unique_id=836154111]
 shape = SubResource("ConcavePolygonShape3D_5gog5")
 
-[node name="Plane_007" parent="connesi_building_test2" index="663" unique_id=613712250 groups=["navigation_source"]]
+[node name="Plane_007" parent="connesi_building_test2" index="676" unique_id=286691836 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Plane_007" index="0" unique_id=1400127695 groups=["surface_rock"]]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Plane_007/StaticBody3D" unique_id=281350091]
 shape = SubResource("ConcavePolygonShape3D_4v56w")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Plane_010" parent_id_path=PackedInt32Array(2049194514, 574081346) index="0" unique_id=547104135]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Plane_010" parent_id_path=PackedInt32Array(2049194514, 831935239) index="0" unique_id=547104135]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Plane_010/StaticBody3D" unique_id=474785343]
 shape = SubResource("ConcavePolygonShape3D_y16vl")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Plane_012" parent_id_path=PackedInt32Array(2049194514, 1321903671) index="0" unique_id=287534202 groups=["surface_rock"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Plane_012" parent_id_path=PackedInt32Array(2049194514, 501340980) index="0" unique_id=287534202 groups=["surface_rock"]]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Plane_012/StaticBody3D" unique_id=148403166]
 shape = SubResource("ConcavePolygonShape3D_n7fgb")
 
-[node name="ManigliaA_011" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 29867676) index="0" unique_id=805663132]
+[node name="ManigliaA_011" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 182280613) index="0" unique_id=1084388017]
 transform = Transform3D(-4.198565e-08, -0.14899904, -7.669876e-08, -4.348514e-08, 5.506242e-07, -0.020754721, 0.025157224, -2.4866802e-07, -3.587538e-08, -0.7450409, 0.11988318, 0.9422064)
 
-[node name="ManigliaA_012" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 29867676) index="1" unique_id=87880865]
+[node name="ManigliaA_012" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 182280613) index="1" unique_id=1524131090]
 transform = Transform3D(0.01184682, 0.13697962, 0.0022503333, 0.010829986, -0.036932327, 0.018809065, 0.026999516, -0.045289554, -0.008532049, 0.7637329, 0.12035811, 0.9427767)
 
-[node name="ManigliaB_011" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 29867676) index="2" unique_id=591497343]
+[node name="ManigliaB_011" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 182280613) index="2" unique_id=229063796]
 transform = Transform3D(-2.0992825e-08, -0.8939943, -3.834938e-08, -2.174257e-08, 3.3037452e-06, -0.0103773605, 0.012578612, -1.4920081e-06, -1.793769e-08, -1.0419006, 0.11988318, 0.9422064)
 
-[node name="ManigliaB_012" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 29867676) index="3" unique_id=1096691236]
+[node name="ManigliaB_012" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 182280613) index="3" unique_id=1227990275]
 transform = Transform3D(0.0059234058, 0.82187784, 0.0011251679, 0.0054149907, -0.22159398, 0.009404534, 0.013499757, -0.27173722, -0.0042660227, 1.0604706, 0.12033653, 0.9423809)
 
-[node name="ManigliaC_011" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 29867676) index="4" unique_id=153129536]
+[node name="ManigliaC_011" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 182280613) index="4" unique_id=1655211934]
 transform = Transform3D(-0.29799807, -1.6816928e-07, 2.4839997e-08, -7.133093e-07, -1.3495389e-08, -0.0103773605, 1.3280251e-06, -0.037735835, 3.7111227e-09, -1.7830353, 0.11988318, 0.91783524)
 
-[node name="ManigliaC_012" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 29867676) index="5" unique_id=2003669154]
+[node name="ManigliaC_012" parent="connesi_building_test2/Porta Assistenza 00/Porta" parent_id_path=PackedInt32Array(2049194514, 182280613) index="5" unique_id=155795722]
 transform = Transform3D(0.29799807, -8.177274e-08, -1.1057136e-07, 3.1751865e-06, 0, 0.0103773605, -6.4575534e-07, -0.037735835, 2.3960573e-13, 1.7829437, 0.11895466, 0.91708755)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Carloni Esterna/Porta carloni esterna vetro" parent_id_path=PackedInt32Array(2049194514, 1408425876) index="0" unique_id=1922532542]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Carloni Esterna/Porta carloni esterna vetro" parent_id_path=PackedInt32Array(2049194514, 1707835654) index="0" unique_id=1922532542]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0017492175, 0.4571505, 0)
 metadata/surface_type = "glass"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Porta Carloni Esterna/Porta carloni esterna vetro/StaticBody3D" unique_id=884103442]
 shape = SubResource("BoxShape3D_fj46i")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Carloni esterna cornice LEFT" parent_id_path=PackedInt32Array(2049194514, 1482724884) index="0" unique_id=672877564]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Carloni esterna cornice LEFT" parent_id_path=PackedInt32Array(2049194514, 761138437) index="0" unique_id=672877564]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8098321, -0.6903982, 0.016494002)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Porta Carloni esterna cornice LEFT/StaticBody3D" unique_id=687968038]
 shape = SubResource("BoxShape3D_17x5m")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Carloni esterna cornice RIGHT" parent_id_path=PackedInt32Array(2049194514, 654177834) index="0" unique_id=165184030]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Carloni esterna cornice RIGHT" parent_id_path=PackedInt32Array(2049194514, 1219960915) index="0" unique_id=165184030]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8098321, -0.690398, -0.016493808)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Porta Carloni esterna cornice RIGHT/StaticBody3D" unique_id=1878451718]
 shape = SubResource("BoxShape3D_qw6fv")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Carloni esterna cornice TOP" parent_id_path=PackedInt32Array(2049194514, 801081990) index="0" unique_id=1680048799]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Carloni esterna cornice TOP" parent_id_path=PackedInt32Array(2049194514, 1509878073) index="0" unique_id=1680048799]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.20830424, 0.01649374)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Porta Carloni esterna cornice TOP/StaticBody3D" unique_id=116349228]
 shape = SubResource("BoxShape3D_blsys")
 
-[node name="Vetro_012" parent="connesi_building_test2/Porta Emergenza Assistenza/PortaAssitenza_040" parent_id_path=PackedInt32Array(2049194514, 1673710611) index="1" unique_id=258871892]
+[node name="Vetro_012" parent="connesi_building_test2/Porta Emergenza Assistenza/PortaAssitenza_040" parent_id_path=PackedInt32Array(2049194514, 732962881) index="1" unique_id=379864602]
 surface_material_override/0 = ExtResource("16_xde15")
 
-[node name="Vetro_013" parent="connesi_building_test2/Porta Emergenza Assistenza 2" parent_id_path=PackedInt32Array(2049194514, 761150719) index="1" unique_id=1981986717]
+[node name="Vetro_013" parent="connesi_building_test2/Porta Emergenza Assistenza 2" parent_id_path=PackedInt32Array(2049194514, 861311875) index="1" unique_id=623892709]
 surface_material_override/0 = ExtResource("16_xde15")
 
-[node name="Porta_012" parent="connesi_building_test2/Porta Emergenza Produzione" parent_id_path=PackedInt32Array(2049194514, 425719582) index="8" unique_id=140257150 groups=["navigation_source"]]
+[node name="Porta_012" parent="connesi_building_test2/Porta Emergenza Produzione" parent_id_path=PackedInt32Array(2049194514, 1866093087) index="8" unique_id=1460652165 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Lab/Porta_011" parent_id_path=PackedInt32Array(2049194514, 1946949527) index="2" unique_id=898989572]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Lab/Porta_011" parent_id_path=PackedInt32Array(2049194514, 492229386) index="2" unique_id=898989572]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1590462e-06, 0, 0.50000095)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Porta Lab/Porta_011/StaticBody3D" unique_id=1506377730]
 shape = SubResource("BoxShape3D_llwcg")
 
-[node name="Porta Lab Esterna " parent="connesi_building_test2" index="705" unique_id=1711377266]
+[node name="Porta Lab Esterna " parent="connesi_building_test2" index="718" unique_id=110643766]
 script = ExtResource("13_bc7u3")
 auto_close = true
 open_sound = ExtResource("31_vviwf")
 close_sound = ExtResource("32_h6oip")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Lab Esterna /Porta lab esterna Vetro" parent_id_path=PackedInt32Array(2049194514, 394538949) index="0" unique_id=1187651117]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Porta Lab Esterna /Porta lab esterna Vetro" parent_id_path=PackedInt32Array(2049194514, 395601639) index="0" unique_id=1187651117]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45736656, 0)
 metadata/surface_type = "glass"
 
@@ -3392,10 +3398,10 @@ shape = SubResource("BoxShape3D_hbjui")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65289307, -0.38101196, 0.35876465)
 shape = SubResource("BoxShape3D_hyfr5")
 
-[node name="Cylinder_058" parent="connesi_building_test2/Porta Switch/Porta_006" parent_id_path=PackedInt32Array(2049194514, 115463388) index="4" unique_id=597535273]
+[node name="Cylinder_058" parent="connesi_building_test2/Porta Switch/Porta_006" parent_id_path=PackedInt32Array(2049194514, 627631334) index="4" unique_id=1456455350]
 transform = Transform3D(0.016, 0, 0, 0, 0.016, 0, 0, 0, 0.01, 1.0604783, 0.12033653, 0.9423787)
 
-[node name="potted_rubber_plant" parent="connesi_building_test2" index="718" unique_id=341991718 groups=["navigation_source"]]
+[node name="potted_rubber_plant" parent="connesi_building_test2" index="731" unique_id=267025332 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/potted_rubber_plant" index="0" unique_id=850616963]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2153745, -1.1920929e-07)
@@ -3403,49 +3409,49 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2153745, -1.1920929e-07)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/potted_rubber_plant/StaticBody3D" unique_id=1191911195]
 shape = SubResource("BoxShape3D_b2ml6")
 
-[node name="Pulpito Lab" parent="connesi_building_test2" index="720" unique_id=23658601 groups=["navigation_source"]]
+[node name="Pulpito Lab" parent="connesi_building_test2" index="733" unique_id=753401614 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Pulpito Lab/Pulpito" parent_id_path=PackedInt32Array(2049194514, 76209478) index="0" unique_id=896847749]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Pulpito Lab/Pulpito" parent_id_path=PackedInt32Array(2049194514, 1677386501) index="0" unique_id=896847749]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65518856, -0.3695451, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Pulpito Lab/Pulpito/StaticBody3D" unique_id=425107713]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -11.826172)
 shape = SubResource("BoxShape3D_md7qk")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Rack Regia/L_1a8b6df6_73d4_4ad3_8f47_3b570b4ecf40_I2" parent_id_path=PackedInt32Array(2049194514, 1379437516) index="0" unique_id=1536856461]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Rack Regia/L_1a8b6df6_73d4_4ad3_8f47_3b570b4ecf40_I2" parent_id_path=PackedInt32Array(2049194514, 768564130) index="0" unique_id=1536856461]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00024414063, 785.89233, 0.010528564)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Rack Regia/L_1a8b6df6_73d4_4ad3_8f47_3b570b4ecf40_I2/StaticBody3D" unique_id=877352371]
 shape = SubResource("BoxShape3D_wcoao")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Recinzione Enel Ringhiera_112" parent_id_path=PackedInt32Array(2049194514, 1487953978) index="0" unique_id=563861218]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Recinzione Enel Ringhiera_112" parent_id_path=PackedInt32Array(2049194514, 1075430450) index="0" unique_id=563861218]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.924752, -0.018159688, -0.017240347)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Recinzione Enel Ringhiera_112/StaticBody3D" unique_id=562976585]
 shape = SubResource("BoxShape3D_sdjw4")
 
-[node name="Ringhiera Strada_139" parent="connesi_building_test2/Ringhiera Strada" parent_id_path=PackedInt32Array(2049194514, 809741697) index="138" unique_id=852496417]
+[node name="Ringhiera Strada_139" parent="connesi_building_test2/Ringhiera Strada" parent_id_path=PackedInt32Array(2049194514, 2145863207) index="138" unique_id=1900141195]
 transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, -33.95147, 0.020728052, 0.02796936)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sanitary_Toilets_Ceramica-Catalano_Sfera-54-Floorstanding-NewFlush-WC" parent_id_path=PackedInt32Array(2049194514, 269226876) index="0" unique_id=1577286940]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sanitary_Toilets_Ceramica-Catalano_Sfera-54-Floorstanding-NewFlush-WC" parent_id_path=PackedInt32Array(2049194514, 1248236451) index="0" unique_id=1577286940]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sanitary_Toilets_Ceramica-Catalano_Sfera-54-Floorstanding-NewFlush-WC/StaticBody3D" unique_id=1304381002]
 shape = SubResource("ConvexPolygonShape3D_48lc1")
 
-[node name="Scala 3 pezzi" parent="connesi_building_test2" index="977" unique_id=754125962]
+[node name="Scala 3 pezzi" parent="connesi_building_test2" index="990" unique_id=1621745033]
 script = ExtResource("38_525ww")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Scala 3 pezzi/section_1" parent_id_path=PackedInt32Array(2049194514, 1804078385) index="0" unique_id=263312410]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Scala 3 pezzi/section_1" parent_id_path=PackedInt32Array(2049194514, 1993842223) index="0" unique_id=263312410]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Scala 3 pezzi/section_1/StaticBody3D" unique_id=1862009180]
 shape = SubResource("ConcavePolygonShape3D_525ww")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Scala 3 pezzi/section_2" parent_id_path=PackedInt32Array(2049194514, 448940411) index="0" unique_id=1985400314]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Scala 3 pezzi/section_2" parent_id_path=PackedInt32Array(2049194514, 1105368067) index="0" unique_id=1985400314]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Scala 3 pezzi/section_2/StaticBody3D" unique_id=1154048512]
 shape = SubResource("ConcavePolygonShape3D_doul5")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Scala 3 pezzi/section_3" parent_id_path=PackedInt32Array(2049194514, 488847388) index="0" unique_id=754571018]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Scala 3 pezzi/section_3" parent_id_path=PackedInt32Array(2049194514, 1526038344) index="0" unique_id=754571018]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Scala 3 pezzi/section_3/StaticBody3D" unique_id=866396715]
 shape = SubResource("ConcavePolygonShape3D_lqvdi")
@@ -3468,33 +3474,33 @@ transform = Transform3D(1.0000002, 9.313226e-10, 1.4901161e-08, -6.519258e-09, 0
 [node name="TopExit" type="Marker3D" parent="connesi_building_test2/Scala 3 pezzi" index="8" unique_id=975963356]
 transform = Transform3D(1.0000002, 9.313226e-10, 1.4901161e-08, -1.3038516e-08, 0.9999999, -9.863288e-08, 5.2154064e-08, 5.646143e-09, 1, 0.18222618, 4.846222, -0.30723286)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Scatole/290x290x290_1" parent_id_path=PackedInt32Array(2049194514, 1212385133) index="0" unique_id=1283299386]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Scatole/290x290x290_1" parent_id_path=PackedInt32Array(2049194514, 712709931) index="0" unique_id=1283299386]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.9073486e-06)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Scatole/290x290x290_1/StaticBody3D" unique_id=1340298618]
 transform = Transform3D(0.9999995, -1.0658141e-14, -2.3841858e-07, -7.531753e-13, 1.0000002, -5.684342e-14, 2.3841858e-07, 4.2632564e-14, 0.9999995, 10.575684, -1.4305115e-06, -23.279419)
 shape = SubResource("BoxShape3D_hepgi")
 
-[node name="Scrivania Lab" parent="connesi_building_test2" index="982" unique_id=1959630315 groups=["bruno_intro_blocker", "navigation_source"]]
+[node name="Scrivania Lab" parent="connesi_building_test2" index="995" unique_id=1577368501 groups=["bruno_intro_blocker", "navigation_source"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.776692, 0.5936165, 10.966659)
 
-[node name="Scrivania lab" parent="connesi_building_test2/Scrivania Lab" index="0" unique_id=439090920 groups=["bruno_intro_blocker"]]
+[node name="Scrivania lab" parent="connesi_building_test2/Scrivania Lab" index="0" unique_id=597351266 groups=["bruno_intro_blocker"]]
 
-[node name="Scrivania lab_001" parent="connesi_building_test2/Scrivania Lab" index="1" unique_id=1576040444 groups=["bruno_intro_blocker"]]
+[node name="Scrivania lab_001" parent="connesi_building_test2/Scrivania Lab" index="1" unique_id=1376073936 groups=["bruno_intro_blocker"]]
 
-[node name="Scrivania lab_002" parent="connesi_building_test2/Scrivania Lab" index="2" unique_id=1508657623 groups=["bruno_intro_blocker"]]
+[node name="Scrivania lab_002" parent="connesi_building_test2/Scrivania Lab" index="2" unique_id=1495046338 groups=["bruno_intro_blocker"]]
 
-[node name="Scrivania lab_003" parent="connesi_building_test2/Scrivania Lab" index="3" unique_id=1215090941 groups=["bruno_intro_blocker"]]
+[node name="Scrivania lab_003" parent="connesi_building_test2/Scrivania Lab" index="3" unique_id=456294108 groups=["bruno_intro_blocker"]]
 
-[node name="Scrivania lab_004" parent="connesi_building_test2/Scrivania Lab" index="4" unique_id=400913383 groups=["bruno_intro_blocker"]]
+[node name="Scrivania lab_004" parent="connesi_building_test2/Scrivania Lab" index="4" unique_id=1087786534 groups=["bruno_intro_blocker"]]
 
-[node name="Scrivania lab_005" parent="connesi_building_test2/Scrivania Lab" index="5" unique_id=733748445 groups=["bruno_intro_blocker"]]
+[node name="Scrivania lab_005" parent="connesi_building_test2/Scrivania Lab" index="5" unique_id=651172939 groups=["bruno_intro_blocker"]]
 
-[node name="Scrivania lab_006" parent="connesi_building_test2/Scrivania Lab" index="6" unique_id=800619245 groups=["bruno_intro_blocker"]]
+[node name="Scrivania lab_006" parent="connesi_building_test2/Scrivania Lab" index="6" unique_id=998867237 groups=["bruno_intro_blocker"]]
 
-[node name="Scrivania lab_007" parent="connesi_building_test2/Scrivania Lab" index="7" unique_id=2127547868 groups=["bruno_intro_blocker"]]
+[node name="Scrivania lab_007" parent="connesi_building_test2/Scrivania Lab" index="7" unique_id=1644325059 groups=["bruno_intro_blocker"]]
 
-[node name="Scrivania lab_008" parent="connesi_building_test2/Scrivania Lab" index="8" unique_id=368045024 groups=["bruno_intro_blocker"]]
+[node name="Scrivania lab_008" parent="connesi_building_test2/Scrivania Lab" index="8" unique_id=1232540096 groups=["bruno_intro_blocker"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Scrivania Lab/Scrivania lab_008" index="0" unique_id=1123973795]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5911323, 0.70514727, -0.81473726)
@@ -3503,7 +3509,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5911323, 0.70514727, -0.81
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5230011, 0)
 shape = SubResource("BoxShape3D_hstw4")
 
-[node name="Scrivania Lab_001" parent="connesi_building_test2" index="983" unique_id=1671609562 groups=["navigation_source"]]
+[node name="Scrivania Lab_001" parent="connesi_building_test2" index="996" unique_id=1181438156 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Scrivania Lab_001" index="9" unique_id=1849756819]
 
@@ -3511,7 +3517,7 @@ shape = SubResource("BoxShape3D_hstw4")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.031252, -0.23168945, -0.008544922)
 shape = SubResource("BoxShape3D_t5ng6")
 
-[node name="Scrivania Lab_002" parent="connesi_building_test2" index="984" unique_id=1336955042 groups=["navigation_source"]]
+[node name="Scrivania Lab_002" parent="connesi_building_test2" index="997" unique_id=1468172454 groups=["navigation_source"]]
 
 [node name="StaticBody3D2" type="StaticBody3D" parent="connesi_building_test2/Scrivania Lab_002" index="10" unique_id=1165270844]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.68463135, 0, 0)
@@ -3520,9 +3526,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.68463135, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.06444645, -0.23168945, -0.008544922)
 shape = SubResource("BoxShape3D_t5ng6")
 
-[node name="Scrivania Lab_003" parent="connesi_building_test2" index="985" unique_id=1127101119 groups=["navigation_source"]]
+[node name="Scrivania Lab_003" parent="connesi_building_test2" index="998" unique_id=1979184596 groups=["navigation_source"]]
 
-[node name="Scrivania lab_035" parent="connesi_building_test2/Scrivania Lab_003" index="8" unique_id=960977305 node_paths=PackedStringArray("power_system", "lights_root")]
+[node name="Scrivania lab_035" parent="connesi_building_test2/Scrivania Lab_003" index="8" unique_id=16798327 node_paths=PackedStringArray("power_system", "lights_root")]
 script = ExtResource("4_tgyvi")
 power_system = NodePath("../../../ConnesiPower")
 lights_root = NodePath("../../../LuciLab")
@@ -3534,7 +3540,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.389617, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.031252, -0.23168945, -0.008544922)
 shape = SubResource("BoxShape3D_t5ng6")
 
-[node name="Scrivania Lab_004" parent="connesi_building_test2" index="986" unique_id=1386115293 groups=["navigation_source"]]
+[node name="Scrivania Lab_004" parent="connesi_building_test2" index="999" unique_id=1653087243 groups=["navigation_source"]]
 
 [node name="StaticBody3D3" type="StaticBody3D" parent="connesi_building_test2/Scrivania Lab_004" index="10" unique_id=1951893209]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.79047585, 0, 0)
@@ -3543,156 +3549,156 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.79047585, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.16209412, -0.23168945, -0.008544922)
 shape = SubResource("BoxShape3D_t5ng6")
 
-[node name="Scrivania lab_048" parent="connesi_building_test2" index="987" unique_id=738077677 groups=["navigation_source"]]
+[node name="Scrivania lab_048" parent="connesi_building_test2" index="1000" unique_id=668838023 groups=["navigation_source"]]
 
-[node name="Scrivania lab_049" parent="connesi_building_test2" index="988" unique_id=1173040475 groups=["navigation_source"]]
+[node name="Scrivania lab_049" parent="connesi_building_test2" index="1001" unique_id=277529242 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ScrivaniaRegia/Root/desk/desk_0" parent_id_path=PackedInt32Array(2049194514, 1422317775) index="0" unique_id=200239768]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ScrivaniaRegia/Root/desk/desk_0" parent_id_path=PackedInt32Array(2049194514, 1873885913) index="0" unique_id=200239768]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/ScrivaniaRegia/Root/desk/desk_0/StaticBody3D" unique_id=817377661]
 shape = SubResource("BoxShape3D_6yp8p")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ScrivaniaRegiaAngolo/Cube_137" parent_id_path=PackedInt32Array(2049194514, 330690766) index="0" unique_id=966906482]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ScrivaniaRegiaAngolo/Cube_137" parent_id_path=PackedInt32Array(2049194514, 393266106) index="0" unique_id=966906482]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.008001924, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/ScrivaniaRegiaAngolo/Cube_137/StaticBody3D" unique_id=1028043126]
 shape = SubResource("BoxShape3D_b4axm")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ScrivaniaRegiaAngolo/Plane_008" parent_id_path=PackedInt32Array(2049194514, 502194506) index="0" unique_id=314742863]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/ScrivaniaRegiaAngolo/Plane_008" parent_id_path=PackedInt32Array(2049194514, 585303837) index="0" unique_id=314742863]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/ScrivaniaRegiaAngolo/Plane_008/StaticBody3D" unique_id=2029745794]
 shape = SubResource("ConcavePolygonShape3D_tixhl")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sedia Rossa/Collada visual scene group_002/Chair_/defaultMaterial" parent_id_path=PackedInt32Array(2049194514, 1416501385) index="0" unique_id=1457390098]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sedia Rossa/Collada visual scene group_002/Chair_/defaultMaterial" parent_id_path=PackedInt32Array(2049194514, 1627280869) index="0" unique_id=1457390098]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00015884638, 0.6867206, -0.00031477213)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sedia Rossa/Collada visual scene group_002/Chair_/defaultMaterial/StaticBody3D" unique_id=839552317]
 shape = SubResource("BoxShape3D_hd2co")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sedia Rossa_001/Collada visual scene group_005/Chair__001/defaultMaterial_007" parent_id_path=PackedInt32Array(2049194514, 1039655086) index="0" unique_id=1711969163]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sedia Rossa_001/Collada visual scene group_005/Chair__001/defaultMaterial_007" parent_id_path=PackedInt32Array(2049194514, 86994738) index="0" unique_id=1711969163]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00015884638, 0.6867206, -0.00031477213)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sedia Rossa_001/Collada visual scene group_005/Chair__001/defaultMaterial_007/StaticBody3D" unique_id=1549527742]
 shape = SubResource("BoxShape3D_ic4km")
 
-[node name="Seggiolini" parent="connesi_building_test2" index="993" unique_id=596660449 groups=["navigation_source"]]
+[node name="Seggiolini" parent="connesi_building_test2" index="1006" unique_id=1219967967 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Seggiolini/U_S_Bench" parent_id_path=PackedInt32Array(2049194514, 574840047) index="0" unique_id=253863354]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Seggiolini/U_S_Bench" parent_id_path=PackedInt32Array(2049194514, 1242117203) index="0" unique_id=253863354]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26021823, -0.6224198)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Seggiolini/U_S_Bench/StaticBody3D" unique_id=1885515869]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.2098656)
 shape = SubResource("BoxShape3D_5smap")
 
-[node name="Seggiolini_001" parent="connesi_building_test2" index="994" unique_id=2094691495 groups=["navigation_source"]]
+[node name="Seggiolini_001" parent="connesi_building_test2" index="1007" unique_id=835133655 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Seggiolini_001/U_S_Bench_003" parent_id_path=PackedInt32Array(2049194514, 1715108760) index="0" unique_id=1192362525]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Seggiolini_001/U_S_Bench_003" parent_id_path=PackedInt32Array(2049194514, 801958810) index="0" unique_id=1192362525]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26021823, -0.6224198)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Seggiolini_001/U_S_Bench_003/StaticBody3D" unique_id=78233414]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.244442)
 shape = SubResource("BoxShape3D_jae6m")
 
-[node name="Seggiolini_002" parent="connesi_building_test2" index="995" unique_id=160934820 groups=["navigation_source"]]
+[node name="Seggiolini_002" parent="connesi_building_test2" index="1008" unique_id=1855764290 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Seggiolini_002/U_S_Bench_006" parent_id_path=PackedInt32Array(2049194514, 1023532329) index="0" unique_id=1844651752]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Seggiolini_002/U_S_Bench_006" parent_id_path=PackedInt32Array(2049194514, 383725930) index="0" unique_id=1844651752]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26021823, -0.6224198)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Seggiolini_002/U_S_Bench_006/StaticBody3D" unique_id=1907908018]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.2477074)
 shape = SubResource("BoxShape3D_gr3tr")
 
-[node name="Seggiolini_003" parent="connesi_building_test2" index="996" unique_id=1410906433 groups=["navigation_source"]]
+[node name="Seggiolini_003" parent="connesi_building_test2" index="1009" unique_id=1199201229 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Seggiolini_003/U_S_Bench_009" parent_id_path=PackedInt32Array(2049194514, 1066066860) index="0" unique_id=436221749]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Seggiolini_003/U_S_Bench_009" parent_id_path=PackedInt32Array(2049194514, 1043146607) index="0" unique_id=436221749]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.26021823, -0.6224198)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Seggiolini_003/U_S_Bench_009/StaticBody3D" unique_id=105242478]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.9073486e-06, 0, 1.2024107)
 shape = SubResource("BoxShape3D_5r01v")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Fence/Fence_wire_m_0" parent_id_path=PackedInt32Array(2049194514, 2076735604) index="0" unique_id=581247757]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Fence/Fence_wire_m_0" parent_id_path=PackedInt32Array(2049194514, 215819205) index="0" unique_id=581247757]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Fence/Fence_wire_m_0/StaticBody3D" unique_id=347860755]
 shape = SubResource("ConcavePolygonShape3D_fydma")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Ground/Ground_ground_m_0" parent_id_path=PackedInt32Array(2049194514, 1415259635) index="0" unique_id=1494234544]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Ground/Ground_ground_m_0" parent_id_path=PackedInt32Array(2049194514, 144861783) index="0" unique_id=1494234544]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Ground/Ground_ground_m_0/StaticBody3D" unique_id=521305299]
 shape = SubResource("ConcavePolygonShape3D_yhyog")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_ant_A_m_0" parent_id_path=PackedInt32Array(2049194514, 782356284) index="0" unique_id=1926000173]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_ant_A_m_0" parent_id_path=PackedInt32Array(2049194514, 166308396) index="0" unique_id=1926000173]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_ant_A_m_0/StaticBody3D" unique_id=557656616]
 shape = SubResource("ConcavePolygonShape3D_gfnly")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_ant_b_m_0" parent_id_path=PackedInt32Array(2049194514, 2076681084) index="0" unique_id=1217905170]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_ant_b_m_0" parent_id_path=PackedInt32Array(2049194514, 1519649892) index="0" unique_id=1217905170]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_ant_b_m_0/StaticBody3D" unique_id=1978650742]
 shape = SubResource("ConcavePolygonShape3D_ip2bq")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_bolts_m_0" parent_id_path=PackedInt32Array(2049194514, 1014061095) index="0" unique_id=1859748873]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_bolts_m_0" parent_id_path=PackedInt32Array(2049194514, 1523831759) index="0" unique_id=1859748873]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_bolts_m_0/StaticBody3D" unique_id=1613874928]
 shape = SubResource("ConcavePolygonShape3D_uul6w")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_bottom_m_0" parent_id_path=PackedInt32Array(2049194514, 1594806555) index="0" unique_id=668319048]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_bottom_m_0" parent_id_path=PackedInt32Array(2049194514, 823888946) index="0" unique_id=668319048]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_bottom_m_0/StaticBody3D" unique_id=1583519281]
 shape = SubResource("ConcavePolygonShape3D_morne")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_floor_m_0" parent_id_path=PackedInt32Array(2049194514, 1442228685) index="0" unique_id=735270844]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_floor_m_0" parent_id_path=PackedInt32Array(2049194514, 34755050) index="0" unique_id=735270844]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_floor_m_0/StaticBody3D" unique_id=2135745737]
 shape = SubResource("ConcavePolygonShape3D_ioil7")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_metal_m_0_002" parent_id_path=PackedInt32Array(2049194514, 1038346060) index="0" unique_id=2045294669]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_metal_m_0_002" parent_id_path=PackedInt32Array(2049194514, 359884276) index="0" unique_id=2045294669]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_metal_m_0_002/StaticBody3D" unique_id=334650814]
 shape = SubResource("ConcavePolygonShape3D_ftlfn")
 
-[node name="Tower_plastic_m_0" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower" parent_id_path=PackedInt32Array(2049194514, 1570884215) index="8" unique_id=872611962]
+[node name="Tower_plastic_m_0" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower" parent_id_path=PackedInt32Array(2049194514, 1112174388) index="8" unique_id=1344515451]
 surface_material_override/0 = SubResource("StandardMaterial3D_mus8j")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_rustmetal_m_0" parent_id_path=PackedInt32Array(2049194514, 918910764) index="0" unique_id=1017532168]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_rustmetal_m_0" parent_id_path=PackedInt32Array(2049194514, 1009628481) index="0" unique_id=1017532168]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_rustmetal_m_0/StaticBody3D" unique_id=2031886385]
 shape = SubResource("ConcavePolygonShape3D_qbg5q")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_rustmetal_m_0_001" parent_id_path=PackedInt32Array(2049194514, 791322495) index="0" unique_id=1404884503]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_rustmetal_m_0_001" parent_id_path=PackedInt32Array(2049194514, 2046153048) index="0" unique_id=1404884503]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower/Tower_rustmetal_m_0_001/StaticBody3D" unique_id=1078432398]
 shape = SubResource("ConcavePolygonShape3D_mwxxh")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower" parent_id_path=PackedInt32Array(2049194514, 1570884215) index="11" unique_id=359483661]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower" parent_id_path=PackedInt32Array(2049194514, 1112174388) index="11" unique_id=359483661]
 libraries/ = SubResource("AnimationLibrary_kl6sf")
 autoplay = &"glow_torre"
 
-[node name="OmniLight3D" type="OmniLight3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower" parent_id_path=PackedInt32Array(2049194514, 1570884215) index="12" unique_id=1921939683]
+[node name="OmniLight3D" type="OmniLight3D" parent="connesi_building_test2/Sketchfab_model/RelayTower_FBX/RootNode/Tower" parent_id_path=PackedInt32Array(2049194514, 1112174388) index="12" unique_id=1921939683]
 transform = Transform3D(1, 4.7609865e-14, 2.3804933e-14, -4.7609865e-14, 1, 3.256946e-14, -2.3804933e-14, -3.256946e-14, 1, -0.0002746582, -0.00049518625, 4153.9233)
 light_color = Color(0.7607843, 0.09411765, 1, 1)
 light_energy = 0.0
 omni_range = 51.546
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model_002/Collada visual scene group_001/Material2_238" parent_id_path=PackedInt32Array(2049194514, 599301974) index="0" unique_id=1483561913]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model_002/Collada visual scene group_001/Material2_238" parent_id_path=PackedInt32Array(2049194514, 1792733638) index="0" unique_id=1483561913]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.1864204, -4.2989388, 70.53125)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model_002/Collada visual scene group_001/Material2_238/StaticBody3D" unique_id=2146839317]
 shape = SubResource("BoxShape3D_rfxl7")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model_004/Root_001/Plane_014/Plane_0" parent_id_path=PackedInt32Array(2049194514, 243454676) index="0" unique_id=1047352438]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model_004/Root_001/Plane_014/Plane_0" parent_id_path=PackedInt32Array(2049194514, 674013375) index="0" unique_id=1047352438]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.006559998, -0.028485, 0.03576)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model_004/Root_001/Plane_014/Plane_0/StaticBody3D" unique_id=976738125]
 shape = SubResource("BoxShape3D_6dmhq")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model_005/f298290104524950a1e0339213387b24_fbx/RootNode_001/polySurface2/polySurface2_Monitor_M_0" parent_id_path=PackedInt32Array(2049194514, 1638808365) index="0" unique_id=201616810]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Sketchfab_model_005/f298290104524950a1e0339213387b24_fbx/RootNode_001/polySurface2/polySurface2_Monitor_M_0" parent_id_path=PackedInt32Array(2049194514, 1647237344) index="0" unique_id=201616810]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 19.234793, -2.861023e-06)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Sketchfab_model_005/f298290104524950a1e0339213387b24_fbx/RootNode_001/polySurface2/polySurface2_Monitor_M_0/StaticBody3D" unique_id=1062751532]
 shape = SubResource("BoxShape3D_yfbrb")
 
-[node name="Sphere001" parent="connesi_building_test2" index="1005" unique_id=1621370864 groups=["navigation_source"]]
+[node name="Sphere001" parent="connesi_building_test2" index="1018" unique_id=1147303013 groups=["navigation_source"]]
 mesh = SubResource("ArrayMesh_lxcis")
 
 [node name="OmniCore" type="OmniLight3D" parent="connesi_building_test2/Sphere001" index="0" unique_id=207622312]
@@ -3720,7 +3726,7 @@ autoplay = true
 max_distance = 10.0
 bus = &"SFX"
 
-[node name="Strada_001" parent="connesi_building_test2" index="1006" unique_id=1713744933 groups=["navigation_source"]]
+[node name="Strada_001" parent="connesi_building_test2" index="1019" unique_id=2085054330 groups=["navigation_source"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.634406, -0.35784203, 23.18474)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Strada_001" index="0" unique_id=638957285 groups=["surface_rock"]]
@@ -3728,20 +3734,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.634406, -0.35784203, 23.18
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Strada_001/StaticBody3D" unique_id=1692972518]
 shape = SubResource("ConcavePolygonShape3D_yt5n2")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Tetto Capannone/Cube_059" parent_id_path=PackedInt32Array(2049194514, 1266021507) index="0" unique_id=203637934]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Tetto Capannone/Cube_059" parent_id_path=PackedInt32Array(2049194514, 1415042309) index="0" unique_id=203637934]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Tetto Capannone/Cube_059/StaticBody3D" unique_id=163348943]
 shape = SubResource("ConcavePolygonShape3D_c6nya")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Tetto Porta Emergenza Assistenza" parent_id_path=PackedInt32Array(2049194514, 379805299) index="0" unique_id=1724060812]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Tetto Porta Emergenza Assistenza" parent_id_path=PackedInt32Array(2049194514, 730325384) index="0" unique_id=1724060812]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Tetto Porta Emergenza Assistenza/StaticBody3D" unique_id=1349279777]
 shape = SubResource("ConcavePolygonShape3D_dyqd7")
 
-[node name="Maple_1" parent="connesi_building_test2/Tree" parent_id_path=PackedInt32Array(2049194514, 943796802) index="0" unique_id=817830677]
+[node name="Maple_1" parent="connesi_building_test2/Tree" parent_id_path=PackedInt32Array(2049194514, 1833716885) index="0" unique_id=149379887]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -168.33789, 141.02039, 3.8689766)
 
-[node name="VanBrnt" parent="connesi_building_test2" index="1030" unique_id=907885956 groups=["navigation_source"]]
+[node name="VanBrnt" parent="connesi_building_test2" index="1043" unique_id=973376375 groups=["navigation_source"]]
 transform = Transform3D(-0.00092058064, 0, -0.0015887347, 0, 0.0018361772, 0, 0.0015887347, 0, -0.00092058064, 33.480785, -0.024615288, 40.242878)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VanBrnt" index="0" unique_id=2216721]
@@ -3750,25 +3756,25 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -218.8092, 1173.0662, 3.86816
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VanBrnt/StaticBody3D" unique_id=1505596338]
 shape = SubResource("BoxShape3D_fskn1")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Vetrina Carloni cornice LEFT" parent_id_path=PackedInt32Array(2049194514, 1914161126) index="0" unique_id=1541666539]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Vetrina Carloni cornice LEFT" parent_id_path=PackedInt32Array(2049194514, 1173270012) index="0" unique_id=1541666539]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8098321, -0.9926276, 0.016494002)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Vetrina Carloni cornice LEFT/StaticBody3D" unique_id=1544470206]
 shape = SubResource("BoxShape3D_45ilq")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Vetrina Carloni cornice RIGHT" parent_id_path=PackedInt32Array(2049194514, 344496080) index="0" unique_id=88872641]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Vetrina Carloni cornice RIGHT" parent_id_path=PackedInt32Array(2049194514, 918425213) index="0" unique_id=88872641]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8098321, -0.9926276, -0.016493808)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Vetrina Carloni cornice RIGHT/StaticBody3D" unique_id=1597721439]
 shape = SubResource("BoxShape3D_egllb")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Vetrina Carloni cornice TOP" parent_id_path=PackedInt32Array(2049194514, 1743418751) index="0" unique_id=1824788956]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Vetrina Carloni cornice TOP" parent_id_path=PackedInt32Array(2049194514, 1508267604) index="0" unique_id=1824788956]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22679743, 0.016493738)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Vetrina Carloni cornice TOP/StaticBody3D" unique_id=739309128]
 shape = SubResource("BoxShape3D_pxhmb")
 
-[node name="Vetrina Lab cornice LEFT" parent="connesi_building_test2" index="1034" unique_id=68343177 groups=["navigation_source"]]
+[node name="Vetrina Lab cornice LEFT" parent="connesi_building_test2" index="1047" unique_id=1478613881 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Vetrina Lab cornice LEFT" index="0" unique_id=2037106834]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8098321, -0.9926276, 0.016494002)
@@ -3776,7 +3782,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8098321, -0.9926276, 0.016
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Vetrina Lab cornice LEFT/StaticBody3D" unique_id=2120252762]
 shape = SubResource("BoxShape3D_avksw")
 
-[node name="Vetrina Lab cornice RIGHT" parent="connesi_building_test2" index="1035" unique_id=2138394719 groups=["navigation_source"]]
+[node name="Vetrina Lab cornice RIGHT" parent="connesi_building_test2" index="1048" unique_id=1768010664 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Vetrina Lab cornice RIGHT" index="0" unique_id=1265876345]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8098321, -0.9926276, -0.016493808)
@@ -3784,7 +3790,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8098321, -0.9926276, -0.016
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Vetrina Lab cornice RIGHT/StaticBody3D" unique_id=378586254]
 shape = SubResource("BoxShape3D_ksm0x")
 
-[node name="Vetrina Lab cornice TOP" parent="connesi_building_test2" index="1036" unique_id=736010980 groups=["navigation_source"]]
+[node name="Vetrina Lab cornice TOP" parent="connesi_building_test2" index="1049" unique_id=995984930 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/Vetrina Lab cornice TOP" index="0" unique_id=371783063]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22679743, -0.016493738)
@@ -3792,166 +3798,166 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.22679743, -0.016493738)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/Vetrina Lab cornice TOP/StaticBody3D" unique_id=761310119]
 shape = SubResource("BoxShape3D_hp5dm")
 
-[node name="VetrinaArmatura" parent="connesi_building_test2" index="1037" unique_id=442446385 groups=["navigation_source"]]
+[node name="VetrinaArmatura" parent="connesi_building_test2" index="1050" unique_id=1526468141 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_065" parent_id_path=PackedInt32Array(2049194514, 250108697) index="0" unique_id=927221778]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_065" parent_id_path=PackedInt32Array(2049194514, 1693854863) index="0" unique_id=927221778]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5497208e-06, -0.78788066, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_065/StaticBody3D" unique_id=638310244]
 shape = SubResource("BoxShape3D_18lnt")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_067" parent_id_path=PackedInt32Array(2049194514, 192012759) index="0" unique_id=1055608746]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_067" parent_id_path=PackedInt32Array(2049194514, 1078222459) index="0" unique_id=1055608746]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8316956, -5.4242363, -3.5478573)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_067/StaticBody3D" unique_id=588626207]
 shape = SubResource("BoxShape3D_takq8")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_102" parent_id_path=PackedInt32Array(2049194514, 179681282) index="0" unique_id=383744884]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_102" parent_id_path=PackedInt32Array(2049194514, 1752263818) index="0" unique_id=383744884]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.800843, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_102/StaticBody3D" unique_id=1775406562]
 shape = SubResource("BoxShape3D_6gg8y")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_103" parent_id_path=PackedInt32Array(2049194514, 181765730) index="0" unique_id=449567749]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_103" parent_id_path=PackedInt32Array(2049194514, 1241376956) index="0" unique_id=449567749]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.800843, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_103/StaticBody3D" unique_id=901726466]
 shape = SubResource("BoxShape3D_j2piu")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_104" parent_id_path=PackedInt32Array(2049194514, 918833428) index="0" unique_id=46380102]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_104" parent_id_path=PackedInt32Array(2049194514, 553104028) index="0" unique_id=46380102]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5497208e-06, -0.78788066, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_104/StaticBody3D" unique_id=262493905]
 shape = SubResource("BoxShape3D_1pxj2")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_105" parent_id_path=PackedInt32Array(2049194514, 1331210574) index="0" unique_id=370771005]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_105" parent_id_path=PackedInt32Array(2049194514, 1581695450) index="0" unique_id=370771005]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21.370848, -0.78788066, 0)
 metadata/surface_type = "glass"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_105/StaticBody3D" unique_id=2021773839]
 shape = SubResource("BoxShape3D_lc7ly")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_106" parent_id_path=PackedInt32Array(2049194514, 20127394) index="0" unique_id=576698686]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_106" parent_id_path=PackedInt32Array(2049194514, 224198321) index="0" unique_id=576698686]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.905497, -0.78788066, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_106/StaticBody3D" unique_id=2131373119]
 shape = SubResource("BoxShape3D_nffod")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_112" parent_id_path=PackedInt32Array(2049194514, 804559971) index="0" unique_id=245895425]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_112" parent_id_path=PackedInt32Array(2049194514, 1915967638) index="0" unique_id=245895425]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.4792745, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_112/StaticBody3D" unique_id=1074961578]
 shape = SubResource("BoxShape3D_3bx0e")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_113" parent_id_path=PackedInt32Array(2049194514, 1249043143) index="0" unique_id=2003061884]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_113" parent_id_path=PackedInt32Array(2049194514, 1046964256) index="0" unique_id=2003061884]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.4792745, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_113/StaticBody3D" unique_id=1648868270]
 shape = SubResource("BoxShape3D_0a5t8")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_114" parent_id_path=PackedInt32Array(2049194514, 1512399204) index="0" unique_id=1471935444]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_114" parent_id_path=PackedInt32Array(2049194514, 1286667661) index="0" unique_id=1471935444]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059115887, -0.7634547, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_114/StaticBody3D" unique_id=1157086715]
 shape = SubResource("BoxShape3D_6kne7")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_115" parent_id_path=PackedInt32Array(2049194514, 1434873013) index="0" unique_id=446825290]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_115" parent_id_path=PackedInt32Array(2049194514, 841821453) index="0" unique_id=446825290]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059115887, -0.7634547, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_115/StaticBody3D" unique_id=240169308]
 shape = SubResource("BoxShape3D_41mud")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_116" parent_id_path=PackedInt32Array(2049194514, 572727985) index="0" unique_id=863040503]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_116" parent_id_path=PackedInt32Array(2049194514, 1353525385) index="0" unique_id=863040503]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.4792745, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_116/StaticBody3D" unique_id=1364226434]
 shape = SubResource("BoxShape3D_5mq2w")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_117" parent_id_path=PackedInt32Array(2049194514, 2050866791) index="0" unique_id=1978195102]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_117" parent_id_path=PackedInt32Array(2049194514, 715584491) index="0" unique_id=1978195102]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059115887, -0.7634547, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_117/StaticBody3D" unique_id=1388762612]
 shape = SubResource("BoxShape3D_00eui")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_118" parent_id_path=PackedInt32Array(2049194514, 1212859345) index="0" unique_id=138840682]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_118" parent_id_path=PackedInt32Array(2049194514, 2103670146) index="0" unique_id=138840682]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00059115887, -0.7634547, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_118/StaticBody3D" unique_id=991972963]
 shape = SubResource("BoxShape3D_cua1w")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_119" parent_id_path=PackedInt32Array(2049194514, 273759560) index="0" unique_id=1240742610]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_119" parent_id_path=PackedInt32Array(2049194514, 1819161649) index="0" unique_id=1240742610]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.4792745, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_119/StaticBody3D" unique_id=837170677]
 shape = SubResource("BoxShape3D_kny17")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_120" parent_id_path=PackedInt32Array(2049194514, 351073278) index="0" unique_id=438058653]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_120" parent_id_path=PackedInt32Array(2049194514, 503967115) index="0" unique_id=438058653]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42.258026, -5.4242363, -3.5478573)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_120/StaticBody3D" unique_id=1050983703]
 shape = SubResource("BoxShape3D_4wflr")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_121" parent_id_path=PackedInt32Array(2049194514, 131105535) index="0" unique_id=170128109]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_121" parent_id_path=PackedInt32Array(2049194514, 423291238) index="0" unique_id=170128109]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8316345, -5.4242363, -3.5478573)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_121/StaticBody3D" unique_id=771155227]
 shape = SubResource("BoxShape3D_35dtu")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_122" parent_id_path=PackedInt32Array(2049194514, 1066774046) index="0" unique_id=1024075974]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_122" parent_id_path=PackedInt32Array(2049194514, 1982146819) index="0" unique_id=1024075974]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -47.46702, -5.4242363, -3.5478573)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_122/StaticBody3D" unique_id=1439747160]
 shape = SubResource("BoxShape3D_nsdv3")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_123" parent_id_path=PackedInt32Array(2049194514, 381217386) index="0" unique_id=1100220623]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_123" parent_id_path=PackedInt32Array(2049194514, 1897238548) index="0" unique_id=1100220623]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8316956, -5.4242363, -3.5478573)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_123/StaticBody3D" unique_id=565297152]
 shape = SubResource("BoxShape3D_vqde3")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_124" parent_id_path=PackedInt32Array(2049194514, 625044899) index="0" unique_id=1187342230]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_124" parent_id_path=PackedInt32Array(2049194514, 1649124930) index="0" unique_id=1187342230]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -41.331085, -5.4242363, -3.5478573)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_124/StaticBody3D" unique_id=2112454527]
 shape = SubResource("BoxShape3D_urw1t")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_441" parent_id_path=PackedInt32Array(2049194514, 1882215066) index="0" unique_id=944713833]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura/Cube_441" parent_id_path=PackedInt32Array(2049194514, 276984576) index="0" unique_id=944713833]
 metadata/surface_type = "glass"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura/Cube_441/StaticBody3D" unique_id=297127330]
 shape = SubResource("ConcavePolygonShape3D_ul3ml")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_107" parent_id_path=PackedInt32Array(2049194514, 1954623462) index="0" unique_id=1550038336]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_107" parent_id_path=PackedInt32Array(2049194514, 1543792708) index="0" unique_id=1550038336]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.800843, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_107/StaticBody3D" unique_id=218000289]
 shape = SubResource("BoxShape3D_ts7l5")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_108" parent_id_path=PackedInt32Array(2049194514, 1272409981) index="0" unique_id=632692495]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_108" parent_id_path=PackedInt32Array(2049194514, 985924570) index="0" unique_id=632692495]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.800843, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_108/StaticBody3D" unique_id=1081412806]
 shape = SubResource("BoxShape3D_s187o")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_109" parent_id_path=PackedInt32Array(2049194514, 1675530074) index="0" unique_id=1867232304]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_109" parent_id_path=PackedInt32Array(2049194514, 1252965339) index="0" unique_id=1867232304]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5497208e-06, -0.78788066, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_109/StaticBody3D" unique_id=2089337374]
 shape = SubResource("BoxShape3D_n0etn")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_110" parent_id_path=PackedInt32Array(2049194514, 546129893) index="0" unique_id=2005835819]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_110" parent_id_path=PackedInt32Array(2049194514, 743149547) index="0" unique_id=2005835819]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.59812, -0.78788066, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_110/StaticBody3D" unique_id=736769578]
 shape = SubResource("BoxShape3D_mab78")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_111" parent_id_path=PackedInt32Array(2049194514, 62800187) index="0" unique_id=1015790759]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_111" parent_id_path=PackedInt32Array(2049194514, 1111344229) index="0" unique_id=1015790759]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.905493, -0.78788066, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_111/StaticBody3D" unique_id=1715759551]
 shape = SubResource("BoxShape3D_bs1yf")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_440" parent_id_path=PackedInt32Array(2049194514, 1286523794) index="0" unique_id=1569924117]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2/VetrinaArmatura_001/Cube_440" parent_id_path=PackedInt32Array(2049194514, 1042980348) index="0" unique_id=1569924117]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43.798523, -0.7878804, 0)
 metadata/surface_type = "glass"
 
@@ -6024,108 +6030,108 @@ omni_range = 3.0
 
 [node name="connesi_building_test2_addon_1" parent="." unique_id=1626445192 instance=ExtResource("89_7fdwr")]
 
-[node name="Auto Antonio" parent="connesi_building_test2_addon_1" index="1" unique_id=1319291517 groups=["navigation_source"]]
+[node name="Auto Antonio" parent="connesi_building_test2_addon_1" index="10" unique_id=330240664 groups=["navigation_source"]]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Auto Antonio/root_001/GLTF_SceneRootNode/SM_Ioniq_5_Body_4/Object_4" parent_id_path=PackedInt32Array(1626445192, 1710949915) index="0" unique_id=1667969466]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Auto Antonio/root_001/GLTF_SceneRootNode/SM_Ioniq_5_Body_4/Object_4" parent_id_path=PackedInt32Array(1626445192, 1211077849) index="0" unique_id=1667969466]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0014806986, 0.9617651, 0.25590658)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Auto Antonio/root_001/GLTF_SceneRootNode/SM_Ioniq_5_Body_4/Object_4/StaticBody3D" unique_id=2026537877]
 transform = Transform3D(1, 0, 0, 0, 0.99999994, 2.842171e-14, 0, -2.842171e-14, 0.99999994, 0, -1.0927339, 0)
 shape = SubResource("BoxShape3D_0cvcg")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Auto Antonio/root_001/GLTF_SceneRootNode/SM_Ioniq_5_Body_4/Object_5" parent_id_path=PackedInt32Array(1626445192, 937911064) index="0" unique_id=747189844]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Auto Antonio/root_001/GLTF_SceneRootNode/SM_Ioniq_5_Body_4/Object_5" parent_id_path=PackedInt32Array(1626445192, 1648654515) index="0" unique_id=747189844]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Auto Antonio/root_001/GLTF_SceneRootNode/SM_Ioniq_5_Body_4/Object_5/StaticBody3D" unique_id=188471293]
 shape = SubResource("ConvexPolygonShape3D_pco2u")
 
-[node name="Bacheca" parent="connesi_building_test2_addon_1" index="2" unique_id=1054248552]
+[node name="Bacheca" parent="connesi_building_test2_addon_1" index="11" unique_id=1911507012]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 1.5113945, 1.1683116, -5.3845243)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Canalina" parent_id_path=PackedInt32Array(1626445192, 451685946) index="0" unique_id=1365814910]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Canalina" parent_id_path=PackedInt32Array(1626445192, 2065128461) index="0" unique_id=1365814910]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0374256, -0.9675765, 0.27978587)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Canalina/StaticBody3D" unique_id=150996497]
 shape = SubResource("BoxShape3D_87f7a")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Canalina_001" parent_id_path=PackedInt32Array(1626445192, 1581370678) index="0" unique_id=54691671]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Canalina_001" parent_id_path=PackedInt32Array(1626445192, 149269510) index="0" unique_id=54691671]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0374256, -0.9675765, 0.69015)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Canalina_001/StaticBody3D" unique_id=318352171]
 shape = SubResource("BoxShape3D_eo5nh")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Canalina_002" parent_id_path=PackedInt32Array(1626445192, 290759377) index="0" unique_id=386477932]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Canalina_002" parent_id_path=PackedInt32Array(1626445192, 1627278208) index="0" unique_id=386477932]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0374256, -0.9675765, 0.30093694)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Canalina_002/StaticBody3D" unique_id=152765974]
 shape = SubResource("BoxShape3D_385xi")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cesso/Cesso_001/RootNode_005/Cube_467/Cube_036_Material_002_0" parent_id_path=PackedInt32Array(1626445192, 1146384742) index="0" unique_id=1738259563]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cesso/Cesso_001/RootNode_005/Cube_467/Cube_036_Material_002_0" parent_id_path=PackedInt32Array(1626445192, 1894535928) index="0" unique_id=1738259563]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03794056, 0, 0.21398495)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Cesso/Cesso_001/RootNode_005/Cube_467/Cube_036_Material_002_0/StaticBody3D" unique_id=1791400147]
 shape = SubResource("BoxShape3D_lrfde")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cesso_002/Cesso_003/RootNode_006/Cube_459/Cube_036_Material_002_0_001" parent_id_path=PackedInt32Array(1626445192, 658491511) index="0" unique_id=1862400045]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cesso_002/Cesso_003/RootNode_006/Cube_459/Cube_036_Material_002_0_001" parent_id_path=PackedInt32Array(1626445192, 2056843276) index="0" unique_id=1862400045]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03794056, 0, 0.21398495)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Cesso_002/Cesso_003/RootNode_006/Cube_459/Cube_036_Material_002_0_001/StaticBody3D" unique_id=1981582310]
 shape = SubResource("BoxShape3D_hjlak")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Condizionatore/Cube_437" parent_id_path=PackedInt32Array(1626445192, 1315625493) index="0" unique_id=104800286]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Condizionatore/Cube_437" parent_id_path=PackedInt32Array(1626445192, 459836081) index="0" unique_id=104800286]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.929848, -0.22578812, 19.209366)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Condizionatore/Cube_437/StaticBody3D" unique_id=2127610128]
 shape = SubResource("BoxShape3D_i85c0")
 
-[node name="Cube_439" parent="connesi_building_test2_addon_1" index="36" unique_id=800600261]
+[node name="Cube_439" parent="connesi_building_test2_addon_1" index="65" unique_id=2102180331]
 visible = false
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cube_463" parent_id_path=PackedInt32Array(1626445192, 1527909448) index="0" unique_id=2052215121]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cube_463" parent_id_path=PackedInt32Array(1626445192, 166403605) index="0" unique_id=2052215121]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Cube_463/StaticBody3D" unique_id=2033657368]
 shape = SubResource("ConcavePolygonShape3D_kxnsh")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cube_464" parent_id_path=PackedInt32Array(1626445192, 1528363773) index="0" unique_id=774869948]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cube_464" parent_id_path=PackedInt32Array(1626445192, 1445503815) index="0" unique_id=774869948]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Cube_464/StaticBody3D" unique_id=962625155]
 shape = SubResource("ConvexPolygonShape3D_6tlv4")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cube_465" parent_id_path=PackedInt32Array(1626445192, 191002070) index="0" unique_id=840098596]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cube_465" parent_id_path=PackedInt32Array(1626445192, 1239427091) index="0" unique_id=840098596]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Cube_465/StaticBody3D" unique_id=1013438688]
 shape = SubResource("ConvexPolygonShape3D_0puoq")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cylinder_138" parent_id_path=PackedInt32Array(1626445192, 1489093221) index="0" unique_id=102899757]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cylinder_138" parent_id_path=PackedInt32Array(1626445192, 1678572838) index="0" unique_id=102899757]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5762787e-07, -1.5435696, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Cylinder_138/StaticBody3D" unique_id=1618137650]
 shape = SubResource("BoxShape3D_ufi8e")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cylinder_139" parent_id_path=PackedInt32Array(1626445192, 1552525286) index="0" unique_id=494369163]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cylinder_139" parent_id_path=PackedInt32Array(1626445192, 1101886839) index="0" unique_id=494369163]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5497208e-06, -4.9873714, -1.1920929e-07)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Cylinder_139/StaticBody3D" unique_id=956961246]
 shape = SubResource("BoxShape3D_4v283")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cylinder_140" parent_id_path=PackedInt32Array(1626445192, 776906654) index="0" unique_id=1572931659]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cylinder_140" parent_id_path=PackedInt32Array(1626445192, 1388132232) index="0" unique_id=1572931659]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5762787e-06, 12.931687, 5.9604645e-07)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Cylinder_140/StaticBody3D" unique_id=1015703015]
 shape = SubResource("BoxShape3D_sxqel")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cylinder_142" parent_id_path=PackedInt32Array(1626445192, 203300111) index="0" unique_id=127547195]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cylinder_142" parent_id_path=PackedInt32Array(1626445192, 375679834) index="0" unique_id=127547195]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5762787e-07, -1.6357436, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Cylinder_142/StaticBody3D" unique_id=1888785374]
 shape = SubResource("BoxShape3D_mk4qa")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cylinder_143" parent_id_path=PackedInt32Array(1626445192, 313270525) index="0" unique_id=1884895912]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Cylinder_143" parent_id_path=PackedInt32Array(1626445192, 1895090485) index="0" unique_id=1884895912]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3113022e-06, -4.4969816, -1.1920929e-07)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Cylinder_143/StaticBody3D" unique_id=1152345815]
 shape = SubResource("BoxShape3D_u7aru")
 
-[node name="desk_Teacher_lambert1_0" parent="connesi_building_test2_addon_1" index="55" unique_id=1135854928 groups=["navigation_source"]]
+[node name="desk_Teacher_lambert1_0" parent="connesi_building_test2_addon_1" index="84" unique_id=1662637847 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/desk_Teacher_lambert1_0" index="0" unique_id=1095357292]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1920929e-07, 0.6024089, 0)
@@ -6133,7 +6139,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1920929e-07, 0.6024089, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/desk_Teacher_lambert1_0/StaticBody3D" unique_id=1235424527]
 shape = SubResource("BoxShape3D_3kqk4")
 
-[node name="_car_body_gray_plastic_Mesh" parent="connesi_building_test2_addon_1/Kona" parent_id_path=PackedInt32Array(1626445192, 83052251) index="4" unique_id=1006718970 groups=["navigation_source"]]
+[node name="_car_body_gray_plastic_Mesh" parent="connesi_building_test2_addon_1/Kona" parent_id_path=PackedInt32Array(1626445192, 247150199) index="4" unique_id=1194185882 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Kona/_car_body_gray_plastic_Mesh" index="0" unique_id=892130568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5657043, -0.0054244995, -37.73265)
@@ -6142,48 +6148,48 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5657043, -0.0054244995, -37
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.1117554, 26.696297)
 shape = SubResource("BoxShape3D_yi3r8")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Kona/_car_body_Mesh" parent_id_path=PackedInt32Array(1626445192, 1570753167) index="0" unique_id=351862438]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Kona/_car_body_Mesh" parent_id_path=PackedInt32Array(1626445192, 937000437) index="0" unique_id=351862438]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Kona/_car_body_Mesh/StaticBody3D" unique_id=1283935329]
 shape = SubResource("ConvexPolygonShape3D_6yp8p")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Lavabo/root_002/GLTF_SceneRootNode_001/Lavabo_2/Object_4_001" parent_id_path=PackedInt32Array(1626445192, 326429523) index="0" unique_id=118393197]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Lavabo/root_002/GLTF_SceneRootNode_001/Lavabo_2/Object_4_001" parent_id_path=PackedInt32Array(1626445192, 1428068487) index="0" unique_id=118393197]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1920929e-07, -1.7200303, -0.14406419)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Lavabo/root_002/GLTF_SceneRootNode_001/Lavabo_2/Object_4_001/StaticBody3D" unique_id=1498045707]
 shape = SubResource("BoxShape3D_oi64g")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Lavabo_001/root_003/GLTF_SceneRootNode_002/Lavabo_2_001/Object_4_002" parent_id_path=PackedInt32Array(1626445192, 1333894254) index="0" unique_id=1197757355]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Lavabo_001/root_003/GLTF_SceneRootNode_002/Lavabo_2_001/Object_4_002" parent_id_path=PackedInt32Array(1626445192, 2117127440) index="0" unique_id=1197757355]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1920929e-07, -1.7200303, -0.14406419)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Lavabo_001/root_003/GLTF_SceneRootNode_002/Lavabo_2_001/Object_4_002/StaticBody3D" unique_id=1150483002]
 shape = SubResource("BoxShape3D_dyqd7")
 
-[node name="Porta DC" parent="connesi_building_test2_addon_1" index="92" unique_id=1948631838]
+[node name="Porta DC" parent="connesi_building_test2_addon_1" index="138" unique_id=2077133169]
 transform = Transform3D(0.8673423, 0, -0.4977121, 0, 1, 0, 0.4977121, 0, 0.8673423, 6.3105927, 1.1590202, 0.55465215)
 
-[node name="Cylinder_105" parent="connesi_building_test2_addon_1/Porta DC" index="0" unique_id=1182781279]
+[node name="Cylinder_105" parent="connesi_building_test2_addon_1/Porta DC" index="0" unique_id=1801302988]
 transform = Transform3D(-0.009954241, 0.0043367147, -8.8126806e-10, -2.3841853e-09, -5.960463e-10, -0.02, -0.017346859, -0.0024885603, 3.2545442e-09, -0.028887749, 0.016503334, -0.10092878)
 
-[node name="Cylinder_106" parent="connesi_building_test2_addon_1/Porta DC" index="1" unique_id=263033887]
+[node name="Cylinder_106" parent="connesi_building_test2_addon_1/Porta DC" index="1" unique_id=1543553331]
 transform = Transform3D(-0.0049771206, 0.026020288, -4.4063403e-10, -1.1920926e-09, -3.5762782e-09, -0.01, -0.0086734295, -0.01493137, 1.6272721e-09, -0.020246506, 0.016503334, -0.10588908)
 
-[node name="Cylinder_107" parent="connesi_building_test2_addon_1/Porta DC" index="2" unique_id=392838451]
+[node name="Cylinder_107" parent="connesi_building_test2_addon_1/Porta DC" index="2" unique_id=370153548]
 transform = Transform3D(0.00867343, 0.014931372, 0, 0, 0, -0.01, -0.0049771233, 0.026020277, 0, 0.010967255, 0.016503334, -0.1014626)
 
-[node name="Cylinder_131" parent="connesi_building_test2_addon_1/Porta DC" index="3" unique_id=790766475]
+[node name="Cylinder_131" parent="connesi_building_test2_addon_1/Porta DC" index="3" unique_id=617511684]
 transform = Transform3D(-0.010476088, -0.0042560194, 0.00065770553, 0.0013208054, -1.044868e-05, 0.019956294, -0.016985511, 0.0026241587, 0.0011461672, -0.073027134, 0.016961098, -0.07612276)
 
-[node name="Cylinder_134" parent="connesi_building_test2_addon_1/Porta DC" index="4" unique_id=1589903204]
+[node name="Cylinder_134" parent="connesi_building_test2_addon_1/Porta DC" index="4" unique_id=597775369]
 transform = Transform3D(-0.005238044, -0.025536142, 0.00032885067, 0.00066039874, -6.269227e-05, 0.009978148, -0.008492756, 0.015744958, 0.0005730804, -0.08150673, 0.016940236, -0.07089615)
 
-[node name="Cylinder_135" parent="connesi_building_test2_addon_1/Porta DC" index="5" unique_id=1906947027]
+[node name="Cylinder_135" parent="connesi_building_test2_addon_1/Porta DC" index="5" unique_id=126510153]
 transform = Transform3D(-0.008673433, 0.014931369, 4.4115147e-09, 5.0862385e-09, 0, 0.01, 0.004977121, 0.0260203, -2.5314837e-09, -0.09252739, 0.015608668, -0.041388273)
 
-[node name="Porta_092" parent="connesi_building_test2_addon_1/Porta DC" index="6" unique_id=755192701]
+[node name="Porta_092" parent="connesi_building_test2_addon_1/Porta DC" index="6" unique_id=236255603]
 transform = Transform3D(0.8673429, 0, 0.49771246, 0, 1, 0, -0.49771246, 0, 0.8673429, 0.3391881, -0.08906257, 0.54874897)
 
-[node name="ScaffaleMagazzino" parent="connesi_building_test2_addon_1" index="96" unique_id=1111897014 groups=["navigation_source"]]
+[node name="ScaffaleMagazzino" parent="connesi_building_test2_addon_1" index="142" unique_id=2041753775 groups=["navigation_source"]]
 
 [node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/ScaffaleMagazzino" index="0" unique_id=1766434341]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48174208, 1.0134491, 0)
@@ -6191,19 +6197,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48174208, 1.0134491, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/ScaffaleMagazzino/StaticBody3D" unique_id=1425728924]
 shape = SubResource("BoxShape3D_kxnsh")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Secchio" parent_id_path=PackedInt32Array(1626445192, 357790184) index="0" unique_id=1296620120]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Secchio" parent_id_path=PackedInt32Array(1626445192, 1581695050) index="0" unique_id=1296620120]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0065431446, 0.056997597, -0.0003605932)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Secchio/StaticBody3D" unique_id=1262786651]
 shape = SubResource("BoxShape3D_6tlv4")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Secchio_001" parent_id_path=PackedInt32Array(1626445192, 1322214410) index="0" unique_id=1025058935]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Secchio_001" parent_id_path=PackedInt32Array(1626445192, 1800040696) index="0" unique_id=1025058935]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0065431446, 0.056997597, -0.0003605932)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Secchio_001/StaticBody3D" unique_id=1965034529]
 shape = SubResource("BoxShape3D_0puoq")
 
-[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Tetto Bagni Assistenza_001" parent_id_path=PackedInt32Array(1626445192, 319797525) index="0" unique_id=1259904558]
+[node name="StaticBody3D" type="StaticBody3D" parent="connesi_building_test2_addon_1/Tetto Bagni Assistenza_001" parent_id_path=PackedInt32Array(1626445192, 741045470) index="0" unique_id=1259904558]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.828182, -0.10141772, 3.4286726)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="connesi_building_test2_addon_1/Tetto Bagni Assistenza_001/StaticBody3D" unique_id=430513464]
@@ -6419,8 +6425,8 @@ source_visual = NodePath("../../connesi_building_test2/Porta Magazzino 01/Porta_
 runtime_name = &"WarehouseGrid013"
 persistent_id = &"main.door.warehouse.WarehouseGrid013"
 interaction_name = "PORTA MAGAZZINO 013"
-enemy_jump_open_enabled = true
 width_axis = 0
+enemy_jump_open_enabled = true
 
 [node name="PortaGrigliata014" type="Node" parent="WarehouseDoors" unique_id=1890822399 node_paths=PackedStringArray("source_visual")]
 script = ExtResource("99_door_setup")
@@ -6428,8 +6434,8 @@ source_visual = NodePath("../../connesi_building_test2/Porta Magazzino 01_001/Po
 runtime_name = &"WarehouseGrid014"
 persistent_id = &"main.door.warehouse.WarehouseGrid014"
 interaction_name = "PORTA MAGAZZINO 014"
-enemy_jump_open_enabled = true
 width_axis = 0
+enemy_jump_open_enabled = true
 
 [node name="PortaGrigliata015" type="Node" parent="WarehouseDoors" unique_id=166818826 node_paths=PackedStringArray("source_visual")]
 script = ExtResource("99_door_setup")
@@ -6437,8 +6443,8 @@ source_visual = NodePath("../../connesi_building_test2/Porta Magazzino 01_002/Po
 runtime_name = &"WarehouseGrid015"
 persistent_id = &"main.door.warehouse.WarehouseGrid015"
 interaction_name = "PORTA MAGAZZINO 015"
-enemy_jump_open_enabled = true
 width_axis = 0
+enemy_jump_open_enabled = true
 
 [node name="PortaScale038" type="Node" parent="WarehouseDoors" unique_id=71046678 node_paths=PackedStringArray("source_visual")]
 script = ExtResource("99_door_setup")
@@ -6464,17 +6470,20 @@ script = ExtResource("96_test_access")
 [node name="BroccoloSpawn" type="Marker3D" parent="." unique_id=211438660]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.19058454, 0.26043603, -6.215005)
 
-[node name="BroccoloEncounter" type="Node" parent="." unique_id=38724357 node_paths=PackedStringArray("spawn", "trigger_switch", "entrance_switch", "corridor_lights_switch", "player", "hud")]
+[node name="BroccoloEncounter" type="Node" parent="." unique_id=38724357 node_paths=PackedStringArray("spawn", "camera_stop_marker", "trigger_switch", "entrance_switch", "corridor_lights_switch", "player", "hud")]
 script = ExtResource("100_broccolo_encounter")
 spawn = NodePath("../BroccoloSpawn")
+camera_stop_marker = NodePath("BroccoloCameraStop")
 trigger_switch = NodePath("../Interruttore Luce Lampadario Magazzino")
 entrance_switch = NodePath("../Interruttore Luce Ingresso Magazzino")
 corridor_lights_switch = NodePath("../Interruttore Luce Corridoio Magazzino")
 player = NodePath("../Player")
 hud = NodePath("../HUD")
-alien_puzzle_path = NodePath("../RegiaIntegration/NetworkPuzzle")
 
-[node name="BroccoloMinionSpawner" parent="BroccoloEncounter" instance=ExtResource("101_broccolo_combat")]
+[node name="BroccoloMinionSpawner" parent="BroccoloEncounter" unique_id=894294802 instance=ExtResource("101_broccolo_combat")]
+
+[node name="BroccoloCameraStop" type="Marker3D" parent="BroccoloEncounter" unique_id=1280971987]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 6.9747653, 0.119181395, -6.345135)
 
 [editable path="Player"]
 [editable path="Player/Head/Camera3D/WeaponHolder/LowWorldViewModel"]

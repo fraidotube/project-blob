@@ -396,6 +396,7 @@ func emit_copy() -> Node:
 			copy.spawn_tween = tween
 			tween.tween_property(copy.visual, "position", offset, 0.45)
 		copies.append(copy)
+		if is_instance_valid(boss.audio):boss.audio.play_duplicate_cues()
 		if boss.power_fx == null: boss.burst(boss.global_position + Vector3.UP * 0.1)
 		spawn_times_ms.append((Time.get_ticks_usec() - started) / 1000.0)
 		return copy

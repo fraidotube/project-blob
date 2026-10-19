@@ -17,6 +17,44 @@ extends Node3D
 @export var hurt_streams: Array[AudioStream] = []
 ## Secondi iniziali da saltare per ciascuna reazione, nello stesso ordine degli stream.
 @export var hurt_start_offsets := PackedFloat32Array()
+@export_group("Boss fight")
+## Carica sonora riprodotta mentre il corpo principale si rimpicciolisce.
+@export var shrink_aura_stream: AudioStream
+## Voce del principale all'avvio della trasformazione.
+@export var shrink_voice_stream: AudioStream
+## Lampo sonoro breve che accompagna l'emissione di ogni copia.
+@export var duplicate_aura_stream: AudioStream
+## Varianti pop delle copie; vengono alternate evitando ripetizioni consecutive.
+@export var duplicate_pop_streams: Array[AudioStream] = []
+## Suoni associati nell'ordine alle clip throw, trow2 e trow_grenade.
+@export var sphere_launch_streams: Array[AudioStream] = []
+## Impatto della sfera quando causa danno al giocatore.
+@export var sphere_impact_stream: AudioStream
+@export_group("Tagli audio boss")
+## Secondo iniziale da saltare nella carica aura; rimuove il silenzio registrato.
+@export_range(0.0, 5.0, 0.01) var shrink_aura_start_offset := 1.08
+## Durata utile della carica durante la trasformazione.
+@export_range(0.05, 5.0, 0.05) var shrink_aura_play_seconds := 1.8
+## Secondo iniziale da saltare nella battuta di trasformazione.
+@export_range(0.0, 1.0, 0.01) var shrink_voice_start_offset := 0.13
+## Durata massima della battuta, esclusa la lunga coda muta.
+@export_range(0.05, 5.0, 0.05) var shrink_voice_play_seconds := 1.9
+## Inizio del frammento utile della carica aura alla duplicazione.
+@export_range(0.0, 5.0, 0.01) var duplicate_aura_start_offset := 1.08
+## Durata breve della carica aura alla duplicazione.
+@export_range(0.05, 2.0, 0.05) var duplicate_aura_play_seconds := 0.55
+## Silenzio iniziale da saltare nei pop, nello stesso ordine delle varianti.
+@export var duplicate_pop_start_offsets := PackedFloat32Array([0.18, 0.145])
+## Durata dei pop prima della coda muta, nello stesso ordine delle varianti.
+@export var duplicate_pop_play_seconds := PackedFloat32Array([0.17, 0.14])
+## Silenzio iniziale da saltare nei suoni di lancio, nello stesso ordine delle clip.
+@export var sphere_launch_start_offsets := PackedFloat32Array([0.03, 0.04, 0.03])
+## Durata utile dei suoni di lancio; tronca la coda muta dei file originali.
+@export var sphere_launch_play_seconds := PackedFloat32Array([0.88, 0.92, 0.92])
+## Silenzio iniziale da saltare nel suono d'impatto.
+@export_range(0.0, 1.0, 0.01) var sphere_impact_start_offset := 0.06
+## Durata utile dell'impatto, prima del silenzio finale.
+@export_range(0.05, 5.0, 0.05) var sphere_impact_play_seconds := 2.2
 @export_group("Mix e cadenza")
 ## Pitch dei piccoli passi;1 e' l'originale.
 @export_range(0.5, 2.5, 0.05) var step_pitch := 1.7
@@ -47,6 +85,8 @@ var last_hurt := -1
 var hurts_played := 0
 var steps_played := 0
 var impacts_played := 0
+var last_pop := -1
+var voice_cutoff: Timer
 
 func _ready() -> void:
 	voice = _player("Voice", voice_volume_db, 18)
@@ -57,6 +97,11 @@ func _ready() -> void:
 	effect = _player("Action", effect_volume_db, 14)
 	last_position = get_parent().global_position
 	get_parent().get_node("MouthPresentation").bind_voice(voice)
+	voice_cutoff = Timer.new()
+	voice_cutoff.name = "VoiceCueCutoff"
+	voice_cutoff.one_shot = true
+	add_child(voice_cutoff)
+	voice_cutoff.timeout.connect(voice.stop)
 
 func _player(title: String, volume: float, distance: float) -> AudioStreamPlayer3D:
 	var sound := AudioStreamPlayer3D.new()
@@ -122,6 +167,57 @@ func action(kind: String) -> void:
 	effect.play()
 	if kind == "hit": impacts_played += 1
 
+func play_one_shot(stream: AudioStream, start_offset: float, duration: float, use_override_position := false, override_position := Vector3.ZERO) -> void:
+	if stream == null or not is_inside_tree():return
+	var world := get_tree().current_scene
+	if world == null:return
+	var player := AudioStreamPlayer3D.new()
+	player.name = "BroccoloOneShot"
+	player.bus = &"SFX"
+	player.volume_db = effect_volume_db
+	player.max_distance = step_hearing_distance
+	player.unit_size = step_unit_size
+	player.stream = stream
+	world.add_child(player)
+	player.global_position = override_position if use_override_position else get_parent().global_position
+	player.finished.connect(player.queue_free)
+	var start := clampf(start_offset, 0.0, maxf(stream.get_length() - 0.02, 0.0))
+	player.play(start)
+	var cutoff := duration if duration > 0.0 else stream.get_length() - start
+	if cutoff > 0.0:
+		get_tree().create_timer(cutoff, false).timeout.connect(func():
+			if is_instance_valid(player):
+				player.stop()
+				player.queue_free()
+		)
+
+func play_shrink_cue() -> void:
+	play_one_shot(shrink_aura_stream, shrink_aura_start_offset, shrink_aura_play_seconds)
+	if shrink_voice_stream == null:return
+	voice.stop()
+	voice.stream = shrink_voice_stream
+	voice.volume_db = voice_volume_db
+	voice.pitch_scale = 1.0
+	voice.play(shrink_voice_start_offset)
+	voice_cutoff.start(shrink_voice_play_seconds)
+
+func play_duplicate_cues() -> void:
+	play_one_shot(duplicate_aura_stream, duplicate_aura_start_offset, duplicate_aura_play_seconds)
+	if duplicate_pop_streams.is_empty():return
+	var index := randi_range(0, duplicate_pop_streams.size() - 1)
+	if index == last_pop and duplicate_pop_streams.size() > 1:index = (index + 1) % duplicate_pop_streams.size()
+	last_pop = index
+	var start := duplicate_pop_start_offsets[index] if index < duplicate_pop_start_offsets.size() else 0.0
+	var duration := duplicate_pop_play_seconds[index] if index < duplicate_pop_play_seconds.size() else 0.0
+	play_one_shot(duplicate_pop_streams[index], start, duration)
+
+func play_sphere_launch(clip: StringName) -> void:
+	var index := [&"mie/throw", &"mie/trow2", &"mie/trow_grenade"].find(clip)
+	if index < 0 or index >= sphere_launch_streams.size():return
+	var start := sphere_launch_start_offsets[index] if index < sphere_launch_start_offsets.size() else 0.0
+	var duration := sphere_launch_play_seconds[index] if index < sphere_launch_play_seconds.size() else 0.0
+	play_one_shot(sphere_launch_streams[index], start, duration)
+
 func set_paused(paused: bool) -> void:
 	voice.stream_paused = paused
 	footsteps.stream_paused = paused
@@ -129,5 +225,6 @@ func set_paused(paused: bool) -> void:
 
 func stop_voice() -> void:
 	voice.stop()
+	voice_cutoff.stop()
 	var mouth = get_parent().get_node("MouthPresentation")
 	if is_instance_valid(mouth.motion): mouth.motion.reset_mouth()

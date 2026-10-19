@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=25 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/enemies/broccolo.tscn" id="1"]
 [ext_resource type="Script" path="res://scripts/enemies/broccolo_lab_actor.gd" id="2"]
@@ -15,6 +15,14 @@
 [ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/colpito1_mostro.mp3" id="17_hurt"]
 [ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/colpito2_mostro.mp3" id="18_hurt"]
 [ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/colpito3_mostro.mp3" id="19_hurt"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/aura_charge.mp3" id="20_aura"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/rimpicciolisco_mostro.mp3" id="21_shrink_voice"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/pop1.mp3" id="22_pop1"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/pop2.mp3" id="23_pop2"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/lanciosfera1.mp3" id="24_throw1"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/lanciosfera2.mp3" id="25_throw2"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/lanciosfera3.mp3" id="26_throw3"]
+[ext_resource type="AudioStream" path="res://assets/models/enemies/broccolo/flame_impact.mp3" id="27_impact"]
 
 [sub_resource type="CapsuleShape3D" id="Capsule"]
 radius = 0.065
@@ -41,6 +49,12 @@ landing_stream = ExtResource("15")
 hit_stream = ExtResource("16")
 hurt_streams = Array[AudioStream]([ExtResource("17_hurt"), ExtResource("18_hurt"), ExtResource("19_hurt")])
 hurt_start_offsets = PackedFloat32Array(0.045, 0.08, 0.105)
+shrink_aura_stream = ExtResource("20_aura")
+shrink_voice_stream = ExtResource("21_shrink_voice")
+duplicate_aura_stream = ExtResource("20_aura")
+duplicate_pop_streams = Array[AudioStream]([ExtResource("22_pop1"), ExtResource("23_pop2")])
+sphere_launch_streams = Array[AudioStream]([ExtResource("24_throw1"), ExtResource("25_throw2"), ExtResource("26_throw3")])
+sphere_impact_stream = ExtResource("27_impact")
 
 [node name="FlyingKick" type="Node" parent="Moves"]
 script = ExtResource("3")

@@ -1,5 +1,7 @@
 # Configurare Project Blob dall'Inspector
 
+**Audio fight Broccolo (19/10):** selezionare `BroccoloMinionSpawner` per stream, volume, ripartenza soundtrack e parametri mappa. In `MainBroccolo/LabAudio` (e nella scena Actor Scene per le copie) sono esposti i cue, offset iniziali e durate di taglio; pop streams e lanci rispettano gli array ordinati. Su `BroccoloEncounter` → **Invito interruttore** regolare raggio di prossimità, portata, energia e frequenza pulsazione della luce viola, applicata soltanto al comando lampadario.
+
 **Sfera/incendio Broccolo18/10:** sul root laboratorio collegamenti Energy Visual Scene/Burn Status; nel test puntano a EnergyVisual e Player/BroccoloBurnStatus, in mappa null. Sullo stato: Target/Camera obbligatori, Duration Seconds3, Tick Damage3, Tick Seconds0,75, Flame Height1,7m e Flame Color. Energia grafica: scene broccolo_energy_visual, dimensioni/tinta aura e materiali/mesh Core/Orbit; fisica/danno/raggio sui Moves del boss come prima. BodyFlames usa stessa PowerVFX. Nuovi effetti esclusivamente runtime, nessun @tool; parametri stato custom serializzati e applicati nel test.
 
 PowerVFX / Nascita copie: **Copy Flash Seconds0,22s** e **Copy Flash Strength0,65** regolano il breve guscio arancione alla duplicazione, separato dalla durata delle particelle. A fine lampo la copia conserva il bordo normale e il principale riprende l'eventuale aura dorata.

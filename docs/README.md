@@ -1,5 +1,11 @@
 # Project Blob — documentazione di continuità
 
+**19/10 — Audio e invito interruttore Broccolo:** carica/voce shrink, aura+pop copie, tre lanci, impatto sfera sul danno reale e soundtrack sono collegati; i silenzi MP3 vengono saltati/interrotti in riproduzione. Il comando lampadario pulsa viola entro portata. Playtest audio/luci all'utente; dettagli in [BROCCOLO_COMBAT_LAB](BROCCOLO_COMBAT_LAB.md) e [BROCCOLO_MAP_INTRO](BROCCOLO_MAP_INTRO.md).
+
+**19/10 — Broccolo, seconda cinematic e handoff:** posa spostata a destra con controllo di spazio; nella mappa la presentazione passa direttamente al combattimento senza shrink preliminare, lasciando una sola trasformazione con aura all'avvio del boss. Playtest cinematica/lotta lasciato all'utente.
+
+**19/10 — regia iniziale Broccolo:** [idle continuo fino al cue della risposta](BROCCOLO_MAP_INTRO.md#idle-durante-il-dolly-19-ottobre), poi risposta con anticipo3,5s e camera al marker sul cue13,5s. L'utente prova la cinematic completa; altri boss esclusi.
+
 **18/10 — sfera con aura e player incendiato:** [nuova prova laboratorio](BROCCOLO_COMBAT_LAB.md#sfera-energetica-e-bruciatura--prova1810), proiettile con scia e impatto diretto che brucia3s; Tab / Prova bruciatura in FPS. Mappa conservata fino ad approvazione del pacchetto.
 
 **18/10 — prova effetti Broccolo:** [F6 laboratorio e pulsante Ripeti trasformazione](BROCCOLO_COMBAT_LAB.md#prova-effetti-1810--prima-approvazione-nel-laboratorio). Nascita fisica dal corpo con particelle, bordo arancione leggibile e aura dorata. Solo test fino ad approvazione, poi stessa risorsa IDENTICA nella mappa.
@@ -155,3 +161,5 @@ Il locale descrive i file attuali; il PDF conserva storia e intenzioni; Git cons
 
 Questi file conservano il PDF, gli standard e le osservazioni verificabili della sessione. Conversazioni precedenti non incluse nel PDF, sorgenti Blender esterni e asset locali non vengono ricostruiti o copiati dai Markdown. La documentazione non sostituisce il backup dei file.
 # **17/10 — Broccolo, regia aggiornata:** rotazione della camera anticipata lungo il primo dolly; nella seconda cinematic un percorso sicuro di4,8m riporta camera e player vicino alla svolta iniziale (distanza residua0,39m per gli ostacoli). Il salto della danza avanza fino a1m. Idle ruota quando il personaggio esce dall'inquadratura. Test mappa `--cinematic-only` passato; playtest visivo richiesto. [Guida](BROCCOLO_MAP_INTRO.md).
+**19/10 — Luci boss fight Broccolo:** tinta viola leggera sulle luci ambientali durante la battaglia; ripristino alla sconfitta o allo stop. Playtest visivo all'utente.
+**19/10 — Broccolo:** tinta viola delle luci confermata dall'utente; default Inspector dell'offset della seconda presentazione aumentato di 10 cm.

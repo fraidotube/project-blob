@@ -117,6 +117,15 @@ func run() -> void:
 	var interaction: Node = player.get_node("InteractionSystem")
 	var weapon: Node = player.get_node("Head/Camera3D/WeaponHolder")
 	if map_mode:
+		var combat_component: Node = world.get_node("BroccoloEncounter/BroccoloMinionSpawner")
+		var combat_deadline := Time.get_ticks_msec() + 60000
+		while not combat_component.ready_for_test and Time.get_ticks_msec() < combat_deadline:
+			await process_frame
+		check(combat_component.ready_for_test, "Preparazione Broccolo in mappa completata")
+		check(combat_component.burn_status == player.get_node("BroccoloBurnStatus"), "Bruciatura collegata al player reale della mappa")
+		check(combat_component.get_node("MainBroccolo").power_fx != null and not combat_component.reserve.is_empty() and combat_component.reserve[0].power_fx != null,
+			"Aura principale e copie della mappa usano gli effetti approvati")
+		check(combat_component.energy_visual_scene != null, "La sfera usa la grafica approvata anche in mappa")
 		world.get_node("AngelastriEncounter").set_process(false)
 		world.get_node("BrunoBuozzi").set_physics_process(false)
 		# Posizione libera accanto al lampadario che avvia la cinematica.
@@ -146,42 +155,69 @@ func run() -> void:
 	trigger.try_toggle_lights()
 	var player_pose := player.global_transform
 	var fov: float = encounter.player_camera.fov
+	var player_camera_pose: Transform3D = encounter.player_camera.global_transform
 	trigger.try_toggle_lights()
 	check(encounter.cinematic and not player.is_physics_processing() and not player.is_processing_unhandled_input(), "Accensione lampadario blocca il player")
-	check(is_equal_approx(encounter.camera_path_seconds, 3.25), "Dolly accorciato prima che inizi la telefonata")
-	check(is_equal_approx(encounter.camera_straight_distance, 2.8), "La camera avanza un po' di piu' prima della svolta per liberare l'angolo")
+	if not is_instance_valid(encounter.camera):
+		quit(maxi(failures, 1))
+		return
+	check(is_instance_valid(encounter.ringtone_player) and encounter.ringtone_player.playing,
+		"La suoneria parte subito quando il comando luce avvia la cinematica")
+	check(encounter.answer_at_ringtone_seconds > encounter.answer_seconds and encounter.synchronize_camera_to_ringtone_answer,
+		"La regia usa il cue della suoneria come orologio comune per animazione e camera")
+	check(encounter.camera.global_transform.is_equal_approx(player_camera_pose), "La camera parte dalla posa FPS esatta")
 	var expected_corridor_axis: Vector3 = (trigger.global_position - entrance.global_position).normalized()
 	check(encounter.camera_travel_axis.dot(expected_corridor_axis) > 0.99, "La camera usa l'asse ingresso-lampadario come direzione del corridoio")
-	var straight_camera_sample: Vector3 = encounter._camera_path_position(encounter.camera_turn_start_ratio * 0.5)
-	var straight_camera_delta: Vector3 = straight_camera_sample - encounter.camera_path_start
-	check(straight_camera_delta.dot(encounter.camera_travel_axis) > 0.1 and straight_camera_delta.cross(encounter.camera_travel_axis).length() < 0.01,
-		"Il primo tratto della camera resta dritto lungo il corridoio")
-	var early_camera_forward: Vector3 = encounter._camera_path_forward(encounter.camera_turn_start_ratio * 0.5, straight_camera_sample)
-	var early_target_direction: Vector3 = (encounter._shot_target() - straight_camera_sample).normalized()
-	var initial_target_alignment: float = encounter.camera_travel_axis.dot(early_target_direction)
-	check(early_camera_forward.dot(encounter.camera_travel_axis) > 0.65 and early_camera_forward.dot(early_target_direction) > initial_target_alignment + 0.02,
-		"La camera inizia a ruotare dolcemente mentre avanza lungo il corridoio")
-	var turn_camera_sample: Vector3 = encounter._camera_path_position(0.95)
-	check((turn_camera_sample - encounter.camera_path_turn).dot(encounter.camera_left_axis) > 0.1,
-		"La seconda parte del dolly curva a sinistra verso Broccolo")
-	check(turn_camera_sample.distance_to(encounter.camera_path_turn) <= encounter.camera_left_turn_distance + 0.1,
-		"La camera termina la curva all'imbocco senza avanzare dentro la corsia")
+	var quarter_camera_sample: Vector3 = encounter._camera_path_position(0.25)
+	var halfway_camera_sample: Vector3 = encounter._camera_path_position(0.5)
+	var turn_camera_sample: Vector3 = encounter._camera_path_position(1.0)
+	check(quarter_camera_sample.distance_to(encounter.camera_path_start) > 0.01 and turn_camera_sample.is_equal_approx(encounter.camera_path_end),
+		"Il dolly rettilineo collega la visuale FPS al marker di arresto")
+	if map_mode:
+		check(encounter.camera_stop_marker != null and is_equal_approx(encounter.camera_path_end.x, encounter.camera_stop_marker.global_position.x) and
+			is_equal_approx(encounter.camera_path_end.z, encounter.camera_stop_marker.global_position.z),
+			"La camera termina esattamente sul marker utente in X/Z")
+	var route_axis: Vector3 = (encounter.camera_path_end - encounter.camera_path_start).normalized()
+	check((halfway_camera_sample - encounter.camera_path_start).cross(route_axis).length() < 0.01,
+		"La camera segue una linea retta fino al marker")
+	check(encounter._smooth_cinematic(0.1) < 0.02 and encounter._smooth_cinematic(0.9) > 0.98,
+		"La curva parte e termina senza scatti di velocita'")
 	check(encounter.camera_path_end.distance_to(encounter.presentation.actor.global_position) > 1.0,
 		"La posa finale della camera resta separata dal corpo di Broccolo")
-	var turn_camera_forward: Vector3 = encounter._camera_path_forward(0.95, turn_camera_sample)
+	var turn_camera_forward: Vector3 = encounter._camera_path_forward(1.0, turn_camera_sample)
 	var turn_target_direction: Vector3 = (encounter._shot_target() - turn_camera_sample).normalized()
 	check(turn_camera_forward.dot(turn_target_direction) > 0.85,
 		"La camera completa la svolta orientandosi verso Broccolo")
+	var initial_forward: Vector3 = -player_camera_pose.basis.z
+	var final_rotation_angle := rad_to_deg(initial_forward.angle_to(turn_camera_forward))
+	var halfway_forward: Vector3 = encounter._camera_path_forward(0.5, halfway_camera_sample)
+	check(final_rotation_angle > 15.0 and initial_forward.angle_to(halfway_forward) > 0.01,
+		"La rotazione verso Broccolo comincia durante l'avanzamento e completa al marker")
 	check(not weapon.is_processing() and not weapon.visible and not encounter.hud.visible and not interaction.is_processing(), "Armi HUD interazione bloccati")
 	check(encounter.blocks_saving(), "Salvataggio bloccato durante introduzione")
 	var studio: Node = encounter.presentation
 	var phone: Node = studio.phone
+	check(studio.animation.assigned_animation == &"mie/idle" and studio.animation.is_playing() and
+		studio.animation.get_animation(&"mie/idle").loop_mode == Animation.LOOP_LINEAR,
+		"Broccolo resta in idle ciclico durante l'avvicinamento della camera")
 	phone.thrown_phone_floor_contacted.connect(func(): captured["phone_ground_contact"] = true)
 	var cue_wait := 0.0
-	while studio.presentation.stage != "answer" and cue_wait < 5.0:
+	var idle_advanced := false
+	while studio.presentation.stage != "answer" and cue_wait < 12.0:
 		await process_frame
 		cue_wait += encounter.get_process_delta_time()
-	check(studio.presentation.stage == "answer", "La telefonata parte quando la camera e' quasi arrivata all'inquadratura")
+		if studio.animation.assigned_animation == &"mie/idle" and studio.animation.current_animation_position > 0.1:
+			idle_advanced = true
+	check(idle_advanced, "L'idle continua ad animarsi mentre la camera percorre il corridoio")
+	check(studio.presentation.stage == "answer" and encounter.presentation_reveal_started,
+		"L'animazione di risposta parte sul cue anticipato della suoneria")
+	check(studio.animation.assigned_animation == &"mie/phone_answer_talk",
+		"Il cue della suoneria interrompe l'idle e avvia la risposta")
+	if studio.presentation.stage == "answer":
+		var answer_animation_cue: float = encounter.ringtone_player.get_playback_position()
+		check(absf(answer_animation_cue - (encounter.answer_at_ringtone_seconds - encounter.answer_seconds)) < 0.35,
+			"L'animazione inizia con l'anticipo configurato rispetto alla risposta telefonica")
+		check(encounter._camera_sees_broccolo(), "Quando parte la risposta Broccolo e' gia' inquadrato con visuale libera")
 	for clip_name: StringName in [&"mie/phone_answer_talk", &"mie/trow2", &"mie/walking"]:
 		var source_clip: Animation = studio.curves[clip_name]
 		var runtime_clip: Animation = studio.animation.get_animation(clip_name)
@@ -216,6 +252,7 @@ func run() -> void:
 	var launched_copy_moved := false
 	var launched_copy_at := -1.0
 	var checked_throw_visibility := false
+	var ring_answer_checked := false
 	check(phone.throw_lifetime_seconds >= 8.0, "Il lancio mantiene un failsafe se non raggiunge il pavimento")
 	while not encounter.intro_completed and elapsed < 45:
 		await process_frame
@@ -244,7 +281,16 @@ func run() -> void:
 					camera_contacts += 1
 					if camera_contacts < 4:
 						print("BROCCOLO_CAMERA_CONTACT ", encounter.camera.global_position," ",camera_hits[0].collider.get_path())
-		if studio.presentation.stage == "phone" and elapsed > 10 and not captured.has("phone"):
+		if studio.presentation.stage == "phone" and not ring_answer_checked:
+			ring_answer_checked = true
+			check(encounter.camera.global_position.distance_to(encounter.camera_path_end) < 0.15,
+				"La camera arriva al marker insieme al cue di risposta della suoneria")
+			check(not encounter.ringtone_player.playing,
+				"La suoneria si interrompe quando Broccolo risponde")
+			check(absf(encounter.ring_answer_position - encounter.answer_at_ringtone_seconds) < 0.75,
+				"La risposta avviene vicino al cue configurato nella suoneria")
+			check(studio.voice.playing and studio.voice.get_playback_position() < 0.5,
+				"La voce di Broccolo parte insieme alla risposta al telefono")
 			await capture("phone")
 		if studio.presentation.stage == "answer" and not captured.has("first_camera_sightline"):
 			captured["first_camera_sightline"] = true
@@ -252,7 +298,7 @@ func run() -> void:
 			var sightline := PhysicsRayQueryParameters3D.create(encounter.camera.global_position, camera_target, 1)
 			sightline.exclude = encounter._camera_exclusions()
 			check(player.get_world_3d().direct_space_state.intersect_ray(sightline).is_empty(),
-				"L'inquadratura iniziale libera l'angolo del magazzino e vede Broccolo")
+				"Dopo la svolta a sinistra la camera ha visuale libera su Broccolo")
 		if studio.presentation.stage == "throw":
 			seen_throw = true
 			check(studio.voice.get_playback_position() >= 23.0, "Pausa voce spostata a23secondi")
@@ -287,6 +333,7 @@ func run() -> void:
 				check(launched_copy.global_position.y > 0.05, "La copia resta sopra il pavimento durante il volo visibile")
 		if studio.presentation.stage == "walk" and not captured.has("walk"):await capture("walk")
 	check(encounter.intro_completed and seen_throw, "Telefonata lancio camminata completati")
+	check(ring_answer_checked, "La telefonata raggiunge il cue di risposta sincronizzato")
 	check(captured.has("first_camera_sightline"), "La prima camera viene verificata con una linea di vista libera")
 	check(hidden_at_throw and not phone.phone_visual.visible, "Telefono resta nascosto dopo il gesto")
 	check(checked_throw_visibility, "Il test ha verificato la durata visibile del lancio")
@@ -515,8 +562,27 @@ func run() -> void:
 		quit(failures)
 		return
 	encounter._combat_ready()
-	await create_timer(1.3).timeout
 	var spawner := encounter.get_node_or_null("BroccoloMinionSpawner")
+	if map_mode and is_instance_valid(spawner):
+		var combat_start_deadline := Time.get_ticks_msec() + 60000
+		while not spawner.started and Time.get_ticks_msec() < combat_start_deadline:
+			await process_frame
+		check(spawner.started, "La configurazione della lotta mappa completa l'handoff")
+		var main_boss: Node = spawner.boss
+		check(main_boss.state == "shrink", "Il corpo principale avvia la sua unica riduzione prima della lotta")
+		await physics_frame
+		check(main_boss.power_fx.visible and main_boss.power_fx.transforming,
+			"L'aura approvata si accende durante la riduzione in mappa")
+		var shrink_deadline := Time.get_ticks_msec() + 5000
+		while main_boss.state == "shrink" and Time.get_ticks_msec() < shrink_deadline:
+			await process_frame
+		check(main_boss.state == "chase" and is_equal_approx(main_boss.visual.scale.x, main_boss.miniature_scale),
+			"Il boss termina la trasformazione alla scala di combattimento")
+		var wave_deadline := Time.get_ticks_msec() + 8000
+		while spawner.active_minions.size() < 2 and Time.get_ticks_msec() < wave_deadline:
+			await process_frame
+	else:
+		await create_timer(1.3).timeout
 	check(not encounter.cinematic and is_instance_valid(spawner), "Dopo la danza il controllo ritorna e si attiva lo spawner")
 	if is_instance_valid(spawner):
 		var minions: Array = spawner.active_minions
@@ -524,7 +590,7 @@ func run() -> void:
 		if not minions.is_empty():
 			var minion: CharacterBody3D = minions[0]
 			check(minion.has_method("take_bullet_hit") and minion.has_method("take_damage"), "I minion ricevono i colpi con l'interfaccia delle armi")
-			check(minion.get_node("Broccolo").scale.is_equal_approx(Vector3.ONE * .11), "Il clone viene ridotto a circa20cm")
+			check(is_equal_approx(minion.get_node("Broccolo").scale.x, minion.miniature_scale), "Il clone usa la scala configurata dal profilo")
 			minion.take_damage(99)
 	print("BROCCOLO_ENCOUNTER_TEST failures=", failures," map=",map_mode," contacts=",contacts," camera_contacts=",camera_contacts," max_step=",maximum_step," final=",final.origin," mouth=",mouth_peak)
 	quit(failures)

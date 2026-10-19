@@ -388,12 +388,14 @@ func _update_ranged(offset: Vector3, delta: float) -> void:
 
 func fire_energy() -> void:
 	if not is_instance_valid(target): return
+	audio.play_sphere_launch(move.clip)
 	var projectile := ENERGY.new()
 	projectile.shooter = self
 	projectile.target = target
 	if is_instance_valid(lab):
 		projectile.visual_scene = lab.energy_visual_scene
 		projectile.burn_status = lab.burn_status
+	projectile.impact_audio = audio
 	projectile.speed = move.projectile_speed
 	projectile.radius = move.blast_radius
 	projectile.damage = move.damage
@@ -631,6 +633,7 @@ func preview_transformation() -> void:
 	visual.scale = Vector3.ONE
 	visual.position = model_offset
 	play(&"mie/idle")
+	if is_instance_valid(audio):audio.play_shrink_cue()
 	if power_fx != null: power_fx.stop()
 
 func _finish_emergence_visual() -> void:

@@ -1,5 +1,49 @@
 # Broccolo nel corridoio magazzino — prima introduzione
 
+## Interruttore e cue sonori della boss fight (19 ottobre)
+
+`BroccoloEncounter` crea sul solo interruttore `Interruttore Luce Lampadario Magazzino` una OmniLight viola pulsante: compare entro `switch_glow_distance` (default4m), illumina il corpo dell'interruttore e scompare quando si accende il circuito o termina l'intro. Raggio, energia e battito sono parametri Inspector sotto **Invito interruttore**. Non modifica gli altri comandi luce.
+
+All'avvio trasformazione partono insieme aura sonora e `rimpicciolisco_mostro`; la generazione di ogni copia emette aura breve e un pop alternato. Il lancio usa la clip sonora associata all'animazione; l'impatto usa `flame_impact` solo se il player perde HP. La soundtrack parte all'handoff con la boss fight e si riavvia a285s, prima del silenzio finale. I tagli usano `play(start_offset)` e stop temporizzati, senza ricodificare gli MP3 originali.
+
+**Playtest richiesto:** verificare che il viola sia leggibile nel corridoio buio senza diventare invadente; ascoltare volume/ritmo simultanei e confermare il cue d'impatto. Non è stato eseguito test Godot o ascolto strumentale.
+
+## Seconda cinematic e handoff al boss (19 ottobre)
+
+All'avvio della seconda presentazione il root di Broccolo viene traslato verso destra nell'inquadratura, fino a `0,35 m` (parametro `second_presentation_screen_right_offset` su `BroccoloEncounter`). Una capsula verifica la posa finale e riduce l'offset se un mobile o una parete la occupano, evitando di spostarlo dentro l'armadio. L'offset è eseguito prima che il presenter resetti la posa dell'attore, quindi resta valido per discorso e danza.
+
+Alla fine della danza, la presentazione in modalità mappa avvia direttamente `combat_ready` e sfuma la musica senza chiamare `shrink_preview()`. Il combattente principale resta grande fino all'handoff e viene ridotto una sola volta dal controller di combattimento, con l'aura prevista. La preview standalone mantiene la propria dimostrazione di shrink.
+
+Nessun playtest o test Godot eseguito: la cinematica completa e il combattimento sono lasciati alla prova dell'utente.
+
+## Idle durante il dolly (19 ottobre)
+
+Il presenter duplica le animazioni impostando inizialmente tutte le clip su `LOOP_NONE`; per questo l'idle iniziale si fermava prima che la camera completasse il percorso. All'avvio della regia, `BroccoloEncounter` resetta la presentazione, imposta `mie/idle` su `LOOP_LINEAR` e la avvia prima di mostrare Broccolo. Al cue anticipato della suoneria `start_introduction()` sostituisce l'idle con `mie/phone_answer_talk`; il sequencer mantiene l'anticipo di `answer_seconds` e la risposta sul cue audio.
+
+L'utente ha chiesto di fare personalmente la prova della cinematic completa e del combattimento: dopo questa modifica non eseguire test/playtest Godot. Verificare in gioco che l'idle resti visibile per tutto il dolly e venga interrotto al cue corretto. La modifica è limitata a Broccolo; altri boss invariati.
+
+## Regia iniziale sincronizzata al cue utente (19 ottobre)
+
+La regia iniziale usa `BroccoloCameraStop` come punto di arresto. Il percorso va in linea retta dalla trasformazione FPS al marker, mantenendo la quota della camera e usando le coordinate X/Z del marker; non calcola una curva né sceglie un endpoint alternativo. L'orientamento guarda Broccolo con gradualita' gia' durante l'avanzamento. Uno sweep sferico verifica una volta la tratta completa e un ray controlla l'inquadratura al marker; durante il movimento la camera segue il segmento validato senza correzioni per-frame che possano produrre scatti.
+
+La suoneria e' il clock della sequenza: a `answer_at_ringtone_seconds - answer_seconds` (10s con i default) parte l'animazione di risposta; il progresso dolly segue il playback e raggiunge il marker sul cue risposta a13,5s. Questo allunga il movimento per rispettare l'ordine richiesto, invece di lasciare la camera ferma in attesa o farla arrivare prima dell'animazione. Il fallback senza sincronizzazione usa `camera_path_seconds`. La seconda cinematic, la danza e il combattimento restano fuori da questa modifica.
+
+**Verifiche:** fixture e mappa `broccolo_encounter_test.gd -- --cinematic-only` passano (`failures=0`). Controllano trigger dell'animazione all'anticipo previsto, visuale su Broccolo, segmento rettilineo, marker, camera al cue risposta (13,378s), collisioni, lancio telefono e regressioni della seconda cinematic. Godot headless emette errori renderer Dummy al teardown; gli assert risultano passati. Il playtest utente resta necessario per giudicare composizione e dolcezza.
+
+## VFX Broccolo nella mappa (19 ottobre)
+
+La prima cinematic usa ora il marker e il cue audio descritti sopra. La seconda cinematic non e' stata cambiata. Le note storiche sulla curva e sul dolly di7s sono superate.
+
+Il combattimento in mappa collega ora la stessa `broccolo_power_vfx.tscn` usata dal laboratorio al corpo principale e al pool copie, la stessa grafica della sfera e `broccolo_burn_status.tscn` al player reale. Al passaggio dalla cinematic alla lotta il corpo principale parte grande e si rimpicciolisce una sola volta con l'aura; poi avvia il combattimento. Le copie conservano l'emersione dal corpo e la dispersione casuale gia' testate.
+
+**Verifiche VFX:** aura, spawn copie, sfera e bruciatura restano collegati in mappa alle risorse approvate del laboratorio. Le verifiche della regia sono registrate nella sezione precedente; il playtest visivo del pacchetto resta all'utente.
+
+## Suoneria telefono — risposta, nota storica (19 ottobre)
+
+Il file `assets/models/enemies/broccolo/zenghera_suoneria.mp3` e' collegato al `BroccoloEncounter` come `ringtone_stream` e parte appena il comando del lampadario avvia la cinematic. La nota precedente descriveva un dolly fisso da7s: e' superata dalla regia sincronizzata riportata in cima a questa guida. La suoneria e i cue restano configurabili nell'Inspector sul nodo `BroccoloEncounter`.
+
+**Verifiche storiche:** i risultati precedenti riguardavano la durata fissa della camera e sono superati dai test nella sezione di regia aggiornata. Audio Dummy non valuta il mix: ascolto della suoneria e della voce resta da fare nel playtest.
+
 ## Passaggio di consegne 17/10 — cinematic chiuse, boss da provare isolato
 
 L'utente ha confermato in gioco la prima cinematic: velocità uniforme lungo rettilineo e curva, rotazione coordinata all'avanzamento, punto e orientamento finali corretti. La prima cinematic è congelata. La seconda era già approvata e va lasciata invariata. Nessuna ulteriore modifica o test automatico su queste due sequenze durante la prossima fase.

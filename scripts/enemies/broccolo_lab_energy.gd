@@ -14,6 +14,7 @@ var tint := Color(0.3, 0.65, 1.0)
 ## Collegamenti opzionali del laboratorio: null conserva il proiettile mappa.
 var visual_scene: PackedScene
 var burn_status: Node3D
+var impact_audio: Node
 var energy_visual: Node3D
 var direct_hit := false
 const BURST = preload("res://scripts/effects/broccolo_lab_burst.gd")
@@ -82,7 +83,11 @@ func detonate() -> void:
 		excluded.append(target.get_rid())
 		query.exclude = excluded
 		if get_world_3d().direct_space_state.intersect_ray(query).is_empty():
+			var health_before: int = target.health
 			target.take_damage(damage)
+			if target.health < health_before and is_instance_valid(impact_audio):
+				impact_audio.play_one_shot(impact_audio.sphere_impact_stream, impact_audio.sphere_impact_start_offset,
+					impact_audio.sphere_impact_play_seconds, true, target.global_position)
 			if direct_hit and not target.is_dead and is_instance_valid(burn_status) and burn_status.target == target:
 				burn_status.ignite()
 	if is_instance_valid(energy_visual):

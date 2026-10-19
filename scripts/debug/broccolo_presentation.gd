@@ -111,14 +111,20 @@ func _begin_dance() -> void:
 	_play(DANCES[0])
 
 func _begin_shrink() -> void:
-	_set_stage("shrinking")
 	_play(&"mie/idle")
-	studio.shrink_preview()
 	music_fade=create_tween()
 	music_fade_paused=false
 	music_fade.tween_property(studio.music,"volume_db",-60.0,1.0)
 	music_fade.tween_callback(studio.music.stop)
 	music_fade.finished.connect(func():music_fade=null)
+	# In mappa la riduzione con aura appartiene al combattente principale e
+	# parte una sola volta al suo handoff. La preview standalone mantiene la demo.
+	if studio.map_presentation:
+		_set_stage("combat_ready")
+		combat_ready.emit()
+		return
+	_set_stage("shrinking")
+	studio.shrink_preview()
 
 func _process(delta:float) -> void:
 	if music_fade!=null and music_fade.is_valid() and studio.preview_paused!=music_fade_paused:

@@ -1,5 +1,13 @@
 # Broccolo — laboratorio boss fight (17/10/2026)
 
+## Cue audio e impatto sfera (19/10)
+
+`broccolo_lab_actor.tscn/LabAudio` collega `aura_charge.mp3` a trasformazione e duplicazione, `rimpicciolisco_mostro.mp3` alla voce del principale, `pop1/2.mp3` alternati per ogni copia, i tre `lanciosfera*.mp3` rispettivamente alle mosse `throw`, `trow2`, `trow_grenade`, e `flame_impact.mp3` all'impatto che riduce davvero la salute del player. I player 3D one-shot sono figli temporanei della scena mappa, quindi completano il suono anche quando il proiettile viene rimosso.
+
+I file originali restano intatti: `LabAudio` espone offset e durata per saltare l'inizio muto o troncare la coda. Impostazioni iniziali basate sull'analisi dei file: aura `1,08s`; voce `0,13s` per massimo `1,9s`; pop `0,18/0,145s` per `0,17/0,14s`; lanci `0,03/0,04/0,03s` per `0,88/0,92/0,92s`; impatto `0,06s` per `2,2s`. Aura duplicazione dura `0,55s`. La scena mappa avvia `Broccolo_soundtrack.mp3` all'handoff, volume iniziale `−8dB`, e riparte da zero al secondo `285` per non ripetere la coda muta. Serve ascolto reale per rifinire livelli e sincronizzazione.
+
+**Da procurare se vuoi completare il paesaggio sonoro:** una morte dedicata per le copie e un'esplosione/urto ambientale per le sfere che colpiscono pareti o pavimento; al momento le copie riusano la reazione mostro e l'impatto player usa `flame_impact`. Non manca un altro suono per gli eventi richiesti in questo passaggio.
+
 ## Sfera energetica e bruciatura — prova18/10
 
 Utente approva anche il lampo arancione e richiede sfera piu bella, con effetto simile all'aura, e giocatore incendiato per alcuni secondi quando viene colpito. Prova ancora nel laboratorio, senza caricamento o aggiornamento mappa.

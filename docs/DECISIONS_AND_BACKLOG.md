@@ -1,5 +1,13 @@
 # Project Blob — decisioni e attività aperte
 
+**19/10 — feedback sonoro e switch Broccolo:** usare `aura_charge` per shrink e breve duplicazione, `pop1/2` alternati, `lanciosfera1/2/3` abbinati alle tre animazioni, `flame_impact` solo se il player perde salute, `rimpicciolisco_mostro` in avvio trasformazione e `Broccolo_soundtrack` nella boss fight. L'interruttore lampadario pulsa viola per prossimità. Restano da ascoltare mix e volume in Godot; non modificare gli altri boss.
+
+**19/10 — correzioni Broccolo:** seconda posa spostata verso destra (offset Inspector, controllo collisioni); in modalità mappa il presenter emette combat-ready senza ridurre la mesh, così il controller del boss applica una sola trasformazione con VFX. L'utente prova la cinematic completa e il combattimento; non lanciare test Godot in questa rifinitura.
+
+**19/10 — regia iniziale Broccolo, playtest utente aperto:** il marker `BroccoloCameraStop` guida la tratta rettilinea e l'arresto; la camera mira progressivamente a Broccolo. Cue audio unico: l'animazione di risposta parte a10s, il dolly segue il playback e raggiunge il marker sul cue13,5s. Fixture e mappa passate (`failures=0`); serve valutazione visiva in gioco. Cinematiche successive e sistemi di altri boss intatti. [Dettagli](BROCCOLO_MAP_INTRO.md#regia-iniziale-sincronizzata-al-cue-utente-19-ottobre).
+
+**Seguito19/10:** `mie/idle` resta in loop durante il dolly, poi la risposta lo interrompe al cue anticipato. L'utente prova la sequenza completa e il combattimento; in questo passaggio non sono stati eseguiti test Godot.
+
 **18/10 — sfera e incendio da valutare:** nuova richiesta esplicita dopo gradimento di aura/lampo. Prototipo laboratorio usa stesso VFX sul proiettile, impatto diretto incendia3s con danno periodico3/0,75s, senza stacking; AoE conserva danno senza incendio e muri proteggono. Scelto componente separato dal player storico per non alterare fuochi ambientali o save. Tuning/durata e resa FPS da confermare; pacchetto effetti da trasferire identico in mappa solo dopo approvazione. Audio energia/esplosione dedicati ancora mancanti.
 
 **18/10 — VFX da approvare nel test:** utente conferma combattimento mappa funzionante e chiede copia/particelle che partano dal corpo, arancione piu visibile e aura power-up dorata alla riduzione. Implementati nel laboratorio con risorsa PowerVFX condivisa, nascita fisica0,5s prima della corsa e rim configurabile. Esplicito: evitare caricamenti mappa, trasferire IDENTICI solo dopo approvazione. Riferimento profilo null in mappa conserva versione precedente; futura integrazione deve usare lo stesso PackedScene e collegarne l'attivazione alla riduzione finale. [Guida](BROCCOLO_COMBAT_LAB.md).
@@ -266,3 +274,5 @@ Implementata [prova isolata](BRUNO_MOUTH_PREVIEW.md), apertura discreta pilotata
 
 Per una nuova decisione registrare: data, richiesta/conferma utente, scelta, sistemi/file, prova, eventuale sostituzione della decisione precedente. Separare “implementato”, “testato” e “registrato in Git”; collegare il completamento a una voce del registro.
 # **17/10 — Regia Broccolo:** seconda camera/player seguono waypoints sicuri verso il punto di svolta della prima ripresa, invece di arretrare lungo un solo vettore; percorso mappa4,8m, endpoint libero a0,39m dal target. Dolley iniziale ruota progressivamente; idle facing è ritardato all'uscita dal campo visivo. Salto finale avanza fino a1m. Mappa `--cinematic-only` failures0. Prossimo: playtest utente, poi si torna alla boss fight in scena di prova.
+**19/10 — Illuminazione Broccolo:** tinta viola ambientale limitata alla boss fight, valori originali ripristinati; forza e colore target configurabili nell'Inspector. Resa da confermare nel playtest.
+**19/10 — Esito e rifinitura Broccolo:** tinta viola in combattimento confermata; default Inspector della seconda presentazione aumentato di ulteriori10cm a destra (0,45m). Da verificare insieme alla scena completata.
