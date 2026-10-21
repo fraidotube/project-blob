@@ -41,6 +41,11 @@ var opening_slider: HSlider
 var clip_names: Array[StringName] = []
 var curves: Dictionary = {}
 var rig_basis := Basis.IDENTITY
+var map_dance_motion_axis := Vector3.ZERO
+var map_dance_collision_exclusions: Array[RID] = []
+var map_dance_collision_shape := CapsuleShape3D.new()
+var map_dance_collision_radius := 0.4
+var map_dance_collision_height := 1.6
 var clip_prefix := Vector3.ZERO
 var dance_prefix := Vector3.ZERO
 var dance_index := 0
@@ -274,11 +279,33 @@ func _update_motion() -> void:
 	var moving:bool=travel and not (presentation!=null and presentation.active() and presentation.stationary())
 	if map_presentation and phone_root_motion and presentation.stage in ["answer","phone"]:moving=travel
 	if map_presentation and presentation!=null and presentation.stage=="dance":
-		# Le clip privata conserva la posa sul posto; applica qui il moto originale
-		# delle anche, ruotato col fronte attuale di Broccolo, durante tutta la coreografia.
-		actor.position=clip_prefix+actor.basis*(_root_offset(name,animation.current_animation_position)*ratio*dance_motion_scale)
+		# Proietta il root motion mondo sull'asse del corridoio: Broccolo puo' guardare
+		# il player senza che la camminata della seconda cinematic tagli verso gli arredi.
+		var local_motion := actor.basis*(_root_offset(name,animation.current_animation_position)*ratio*dance_motion_scale)
+		var world_motion := global_basis*local_motion
+		if map_dance_motion_axis.length_squared()>0.001:
+			var axis := map_dance_motion_axis.normalized()
+			var actor_forward := -actor.global_basis.z
+			actor_forward.y=0.0
+			var axis_sign := signf(actor_forward.normalized().dot(axis)) if actor_forward.length_squared()>0.001 else 1.0
+			var travel_sign := signf(world_motion.dot(actor_forward))
+			if is_zero_approx(travel_sign):travel_sign=1.0
+			world_motion=axis*(world_motion.length()*axis_sign*travel_sign)
+			local_motion=global_basis.inverse()*world_motion
+		var candidate_position := clip_prefix+local_motion
+		if _map_dance_position_is_clear(candidate_position):actor.position=candidate_position
 	else:
 		actor.position=clip_prefix+(_root_offset(name,animation.current_animation_position)*ratio if moving else Vector3.ZERO)
+
+func _map_dance_position_is_clear(local_position: Vector3) -> bool:
+	map_dance_collision_shape.radius=map_dance_collision_radius
+	map_dance_collision_shape.height=map_dance_collision_height
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape=map_dance_collision_shape
+	query.collision_mask=1
+	query.exclude=map_dance_collision_exclusions
+	query.transform=Transform3D(Basis.IDENTITY, to_global(local_position+Vector3.UP*(map_dance_collision_height*0.5)))
+	return get_world_3d().direct_space_state.intersect_shape(query,1).is_empty()
 
 func start_dance() -> void:
 	reset_preview()

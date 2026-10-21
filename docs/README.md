@@ -1,5 +1,25 @@
 # Project Blob — documentazione di continuità
 
+**21/10 — Rifinitura mira pistola e shotgun:** zoom aumentato a12° su tutte le armi; pistola mantiene gli8cm a sinistra e scende4cm. Shotgun gira4,5° a sinistra (mano destra leggermente rientrata), mantiene16cm a destra e scende da4cm sopra a1cm sotto. Bake e test in corso; F6 utente per confermare mirino scoperto e canna verticale.
+
+**21/10 — Mira pistola e zoom armi:** clip aim pistola traslate8cm a sinistra (Inspector, senza alterare rotazioni/FBX); pistola/SMG/shotgun restringono il FOV di7° mentre si mira, con transizione0,18s e ritorno al valore utente. Test mira pistola, gameplay SMG/shotgun e configurazione Inspector passati; prossimo F6 per valutare posa e intensità dello zoom.
+
+**21/10 — Mira shotgun traslata e audio dedicato:** dopo due controlli F6, mira spostata di 16 cm a destra e 4 cm in alto in spazio camera, senza ulteriori rotazioni; audio confermato buono. Test pose/runtime/gameplay e regressione pistola passati; nuovo controllo F6 utente.
+
+**21/10 — Mira shotgun e capienza cinque:** tutte le clip di mira girano a sinistra attorno alla presa sinistra con mano destra che va a destra; transizioni progressive. Cinque cartucce, reload ripete cinque inserimenti. Test mirati passati; prossimo F6 utente per valutazione visiva.
+
+**21/10 — Shotgun: FBX riallineate e polsi corretti:** [libreria shotgun_corrected e tuning Inspector](SHOTGUN_GAMEPLAY.md). Tutte19clip, scene/altre armi preservate; test4080pose e render passati, prova F6 all'utente.
+
+**20/10 — Shotgun implementato:** [poligono F6, parametri Inspector e analisi FX](SHOTGUN_GAMEPLAY.md). Un colpo caricato, rosata ampia a corto raggio, ricarica a tre fasi, mira, pickup e save. FX fiammata/fumo verificati in rendering; test gameplay/Inspector/inventario passati. HUD munizioni rimandata come richiesto.
+
+**20/10 — Pistola FBX, mira e movimento più lento:** [comandi, configurazione e prova poligono](PISTOL_GAMEPLAY.md). Playtest a cura dell'utente; controllo caricamento passato.
+
+**20/10 — SMG giocabile con nuove animazioni e mira:** [poligono F6 e comandi](SMG_GAMEPLAY.md), destro tenuto per mirare/sinistro per sparare, ricarica e locomozione FBX collegate. SMG pronta nel poligono, trasformazioni corrette dall'utente conservate. Verifiche tecniche/GPU passate; prova manuale aperta.
+
+**20/10 — pacchetto braccia completato:** [70 FBX convertiti e collegati all'AnimationPlayer del player](FPS_ARMS_RETARGET.md#pacchetto-completo-collegato-al-player-20-ottobre-2026), libreria `fbx_arms`. Conversione circa31s; test binding/350pose passato. Clip disponibili per ispezione, azioni gameplay conservate.
+
+**20/10 — braccia FPS da FBX originale:** [prova completa SMG e metodo](FPS_ARMS_RETARGET.md). F6 `smg_fbx_retarget_test.tscn`: posa e movimento sulle nostre LowWorld, confronto con scheletro sorgente, senza `.res` precedente o pose LowWorld di base. Test tecnici e render passati; valutazione utente prima delle altre clip.
+
 **19/10 — Audio e invito interruttore Broccolo:** carica/voce shrink, aura+pop copie, tre lanci, impatto sfera sul danno reale e soundtrack sono collegati; i silenzi MP3 vengono saltati/interrotti in riproduzione. Il comando lampadario pulsa viola entro portata. Playtest audio/luci all'utente; dettagli in [BROCCOLO_COMBAT_LAB](BROCCOLO_COMBAT_LAB.md) e [BROCCOLO_MAP_INTRO](BROCCOLO_MAP_INTRO.md).
 
 **19/10 — Broccolo, seconda cinematic e handoff:** posa spostata a destra con controllo di spazio; nella mappa la presentazione passa direttamente al combattimento senza shrink preliminare, lasciando una sola trasformazione con aura all'avvio del boss. Playtest cinematica/lotta lasciato all'utente.

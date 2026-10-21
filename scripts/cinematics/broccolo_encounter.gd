@@ -44,10 +44,14 @@ signal introduction_finished(actor_pose: Transform3D)
 @export_range(0.0, 1.0, 0.05) var lateral_motion_scale := 0.2
 ## Scala uniformemente il moto root delle tre clip di danza; la durata e i gesti restano invariati.
 @export_range(0.1, 1.0, 0.05) var dance_motion_scale := 0.5
+## Raggio della capsula che impedisce alla danza di compenetrare pareti/arredi (m).
+@export_range(0.2, 0.8, 0.01) var dance_collision_radius := 0.4
+## Altezza della capsula per il controllo del percorso di danza (m).
+@export_range(1.0, 2.1, 0.05) var dance_collision_height := 1.6
 ## Sposta tutta la coreografia verso sinistra nell'inquadratura, lontano dalla parete destra.
 @export_range(0.0, 0.75, 0.05) var dance_screen_left_offset := 0.05
 ## Sposta Broccolo a destra nell'inquadratura prima del secondo discorso, se la posa e' libera.
-@export_range(0.0, 0.8, 0.05) var second_presentation_screen_right_offset := 0.45
+@export_range(0.0, 0.8, 0.05) var second_presentation_screen_right_offset := 0.0
 ## Collider del mobile da disattivare solo durante la seconda cinematic e ripristinare al ritorno FPS.
 @export var dance_obstacle_collision_path := NodePath("../connesi_building_test2_addon_1/ScaffaleMagazzino/StaticBody3D")
 ## Numero di cicli walking dopo il lancio; default approvato nello studio: tre.
@@ -213,6 +217,11 @@ func _setup() -> void:
 	presentation.presentation.stage_changed.connect(_on_presentation_stage_changed)
 	route_ready = _plan_route()
 	_cache_camera_corridor_axis()
+	presentation.map_dance_motion_axis = camera_corridor_axis
+	presentation.map_dance_collision_radius = dance_collision_radius
+	presentation.map_dance_collision_height = dance_collision_height
+	presentation.map_dance_collision_exclusions.clear()
+	presentation.map_dance_collision_exclusions.append(player.get_rid())
 	if intro_completed:_restore_idle()
 	print("BROCCOLO_ENCOUNTER_READY spawn=", presentation.global_position)
 
@@ -921,6 +930,11 @@ func apply_persistent_state(data: Dictionary) -> void:
 			_place_at_spawn()
 			route_ready = _plan_route()
 			_cache_camera_corridor_axis()
+			presentation.map_dance_motion_axis = camera_corridor_axis
+			presentation.map_dance_collision_radius = dance_collision_radius
+			presentation.map_dance_collision_height = dance_collision_height
+			presentation.map_dance_collision_exclusions.clear()
+			presentation.map_dance_collision_exclusions.append(player.get_rid())
 			presentation.hide()
 
 func _restore_idle() -> void:

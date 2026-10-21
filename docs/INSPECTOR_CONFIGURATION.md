@@ -1,5 +1,43 @@
 # Configurare Project Blob dall'Inspector
 
+## Mappa rapida del Player e delle armi
+
+Le impostazioni seguono il componente che le applica. Aprire `scenes/player/player.tscn` e usare questo percorso:
+
+| Nodo | Cosa si configura |
+|---|---|
+| `Player` | Movimento, sensibilità visuale, postura, salute e inventario iniziali, passo/salto, voce e tasto dello slot shotgun. |
+| `Player/Head/Camera3D` | Proprietà native della camera e script `camera_settings.gd`; il FOV base e la preferenza salvata restano qui. |
+| `Player/Head/Camera3D/WeaponHolder` | Possesso e arma iniziali; pistola; SMG; zoom condiviso; torcia; combattimento ravvicinato/racchetta; ricarica, audio e anti-clipping comuni. I gruppi Inspector iniziano con `Pistola —`, `SMG —`, `Audio —` o `Mira —` per rendere chiara la destinazione. |
+| `Player/Head/Camera3D/WeaponHolder/ShotgunController` | Collegamenti, dotazione, rosata/danno, animazioni, posa aim e audio esclusivi dello shotgun. I gruppi iniziano con `Shotgun —`. |
+| Risorsa `Pose Correction` del `ShotgunController` | Geometria e correzioni delle animazioni shotgun. I valori aim correnti sono4,5° a sinistra,0,16m a destra e−0,01m in alto/basso camera-space. |
+
+Le animazioni di pistola e SMG sono risorse separate assegnate sul `WeaponHolder`; la risorsa shotgun è assegnata sul controller dedicato. I componenti restano separati per evitare che regolazioni specifiche di un'arma alterino le altre. I valori comuni (per esempio lo zoom) hanno una sola fonte sul `WeaponHolder`.
+
+Per un tuning nuovo, partire dal nodo indicato nella tabella, modificare il relativo gruppo/risorsa e verificare la serializzazione con `player_inspector_configuration_test.gd`; il test automatico non sostituisce F6 per la resa visiva.
+
+**Rifinitura mira21/10:** `WeaponHolder → Pistola — Animazioni e mira`: `Pistol Aim Translation Left Meters` resta0,08m; `Pistol Aim Translation Down Meters` default0,04m abbassa la pistola senza alterare l'offset orizzontale. `Mira — Zoom condiviso → Aim Zoom Fov Reduction` default12° per pistola/SMG/shotgun; transizione0,18s. Nel profilo `ShotgunController → Pose Correction`, mira: `Aim Weapon Left Degrees`4,5°, `Aim Translation Right Meters`0,16m invariato e `Aim Translation Up Meters`−0,01m (1cm sotto).
+
+**Mira pistola e zoom condiviso21/10:** sul `WeaponHolder`, gruppi **Pistola — Animazioni e mira** e **Mira — Zoom condiviso**. La pistola mantiene offset sinistro0,08m e abbassamento0,04m; lo zoom corrente è12° in0,18s per pistola, SMG e shotgun. Ritorna al FOV base della Camera3D/SettingsManager al rilascio.
+
+**Shotgun mira e audio21/10:** nel profilo `ShotgunController → Pose Correction`, `Aim Translation Right Meters` e `Aim Translation Up Meters` regolano in metri gli offset camera-space di tutte le clip aim; valori correnti0,16 destra e−0,01 (basso). Nel gruppo **Shotgun — Audio**, `Shot Audio Variants` contiene i tre spari casuali; `Reload Audio` accompagna ogni inserimento; `Pump Audio`, `Pump Audio Delay` e `Pump Audio Duration` configurano sorgente, ritardo e taglio del suono composito della pompa.
+
+**Mira shotgun21/10:** `ShotgunController → Pose Correction → Aim Weapon Left Degrees` regola il giro dell'arma attorno alla mano sinistra, aumentando lo spostamento a destra della mano/calcio. Capienza cinque cartucce in `Dotazione iniziale → Capacity`; il reload ripete `ReloadStep` fino alla capienza o alla riserva esaurita.
+
+**Correzione shotgun21/10:** `Player/Head/Camera3D/WeaponHolder/ShotgunController → Pose Correction`: Yaw Left Degrees9,35, Yaw Pivot nello spazio rig, Wrist Reference Pose, intensità twist SX/DX1, Upper Arm Share0,35, Max Twist150°, Bake Fps240. Modifiche applicate allo spawn tramite copie locali; profilo serializzato e variante yaw0 verificati. Per aggiornare preview su disco usare il tool bake_shotgun_correction. AnimationPlayer: scegliere `shotgun_corrected/...`, gli originali `fbx_arms/...` sono grezzi e conservati. Nessuna rotazione di nodi condivisi. [Guida](SHOTGUN_GAMEPLAY.md).
+
+**Shotgun20/10:** selezionare `Player/Head/Camera3D/WeaponHolder/ShotgunController`: gruppi Shotgun — Collegamenti, Dotazione nuova partita, Rosata e danno, Ritmo e animazioni, Audio. Tutti i riferimenti modello/marker/animazioni/FX sono esposti; danno/pallini/cono/raggio/decadimento, tempi, capienza e riserva configurabili. Per FX aprire `scenes/effects/shotgun_muzzle_fx.tscn`: root tempi/texture/fumo; Flash/Smoke dimensioni QuadMesh e Shader Parameters; Light parametri nativi. Sui pickup root: tipo Arma/Cartucce, quantità, nome/colore/bordo. `Player → Armi — Slot shotgun` sceglie l'azione di selezione, default Input Map weapon_slot_6. Roundtrip e applicazione runtime di tuning/dotazione shotgun verificati. [Tutti i default e i nodi](SHOTGUN_GAMEPLAY.md).
+
+**Indice pistola in mira20/10:** WeaponHolder → Pistola — Animazioni e mira: Pistol Aim Index Reference=`a_arms_pistol_idle`, Fire Reference=`a_arms_pistol_attack1`, Correction=1 (intervallo0–1). Copie locali correggono solo le tre rotazioni dell'indice destro; valori applicati allo spawn, riavviare dopo tuning. Transizioni approvate conservate.
+
+**Raccordi mira pistola20/10:** `Player/Head/Camera3D/WeaponHolder → Pistola — Animazioni e mira`: Pistol Aim Enter Seconds e Pistol Aim Exit Seconds (secondi, default0,55 ciascuno), Pistol Aim Elbow Clearance Degrees (gradi, default6,0 disabilita arco aggiuntivo). Generazione clip runtime dalla posa corrente ai cicli configurati; nessuna modifica automatica della scena nell'editor. [Dettagli](PISTOL_GAMEPLAY.md).
+
+**Modello pistola20/10:** WeaponHolder → Pistola — Animazioni e mira espone anche Pistol Mechanical Fire=`mie/fire` e Pistol Mechanical Reload=`mie/reload`, appartenenti a `PistolSocket/Pistol_01/AnimationPlayer`. Nessuna clip meccanica di base: quella importata è vuota; il ripristino usa la posa iniziale salvata in scena.
+
+**Pistola20/10:** `Player/Head/Camera3D/WeaponHolder → Pistola — Animazioni e mira`: Pistol Animations espone17assegnazioni nella risorsa `pistol_gameplay_animations.tres`, Pistol Aim Action e blend movimento/azioni/sparo. Schema condiviso con SMG, risorse separate. `Player → Movimento — Velocità`: Walk2,5 / Sprint4 / Crouch1,4 m/s. Scene e pose salvate dall'utente preservate. [Guida](PISTOL_GAMEPLAY.md).
+
+**SMG20/10:** selezionare `Player/Head/Camera3D/WeaponHolder`, gruppo **SMG — Animazioni e mira**. Espandere `Smg Animations` (`resources/animations/smg_gameplay_animations.tres`) per17assegnazioni a clip esistenti: cicli, crouch, azioni, AimStart/AimEnd, varianti Aiming e pose di riferimento. Sul WeaponHolder: azione Input Map, blend movimento/azioni/rinculo in secondi. Per una variante duplicare la risorsa e riassegnarla. Ricarica usa il moltiplicatore già presente; danni/cadenza/capienza restano nei gruppi precedenti. Nel solo poligono, override `Player/Head/Camera3D/WeaponHolder` ha Starting Owns Smg=true e Starting Equipped Weapon=SMG. [Guida](SMG_GAMEPLAY.md).
+
 **Audio fight Broccolo (19/10):** selezionare `BroccoloMinionSpawner` per stream, volume, ripartenza soundtrack e parametri mappa. In `MainBroccolo/LabAudio` (e nella scena Actor Scene per le copie) sono esposti i cue, offset iniziali e durate di taglio; pop streams e lanci rispettano gli array ordinati. Su `BroccoloEncounter` → **Invito interruttore** regolare raggio di prossimità, portata, energia e frequenza pulsazione della luce viola, applicata soltanto al comando lampadario.
 
 **Sfera/incendio Broccolo18/10:** sul root laboratorio collegamenti Energy Visual Scene/Burn Status; nel test puntano a EnergyVisual e Player/BroccoloBurnStatus, in mappa null. Sullo stato: Target/Camera obbligatori, Duration Seconds3, Tick Damage3, Tick Seconds0,75, Flame Height1,7m e Flame Color. Energia grafica: scene broccolo_energy_visual, dimensioni/tinta aura e materiali/mesh Core/Orbit; fisica/danno/raggio sui Moves del boss come prima. BodyFlames usa stessa PowerVFX. Nuovi effetti esclusivamente runtime, nessun @tool; parametri stato custom serializzati e applicati nel test.
@@ -35,15 +73,15 @@ Apri `scenes/player/player.tscn` per modificare i predefiniti condivisi. Per mod
 | Nodo da selezionare | Cosa regolare |
 |---|---|
 | Player → Salute e dotazione iniziale | Max Health, Starting Health, Starting Inventory |
-| Player → Movimento | Walk Speed, Sprint Speed, Crouch Speed, Jump Velocity (m/s) |
-| Player → Visuale | Base Mouse Sensitivity; viene moltiplicata per la preferenza del menu |
-| Player → Postura avanzata | Altezze capsula/testa e velocita transizione; verificare soffitti/passaggi dopo modifiche |
-| Player → Ritmo passi / Audio passi e salti / Player Voice | Intervalli, stream, volume voci, cooldown e respiri |
-| Player/Head/Camera3D/WeaponHolder → Dotazione iniziale | Possesso pistola/torcia/SMG e arma inizialmente in mano |
-| WeaponHolder → Danni / Combat / Racchetta | Danni, portata, cadenza pistola, cooldown melee, velocita/istante impatto racchetta |
-| WeaponHolder → Pistola / SMG | Capienza, colpi inizialmente caricati e riserva; cadenza automatica SMG |
-| WeaponHolder → Torcia | Consumo percentuale/secondo, carica iniziale, batterie di ricambio e capienza |
-| WeaponHolder → Audio Pistola / Audio SMG / Animazioni / Viewmodel | Stream/volumi, velocita ricarica e arretramento vicino ai muri |
+| Player → Movimento — Velocità | Walk Speed, Sprint Speed, Crouch Speed, Jump Velocity (m/s) |
+| Player → Visuale — Sensibilità | Base Mouse Sensitivity; viene moltiplicata per la preferenza del menu |
+| Player → Postura — Accovacciamento | Altezze capsula/testa e velocita transizione; verificare soffitti/passaggi dopo modifiche |
+| Player → Movimento — Passi e atterraggio / Audio — Passi e salti / Audio — Voce del player | Intervalli, stream, volume voci, cooldown e respiri |
+| Player/Head/Camera3D/WeaponHolder → Dotazione iniziale — Nuova partita | Possesso pistola/torcia/SMG e arma inizialmente in mano |
+| WeaponHolder → Danni / Combattimento / Extra — Racchetta | Danni, portata, cadenza pistola, cooldown melee, velocita/istante impatto racchetta |
+| WeaponHolder → Pistola — Munizioni iniziali / SMG — Munizioni iniziali | Capienza, colpi inizialmente caricati e riserva; cadenza automatica SMG |
+| WeaponHolder → Torcia — Batteria | Consumo percentuale/secondo, carica iniziale, batterie di ricambio e capienza |
+| WeaponHolder → Audio — Pistola / Audio — SMG / Animazioni condivise — Ricarica / Viewmodel — Anti-clipping | Stream/volumi, velocita ricarica e arretramento vicino ai muri |
 | Player/Head/Camera3D | Fov nativo; Use Saved Fov attivo applica la preferenza menu all'avvio |
 | Player/Head/Camera3D/InteractRay | Target Position determina la distanza E (attualmente Z=-2 m); mask2, aree abilitate |
 | Player/Head/Camera3D/WeaponRay | Target Position determina la portata massima del ray proiettili (Z=-100 m) |
