@@ -23,13 +23,25 @@ const BOSS_PORTRAIT := preload("res://assets/ui/broccolo.png")
 ## Punto della traccia in cui ripartire da zero, prima della coda muta finale (secondi).
 @export_range(30.0, 293.0, 1.0) var boss_music_loop_at_seconds := 285.0
 @export_group("Illuminazione boss fight")
-## Intensita' della tinta viola applicata alle luci della mappa durante la lotta.
-@export_range(0.0, 0.4, 0.01) var boss_light_violet_strength := 0.12
+## Intensita della tinta sui soli circuiti collegati: 1 = viola pieno.
+@export_range(0.0, 1.0, 0.01) var boss_light_violet_strength := 1.0
 ## Colore verso cui sfumano le luci ambientali; energia e stato restano invariati.
 @export var boss_light_violet_color := Color(0.55, 0.38, 0.82)
+## Gruppi Light3D relativi a questo componente. Stato e interruttori non cambiano.
+@export var boss_light_root_paths: Array[NodePath] = []
+## Interruttori Zone Light Switch di cui tingere anche le copie dei materiali emissivi.
+@export var boss_light_switch_paths: Array[NodePath] = []
 @export_group("Salvataggio combattimento")
 ## Identificatore stabile: blocca salvataggi in battaglia e conserva la sconfitta.
 @export var persistent_id: StringName = &"main.broccolo.combat"
+
+@export_group("Chiave dopo la vittoria")
+## Pickup lasciato a terra dal solo principale; vuoto disabilita il drop nelle fixture.
+@export var victory_pickup_scene: PackedScene
+## ID stabile e unico del pickup, distinto dallo stato del combattimento.
+@export var victory_pickup_id: StringName = &"main.broccolo.assistance_key"
+## Punto di recupero per vecchi checkpoint con boss gia sconfitto e senza posizione del drop.
+@export var victory_fallback_marker: Node3D
 
 var encounter: Node
 var gates: Array[Node] = []
@@ -43,6 +55,9 @@ var active_minions: Array[Node]:
 	get: return copies
 var boss_music_player: AudioStreamPlayer
 var saved_map_light_colors: Dictionary = {}
+var saved_emission_colors: Dictionary = {}
+var victory_pickup_pose := Transform3D.IDENTITY
+var _pickup_pending := false
 
 func _ready() -> void:
 	rng.randomize()
@@ -143,12 +158,45 @@ func _restore_hud() -> void:
 	saved_hud.clear()
 
 func _boss_died() -> void:
+	if defeated: return
 	_stop_boss_music()
 	_restore_map_lighting()
 	defeated = true
 	super._boss_died()
 	for actor in copies.duplicate(): retire_actor(actor)
 	_restore_hud()
+	if victory_pickup_scene != null:
+		victory_pickup_pose = _floor_pickup_pose(boss.global_position)
+		_pickup_pending = true
+		_spawn_victory_pickup.call_deferred()
+
+func _floor_pickup_pose(origin: Vector3) -> Transform3D:
+	var ray := PhysicsRayQueryParameters3D.create(origin + Vector3.UP * 0.35, origin - Vector3.UP * 2.0, 1)
+	var excluded: Array[RID] = []
+	if is_instance_valid(boss): excluded.append(boss.get_rid())
+	if is_instance_valid(player): excluded.append(player.get_rid())
+	for actor in reserve:
+		if is_instance_valid(actor): excluded.append(actor.get_rid())
+	ray.exclude = excluded
+	var hit := get_world_3d().direct_space_state.intersect_ray(ray)
+	var point: Vector3 = hit.get("position", origin)
+	return Transform3D(Basis.IDENTITY, point + Vector3.UP * 0.03)
+
+func _spawn_victory_pickup() -> void:
+	_pickup_pending = false
+	if not defeated or victory_pickup_scene == null: return
+	var state := SaveManager.object_state(victory_pickup_id)
+	if bool(state.get("collected", false)) or SaveManager.participants.has(victory_pickup_id): return
+	var pickup := victory_pickup_scene.instantiate() as Node3D
+	if InventoryManager.has_item(pickup.item_id):
+		pickup.free()
+		return
+	pickup.persistent_id = victory_pickup_id
+	var scene := get_tree().current_scene as Node3D
+	pickup.transform = scene.global_transform.affine_inverse() * victory_pickup_pose
+	scene.add_child(pickup)
+	# A pickup created during restore is not in SaveManager's initial restore list.
+	pickup.apply_persistent_state(state)
 
 func stop_combat() -> void:
 	_stop_boss_music()
@@ -177,28 +225,38 @@ func start_combat() -> void:
 		_apply_map_lighting()
 
 func _apply_map_lighting() -> void:
-	if not saved_map_light_colors.is_empty(): return
-	var scene_root := get_tree().current_scene
-	if not is_instance_valid(scene_root): return
-	for candidate in scene_root.find_children("*", "Light3D", true, false):
-		var light := candidate as Light3D
-		if light == null or not light.is_inside_tree() or _belongs_to_character(light): continue
-		saved_map_light_colors[light.get_instance_id()] = {"node": light, "color": light.light_color}
-		light.light_color = light.light_color.lerp(boss_light_violet_color, boss_light_violet_strength)
+	if not saved_map_light_colors.is_empty() or not saved_emission_colors.is_empty(): return
+	for path in boss_light_root_paths:
+		var branch := get_node_or_null(path)
+		if branch == null:
+			push_error("Broccolo: gruppo luci mancante " + String(path))
+			continue
+		_tint_light_branch(branch)
+	for path in boss_light_switch_paths:
+		var light_switch := get_node_or_null(path)
+		if light_switch == null or not light_switch.get("emissive_materials") is Array:
+			push_error("Broccolo: interruttore emissivo mancante " + String(path))
+			continue
+		for material: BaseMaterial3D in light_switch.emissive_materials:
+			if saved_emission_colors.has(material.get_instance_id()): continue
+			saved_emission_colors[material.get_instance_id()] = {"material": material, "color": material.emission}
+			material.emission = material.emission.lerp(boss_light_violet_color, boss_light_violet_strength)
 
-func _belongs_to_character(light: Light3D) -> bool:
-	var ancestor: Node = light
-	while ancestor != null:
-		if ancestor is CharacterBody3D: return true
-		if ancestor.name.to_lower().contains("angela"): return true
-		ancestor = ancestor.get_parent()
-	return false
+func _tint_light_branch(branch: Node) -> void:
+	if branch is Light3D and not saved_map_light_colors.has(branch.get_instance_id()):
+		saved_map_light_colors[branch.get_instance_id()] = {"node": branch, "color": branch.light_color}
+		branch.light_color = branch.light_color.lerp(boss_light_violet_color, boss_light_violet_strength)
+	for child in branch.get_children(): _tint_light_branch(child)
 
 func _restore_map_lighting() -> void:
 	for entry: Dictionary in saved_map_light_colors.values():
 		var light := entry.get("node") as Light3D
 		if is_instance_valid(light): light.light_color = entry.get("color", Color.WHITE)
 	saved_map_light_colors.clear()
+	for entry: Dictionary in saved_emission_colors.values():
+		var material := entry.get("material") as BaseMaterial3D
+		if is_instance_valid(material): material.emission = entry.color
+	saved_emission_colors.clear()
 
 func _stop_boss_music() -> void:
 	if is_instance_valid(boss_music_player):boss_music_player.stop()
@@ -316,13 +374,13 @@ func route_direction(from: Vector3, to: Vector3) -> Vector3:
 	return heading.normalized()
 
 func blocks_saving() -> bool:
-	return started and not defeated
+	return _pickup_pending or (started and not defeated)
 
 func restore_priority() -> int:
 	return 36
 
 func get_persistent_state() -> Dictionary:
-	return {"defeated": defeated}
+	return {"defeated": defeated, "victory_pickup_pose": victory_pickup_pose}
 
 func apply_persistent_state(data: Dictionary) -> void:
 	while is_inside_tree() and preparing: await get_tree().process_frame
@@ -331,12 +389,21 @@ func apply_persistent_state(data: Dictionary) -> void:
 	started = false
 	initial_wave = false
 	defeated = bool(data.get("defeated", false))
+	_pickup_pending = false
+	var existing: Node = SaveManager.participants.get(victory_pickup_id)
+	if is_instance_valid(existing):
+		SaveManager.unregister_object(victory_pickup_id, existing)
+		existing.queue_free()
 	if is_instance_valid(encounter):
 		encounter.second_presentation_started = defeated
 		encounter.presentation.sequence = false
 		encounter.presentation.animation.play(&"mie/idle", 0)
 		encounter.presentation.set_process(true)
 		if defeated: encounter.presentation.hide()
+	if defeated and victory_pickup_scene != null:
+		var fallback := victory_fallback_marker.global_position if victory_fallback_marker != null else boss.global_position
+		victory_pickup_pose = data.get("victory_pickup_pose", _floor_pickup_pose(fallback))
+		_spawn_victory_pickup()
 
 func _exit_tree() -> void:
 	_stop_boss_music()

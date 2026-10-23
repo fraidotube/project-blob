@@ -1,5 +1,9 @@
 # Project Blob — decisioni e attività aperte
 
+**23/10 — Prossima zona:** richiesta porta segreta libera verso il player (shotgun da collocare dopo a cura utente), porta retroDX con chiave Porta Retro non ancora collocata e chiave Assistenza Tecnica lasciata dal Broccolo principale per Assistenza00. Riutilizzato modello chiave Bruno con sola targhetta blu modificabile Inspector; ID assistance_key storico conservato. Nuovo rear_key predisposto senza assegnazioni iniziali. Verificare F6 verso segreta/retro e leggibilità/raccolta drop; collocazione shotgun e chiave retro restano aperte.
+
+**22/10 — Freeze primo impatto/caricamento e ambiente:** richiesta esplicita di nascondere ogni preparazione del checkpoint fino a player/mani/audio pronti, ridurre scatto al primo colpo sui minion e abbassare l'ambiente. Implementati barriera readiness, await restore, sincronizzazione indoor/posa, cache e warmup impatti/sangue/reazioni e mix ambiente dedicato. Verifiche tecniche passate; resta il playtest utente su Carica dal menu/pausa e primo sparo della boss battle. Non equiparare il tempo CPU del singolo impatto al frame time GPU o a una prova completa dello scontro. Nessun nuovo blackout né modifica a danni/dotazioni.
+
 **21/10 — Allineamento pistola e zoom mira:** spostare a sinistra le pose aim pistola; introdurre un lieve zoom per ogni arma che usa la mira mantenuta. Implementato offset8cm solo sulle copie runtime di AimIdle/Walk/Fire/Pose; FOV ridotto7° con transizione liscia0,18s su pistola/SMG/shotgun. F6 all'utente per giudicare allineamento visivo e livello di zoom.
 
 **21/10 — Shotgun: traslazione di mira e suoni:** dopo due playtest, l'utente chiede ulteriore spostamento a destra e in alto; offset ora16cm destra e4cm alto camera-space, compensato per scala rig3×, senza rotazioni nuove. Audio confermato buono; verificare con F6.

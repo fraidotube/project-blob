@@ -6,7 +6,7 @@ static func texture(id: String) -> Texture2D:
 	if cache.has(id): return cache[id]
 	var drawing := ""
 	match id:
-		"bruno_key", "switch_key", "assistance_key", "production_key":
+		"bruno_key", "switch_key", "assistance_key", "production_key", "rear_key":
 			drawing = '<circle cx="48" cy="48" r="22" fill="#c4bfae"/><circle cx="48" cy="48" r="8" fill="#28202e"/><path d="M62 62L98 98L89 107L79 97L84 92L72 80L67 85L56 74" fill="#c4bfae"/><circle cx="112" cy="112" r="17" fill="none" stroke="#ddd5ba" stroke-width="4"/><path d="M119 123L146 136L132 159L107 144Z" fill="#637080"/>'
 		"network_cable":
 			drawing = '<path d="M28 37C-2 119 154 150 125 67C113 37 53 43 53 84C53 121 125 139 141 100" fill="none" stroke="#d5b652" stroke-width="9"/><path d="M19 17H39V45H19ZM131 82H151V110H131Z" fill="#dae3eb" stroke="#738397" stroke-width="3"/><path d="M23 19V30M28 19V30M33 19V30M135 84V95M140 84V95M145 84V95" stroke="#a78e48" stroke-width="2"/>'

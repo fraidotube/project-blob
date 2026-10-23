@@ -62,17 +62,19 @@ func run() -> void:
 	# Returning the ray prevents it outlining unrelated objects during tests.
 	interact_ray.position = Vector3.ZERO
 	interact_ray.rotation = Vector3.ZERO
-	check(integration.doors.size() == 12, "Dodici porte non create")
-	check(integration.get_setups().size() == 12, "Configurazioni Inspector mancanti")
+	check(integration.doors.size() == 14, "Quattordici porte non create")
+	check(integration.get_setups().size() == 14, "Configurazioni Inspector mancanti")
 	var legacy_directions := {
 		"AnteroomDoor":Vector3.RIGHT, "BathroomRightDoor":Vector3.BACK,
 		"BathroomLeftDoor":Vector3.FORWARD, "SwitchRoomDoor":Vector3.RIGHT,
 		"AssistanceInternalDoor":Vector3.RIGHT, "AssistanceMainDoor":Vector3.FORWARD,
-		"ProductionDoor":Vector3.LEFT, "WarehouseGrid013":Vector3.BACK,
-		"WarehouseGrid014":Vector3.BACK, "WarehouseGrid015":Vector3.BACK,
-		"WarehouseStairs038":Vector3.RIGHT, "CEDDoor":Vector3.RIGHT
+		"ProductionDoor":Vector3.LEFT, "WarehouseGrid013":Vector3.FORWARD,
+		"WarehouseGrid014":Vector3.FORWARD, "WarehouseGrid015":Vector3.FORWARD,
+		"WarehouseStairs038":Vector3.RIGHT, "CEDDoor":Vector3.RIGHT,
+		"WarehouseSecretDoor":Vector3.BACK, "RearRightDoor":Vector3.LEFT
 	}
 	for door in integration.doors:
+		if "--only-new" in OS.get_cmdline_user_args() and String(door.name) not in ["WarehouseSecretDoor", "RearRightDoor", "AssistanceMainDoor"]: continue
 		check(door.persistent_id == StringName("main.door.warehouse."+String(door.name)),"ID storico cambiato durante migrazione")
 		check(door.opening_normal.is_equal_approx(legacy_directions[String(door.name)]),"Verso storico cambiato durante migrazione")
 		check(save_manager.participants.get(door.persistent_id) == door, "Porta non registrata " + String(door.name))
@@ -83,6 +85,14 @@ func run() -> void:
 		check(not door.outlined_meshes.is_empty() and door.outlined_meshes[0].material_overlay == door.outline_material, "Outline mancante " + String(door.name))
 		door.set_interaction_focus(false)
 		check(crossing(door, 1.0), "Porta chiusa attraversabile " + String(door.name))
+		if door.barricaded:
+			check(door.name == &"WarehouseGrid014" and door.get_interaction_name() == "Porta Magazzino", "Barricata o etichetta inattesa")
+			door.interact(player)
+			door.open_door()
+			door.set_forced_open(true)
+			door.apply_persistent_state({"open": true, "unlocked": true})
+			check(not door.is_open and is_zero_approx(door.rotation.y) and not door.enemy_jump_open_enabled, "Barricata apribile")
+			continue
 		if not door.required_key.is_empty():
 			door.interact(player)
 			check(not door.is_open, "Serratura aperta senza chiave")
@@ -118,5 +128,5 @@ func run() -> void:
 		door.close_door()
 		await create_timer(2.1).timeout
 		check(not door.is_open and not door.blocks_saving(), "Chiusura fallita")
-	print("WAREHOUSE_DOORS_TEST failures=", failures)
+	print("WAREHOUSE_DOORS_TEST failures=", failures," scope=", "new_and_assistance" if "--only-new" in OS.get_cmdline_user_args() else "all14")
 	quit(failures)

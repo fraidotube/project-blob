@@ -2,6 +2,8 @@ extends Node
 
 signal checkpoint_saved
 signal restore_completed
+## Stato del mondo applicato, con schermata di caricamento ancora coprente e albero in pausa.
+signal world_restored
 
 const VERSION := 1
 const MAIN_SLOT := "user://savegame.cfg"
@@ -199,6 +201,7 @@ func _load_scene(scene_path: String, data: Dictionary) -> bool:
 		return false
 	await get_tree().process_frame
 	await get_tree().process_frame
+	await transition.wait_scene_initialization()
 	var player := get_tree().get_first_node_in_group("player")
 	transition.set_stage(95.0, "Ripristino della partita" if not data.is_empty() else "Preparazione della partita")
 	if not data.is_empty() and player != null:
@@ -209,8 +212,10 @@ func _load_scene(scene_path: String, data: Dictionary) -> bool:
 	for id: StringName in restore_ids:
 		var object: Node = participants.get(id)
 		if is_instance_valid(object) and world_states.has(String(id)):
-			object.call("apply_persistent_state", object_state(id))
+			await object.call("apply_persistent_state", object_state(id))
 	await get_tree().process_frame
+	world_restored.emit()
+	await transition.prepare_scene_for_reveal()
 	if transition != null:
 		await transition.reveal()
 	if not data.is_empty():

@@ -132,8 +132,6 @@ func _setup() -> void:
 	var normal := Vector3.RIGHT if box.size.x < box.size.z else Vector3.BACK
 	outward = (closed.basis * normal).normalized()
 	var marker: Node3D = scene.get_node("Angelastri")
-	var ambience := scene.get_node_or_null("BackgroundMusic") as AudioStreamPlayer
-	if ambience != null: ambience.volume_db = -10.0
 	if (marker.global_position - doorway_center).dot(outward) < 0.0: outward = -outward
 	doorway_tangent = Vector3.UP.cross(outward).normalized()
 	doorway_half_width = maxf(box.size.x, box.size.z) * 0.5 + 0.3

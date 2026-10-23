@@ -17,6 +17,10 @@ extends Node
 	set(value):
 		panel_source = value
 		_refresh_warnings()
+## Facoltativo: parti dell'anta da unire per ricavare l'ingombro (retro con vetro/griglia).
+## Percorsi relativi a questa configurazione; escludere telai fissi e maniglie.
+@export var panel_parts: Array[NodePath] = []
+var _resolved_panel_parts: Dictionary = {}
 
 @export_group("Identita e salvataggio")
 ## Nome del controller creato nella radice della mappa durante il gioco. Deve essere unico.
@@ -58,7 +62,16 @@ extends Node
 ## Secondi prima della richiesta di chiusura automatica. Usato solo se Auto Close e' attivo.
 @export_range(0.1, 120.0, 0.1) var auto_close_delay := 3.0
 
+@export_group("Passaggio stretto")
+## Sposta il player solo al contatto reale, senza arretramento preventivo o riapertura.
+## Se un muro impedisce lo spostamento, il battente attende senza attraversarlo.
+@export var contact_push_enabled := false
+## Velocita massima della spinta al contatto, in metri al secondo.
+@export_range(0.1, 5.0, 0.1) var contact_push_speed := 2.0
+
 @export_group("Serratura")
+## Mantiene l'anta chiusa per un ostacolo permanente, anche caricando vecchi checkpoint.
+@export var barricaded := false
 ## ID dell'oggetto inventario richiesto (es. switch_key). Vuoto = nessuna chiave.
 ## La chiave non viene consumata e lo sblocco viene salvato. Non crea un pickup.
 @export var required_key: StringName:
@@ -105,14 +118,41 @@ func _refresh_warnings() -> void:
 func get_panel() -> MeshInstance3D:
 	return panel_source if panel_source != null else source_visual as MeshInstance3D
 
+func get_panel_bounds() -> AABB:
+	if panel_parts.is_empty():
+		var panel := get_panel()
+		return panel.global_transform * panel.get_aabb()
+	var bounds := AABB()
+	var first := true
+	for path in panel_parts:
+		var panel := _get_panel_part(path)
+		var part := panel.global_transform * panel.get_aabb()
+		bounds = part if first else bounds.merge(part)
+		first = false
+	return bounds
+
+func _get_panel_part(path: NodePath) -> MeshInstance3D:
+	var part := get_node_or_null(path) as MeshInstance3D
+	# During play the visual group moves under its door controller; keep its references.
+	if not Engine.is_editor_hint():
+		if part != null: _resolved_panel_parts[path] = part
+		else: part = _resolved_panel_parts.get(path) as MeshInstance3D
+	return part
+
 func validation_errors() -> PackedStringArray:
 	var errors := PackedStringArray()
 	if source_visual == null: errors.append("Seleziona Source Visual: la sola parte mobile della porta.")
 	var panel := get_panel()
-	if panel == null or panel.mesh == null:
+	if panel_parts.is_empty() and (panel == null or panel.mesh == null):
 		errors.append("Seleziona una mesh pannello valida; nei gruppi compila Panel Source.")
-	elif source_visual != null and panel != source_visual and not source_visual.is_ancestor_of(panel):
+	elif panel != null and source_visual != null and panel != source_visual and not source_visual.is_ancestor_of(panel):
 		errors.append("Panel Source deve appartenere a Source Visual.")
+	for path in panel_parts:
+		var part := _get_panel_part(path)
+		if part == null or part.mesh == null:
+			errors.append("Parte anta mancante o non valida: " + String(path))
+		elif source_visual != null and part != source_visual and not source_visual.is_ancestor_of(part):
+			errors.append("Le parti anta devono appartenere a Source Visual.")
 	if runtime_name.is_empty(): errors.append("Runtime Name deve essere compilato e unico.")
 	elif String(runtime_name).validate_node_name() != String(runtime_name): errors.append("Runtime Name contiene caratteri non validi per un nodo.")
 	if persistent_id.is_empty(): errors.append("Persistent Id deve essere compilato e unico.")

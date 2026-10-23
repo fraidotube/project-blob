@@ -37,6 +37,45 @@ var _audio_by_surface: Dictionary = {}
 func _ready() -> void:
     _rng.randomize()
     _discover_audio()
+    prepare_resources()
+
+## Carica le texture prima del primo sparo, mantenendole nella cache del gestore.
+func prepare_resources() -> void:
+    _get_texture(GENERIC_TEXTURE)
+    for filenames: Array in TEXTURE_VARIANTS.values():
+        for filename: String in filenames:
+            _get_texture(TEXTURE_DIR + filename)
+
+## Disegna i materiali veri fuori dalla mappa, senza spari, audio o decal persistenti.
+func prepare_rendering() -> void:
+    if DisplayServer.get_name() == "headless": return
+    var viewport := SubViewport.new()
+    viewport.size = Vector2i(96, 96)
+    viewport.world_3d = get_world_3d()
+    viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+    add_child(viewport)
+    var camera := Camera3D.new()
+    camera.cull_mask = 1 << 19
+    viewport.add_child(camera)
+    camera.current = true
+    var at := Vector3(0, -1500, 0)
+    camera.global_position = at + Vector3(0, 1.2, 1.5)
+    camera.look_at(at)
+    var receiver := MeshInstance3D.new()
+    receiver.mesh = BoxMesh.new()
+    receiver.layers = 1 << 19
+    add_child(receiver)
+    receiver.global_position = at - Vector3.UP * 0.5
+    var decal := _spawn_decal(_get_texture(GENERIC_TEXTURE), at, Vector3.UP, "generic")
+    decal.cull_mask = 1 << 19
+    var glass := _spawn_glass(_choose_texture("glass"), at + Vector3.UP * 0.15, Vector3.BACK)
+    glass.layers = 1 << 19
+    await RenderingServer.frame_post_draw
+    await RenderingServer.frame_post_draw
+    decal.queue_free()
+    glass.queue_free()
+    receiver.queue_free()
+    viewport.queue_free()
 
 func spawn_impact(collider: Object, point: Vector3, normal: Vector3) -> void:
     var surface := _surface_from_collider(collider)

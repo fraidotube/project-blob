@@ -13,6 +13,8 @@ var _card: Control
 var _busy := false
 var _target := 0.0
 var _started := 0
+var _saved_master_mute := false
+var _loading_audio_muted := false
 
 func _ready() -> void:
 	layer = 10000
@@ -98,6 +100,9 @@ func cancel_loading() -> void:
 	visible = false
 	overlay.modulate.a = 1.0
 	_busy = false
+	if _loading_audio_muted:
+		AudioServer.set_bus_mute(0, _saved_master_mute)
+		_loading_audio_muted = false
 
 func reveal(duration: float = 0.35) -> void:
 	if _card.visible and _busy:
@@ -111,13 +116,17 @@ func reveal(duration: float = 0.35) -> void:
 	cancel_loading()
 
 # Leaves the scene covered until the caller has finished initialization/restoration.
-func load_scene(scene_path: String, caption: String, show_loading: bool = true) -> PackedScene:
+func load_scene(scene_path: String, caption: String, show_loading: bool = true, mute_loading_audio: bool = true) -> PackedScene:
 	if _busy:
 		return null
 	if not ResourceLoader.exists(scene_path):
 		push_error("SceneTransition: scena non trovata: " + scene_path)
 		return null
 	_busy = true
+	if mute_loading_audio:
+		_saved_master_mute = AudioServer.is_bus_mute(0)
+		_loading_audio_muted = true
+		AudioServer.set_bus_mute(0, true)
 	_started = Time.get_ticks_msec()
 	visible = true
 	_card.visible = show_loading
@@ -153,13 +162,37 @@ func load_scene(scene_path: String, caption: String, show_loading: bool = true) 
 	set_stage(90.0, "Preparazione della partita")
 	return packed
 
-func transition_to(scene_path: String, show_loading: bool = true) -> void:
-	var packed := await load_scene(scene_path, "NUOVA PARTITA", show_loading)
+## Il boot conserva la musica continua; il gameplay silenzia la preparazione per default.
+func transition_to(scene_path: String, show_loading: bool = true, mute_loading_audio: bool = true) -> void:
+	var packed := await load_scene(scene_path, "NUOVA PARTITA", show_loading, mute_loading_audio)
 	if packed == null:
 		return
+	var was_paused := get_tree().paused
+	get_tree().paused = true
 	if get_tree().change_scene_to_packed(packed) != OK:
+		get_tree().paused = was_paused
 		cancel_loading()
 		return
 	await get_tree().process_frame
 	await get_tree().process_frame
+	await wait_scene_initialization()
+	await prepare_scene_for_reveal()
 	await reveal()
+	get_tree().paused = was_paused
+
+## Le scene possono registrare componenti nel gruppo scene_loading_preparation.
+## Non fa avanzare il gameplay mentre SaveManager mantiene l'albero in pausa.
+func wait_scene_initialization() -> void:
+	for component in get_tree().get_nodes_in_group("scene_loading_preparation"):
+		if component.has_method("wait_for_initialization"):
+			await component.wait_for_initialization()
+
+func prepare_scene_for_reveal() -> void:
+	set_stage(97.0, "Preparazione audio ed effetti")
+	for component in get_tree().get_nodes_in_group("scene_loading_preparation"):
+		if component.has_method("prepare_for_reveal"):
+			await component.prepare_for_reveal()
+	# Render the prepared scene under the opaque overlay before fading it out.
+	if DisplayServer.get_name() != "headless":
+		await RenderingServer.frame_post_draw
+		await RenderingServer.frame_post_draw

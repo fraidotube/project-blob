@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource("1")
 item_id = &"assistance_key"
-display_name = "CHIAVE ASSISTENZA"
-description = "Apre la porta principale dell'assistenza."
+display_name = "CHIAVE ASSISTENZA TECNICA"
+description = "La chiave con targhetta blu lasciata da Broccolo. Apre la porta Assistenza 00."

@@ -3,6 +3,7 @@ extends "res://scripts/interactables/door.gd"
 
 var persistent_id: StringName
 var required_key: StringName
+var barricaded := false
 var fingerprint_locked := false
 var fingerprint_unlock_seconds := 10.0
 var unlocked := false
@@ -17,8 +18,11 @@ var _restore_physics := false
 var _retreat_target := Vector3.ZERO
 ## Abilitato dalla configurazione della sola porta autorizzata ai Broccolo.
 @export var enemy_jump_open_enabled := false
+var contact_push_enabled := false
+var contact_push_speed := 2.0
 
 func request_enemy_open(actor: CharacterBody3D) -> bool:
+	if barricaded: return false
 	if not enemy_jump_open_enabled or not is_instance_valid(actor) or not actor.is_in_group("broccolo_lab_actors"): return false
 	if actor.get("state") not in ["gate", "chase"]: return false
 	if fingerprint_locked or not unlocked or retreating: return false
@@ -41,6 +45,7 @@ func _exit_tree() -> void:
 	SaveManager.unregister_object(persistent_id, self)
 
 func get_interaction_action() -> String:
+	if barricaded: return "BLOCCATA"
 	if retreating or blocks_saving():
 		return "IN MOVIMENTO"
 	if is_open:
@@ -52,6 +57,7 @@ func get_interaction_action() -> String:
 	return "APRI"
 
 func interact(_actor: Node) -> void:
+	if barricaded: return
 	if retreating or blocks_saving():
 		return
 	if is_open:
@@ -73,11 +79,15 @@ func authorize_fingerprint() -> void:
 		fingerprint_remaining = fingerprint_unlock_seconds
 
 func open_door() -> void:
+	if barricaded: return
 	if is_open or retreating:
 		return
 	if fingerprint_locked and fingerprint_remaining <= 0.0:
 		return
 	if not fingerprint_locked and not unlocked:
+		return
+	if contact_push_enabled:
+		_begin_open()
 		return
 	var actor := get_tree().get_first_node_in_group("player") as CharacterBody3D
 	# Sposta dolcemente il giocatore fuori dal settore del battente, solo
@@ -111,11 +121,20 @@ func open_door() -> void:
 	_begin_open()
 
 func _begin_open() -> void:
+	if barricaded: return
 	fingerprint_remaining = 0.0
 	super.open_door()
 
+func set_forced_open(value: bool) -> void:
+	if barricaded: return
+	super.set_forced_open(value)
+
+func _force_open_now() -> void:
+	if barricaded: return
+	super._force_open_now()
+
 func close_door() -> void:
-	if _player_in_swing():
+	if not contact_push_enabled and _player_in_swing():
 		GameplayUI.notify("Passaggio occupato.")
 		return
 	super.close_door()
@@ -123,7 +142,7 @@ func close_door() -> void:
 func _on_auto_close_timeout() -> void:
 	# Una chiusura automatica rimandata dal passaggio occupato va ritentata.
 	# Il valore predefinito Auto Close=false mantiene il comportamento esistente.
-	if not forced_open and is_open and _player_in_swing():
+	if not contact_push_enabled and not forced_open and is_open and _player_in_swing():
 		auto_close_timer.start(0.25)
 		return
 	super._on_auto_close_timeout()
@@ -149,11 +168,14 @@ func _physics_process(delta: float) -> void:
 		elif remaining.length() < 0.01:
 			_finish_retreat(true)
 		return
-	if not is_open and blocks_saving() and _player_in_swing():
+	if not contact_push_enabled and not is_open and blocks_saving() and _player_in_swing():
 		# Un giocatore entra nel settore durante la chiusura: riapri.
 		super.open_door()
 	# Non attraversare il player durante il movimento del pannello.
 	var next_angle := lerp_angle(rotation.y, target_rotation_y, open_speed * delta)
+	if contact_push_enabled:
+		# Small angular steps prevent a fast leaf skipping over a capsule.
+		next_angle = rotation.y + clampf(angle_difference(rotation.y, next_angle), -deg_to_rad(3.0), deg_to_rad(3.0))
 	if absf(angle_difference(rotation.y, next_angle)) > 0.00001:
 		var query := PhysicsShapeQueryParameters3D.new()
 		query.shape = panel_box.shape
@@ -162,10 +184,44 @@ func _physics_process(delta: float) -> void:
 		query.exclude = [door_body.get_rid()]
 		for hit: Dictionary in get_world_3d().direct_space_state.intersect_shape(query, 32):
 			if hit.collider.is_in_group("player"):
-				return
+				if not contact_push_enabled or not _push_contact(hit.collider, query.transform, delta):
+					return
+	if contact_push_enabled:
+		# Let the base class update audio/body at the already checked angle.
+		rotation.y = next_angle
+		super._physics_process(0.0)
+		return
 	super._physics_process(delta)
 	if absf(angle_difference(rotation.y, target_rotation_y)) < 0.001:
 		rotation.y = target_rotation_y
+
+func _push_contact(actor: CharacterBody3D, next_panel: Transform3D, delta: float) -> bool:
+	var capsule := actor.get_node_or_null("CollisionShape3D") as CollisionShape3D
+	if capsule == null or not capsule.shape is CapsuleShape3D:
+		return false
+	var size: Vector3 = panel_box.shape.size
+	var axis := Vector3.RIGHT if size.x < size.z else Vector3.BACK
+	var normal := (next_panel.basis * axis).normalized()
+	var center := capsule.global_position
+	var side := signf((center - panel_box.global_position).dot(panel_box.global_basis * axis))
+	if side == 0.0: side = 1.0
+	normal *= side
+	var thickness := minf(size.x, size.z) * 0.5
+	var distance := (center - next_panel.origin).dot(normal)
+	var motion := normal * minf(maxf(0.0, thickness + capsule.shape.radius + 0.015 - distance), contact_push_speed * delta)
+	# Ignore only this leaf during the push; walls and other doors still block it.
+	var had_exception := actor.get_collision_exceptions().has(door_body)
+	if not had_exception: actor.add_collision_exception_with(door_body)
+	actor.move_and_collide(motion)
+	if not had_exception: actor.remove_collision_exception_with(door_body)
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = panel_box.shape
+	query.transform = next_panel
+	query.collision_mask = 1
+	query.exclude = [door_body.get_rid()]
+	for hit: Dictionary in get_world_3d().direct_space_state.intersect_shape(query, 32):
+		if hit.collider == actor: return false
+	return true
 
 func _finish_retreat(open_after: bool) -> void:
 	if is_instance_valid(_player):
@@ -189,7 +245,7 @@ func apply_persistent_state(state: Dictionary) -> void:
 	close_sound_pending = false
 	fingerprint_remaining = 0.0
 	unlocked = not fingerprint_locked and (required_key.is_empty() or bool(state.get("unlocked", false)))
-	is_open = bool(state.get("open", false)) and (unlocked or fingerprint_locked)
+	is_open = not barricaded and bool(state.get("open", false)) and (unlocked or fingerprint_locked)
 	target_rotation_y = deg_to_rad(open_angle) if is_open else 0.0
 	rotation.y = target_rotation_y
 	door_body.global_transform = global_transform * door_body_rest_transform

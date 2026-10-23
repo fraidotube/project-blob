@@ -1,5 +1,19 @@
 # Nuova zona dopo la porta aliena — 15/10/2026
 
+## Porta segreta, retro e accesso Assistenza Tecnica — 23/10/2026
+
+Il foro della porta segreta era già presente nella mesh nuova, ma il collider concavo storico lo chiudeva: rigenerata soltanto la shape del tetto in `resources/collisions/warehouse_secret_roof.tres` (44triangoli), senza cambiare il visuale. Le scatole Yealink utente davanti alla014 bloccano il percorso centrale del test; posizione degli arredi conservata.
+
+Due configurazioni aggiunte ai12battenti esistenti: `WarehouseDoors/PortaSegreta` (mesh `Porta Segreta/Porta_100`, libera,+90°/+Z) e `PortaRetroDX` (gruppo `Porta Retro Dx`,−90°/−X, chiave rear_key). Retro è un'anta a12mesh:6parti strutturali/vetro formano il collider unico,6maniglie/serratura seguono il gruppo; la metàSx non viene modificata. Segreta usa la protezione al contatto delle porte strette. Nessun pickup shotgun o chiave retro collocato in questa fase.
+
+Porta Assistenza00 era già collegata a `AssistanceMainDoor / assistance_key`: preservati ID e meccanica. Il boss Broccolo ora lascia a terra questa chiave alla morte del principale, con IDpickup main.broccolo.assistance_key, modello originale Bruno e copia privata della targhetta blu. Collected/posizione sono persistenti, nessuna assegnazione automatica all'inventario; ripristini ripetuti non duplicano e vecchi checkpoint già sconfitti ricevono il drop fisico al marker. [Parametri Inspector](INSPECTOR_CONFIGURATION.md).
+
+## Luci boss e neon a sensore — 22/10/2026
+
+Durante Broccolo solo i circuiti `Luci Corridoio Magazzino` (6Omni) e `Luci Lampadario Magazzino` (2Spot), con14materiali emissivi, ricevono tinta viola; alla fine ritornano ai colori precedenti. Collegamenti/ID/interruttori, energia e stato acceso/spento sono conservati. Non vengono aggiunti blackout: la sequenza precedente resta invariata; spegnere manualmente il contatore toglie corrente anche ai neon nuovi.
+
+Le mesh importate `connesi_building_test2/NeonMagazzino`, `_001`, `_002` hanno tre componenti in `NeonMagazzinoSensors/Neon01–03`, ciascuno con una Omni `Light`. Sensore di presenza orizzontale2,2m, isteresi0,5m e ritardo off0,6s; controlla dislivello e visibilità contro muri/porte. Si alimentano dalla corrente aziendale, indipendentemente dai due interruttori esistenti. Nessuno stato persistente nuovo: al caricamento ricalcolano la presenza. Materiali duplicati in memoria per emissione del tubo e shading reale quando spento; GLB e texture originali preservati. [Tuning e duplicazione](INSPECTOR_CONFIGURATION.md).
+
 ## Configurazione dall'Inspector — 17/10
 
 La precedente tabella CONFIG nel factory e' stata migrata nei12figli di WarehouseDoors nella scena, con stessi ID, nomi runtime, sorgenti, cardini e valori. Selezionare un figlio per modificare la singola porta; selezionare il genitore per il lettore fingerprint. La direzione di sicurezza viene ricavata automaticamente dal segno dell'angolo e dal cardine. Niente modifiche al codice per regolare apertura/serratura/audio. I controller fisici continuano a essere creati soltanto in gioco, conservando pose/materiali e telai fissi.

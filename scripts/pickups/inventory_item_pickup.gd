@@ -6,6 +6,11 @@ class_name InventoryItemPickup
 @export var item_id: StringName = &"bruno_key"
 ## Quantita assegnata se l'inventario ha capienza sufficiente.
 @export_range(1, 999, 1) var quantity := 1
+@export_group("Targhetta chiave")
+## Colora soltanto il materiale KeyTag del modello originale; metallo e anello restano invariati.
+@export var tint_key_tag := false
+## Tinta moltiplicata alla texture della targhetta, copiata solo in memoria.
+@export var key_tag_color := Color(0.2, 0.65, 1.0)
 var collected := false
 const KEY_MODEL := preload("res://assets/models/edificio/key_with_tag/scene.gltf")
 
@@ -18,6 +23,14 @@ func _ready() -> void:
 	var model := KEY_MODEL.instantiate() as Node3D
 	model.name = "KeyWithTag"
 	add_child(model)
+	if tint_key_tag:
+		for mesh: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):
+			for surface in mesh.mesh.get_surface_count():
+				var original := mesh.get_active_material(surface) as BaseMaterial3D
+				if original != null and original.resource_name == "KeyTag":
+					var material := original.duplicate() as BaseMaterial3D
+					material.albedo_color = key_tag_color
+					mesh.set_surface_override_material(surface, material)
 	var box := AABB()
 	var first := true
 	for mesh: MeshInstance3D in model.find_children("*", "MeshInstance3D", true, false):

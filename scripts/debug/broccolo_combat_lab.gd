@@ -88,6 +88,7 @@ func _ready() -> void:
 
 func prepare_pool() -> void:
 	if pool_ready: return
+	preload("res://scripts/effects/melee_feedback.gd").prepare_resources()
 	var configs := get_node("Roles").get_children()
 	for index in max_copies:
 		var actor = actor_scene.instantiate()
@@ -100,6 +101,12 @@ func prepare_pool() -> void:
 		actor.autonomous = false
 		actor.preview_vfx_scene = boss.preview_vfx_scene
 		add_child(actor)
+		# Bind the reaction tracks while preparing, without damage or hit audio.
+		for clip in [&"mie/hit_fromstand", &"mie/running_hit", &"mie/running_hit_short", &"mie/dying"]:
+			actor.animation.play(clip, 0)
+			actor.animation.advance(0)
+		actor.animation.play(&"mie/idle", 0)
+		actor.animation.advance(0)
 		actor.add_collision_exception_with(boss)
 		boss.add_collision_exception_with(actor)
 		for other in reserve:
@@ -130,6 +137,11 @@ func _warm_render_pool() -> void:
 	viewport.add_child(camera)
 	camera.current = true
 	for actor in reserve:
+		var blood_sample := preload("res://scripts/effects/melee_feedback.gd").create_blood_spray()
+		blood_sample.process_mode = Node.PROCESS_MODE_ALWAYS
+		actor.add_child(blood_sample)
+		blood_sample.position.y = 0.18
+		blood_sample.emitting = true
 		var energy_sample: Node3D
 		if energy_visual_scene != null and actor == reserve[0]:
 			energy_sample = energy_visual_scene.instantiate()
@@ -154,6 +166,7 @@ func _warm_render_pool() -> void:
 		await RenderingServer.frame_post_draw
 		await RenderingServer.frame_post_draw
 		effect.queue_free()
+		blood_sample.queue_free()
 		actor.hide()
 		if actor.power_fx != null:
 			actor.power_fx.stop()

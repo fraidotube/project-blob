@@ -27,6 +27,25 @@ extends Area3D
 
 var _tween: Tween
 
+## Allinea subito il mix al checkpoint, senza attendere body_entered o una sfumatura.
+func synchronize_player(player: CharacterBody3D) -> void:
+	if exterior_ambience == null or player == null: return
+	var capsule := player.get_node_or_null("CollisionShape3D") as CollisionShape3D
+	if capsule == null: return
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = capsule.shape
+	query.transform = capsule.global_transform
+	query.collision_mask = collision_layer
+	query.collide_with_areas = true
+	query.collide_with_bodies = false
+	var inside := false
+	for hit: Dictionary in get_world_3d().direct_space_state.intersect_shape(query, 64):
+		if hit.collider == self:
+			inside = true
+			break
+	if _tween != null: _tween.kill()
+	exterior_ambience.volume_db = inside_volume_db if inside else outside_volume_db
+
 
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)

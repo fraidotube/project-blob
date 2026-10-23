@@ -14,7 +14,7 @@ var menu_was_paused := false
 var menu_held := false
 
 func _ready() -> void:
-	SaveManager.restore_completed.connect(clear_preview)
+	SaveManager.world_restored.connect(clear_preview)
 	print("ANGELASTRI_MAP_READY debug_keys=", enabled)
 
 func _unhandled_input(event: InputEvent) -> void:

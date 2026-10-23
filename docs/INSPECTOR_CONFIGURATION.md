@@ -1,5 +1,41 @@
 # Configurare Project Blob dall'Inspector
 
+## Porta segreta, retro e chiave Broccolo — 23/10
+
+In `map_test → WarehouseDoors`, **PortaSegreta** configura `connesi_building_test2/Porta Segreta/Porta_100`: libera, cardine X massimo, apertura+90°verso+Z (lato di avvicinamento), protezione al contatto come le grigliate. Il fucile a pompa non è stato collocato: lo aggiungerà l'utente. **PortaRetroDX** muove il gruppo `Porta Retro Dx` con vetro e maniglie, cardine Z minimo,−90°verso interno/−X; `Required Key=rear_key`. La definizione inventario CHIAVE PORTA RETRO esiste ma non c'è ancora un pickup nella mappa.
+
+Per un'anta composta, **Mesh e pannello → Panel Parts** elenca le mesh da unire per l'ingombro fisico, con percorsi relativi alla configurazione. Retro usa le6parti BOTTOM/griglia/LEFT/RIGHT/TOP/Vetro; maniglie e serratura seguono il gruppo senza alterare l'asse/cardine. Vuoto mantiene il metodo precedente Source Visual/Panel Source. Non includere il telaio fisso.
+
+In `BroccoloEncounter/BroccoloMinionSpawner → Chiave dopo la vittoria`, `Victory Pickup Scene` collega `scenes/pickups/assistance_key_pickup.tscn`; `Victory Pickup Id=main.broccolo.assistance_key` è stabile. `Victory Fallback Marker` recupera il drop nei vecchi checkpoint con boss già sconfitto e senza posizione del bottino. Il drop resta fisico, da raccogliere conE; non concede automaticamente l'item.
+
+Aprire `scenes/pickups/assistance_key_pickup.tscn`: **Targhetta chiave → Tint Key Tag / Key Tag Color** regola il blu applicato alla sola copia del materiale KeyTag. Modello identico alla chiave di Bruno, metallo/anello e texture originali conservati; Bruno mantiene i colori precedenti. L'ID `assistance_key` è quello già richiesto da **PortaAssistenzaPrincipale**, che corrisponde alla mesh Porta Assistenza00.
+
+## Caricamento pronto e volume ambientale — 22/10
+
+In `map_test` selezionare **MapLoadingPreparation**: collegamenti a player, pool/grafo Broccolo, incontro Angelastri, AnimationPlayer braccia, aree audio e gestore impatti; `Warmup Impact Render` prepara le varianti grafiche sotto la schermata. Nel gruppo **Mix ambientale**, `Ambience Bus Volume Db` regola il solo ambiente (−8dB, prima+2dB). Armi, voci, UI e musica boss restano sui rispettivi bus.
+
+Il loop atmosferico `BackgroundMusic` (AMB_01, non musica) ora usa **Bus=Ambience** e **Volume Db=−20** sul nodo AudioStreamPlayer. Questi valori nativi restano modificabili nell'Inspector: rimossa l'assegnazione nascosta a−10dB dal setup Angelastri. `ExteriorAmbience` e `IndoorAudioZone` conservano il fade normale durante il movimento; caricando un checkpoint la zona allinea subito il volume alla posizione finale. Il mix si regola prima sul bus e poi, se serve, sul singolo player.
+
+`ImpactManager_Runtime` è ora un nodo della mappa, con le regolazioni esistenti di visual/audio/limiti disponibili nell'Inspector; non viene più creato dal primo sparo. Mantiene in cache le texture e scopre l'audio prima del gioco. Il pool Broccolo prepara reazioni/sangue senza applicare danni o cambiare il numero di colpi necessari.
+
+## Luci Broccolo e neon a sensore — 22/10
+
+In `map_test`, selezionare `BroccoloEncounter/BroccoloMinionSpawner`, gruppo **Illuminazione boss fight**: `Boss Light Violet Color` sceglie il viola, `Boss Light Violet Strength` l'intensità (0–1, default1). I due elenchi `Boss Light Root Paths` e `Boss Light Switch Paths` collegano esclusivamente corridoio e lampadari magazzino, comprese le superfici emissive. La tinta non cambia energia, visibilità, stato dei circuiti o ID: gli interruttori restano operativi. Vittoria, stop, caricamento e uscita ripristinano i colori precedenti. Le altre luci, inclusi i nuovi neon, conservano il colore normale.
+
+Per i neon selezionare `NeonMagazzinoSensors/Neon01`, `Neon02`, `Neon03`: **Collegamenti** contiene mesh, luce, corrente e player; **Sensore di presenza** contiene raggio orizzontale2,2m, margine uscita0,5m, dislivello massimo2,5m, ritardo spegnimento0,6s e controllo ogni0,15s. `Require Line Of Sight` evita rilevamenti attraverso muri/porte. Restare vicino mantiene la luce accesa; allontanarsi la spegne. Senza corrente sono spenti; lo stato è ricalcolato dalla presenza dopo caricamento, senza nuovi ID di salvataggio.
+
+Ogni sensore ha un figlio `Light` (OmniLight3D): regolare qui energia0,8, colore freddo e range3m, oltre alle ombre native se necessarie. **Superficie luminosa** del sensore regola colore/energia emissiva e soglia che isola le parti chiare della texture. Il materiale `Baked` importato è unlit: la copia runtime riceve luce reale e attiva l'emissione soltanto quando accesa; texture e GLB originali restano intatti. Le copie sono locali a ciascun neon.
+
+Per aggiungere un quarto neon, duplicare un figlio sensore con la sua `Light`, spostarlo appena sotto la nuova plafoniera e assegnare `Visual` alla relativa mesh. Conservare collegamenti Power System/Player; non duplicare gli interruttori esistenti. Salvare e riavviare F6 per applicare il tuning.
+
+## Porte magazzino 013, 014 e 015 — verso di apertura (22/10)
+
+**Passaggio stretto (22/10):** sulle sole013/014/015 è attivo **Passaggio stretto → Contact Push Enabled**. Niente arretramento preventivo né avviso per l'intero settore; apertura e chiusura spostano il player soltanto al contatto. **Contact Push Speed** limita la spinta (default2m/s). Se un muro blocca il player, la porta attende e riprende quando libera, senza riaprirsi. Le altre porte mantengono la protezione precedente (opzione spenta).
+
+Aprire `scenes/maps/map_test.tscn`, nella scheda **Locale** dell'albero scena espandere `WarehouseDoors` e selezionare `PortaGrigliata013`, `PortaGrigliata014` o `PortaGrigliata015`. Nell'Inspector, **Movimento → Open Angle** regola l'angolo in gradi: cambiare il segno inverte il verso. Le tre porte ora hanno **−90°**, apertura verso l'esterno richiesta dall'utente (prima +90°). Salvare la scena e riavviare F6 per applicare il valore.
+
+Questi nodi usano `warehouse_door_setup.gd`: sono la configurazione modificabile nell'editor; il controller basato su `door.gd` viene costruito durante il gioco. Non occorre aggiungere uno script alle mesh importate. Sono disponibili anche velocità, chiusura automatica, audio, serratura e collegamento all'anta; conservare gli ID di salvataggio e il cardine quando si cambia soltanto il verso.
+
 ## Mappa rapida del Player e delle armi
 
 Le impostazioni seguono il componente che le applica. Aprire `scenes/player/player.tscn` e usare questo percorso:
@@ -166,6 +202,8 @@ Seleziona direttamente la mesh dell'interruttore nella radice della mappa. Nei g
 I parametri dei corpi luminosi reali, come energia, range e cono Spotlight, restano nell'Inspector delle **Light3D**: non nel comando dell'interruttore. L'accensione iniziale, blackout e restore applicano lo stesso stato a luci ed emissione; il ritorno della corrente non riaccende automaticamente il circuito.
 
 ## Limiti e verifica
+
+La porta `WarehouseDoors/PortaGrigliata014` e' barricata intenzionalmente dalle scatole Yealink: gruppo **Serratura → Barricaded** attivo. Impedisce apertura da interazione, nemici, comandi forzati e vecchi salvataggi; `Interaction Name` vale `Porta Magazzino`. Disattivare il blocco solo se si vuole rendere nuovamente utilizzabile il passaggio. Gli altri battenti mantengono il valore predefinito falso.
 
 I controller storici basati su `door.gd` espongono movimento/audio/evidenziamento direttamente sul loro nodo. Migrazione effettuata:12porte WarehouseDoors/interruttori e parametri principali player/armi/spawn, con descrizioni per pickup, oggetti inventario, interazioni e aree ambientali. Bruno/HUD e altri componenti con export preesistenti sono indicati nella tabella, senza dichiarare una conversione completa di tutti i controller storici.
 

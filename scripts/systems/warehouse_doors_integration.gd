@@ -61,8 +61,7 @@ func _setup() -> void:
 	for node in get_setups():
 		var config = node
 		var source: Node3D = config.source_visual
-		var panel: MeshInstance3D = config.get_panel()
-		var bounds: AABB = panel.global_transform * panel.get_aabb()
+		var bounds: AABB = config.get_panel_bounds()
 		var hinge := bounds.get_center()
 		hinge[config.width_axis] = bounds.end[config.width_axis] if config.hinge_at_max else bounds.position[config.width_axis]
 		hinge.y = bounds.position.y
@@ -73,6 +72,7 @@ func _setup() -> void:
 		door.interaction_name = config.interaction_name
 		door.persistent_id = config.persistent_id
 		door.required_key = config.required_key
+		door.barricaded = config.barricaded
 		door.fingerprint_locked = config.fingerprint_locked
 		door.fingerprint_unlock_seconds = fingerprint_unlock_seconds
 		door.open_angle = config.open_angle
@@ -80,6 +80,8 @@ func _setup() -> void:
 		door.auto_close = config.auto_close
 		door.enemy_jump_open_enabled = config.enemy_jump_open_enabled
 		door.auto_close_delay = config.auto_close_delay
+		door.contact_push_enabled = config.contact_push_enabled
+		door.contact_push_speed = config.contact_push_speed
 		# Derive the normal from hinge/angle, avoiding a second editable direction.
 		var radial := bounds.get_center() - hinge
 		radial.y = 0

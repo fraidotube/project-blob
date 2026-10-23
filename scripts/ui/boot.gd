@@ -65,6 +65,7 @@ func _finish_boot() -> void:
 		await transition.call(
 			"transition_to",
 			NEXT_SCENE,
+			false,
 			false
 		)
 		return

@@ -44,6 +44,7 @@ func run() -> void:
 	setup.auto_close = true
 	setup.auto_close_delay = 8.0
 	setup.required_key = &"switch_key"
+	setup.barricaded = true
 	setup.door_audio_volume_db = -9.0
 	setup.interaction_color = Color.CYAN
 	manager.add_child(setup)
@@ -71,6 +72,15 @@ func run() -> void:
 	check(manager.doors.size() == 1,"Configurazione non costruisce porta")
 	if manager.doors.is_empty():quit(1);return
 	var door = manager.doors[0]
+	check(setup.barricaded and door.barricaded, "Barricata Inspector non serializzata/applicata")
+	door.interact(null)
+	door.open_door()
+	door.set_forced_open(true)
+	door._force_open_now()
+	door.apply_persistent_state({"open": true, "unlocked": true})
+	check(not door.is_open and is_zero_approx(door.rotation.y), "Barricata aggirata da apertura o restore")
+	door.barricaded = false
+	door.apply_persistent_state({})
 	check(door.open_angle == -60.0 and door.open_speed == 2.5 and door.opening_normal.is_equal_approx(Vector3.BACK),"Movimento Inspector ignorato")
 	check(door.auto_close and door.auto_close_delay == 8.0,"Chiusura automatica Inspector ignorata")
 	check(door.persistent_id == &"test.inspector.door" and door.required_key == &"switch_key","Serratura o ID non conservati")
